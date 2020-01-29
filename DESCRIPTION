@@ -6,6 +6,16 @@ Author: Who wrote it
 Maintainer: The package maintainer <yourself@somewhere.net>
 Description: More about what it does (maybe more than one line)
     Use four spaces when indenting paragraphs within the Description.
-License: What license is it under?
+License: GPL-3
 Encoding: UTF-8
 LazyData: true
+Depends: methods,sp
+Imports: 
+  data.table,
+  hdf5r
+RoxygenNote: 6.1.1
+Collate: 
+    'class.gedi.level1b.R'
+    'tools.R'
+    'level1bSPDF.R'
+    'readLevel1b.R'
