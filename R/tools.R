@@ -7,6 +7,7 @@
 #'@return H5File; S4 object of class H5File;
 #'@author Carlos Alberto Silva. This function calls \emph{h5file} function from h5 package (Author: Mario Annau)
 #'@seealso \code{\link[h5]{h5file}} in the \emph{h5} package.
+#'@import bit64
 #'@importFrom hdf5r H5File
 #'@importFrom data.table data.table
 #'@export
