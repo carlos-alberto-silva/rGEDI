@@ -17,7 +17,7 @@ grid()
 plot(GEDI01_B,shot_number="19850022900500000",relative=FALSE,polygon=TRUE,type="l", lwd=2, col="forestgreen")
 grid()
 
-spdfs<-level1bSPDF(GEDI01_B@h5)
+spdfs<-level1bSPDF(GEDI01_B)
 
 head(spdfs@data)
 

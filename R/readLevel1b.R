@@ -28,6 +28,6 @@
 readLevel1b<-function(level1bpath) {
   level1b_h5<- hdf5r::H5File$new(level1bpath, mode = 'r')
   level1b<- new("gedi.level1b", h5 = level1b_h5)
-  return(level1b)
+  return(level1b_h5)
 }
 class(level1b_h5)

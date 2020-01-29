@@ -1,11 +1,12 @@
 #setClass("gedi.level1b", representation(h5="H5File",level1b.spdf='SpatialPointsDataFrame'))
+require(h5)
 
 setClass("gedi.level1b", representation(h5="H5File"))
+setClass("gedi.level1bSPDF", slots=c(spdf="SpatialPointsDataFrame"))
 
-setClass("gedi.level1bSPDF", representation(spdf="SpatialPointsDataFrame"))
 
 setMethod("plot", signature("gedi.level1b", y = "missing"), function(x,shot_number,relative=TRUE,polygon=FALSE,...) {
-    level1b<-x@h5
+    level1b<-x@H5File
     groups_id<-grep("BEAM\\d{4}$",gsub("/","",
                                        list.groups(level1b, recursive = F)), value = T)
     k<-"BEAM1011"
@@ -47,5 +48,12 @@ setMethod("plot", signature("gedi.level1b", y = "missing"), function(x,shot_numb
 
 
 setMethod("plot", signature("gedi.level1bSPDF", y = "missing"), function(x,...) {
-    plot(x@spdf,...)
+    spdf_xy<-x@spdf
+    leaflet(spdf_xy) %>%
+    #addCircleMarkers(spdf_xy, y,
+    #                 radius = 3,
+    #                 opacity = 100,
+    #                 color = "white")  %>%
+    addScaleBar(options = list(imperial = FALSE)) %>%
+    addProviderTiles(providers$Esri.WorldImagery)
 })
