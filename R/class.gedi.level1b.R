@@ -1,12 +1,12 @@
 #setClass("gedi.level1b", representation(h5="H5File",level1b.spdf='SpatialPointsDataFrame'))
-require(h5)
+#require(h5)
 
 setClass("gedi.level1b", representation(h5="H5File"))
 setClass("gedi.level1bSPDF", slots=c(spdf="SpatialPointsDataFrame"))
 
 
 setMethod("plot", signature("gedi.level1b", y = "missing"), function(x,shot_number,relative=TRUE,polygon=FALSE,...) {
-    level1b<-x@H5File
+    level1b<-x@h5
     groups_id<-grep("BEAM\\d{4}$",gsub("/","",
                                        list.groups(level1b, recursive = F)), value = T)
     k<-"BEAM1011"
