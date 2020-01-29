@@ -1,8 +1,28 @@
 #setClass("gedi.level1b", representation(h5="H5File",level1b.spdf='SpatialPointsDataFrame'))
+#' @importFrom hdf5r H5File
+setRefClass("H5File")
 
-setClass("gedi.level1b", representation(h5="H5File"))
 
-setClass("gedi.level1bSPDF", representation(spdf="SpatialPointsDataFrame"))
+#' Class for level1b from GEDI
+#'
+#' @slot h5 Object of class H5File from hdf5r package
+#'
+#' @import methods
+#' @export
+gedi.level1b <- setClass(
+  Class="gedi.level1b",
+  slots = list(h5 = "H5File")
+)
+
+#' Class for spatial points data frame from GEDI
+#'
+#' @slot spdf Object of class SpatialPointsDataFrame
+#'
+#' @export
+setClass(
+  "gedi.level1bSPDF",
+  representation=representation(spdf = "SpatialPointsDataFrame")
+)
 
 setMethod("plot", signature("gedi.level1b", y = "missing"), function(x,shot_number,relative=TRUE,polygon=FALSE,...) {
     level1b<-x@h5
@@ -44,7 +64,6 @@ setMethod("plot", signature("gedi.level1b", y = "missing"), function(x,shot_numb
    }
   }
 )
-
 
 setMethod("plot", signature("gedi.level1bSPDF", y = "missing"), function(x,...) {
     plot(x@spdf,...)
