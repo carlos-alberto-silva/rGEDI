@@ -66,5 +66,12 @@ setMethod("plot", signature("gedi.level1b", y = "missing"), function(x,shot_numb
 )
 
 setMethod("plot", signature("gedi.level1bSPDF", y = "missing"), function(x,...) {
-    plot(x@spdf,...)
+    spdf_xy<-x@spdf
+    leaflet(spdf_xy) %>%
+    #addCircleMarkers(spdf_xy, y,
+    #                 radius = 3,
+    #                 opacity = 100,
+    #                 color = "white")  %>%
+    addScaleBar(options = list(imperial = FALSE)) %>%
+    addProviderTiles(providers$Esri.WorldImagery)
 })

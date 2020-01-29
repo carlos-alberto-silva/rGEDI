@@ -2,8 +2,6 @@
 #'
 #'@description This function reads LVIS level1b data
 #'
-#'@usage readLevel1b(level1bpath)
-#'
 #'@param level1bpath file path pointing to LVIS level1b data (H5 format)
 #'@return H5File; S4 object of class H5File;
 #'@author Carlos Alberto Silva. This function calls \emph{h5file} function from h5 package (Author: Mario Annau)
