@@ -20,15 +20,17 @@ level1b.dt<-function(level1b) {
     for ( i in gsub("/","",groups_id)){
         i.s<-i.s+1
         setTxtProgressBar(pb, i.s)
-        level1b.dt<-rbind(level1b.dt, cbind(
-        latitude_bin0=level1b[[paste0(i,"/geolocation/latitude_bin0")]][],
-        latitude_lastbin=level1b[[paste0(i,"/geolocation/latitude_lastbin")]][],
-        longitude_bin0=level1b[[paste0(i,"/geolocation/longitude_bin0")]][],
-        longitude_lastbin=level1b[[paste0(i,"/geolocation/longitude_lastbin")]][],
-        elevation_bin0=level1b[[paste0(i,"/geolocation/elevation_bin0")]][],
-        elevation_lastbin=level1b[[paste0(i,"/geolocation/elevation_lastbin")]][],
-        beam=level1b[[paste0(i,"/beam")]][],
-        shot_number=as.character(level1b[[paste0(i,"/shot_number")]][])))
+        shot_number.df <- bit64::as.data.frame.integer64(level1b[[paste0(i,"/shot_number")]][])
+        names(shot_number.df) <- "shot_number"
+        level1b.dt <- rbind(level1b.dt, cbind(
+          latitude_bin0=level1b[[paste0(i,"/geolocation/latitude_bin0")]][],
+          latitude_lastbin=level1b[[paste0(i,"/geolocation/latitude_lastbin")]][],
+          longitude_bin0=level1b[[paste0(i,"/geolocation/longitude_bin0")]][],
+          longitude_lastbin=level1b[[paste0(i,"/geolocation/longitude_lastbin")]][],
+          elevation_bin0=level1b[[paste0(i,"/geolocation/elevation_bin0")]][],
+          elevation_lastbin=level1b[[paste0(i,"/geolocation/elevation_lastbin")]][],
+          beam=level1b[[paste0(i,"/beam")]][],
+          shot_number.df))
   }
   close(pb)
   return(level1b.dt)

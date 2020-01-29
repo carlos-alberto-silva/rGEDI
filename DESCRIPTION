@@ -11,6 +11,7 @@ Encoding: UTF-8
 LazyData: true
 Depends: methods,sp
 Imports: 
+  bit64,
   data.table,
   hdf5r
 RoxygenNote: 6.1.1
