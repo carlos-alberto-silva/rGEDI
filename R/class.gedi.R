@@ -23,15 +23,15 @@ setClass(
   slots=list(dt = "data.table")
 )
 
-setMethod("plot", signature("gedi.level1b", y = "missing"), function(x,shot_number,relative=TRUE,polygon=FALSE,...) {
-    level1b<-x@h5
-    groups_id<-grep("BEAM\\d{4}$",gsub("/","",
-                                       list.groups(level1b, recursive = F)), value = T)
-    #k<-"BEAM1011"
-    for ( k in groups_id){
-      gid<-max(level1b[[paste0(k,"/shot_number")]][]==shot_number)
-      if (gid==1) {i=k}
-    }
+PlotWaveform<-function(level1b,shot_number,relative=TRUE,polygon=FALSE,return=FALSE,plotWave=FALSE,...){
+  level1b<-level1b@h5
+  groups_id<-grep("BEAM\\d{4}$",gsub("/","",
+                                     list.groups(level1b, recursive = F)), value = T)
+  #k<-"BEAM1011"
+  for ( k in groups_id){
+    gid<-max(level1b[[paste0(k,"/shot_number")]][]==shot_number)
+    if (gid==1) {i=k}
+  }
 
   shot_number_i<-level1b[[paste0(i,"/shot_number")]][]
   shot_number_id<-which(shot_number_i[]==shot_number)
@@ -45,9 +45,11 @@ setMethod("plot", signature("gedi.level1b", y = "missing"), function(x,shot_numb
   elevation_lastbin_i<-elevation_lastbin[shot_number_id]
   z=rev(seq(elevation_lastbin_i,elevation_bin0_i,(elevation_bin0_i-elevation_lastbin_i)/rx_sample_count[shot_number_id]))[-1]
 
-  if (relative==TRUE){x=rxwaveform_inorm } else{
-      x=rxwaveform_i
-    }
+  if (relative==TRUE){x=rxwaveform_inorm} else{
+    x=rxwaveform_i
+  }
+
+  if (plotWave==TRUE){
   if (polygon==TRUE){
 
     xstart<-x[which(z==min(z, na.rm=T))]
@@ -60,9 +62,16 @@ setMethod("plot", signature("gedi.level1b", y = "missing"), function(x,shot_numb
     polygon(xl,yl,...)
   } else {
     plot(x=x,y=z,...)
-   }
+    }
   }
-)
+
+  if (return==TRUE){
+  return(cbind(rxwaveform=x,z=z))}
+}
+
+setMethod("plot", signature("gedi.level1b", y = "missing"), function(x,shot_number,relative=TRUE,polygon=FALSE,...) {
+  PlotWaveform(x,shot_number=shot_number,relative=relative,polygon=polygon,return=FALSE,plotWave=TRUE,...)
+})
 
 setMethod("plot", signature("gedi.level1b.dt", y = "missing"), function(x,...) {
     xy<-x@dt
@@ -98,3 +107,4 @@ gedi.level2b <- setClass(
   Class="gedi.level2b",
   slots = list(h5 = "H5File")
 )
+

@@ -1,13 +1,10 @@
-#'Read GEDI Level1A data
+#'Read GEDI Level2A data
 #'
-#'@description This function reads LVIS level1b data
+#'@description This function reads GEDI level2A data
 #'
-#'@param level1bpath file path pointing to LVIS level1b data (H5 format)
-#'@return H5File; S4 object of class H5File;
-#'@author Carlos Alberto Silva. This function calls \emph{h5file} function from h5 package (Author: Mario Annau)
-#'@seealso \code{\link[h5]{h5file}} in the \emph{h5} package.
+#'@param level2bpath file path pointing to GEDI level2B data (H5 format)
+#'@return level2AFile; S4 object of class "gedi.level2a";
 #'
-#'@importFrom data.table data.table
 #'@import hdf5r
 #'@export
 #list.datasets(level1b., recursive = T))
