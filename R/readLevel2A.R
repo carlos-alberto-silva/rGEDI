@@ -1,4 +1,4 @@
-#'Read LVIS Level1b data
+#'Read GEDI Level1A data
 #'
 #'@description This function reads LVIS level1b data
 #'
@@ -11,8 +11,8 @@
 #'@import hdf5r
 #'@export
 #list.datasets(level1b., recursive = T))
-readLevel1b <-function(level1bpath) {
-  level1b_h5 <- hdf5r::H5File$new(level1bpath, mode = 'r')
-  level1b<- new("gedi.level1b", h5 = level1b_h5)
-  return(level1b)
+readLevel2A <-function(level2Apath) {
+  level2A_h5 <- hdf5r::H5File$new(level2Apath, mode = 'r')
+  level2A<- new("gedi.level2a", h5 = level2A_h5)
+  return(level2A)
 }
