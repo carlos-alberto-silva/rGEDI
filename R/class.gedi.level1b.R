@@ -75,3 +75,4 @@ setMethod("plot", signature("gedi.level1b.dt", y = "missing"), function(x,...) {
     #addScaleBar(options = list(imperial = FALSE)) %>%
     #addProviderTiles(providers$Esri.WorldImagery)
 })
+

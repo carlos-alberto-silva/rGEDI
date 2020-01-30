@@ -29,7 +29,7 @@ level1b2dt<-function(level1b,select=c("latitude_bin0","latitude_lastbin","shot_n
 
   for ( i in select){
     if  ( i =="shot_number"){
-      assign(i,bit64::as.data.frame.integer64(NaN))
+      assign(i,bit64::as.integer64(NaN))
     } else {
       assign(i,numeric())
     }
@@ -41,6 +41,7 @@ level1b2dt<-function(level1b,select=c("latitude_bin0","latitude_lastbin","shot_n
   dtse2<-datasets[selected][!grepl("geolocation/shot_number",datasets[selected])]
 
 
+  # i = "BEAM0000/shot_number"
   for ( i in dtse2){
     #print(i)
     i.s<-i.s+1
@@ -48,7 +49,7 @@ level1b2dt<-function(level1b,select=c("latitude_bin0","latitude_lastbin","shot_n
     name_i<-basename(i)
     if ( name_i =="shot_number"){
 
-      assign(name_i, c(get(name_i),bit64::as.data.frame.integer64(level1b[[i]][])))
+      assign(name_i, bit64::c.integer64(get(name_i),level1b[[i]][]))
 
     } else {
 
@@ -93,3 +94,4 @@ level1b2dt<-function(level1b,select=c("latitude_bin0","latitude_lastbin","shot_n
 }
 
 
+>>>>>>> f57d0feba7a47ee64476a94c1d808eb822c65e80
