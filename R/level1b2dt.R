@@ -74,22 +74,9 @@ level1B2dt<-function(level1b,select=c("latitude_bin0","latitude_lastbin","shot_n
     level1b.dt[,i]<-get(i)
   }
 
-  format(level1b.dt$shot_number[1], scientific = F)
-  format(shot_number[2], scientific = F)
-
-  head(level1b.dt)
-  length(latitude_bin0)
-  length(latitude_bin0)
-  length(latitude_lastbin)
-  nrow(shot_number)
-
-
-  format(shot_number[2], scientific = F)
-
-
   #level1b.spdf<-sp::SpatialPointsDataFrame(cbind(as.numeric(level1b.dt$longitude_bin0),as.numeric(level1b.dt$latitude_bin0)),data=level1b.dt)
   level1b.dt<- methods::new("gedi.level1b.dt", dt = level1b.dt)
   close(pb)
-  return(level1b.dt@dt)
+  return(level1b.dt)
 }
 
