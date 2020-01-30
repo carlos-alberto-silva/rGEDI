@@ -15,7 +15,7 @@
 #'@importFrom data.table data.table
 #'@importFrom sp SpatialPointsDataFrame
 #'@export
-level1b2dt<-function(level1b,select=c("latitude_bin0","latitude_lastbin","shot_number")) {
+level1B2dt<-function(level1b,select=c("latitude_bin0","latitude_lastbin","shot_number")) {
 
   level1b<-level1b@h5
   groups_id<-grep("BEAM\\d{4}$",gsub("/","",
@@ -93,5 +93,3 @@ level1b2dt<-function(level1b,select=c("latitude_bin0","latitude_lastbin","shot_n
   return(level1b.dt@dt)
 }
 
-
->>>>>>> f57d0feba7a47ee64476a94c1d808eb822c65e80
