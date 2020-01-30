@@ -11,8 +11,8 @@
 #'@import hdf5r
 #'@export
 #list.datasets(level1b., recursive = T))
-readLevel2A <-function(level2Apath) {
-  level2A_h5 <- hdf5r::H5File$new(level2Apath, mode = 'r')
-  level2A<- new("gedi.level2a", h5 = level2A_h5)
-  return(level2A)
+readLevel2B <-function(level2Bpath) {
+  level2bB_h5 <- hdf5r::H5File$new(level2Bpath, mode = 'r')
+  level2<- new("gedi.level2b", h5 = level2B_h5)
+  return(level2B)
 }

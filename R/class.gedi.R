@@ -76,3 +76,25 @@ setMethod("plot", signature("gedi.level1b.dt", y = "missing"), function(x,...) {
     #addProviderTiles(providers$Esri.WorldImagery)
 })
 
+
+#' Class for GEDI level2A
+#'
+#' @slot h5 Object of class H5File from hdf5r package
+#'
+#' @import methods
+#' @export
+gedi.level2a <- setClass(
+  Class="gedi.level2a",
+  slots = list(h5 = "H5File")
+)
+
+#' Class for GEDI level2B
+#'
+#' @slot h5 Object of class H5File from hdf5r package
+#'
+#' @import methods
+#' @export
+gedi.level2b <- setClass(
+  Class="gedi.level2b",
+  slots = list(h5 = "H5File")
+)
