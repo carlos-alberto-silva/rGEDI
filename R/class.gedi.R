@@ -15,7 +15,7 @@ gedi.level1b <- setClass(
 
 #' Class for GEDI Level1B derived geolocation
 #'
-#' @slot df Object of class data.table
+#' @slot dt Object of class data.table
 #'
 #' @export
 setClass(
@@ -27,10 +27,16 @@ setMethod("plot", signature("gedi.level1b", y = "missing"), function(x,shot_numb
     level1b<-x@h5
     groups_id<-grep("BEAM\\d{4}$",gsub("/","",
                                        list.groups(level1b, recursive = F)), value = T)
+
+    i = NULL
     #k<-"BEAM1011"
     for ( k in groups_id){
       gid<-max(level1b[[paste0(k,"/shot_number")]][]==shot_number)
       if (gid==1) {i=k}
+    }
+
+    if(is.null(i)) {
+      stop(paste0("Shot number ", shot_number, " was not found within the dataset!"))
     }
 
   shot_number_i<-level1b[[paste0(i,"/shot_number")]][]
@@ -57,7 +63,7 @@ setMethod("plot", signature("gedi.level1b", y = "missing"), function(x,shot_numb
     yl<-c(max(z, na.rm=T),min(z, na.rm=T),min(z, na.rm=T),rev(z),max(z, na.rm=T),max(z, na.rm=T))
 
     plot(xl,yl,...)
-    polygon(xl,yl,...)
+    suppressWarnings(polygon(xl,yl,...))
   } else {
     plot(x=x,y=z,...)
    }

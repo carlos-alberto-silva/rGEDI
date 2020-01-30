@@ -7,16 +7,16 @@ require(hdf5r)
 
 
 #### function readLevel1b
-level1bpath<-"C:\\Users\\carlo\\Documents\\GEDI_package\\GEDI01_B_2019109163004_O01985_T02206_02_003_01.h5"
+level1bpath<-"C:\\Users\\caioh\\Downloads\\GEDI01_B_2019110232351_O02005_T03190_02_003_01.h5"
 
-level1b<-readLevel1b(level1bpath)
+level1b<-readLevel1B(level1bpath)
 
 
 ### plot waveform
 windows()
 par(mfrow=c(1,2))
 par(cex.axis=1.5)
-plot(level1b,shot_number="19850022900500000",relative=TRUE,polygon=TRUE,type="l", lwd=2, col="forestgreen")
+plot(level1b,shot_number="20050019900000001",relative=TRUE,polygon=TRUE,type="l", lwd=2, col="forestgreen")
 grid()
 plot(level1b,shot_number="19850022900500000",relative=FALSE,polygon=TRUE,type="l", lwd=2, col="forestgreen")
 grid()

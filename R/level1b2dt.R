@@ -4,7 +4,9 @@
 #'
 #'
 #'@param level1b H5File object from level1b
-#'@return H5File; S4 object of class H5File;
+#'@param select character vector of desired columns to extract from GEDI hdf5 format, default c("latitude_bin0", "latitude_lastbin", "longitude_bin0", "longitude_lastbin", "shot_number")
+#'
+#'@return gedi.level1b class; S4 object of class gedi.level1b;
 #'@author Carlos Alberto Silva. This function calls \emph{h5file} function from h5 package (Author: Mario Annau)
 #'@seealso \code{\link[h5]{h5file}} in the \emph{h5} package.
 #'
@@ -15,12 +17,8 @@
 #'@importFrom data.table data.table
 #'@importFrom sp SpatialPointsDataFrame
 #'@export
-level1B2dt<-function(level1b,select=c("latitude_bin0","latitude_lastbin","shot_number")) {
-
+level1B2dt<-function(level1b,select=c("latitude_bin0", "latitude_lastbin", "longitude_bin0", "longitude_lastbin", "shot_number")) {
   level1b<-level1b@h5
-  groups_id<-grep("BEAM\\d{4}$",gsub("/","",
-                                     hdf5r::list.groups(level1b, recursive = F)), value = T)
-  pb <- utils::txtProgressBar(min = 0, max = length(groups_id), style = 3)
 
   datasets<-hdf5r::list.datasets(level1b, recursive = T)
   datasets_names<-basename(datasets)
@@ -35,10 +33,11 @@ level1B2dt<-function(level1b,select=c("latitude_bin0","latitude_lastbin","shot_n
     }
   }
 
-  #i="BEAM0000/geolocation/shot_number"
-  i.s=0
-  #i="BEAM0010"
   dtse2<-datasets[selected][!grepl("geolocation/shot_number",datasets[selected])]
+
+  # Set progress bar
+  pb <- utils::txtProgressBar(min = 0, max = length(dtse2), style = 3)
+  i.s=0
 
 
   # i = "BEAM0000/shot_number"
@@ -73,18 +72,6 @@ level1B2dt<-function(level1b,select=c("latitude_bin0","latitude_lastbin","shot_n
   for ( i in select2){
     level1b.dt[,i]<-get(i)
   }
-
-  format(level1b.dt$shot_number[1], scientific = F)
-  format(shot_number[2], scientific = F)
-
-  head(level1b.dt)
-  length(latitude_bin0)
-  length(latitude_bin0)
-  length(latitude_lastbin)
-  nrow(shot_number)
-
-
-  format(shot_number[2], scientific = F)
 
 
   #level1b.spdf<-sp::SpatialPointsDataFrame(cbind(as.numeric(level1b.dt$longitude_bin0),as.numeric(level1b.dt$latitude_bin0)),data=level1b.dt)

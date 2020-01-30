@@ -15,8 +15,4 @@ Imports:
   data.table,
   hdf5r
 RoxygenNote: 6.1.1
-Collate: 
-    'class.gedi.level1b.R'
-    'tools.R'
-    'level1bSPDF.R'
-    'readLevel1b.R'
+

@@ -125,13 +125,6 @@ getSpatialData = function(level1b) {
                longitude_lastbin=longitude_lastbin))
 }
 
-output="C:\\sub.h5"
-
-
-level1b_h5 <- hdf5r::H5File$new(level1bpath, mode = 'r')
-
-level1b<- new("gedi.level1b", h5 = level1b_h5)
-
 clipByMask = function(level1b, output, mask) {
 
   test_filename <- tempfile(fileext = ".h5")
