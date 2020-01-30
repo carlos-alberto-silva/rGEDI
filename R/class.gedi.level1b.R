@@ -1,15 +1,33 @@
 #setClass("gedi.level1b", representation(h5="H5File",level1b.spdf='SpatialPointsDataFrame'))
-#require(h5)
+#' @importFrom hdf5r H5File
+setRefClass("H5File")
 
-setClass("gedi.level1b", representation(h5="H5File"))
-setClass("gedi.level1bSPDF", slots=c(spdf="SpatialPointsDataFrame"))
+#' Class for GEDI level1B
+#'
+#' @slot h5 Object of class H5File from hdf5r package
+#'
+#' @import methods
+#' @export
+gedi.level1b <- setClass(
+  Class="gedi.level1b",
+  slots = list(h5 = "H5File")
+)
 
+#' Class for GEDI Level1B derived geolocation
+#'
+#' @slot df Object of class data.table
+#'
+#' @export
+setClass(
+  Class="gedi.level1b.dt",
+  slots=list(dt = "data.table")
+)
 
 setMethod("plot", signature("gedi.level1b", y = "missing"), function(x,shot_number,relative=TRUE,polygon=FALSE,...) {
     level1b<-x@h5
     groups_id<-grep("BEAM\\d{4}$",gsub("/","",
                                        list.groups(level1b, recursive = F)), value = T)
-    k<-"BEAM1011"
+    #k<-"BEAM1011"
     for ( k in groups_id){
       gid<-max(level1b[[paste0(k,"/shot_number")]][]==shot_number)
       if (gid==1) {i=k}
@@ -46,14 +64,14 @@ setMethod("plot", signature("gedi.level1b", y = "missing"), function(x,shot_numb
   }
 )
 
-
-setMethod("plot", signature("gedi.level1bSPDF", y = "missing"), function(x,...) {
-    spdf_xy<-x@spdf
-    leaflet(spdf_xy) %>%
+setMethod("plot", signature("gedi.level1b.dt", y = "missing"), function(x,...) {
+    xy<-x@dt
+    plot(xy$longitude_bin0,xy$latitude_bin0,...)
+    #leaflet(spdf_xy) %>%
     #addCircleMarkers(spdf_xy, y,
     #                 radius = 3,
     #                 opacity = 100,
     #                 color = "white")  %>%
-    addScaleBar(options = list(imperial = FALSE)) %>%
-    addProviderTiles(providers$Esri.WorldImagery)
+    #addScaleBar(options = list(imperial = FALSE)) %>%
+    #addProviderTiles(providers$Esri.WorldImagery)
 })

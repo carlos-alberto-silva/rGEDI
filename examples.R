@@ -5,27 +5,36 @@ require(hdf5r)
 #h5_data[["BEAM0000/beam"]][]
 #Level1b<- h5::h5file(level1bpath, 'a')
 
+
+#### function readLevel1b
 level1bpath<-"C:\\Users\\carlo\\Documents\\GEDI_package\\GEDI01_B_2019109163004_O01985_T02206_02_003_01.h5"
 
-GEDI01_B<-readLevel1b(level1bpath)
+level1b<-readLevel1b(level1bpath)
 
 
+### plot waveform
+windows()
 par(mfrow=c(1,2))
 par(cex.axis=1.5)
-plot(GEDI01_B,shot_number="19850022900500000",relative=TRUE,polygon=TRUE,type="l", lwd=2, col="red")
+plot(level1b,shot_number="19850022900500000",relative=TRUE,polygon=TRUE,type="l", lwd=2, col="forestgreen")
 grid()
-plot(GEDI01_B,shot_number="19850022900500000",relative=FALSE,polygon=TRUE,type="l", lwd=2, col="forestgreen")
+plot(level1b,shot_number="19850022900500000",relative=FALSE,polygon=TRUE,type="l", lwd=2, col="forestgreen")
 grid()
 
-spdfs<-level1bSPDF(GEDI01_B)
+### level1b to dt
+level1b_df<-level1b2dt(level1b,select="all")
+head(level1b_df)
 
-head(spdfs@data)
+### plot Level1b as dt
+require(rgdal)
+worldshp<-readOGR("C:\\Users\\carlo\\Downloads\\countries_shp\\countries.shp")
 
-plot(spdfs)
-level1b<-GEDI01_B
-y<-kkk@level1b.dt[,1]
-x<-kkk@level1b.dt[,2]
+windows()
+plot(worldshp)
+points(level1b_df$longitude_bin0,level1b_df$latitude_bin0, pch=".", col="green")
 
+x<-as.numeric(spdfs@dt$longitude_bin0)
+y<-as.numeric(spdfs@dt$latitude_bin0)
 # Load the library
 library(leaflet)
 
@@ -36,11 +45,3 @@ leaflet() %>%
                    color = "white")  %>%
   addScaleBar(options = list(imperial = FALSE)) %>%
   addProviderTiles(providers$Esri.WorldImagery)
-
-plot(kkk@level1b.dt[,1],kkk@level1b.dt[,2])
-
-level1b<- h5::h5file(level1bpath, 'a')
-class(level1b)
-
-yBEAM0000<-level1b["BEAM0000"]["geolocation"]["latitude_bin0"][]
-xBEAM0000<-level1b["BEAM0000"]["geolocation"]["longitude_bin0"][]
