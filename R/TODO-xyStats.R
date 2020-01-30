@@ -2,10 +2,10 @@
 #'
 #'@description Compute and plot stastical parameters of 1:1 comparison
 #'
-#'@aliases plotStats
+#'@aliases xyStats
 #'
-#'@param x h5file; S4 object of class H5File
-#'@param y dataframe containing LVIS level 2 data
+#'@param x vector
+#'@param y vector
 #'@param colours h5file; S4 object of class H5File
 #'@param n size
 #'@param xlim dataframe containing LVIS level 2 data
