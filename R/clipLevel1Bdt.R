@@ -25,6 +25,15 @@
 #'
 #'clipped_level1Bdt = clipLevel1(level1Bdt, extent=ext)
 #'
+#'library(leaflet)
+#'leaflet() %>%
+#'  addCircleMarkers(clipped_level1Bdt@dt$longitude_bin0,
+#'                   clipped_level1Bdt@dt$latitude_bin0,
+#'                   radius = 1,
+#'                   opacity = 1,
+#'                   color = "red")  %>%
+#'  addScaleBar(options = list(imperial = FALSE)) %>%
+#'  addProviderTiles(providers$Esri.WorldImagery)
 #'@export
 clipLevel1Bdt = function(level1bdt,extent){
   level1bdt<-level1bdt@dt
@@ -71,6 +80,17 @@ clipLevel1Bdt = function(level1bdt,extent){
 #'
 #'clipped_level1Bdt = clipLevel1Geometry(level1Bdt, polygon_spdf)
 #'
+#'library(leaflet)
+#'leaflet() %>%
+#'  addCircleMarkers(clipped_level1Bdt@dt$longitude_bin0,
+#'                   clipped_level1Bdt@dt$latitude_bin0,
+#'                   radius = 1,
+#'                   opacity = 1,
+#'                   color = "red")  %>%
+#'  addScaleBar(options = list(imperial = FALSE)) %>%
+#'  addPolygons(data=polygon_spdf,weight=1,col = 'white',
+#'              opacity = 1, fillOpacity = 0) %>%
+#'  addProviderTiles(providers$Esri.WorldImagery)
 #'@export
 clipLevel1BdtGeometry = function(level1bdt, polygon_spdf) {
   exshp<-extent(polygon_spdf)
