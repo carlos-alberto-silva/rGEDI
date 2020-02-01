@@ -2,8 +2,12 @@
 
 export(clipLevel1B)
 export(clipLevel1Bgeometry)
+export(cliplevel1Bdt)
+export(cliplevel1BdtGeometry)
 export(level1B2dt)
 export(readLevel1B)
+export(readLevel2A)
+export(readLevel2B)
 exportClasses(gedi.level1b)
 exportClasses(gedi.level1b.dt)
 exportClasses(gedi.level2a)

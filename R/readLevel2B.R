@@ -2,8 +2,8 @@
 #'
 #'@description This function reads GEDI level2B data
 #'
-#'@param level2bpath file path pointing to GEDI level2B data (H5 format)
-#'@return level2bFile; S4 object of class "gedi.level2b";
+#'@param level2Bpath file path pointing to GEDI level2B data (H5 format)
+#'@return level2BFile; S4 object of class "gedi.level2b";
 #'
 #'@import hdf5r
 #'@export

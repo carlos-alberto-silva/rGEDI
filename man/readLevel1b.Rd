@@ -2,22 +2,16 @@
 % Please edit documentation in R/readLevel1b.R
 \name{readLevel1B}
 \alias{readLevel1B}
-\title{Read LVIS Level1b data}
+\title{Read GEDI Level1B data}
 \usage{
-readLevel1B(level1bpath)
+readLevel1B(level1Bpath)
 }
 \arguments{
-\item{level1bpath}{file path pointing to LVIS level1b data (H5 format)}
+\item{level1Bpath}{file path pointing to GEDI level1B data (H5 format)}
 }
 \value{
-H5File; S4 object of class H5File;
+level1BFile; S4 object of class "gedi.level1b";
 }
 \description{
-This function reads LVIS level1b data
-}
-\seealso{
-\code{\link[h5]{h5file}} in the \emph{h5} package.
-}
-\author{
-Carlos Alberto Silva. This function calls \emph{h5file} function from h5 package (Author: Mario Annau)
+This function reads GEDI level1B data
 }
