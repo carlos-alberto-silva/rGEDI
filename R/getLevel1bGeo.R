@@ -18,7 +18,7 @@
 #'@importFrom sp SpatialPointsDataFrame
 #'@export
 getLevel1BGeo<-function(level1b,select=c("latitude_bin0", "latitude_lastbin", "longitude_bin0", "longitude_lastbin", "shot_number")) {
-  #level1b<-level1b@h5
+  level1b<-level1b@h5
 
   datasets<-hdf5r::list.datasets(level1b, recursive = T)
   datasets_names<-basename(datasets)

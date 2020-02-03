@@ -29,7 +29,7 @@
 #'@export
 #'
 getLevel1BWF<-function(level1b,shot_number){
-
+  level1b<-level1b@h5
   groups_id<-grep("BEAM\\d{4}$",gsub("/","",
                                      list.groups(level1b, recursive = F)), value = T)
 

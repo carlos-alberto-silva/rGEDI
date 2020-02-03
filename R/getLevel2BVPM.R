@@ -16,6 +16,7 @@
 #'@importFrom sp SpatialPointsDataFrame
 #'@export
 getLevel2BVPM<-function(level2b){
+  level2b<-level2b@h5
   groups_id<-grep("BEAM\\d{4}$",gsub("/","",
                                      hdf5r::list.groups(level2b, recursive = F)), value = T)
   m.dt<-data.table::data.table()

@@ -1,33 +1,41 @@
-#' Class for GEDI Level1B derived waveform
+#setClass("gedi.level1b", representation(h5="H5File",level1b.spdf='SpatialPointsDataFrame'))
+#' @importFrom hdf5r H5File
+setRefClass("H5File")
+
+#' Class for GEDI level1B
 #'
-#' @slot dt Object of class data.table
+#' @slot h5 Object of class H5File from hdf5r package
 #'
+#' @import methods
 #' @export
-setClass(
-  Class="gedi.waveform",
-  slots=list(df = "data.frame")
+gedi.level1b <- setClass(
+  Class="gedi.level1b",
+  slots = list(h5 = "H5File")
 )
 
+#' Class for GEDI level2A
+#'
+#' @slot h5 Object of class H5File from hdf5r package
+#'
+#' @import methods
+#' @export
+gedi.level2a <- setClass(
+  Class="gedi.level2a",
+  slots = list(h5 = "H5File")
+)
 
-setMethod("plot", signature("gedi.waveform", y = "missing"), function(x,relative=TRUE,polygon=FALSE,...) {
-  waveform<-x@df
-  z<-waveform$elevation
-  if (relative==TRUE){
-    wf<-(waveform$rxwaveform-min(waveform$rxwaveform))/
-      (max(waveform$rxwaveform)-min(waveform$rxwaveform))*100
-    } else{
-      wf=waveform$rxwaveform
-  }
+#' Class for GEDI level2B
+#'
+#' @slot h5 Object of class H5File from hdf5r package
+#'
+#' @import methods
+#' @export
+gedi.level2b <- setClass(
+  Class="gedi.level2b",
+  slots = list(h5 = "H5File")
+)
 
-    if (polygon==TRUE){
-      wfstart<-wf[which(z==min(z, na.rm=T))]
-      wfend<-wf[which(z==max(z, na.rm=T))]
-      wfl<-c(min(wf),min(wf),wfstart,rev(wf),wfend,min(wf))
-      zl<-c(max(z, na.rm=T),min(z, na.rm=T),min(z, na.rm=T),rev(z),max(z, na.rm=T),max(z, na.rm=T))
-      plot(wfl,zl,...)
-      suppressWarnings(polygon(wfl,zl,...))
-    } else {
-      plot(x=wf,y=z,...)
-    }
+setMethod("plot", signature("gedi.level1b", y = "missing"), function(x,shot_number,relative=TRUE,polygon=FALSE,...) {
+  PlotWaveform(x,shot_number=shot_number,relative=relative,polygon=polygon,return=FALSE,plotWave=TRUE,...)
 })
 

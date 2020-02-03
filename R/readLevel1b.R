@@ -8,6 +8,7 @@
 #'@import hdf5r
 #'@export
 readLevel1B <-function(level1Bpath) {
-  level1B <- hdf5r::H5File$new(level1Bpath, mode = 'r')
-  return(level1B)
+  level1b_h5 <- hdf5r::H5File$new(level1Bpath, mode = 'r')
+  level1b<- new("gedi.level1b", h5 = level1b_h5)
+  return(level1b)
 }
