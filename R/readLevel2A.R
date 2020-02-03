@@ -9,7 +9,6 @@
 #'@export
 #list.datasets(level1b., recursive = T))
 readLevel2A <-function(level2Apath) {
-  level2A_h5 <- hdf5r::H5File$new(level2Apath, mode = 'r')
-  level2A<- new("gedi.level2a", h5 = level2A_h5)
+  level2A <- hdf5r::H5File$new(level2Apath, mode = 'r')
   return(level2A)
 }

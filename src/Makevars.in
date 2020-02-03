@@ -1,0 +1,43 @@
+# Makefile for GEDI simulator tools
+HANCOCKTOOLS_ROOT = tools
+GEDIRAT_ROOT = gedisimulator
+LIBCLIDAR_ROOT = libclidar
+CMPFIT_ROOT = cmpfit-1.2
+
+
+PKG_CFLAGS=@HDF5_CFLAGS@ \
+					 @GSL_CFLAGS@ \
+					 @GDAL_CFLAGS@ \
+					 -DDLLEXPORT \
+					 -I$(GEDIRAT_ROOT) -I$(HANCOCKTOOLS_ROOT) -I$(CMPFIT_ROOT) \
+					 -I${LIBCLIDAR_ROOT} -I. -I/usr/include/geotiff \
+					 -I./cmpfit-1.2 -I/usr/include/libgeotiff
+
+PKG_LIBS=@HDF5_LIBS@ \
+         @GSL_LIBS@ \
+         @GDAL_LIBS@
+
+
+
+PKG_CXXFLAGS = $(PKG_CFLAGS)
+
+
+src = $(LIBCLIDAR_ROOT)/libLasProcess.c $(LIBCLIDAR_ROOT)/libLasRead.c \
+	$(LIBCLIDAR_ROOT)/tiffWrite.c $(LIBCLIDAR_ROOT)/gaussFit.c \
+	$(LIBCLIDAR_ROOT)/libLidVoxel.c  $(LIBCLIDAR_ROOT)/libTLSread.c \
+	$(LIBCLIDAR_ROOT)/libLidarHDF.c $(GEDIRAT_ROOT)/gediIO.c \
+	$(LIBCLIDAR_ROOT)/libOctree.c $(GEDIRAT_ROOT)/gediNoise.c \
+	$(GEDIRAT_ROOT)/gediMetric.c $(GEDIRAT_ROOT)/gediRat.c \
+	$(CMPFIT_ROOT)/mpfit.c \
+	msgHandling.c
+src_cpp = process.cpp RcppExports.cpp
+OBJECTS = $(src:.c=.o) \
+				  $(src_cpp:.cpp=.o)
+
+
+all: deps
+
+deps:
+	Rscript ../tools/deps.R
+
+.PHONY: deps clean
