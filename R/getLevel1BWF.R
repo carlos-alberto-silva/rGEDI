@@ -28,7 +28,7 @@
 #'
 #'@export
 #'
-getLevel1BWaveform<-function(level1b,shot_number){
+getLevel1BWF<-function(level1b,shot_number){
 
   groups_id<-grep("BEAM\\d{4}$",gsub("/","",
                                      list.groups(level1b, recursive = F)), value = T)
