@@ -12,22 +12,20 @@ library(rgdal)
 
 
 #### function readLevel1b
-level1bpath<-"E:\\GEDI01_B_2019108002011_O01959_T03909_02_003_01.h5"
+level1bpath<-"E:\\GEDI01_B_2019109163004_O01985_T02206_02_003_01.h5"
 level1b<-readLevel1B(level1bpath)
 
 ### plot waveform
-
-x<-getWaveform(level1b@h5,shot_number="19850022900500000")
+x<-getLevel1BWF(level1b,shot_number="19850022900500000")
 windows()
 par(mfrow=c(1,2))
 par(cex.axis=1.5)
-plot(x,relative=TRUE,polygon=TRUE,type="l", lwd=2, col="red")
-
+plot(x,relative=FALSE,polygon=TRUE,type="l", lwd=2, col="forestgreen", xlab="", ylab="Elevation (m)")
 
 ### level1b to dt
-level1bdt2<-getLevel1BGeolocation(level1b,select=c("latitude_bin0","latitude_lastbin","longitude_bin0","longitude_lastbin","shot_number"))
+level1bGeo<-getLevel1BGeo(level1b,select=c("latitude_bin0","latitude_lastbin","longitude_bin0","longitude_lastbin","shot_number"))
 #require(rgdal)
-nrow(level1bdt2@dt)
+head(level1bGeo)
 
 #write.table(level1bdt2@dt,"C:\\Users\\carlo\\Downloads\\countries_shp\\gedi1b_2.txt", sep=" ")
 #writeOGR(points,"C:\\Users\\carlo\\Downloads\\countries_shp","gedi1b_2", drive="ESRI Shapefile")
@@ -49,19 +47,19 @@ xright = -116.4583
 ybottom = 46.75208
 ytop = 46.84229
 
-level1b<-clipLevel1Bh5(level1b,xleft, xright, ybottom, ytop)
-clipLevel1BGeometrytest<-clipLevel1Bh5Geometry(level1b,polygon_spdf = polygon_spdf)
+# clip by extent boundary box
+level1b_clip<-clipLevel1Bh5(level1b,xleft, xright, ybottom, ytop)
 
-geo<-getLevel1BGeo(clipLevel1Bdtest)
-
-plot(clipLevel1Bdtest)
+# clip by geometry
+level1b_clip<-clipLevel1Bh5Geometry(level1b,polygon_spdf = polygon_spdf)
+geo<-getLevel1BGeo(clipLevel1BGeometrytest)
 
 windows()
 # Load the library
 library(leaflet)
 leaflet() %>%
-  addCircleMarkers(clipLevel1BdtGeometrytest@dt$longitude_bin0,
-                   clipLevel1BdtGeometrytest@dt$latitude_bin0,
+  addCircleMarkers(geo$longitude_bin0,
+                   geo$latitude_bin0,
                    radius = 1,
                    opacity = 1,
                    color = "red")  %>%
@@ -79,11 +77,11 @@ level2a2<-readLevel2A("E:\\GEDI02_A_2019108015252_O01960_T03910_02_001_01.h5")
 rhmetrics1<-getLevel2AM(level2a)
 rhmetrics2<-getLevel2AM(level2a2)
 
-rhmetrics<-data.table::rbindlist(list)
-maps<-level2AGridStats(x=rhmetrics,func=max(rh100),res = 0.5)
+rhmetrics<-data.table::rbindlist(list(rhmetrics1,rhmetrics2))
+maps<-level2AGridStats(x=rhmetrics,func=mySetOfMetrics(rh100),res = 0.5)
 
 windows()
-plot(kkj)
+plot(maps)
 
 #spdfg<-sp::SpatialPointsDataFrame(rhmetrics[,4:3],data=rhmetrics[,4:3])
 #sp::plot(spdfg)
@@ -108,13 +106,14 @@ vpm_metrics3<-getLevel2BVPM(level2b3)
 vpm_metrics4<-getLevel2BVPM(level2b4)
 vpm_metrics5<-getLevel2BVPM(level2b5)
 vpm_metrics6<-getLevel2BVPM(level2b6)
+vpm_metrics7<-getLevel2BVPM(level2b7)
 
 x<-data.table::rbindlist(list(vpm_metrics1,vpm_metrics2,vpm_metrics3,
-                              vpm_metrics4,vpm_metrics5,vpm_metrics6))
+                              vpm_metrics4,vpm_metrics5,vpm_metrics6,vpm_metrics6))
 
 ids<-1:nrow(x)
 x<-x[ids[!x[,"pai"]==-9999],]
-head(x)
 
-maps<-level2BGridStats(x=x,func=max(fhd_normal), res = 0.05)
+maps<-level2BVPMGridStats(x=x,func=mean(pai), res = 0.5)
 
+plot(maps)

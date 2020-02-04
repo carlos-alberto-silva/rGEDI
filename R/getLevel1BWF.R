@@ -56,7 +56,7 @@ getLevel1BWF<-function(level1b,shot_number){
   elevation_lastbin_i<-elevation_lastbin[shot_number_id]
   z=rev(seq(elevation_lastbin_i,elevation_bin0_i,(elevation_bin0_i-elevation_lastbin_i)/rx_sample_count[shot_number_id]))[-1]
 
-  waveform<-new("gedi.waveform", df = data.frame(cbind(rxwaveform=rxwaveform_i,elevation=z)))
+  waveform<-new("gedi.fullwaveform", dt = data.table::data.table(rxwaveform=rxwaveform_i,elevation=z))
 
   return(waveform)
 }

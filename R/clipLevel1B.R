@@ -226,6 +226,6 @@ clipByMask = function(level1b, masks, output = "") {
   }
 
   level1b@h5 = newFile
-  spatial = level1B2dt(level1b)
+  #spatial = level1B2dt(level1b)
   return (level1b)
 }
