@@ -5,7 +5,7 @@
 #'
 #'@param level1b H5File object from level1b
 #'@param select character vector of desired columns to extract from GEDI hdf5 format, default c("latitude_bin0", "latitude_lastbin", "longitude_bin0", "longitude_lastbin", "shot_number")
-#' 
+#'
 #'@return gedi.level1b class; S4 object of class gedi.level1b;
 #'@author Carlos Alberto Silva. This function calls \emph{h5file} function from h5 package (Author: Mario Annau)
 #'@seealso \code{\link[h5]{h5file}} in the \emph{h5} package.
@@ -17,7 +17,7 @@
 #'@importFrom data.table data.table
 #'@importFrom sp SpatialPointsDataFrame
 #'@export
-level1B2dt<-function(level1b,select=c("latitude_bin0", "latitude_lastbin", "longitude_bin0", "longitude_lastbin", "shot_number")) {
+getLevel1BGeo<-function(level1b,select=c("latitude_bin0", "latitude_lastbin", "longitude_bin0", "longitude_lastbin", "shot_number")) {
   level1b<-level1b@h5
 
   datasets<-hdf5r::list.datasets(level1b, recursive = T)
@@ -73,9 +73,8 @@ level1B2dt<-function(level1b,select=c("latitude_bin0", "latitude_lastbin", "long
     level1b.dt[,i]<-get(i)
   }
 
-
   #level1b.spdf<-sp::SpatialPointsDataFrame(cbind(as.numeric(level1b.dt$longitude_bin0),as.numeric(level1b.dt$latitude_bin0)),data=level1b.dt)
-  level1b.dt<- methods::new("gedi.level1b.dt", dt = level1b.dt)
+  #level1b.dt<- methods::new("gedi.level1b.dt", dt = level1b.dt)
   close(pb)
   return(level1b.dt)
 }
