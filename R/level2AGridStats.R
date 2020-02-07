@@ -45,7 +45,7 @@ metrics = list(
 #'@export
 #'
 
-level2AGridStats = function(x, func, res = 0.5)
+level2AGridStats = function(x, func=max(rh100), res = 0.5)
 {
   requireNamespace("data.table")
   # this code has been adapted from the grid_metrics function in lidR package (Roussel et al. 2019)

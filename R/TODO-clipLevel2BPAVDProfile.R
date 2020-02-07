@@ -35,16 +35,16 @@
 #'  addScaleBar(options = list(imperial = FALSE)) %>%
 #'  addProviderTiles(providers$Esri.WorldImagery)
 #'@export
-clipLevel2BVPM = function(x,xleft, xright, ybottom, ytop){
+clipLevel2BVPM = function(level2BVPMdt,xleft, xright, ybottom, ytop){
   # xleft ybottom xright ytop
   mask =
-    x$lon_lowestmode >= xleft &
-    x$lon_lowestmode <= xright &
-    x$lat_lowestmode >= ybottom &
-    x$lat_lowestmode <=  ytop
+    level2BVPMdt$lon_lowestmode >= xleft &
+    level2BVPMdt$lon_lowestmode <= xright &
+    level2BVPMdt$lat_lowestmode >= ybottom &
+    level2BVPMdt$lat_lowestmode <=  ytop
 
-  mask = (1:length(x$lon_lowestmode))[mask]
-  newFile<-x[mask,]
+  mask = (1:length(level2BVPMdt$lon_lowestmode))[mask]
+  newFile<-level2BVPMdt[mask,]
   #newFile<- new("gedi.level1b.dt", dt = level2bdt[mask,])
   if (nrow(newFile) == 0) {print("The polygon does not overlap the GEDI data")} else {
     return (newFile)
@@ -91,9 +91,9 @@ clipLevel2BVPM = function(x,xleft, xright, ybottom, ytop){
 #'              opacity = 1, fillOpacity = 0) %>%
 #'  addProviderTiles(providers$Esri.WorldImagery)
 #'@export
-clipLevel2BVPMGeometry = function(x, polygon_spdf, split_by=NULL) {
+clipLevel2BVPMGeometry = function(level2BVPMdt, polygon_spdf, split_by=NULL) {
   exshp<-raster::extent(polygon_spdf)
-  level2bdt<-clipLevel2BVPM(x, xleft=exshp[1], xright=exshp[2], ybottom=exshp[3], ytop=exshp[4])
+  level2bdt<-clipLevel2BVPM(level2BVPMdt, xleft=exshp[1], xright=exshp[2], ybottom=exshp[3], ytop=exshp[4])
 
   if (nrow(level2bdt) == 0) {print("The polygon does not overlap the GEDI data")} else {
   points = sp::SpatialPointsDataFrame(coords=matrix(c(level2bdt$lon_lowestmode, level2bdt$lat_lowestmode), ncol=2),

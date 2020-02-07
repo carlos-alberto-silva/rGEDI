@@ -1,9 +1,9 @@
-#'Clip GEDI Level1Bdt data
+#'Clip GEDI x data
 #'
-#'@description Clip GEDI Level1Bdt data within a given bounding coordinates
+#'@description Clip GEDI x data within a given bounding coordinates
 #'
 #'
-#'@param level1Bdt level1Bdt; S4 object of class "gedi.level1b.dt"
+#'@param x x; S4 object of class "gedi.level1b.dt"
 #'@param extent Extent object of a Spatial object .
 #'@return Returns An object of class "gedi.level1b.dt"; subset of GEDI Level1B data
 #'@examples
@@ -23,45 +23,45 @@
 #'# creating an exent object
 #'ext<-extent(c(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax))
 #'
-#'clipped_level1Bdt = clipLevel1(level1Bdt, extent=ext)
+#'clipped_x = clipLevel1(x, extent=ext)
 #'
 #'library(leaflet)
 #'leaflet() %>%
-#'  addCircleMarkers(clipped_level1Bdt@dt$longitude_bin0,
-#'                   clipped_level1Bdt@dt$latitude_bin0,
+#'  addCircleMarkers(clipped_x@dt$longitude_bin0,
+#'                   clipped_x@dt$latitude_bin0,
 #'                   radius = 1,
 #'                   opacity = 1,
 #'                   color = "red")  %>%
 #'  addScaleBar(options = list(imperial = FALSE)) %>%
 #'  addProviderTiles(providers$Esri.WorldImagery)
 #'@export
-clipLevel1BGeo = function(level1bGeo,xleft, xright, ybottom, ytop){
+clipx = function(x,xleft, xright, ybottom, ytop){
   # xleft ybottom xright ytop
   mask =
-    level1bGeo$longitude_bin0 >= xleft &
-    level1bGeo$longitude_bin0 <= xright &
-    level1bGeo$latitude_bin0 >= ybottom &
-    level1bGeo$latitude_bin0 <=  ytop &
-    level1bGeo$longitude_lastbin >= xleft &
-    level1bGeo$longitude_lastbin <= xright &
-    level1bGeo$latitude_lastbin >= ybottom &
-    level1bGeo$latitude_lastbin <=  ytop
+    x$longitude_bin0 >= xleft &
+    x$longitude_bin0 <= xright &
+    x$latitude_bin0 >= ybottom &
+    x$latitude_bin0 <=  ytop &
+    x$longitude_lastbin >= xleft &
+    x$longitude_lastbin <= xright &
+    x$latitude_lastbin >= ybottom &
+    x$latitude_lastbin <=  ytop
 
-  mask = (1:length(level1bGeo$longitude_bin0))[mask]
-  newFile<-level1bGeo[mask,]
-  #newFile<- new("gedi.level1b.dt", dt = level1bdt[mask,])
+  mask = (1:length(x$longitude_bin0))[mask]
+  newFile<-x[mask,]
+  #newFile<- new("gedi.level1b.dt", dt = x[mask,])
   if (nrow(newFile) == 0) {print("The polygon does not overlap the GEDI data")} else {
     return (newFile)
   }
 
 }
 
-#'Clip GEDI Level1Bdt data by geometry
+#'Clip GEDI x data by geometry
 #'
-#'@description Clip GEDI Level1Bdt data within a given geometry area
+#'@description Clip GEDI x data within a given geometry area
 #'
 #'
-#'@param level1Bdt level1Bdt; S4 object of class "gedi.level1b.dt"
+#'@param x x; S4 object of class "gedi.level1b.dt"
 #'@param polygon_spdf SpatialDataFrame. A polygon dataset for clipping the waveform
 #'@return Returns An object of class "gedi.level1b.dt"; subset of GEDI Level1B data
 #'@examples
@@ -72,8 +72,8 @@ clipLevel1BGeo = function(level1bGeo,xleft, xright, ybottom, ytop){
 #'#' Reading GEDI level1B file
 #'level1b = readLevel1b(level1Bfilepath)
 #'
-#'#' Creating GEDI level1Bdt object
-#'level1Bdt = level1Bdt(level1b)
+#'#' Creating GEDI x object
+#'x = x(level1b)
 #'
 #'# Polgons file path
 #'polygon_filepath <- system.file("extdata", "clip_polygon.shp", package="rGEDI")
@@ -81,12 +81,12 @@ clipLevel1BGeo = function(level1bGeo,xleft, xright, ybottom, ytop){
 #'# Reading GEDI level2B file
 #'polygon_spdf<-raster::shapefile(polygons_filepath)
 #'
-#'clipped_level1Bdt = clipLevel1Geometry(level1Bdt, polygon_spdf)
+#'clipped_x = clipLevel1Geometry(x, polygon_spdf)
 #'
 #'library(leaflet)
 #'leaflet() %>%
-#'  addCircleMarkers(clipped_level1Bdt@dt$longitude_bin0,
-#'                   clipped_level1Bdt@dt$latitude_bin0,
+#'  addCircleMarkers(clipped_x@dt$longitude_bin0,
+#'                   clipped_x@dt$latitude_bin0,
 #'                   radius = 1,
 #'                   opacity = 1,
 #'                   color = "red")  %>%
@@ -95,28 +95,28 @@ clipLevel1BGeo = function(level1bGeo,xleft, xright, ybottom, ytop){
 #'              opacity = 1, fillOpacity = 0) %>%
 #'  addProviderTiles(providers$Esri.WorldImagery)
 #'@export
-clipLevel1BGeoGeometry = function(level1bdt, polygon_spdf, split_by="id") {
+clipxGeometry = function(x, polygon_spdf, split_by="id") {
   exshp<-raster::extent(polygon_spdf)
-  level1bdt<-clipLevel2BVPM(level1bdt, xleft=exshp[1], xright=exshp[2], ybottom=exshp[3], ytop=exshp[4])
-  if (nrow(level1bdt) == 0) {print("The polygon does not overlap the GEDI data")} else {
-    points = sp::SpatialPointsDataFrame(coords=matrix(c(level1bdt$lon_lowestmode, level1bdt$lat_lowestmode), ncol=2),
-                                        data=data.frame(id=1:length(level1bdt$lon_lowestmode)), proj4string = polygon_spdf@proj4string)
+  x<-clipLevel2BVPM(x, xleft=exshp[1], xright=exshp[2], ybottom=exshp[3], ytop=exshp[4])
+  if (nrow(x) == 0) {print("The polygon does not overlap the GEDI data")} else {
+    points = sp::SpatialPointsDataFrame(coords=matrix(c(x$lon_lowestmode, x$lat_lowestmode), ncol=2),
+                                        data=data.frame(id=1:length(x$lon_lowestmode)), proj4string = polygon_spdf@proj4string)
     points(points, col="red")
     pts = raster::intersect(points, polygon_spdf)
     if (!is.null(split_by)){
 
       if ( any(names(polygon_spdf)==split_by)){
         mask = as.integer(pts@data$id)
-        newFile<-level1bdt[mask,]
+        newFile<-x[mask,]
         newFile$poly_id<-pts@data[,split_by]
       } else {stop(paste("The",split_by,"is not included in the attribute table.
                        Please check the names in the attribute table"))}
 
     } else {
       mask = as.integer(pts@data$id)
-      newFile<-level1bdt[mask,]
+      newFile<-x[mask,]
     }
-    #newFile<- new("gedi.level1b.dt", dt = level1bdt2@dt[mask,])
+    #newFile<- new("gedi.level1b.dt", dt = x2@dt[mask,])
     return (newFile)}
 }
 

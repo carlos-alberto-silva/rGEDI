@@ -35,16 +35,16 @@
 #'  addScaleBar(options = list(imperial = FALSE)) %>%
 #'  addProviderTiles(providers$Esri.WorldImagery)
 #'@export
-clipLevel2AM = function(x,xleft, xright, ybottom, ytop){
+clipLevel2AM = function(level2AMdt,xleft, xright, ybottom, ytop){
   # xleft ybottom xright ytop
   mask =
-    x$lon_lowestmode >= xleft &
-    x$lon_lowestmode <= xright &
-    x$lat_lowestmode >= ybottom &
-    x$lat_lowestmode <=  ytop
+    level2AMdt$lon_lowestmode >= xleft &
+    level2AMdt$lon_lowestmode <= xright &
+    level2AMdt$lat_lowestmode >= ybottom &
+    level2AMdt$lat_lowestmode <=  ytop
 
-  mask = (1:length(x$lon_lowestmode))[mask]
-  newFile<-x[mask,]
+  mask = (1:length(level2AMdt$lon_lowestmode))[mask]
+  newFile<-level2AMdt[mask,]
 
   if (nrow(newFile) == 0) {print("The polygon does not overlap the GEDI data")} else {
     return (newFile)
@@ -91,9 +91,9 @@ clipLevel2AM = function(x,xleft, xright, ybottom, ytop){
 #'              opacity = 1, fillOpacity = 0) %>%
 #'  addProviderTiles(providers$Esri.WorldImagery)
 #'@export
-clipLevel2AMGeometry = function(x, polygon_spdf, split_by="id") {
+clipLevel2AMGeometry = function(level2AMdt, polygon_spdf, split_by="id") {
     exshp<-raster::extent(polygon_spdf)
-    level2adt<-clipLevel2AM(x, xleft=exshp[1], xright=exshp[2], ybottom=exshp[3], ytop=exshp[4])
+    level2adt<-clipLevel2AM(level2AMdt, xleft=exshp[1], xright=exshp[2], ybottom=exshp[3], ytop=exshp[4])
     if (nrow(level2adt) == 0) {print("The polygon does not overlap the GEDI data")} else {
       points = sp::SpatialPointsDataFrame(coords=matrix(c(level2adt$lon_lowestmode, level2adt$lat_lowestmode), ncol=2),
                                           data=data.frame(id=1:length(level2adt$lon_lowestmode)), proj4string = polygon_spdf@proj4string)

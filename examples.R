@@ -139,6 +139,8 @@ polygon_spdf<-raster::shapefile("C:\\Users\\carlo\\OneDrive\\01_Projeto_PrevFogo
 clip<-clipLevel2BVPMGeometry(vpm_metrics6,polygon_spdf, split_by = "ID_UC0")
 points(clip$lon_lowestmode,clip$lat_lowestmode, col=clip$poly_id)
 
+level2BVPMStats(x=clip, fun=max(pai), id="poly_id")
+
 unique(clip$poly_id)
 col<-clip$poly_id
 col[col=="355"]<-"red"
