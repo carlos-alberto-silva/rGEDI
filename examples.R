@@ -40,7 +40,6 @@ worldshp<-rgdal::readOGR("C:\\Users\\carlo\\Downloads\\countries_shp\\countries.
 require(rgdal)
 #polygon_spdf<-raster::shapefile("C:\\Users\\carlo\\Documents\\GEDI_package\\bioma.shp")
 #polygon_spdf<-raster::shapefile("C:\\Users\\carlo\\Documents\\rGEDI\\inst\\extdata\\study_area.shp")
-polygon_spdf<-raster::shapefile("C:\\Users\\carlo\\OneDrive\\01_Projeto_PrevFogo\\01_data\\01_shp\\03_UCs_shp\\ucs_brazil.shp")
 
 require(raster)
 # Rectangle area for cliping
@@ -139,6 +138,33 @@ maps<-level2BVPMGridStats(x=x,func=mean(pai), res = 0.5)
 plot(maps)
 
 head(vpm_metrics1)
+
+polygon_spdf<-raster::shapefile("C:\\Users\\carlo\\OneDrive\\01_Projeto_PrevFogo\\01_data\\01_shp\\03_UCs_shp\\ucs_brazil2.shp")
+
+raster::extent(polygon_spdf)
+
+clip<-clipLevel2BVPMGeometry(vpm_metrics6,polygon_spdf)
+head(vpm_metrics6)
+plot(polygon_spdf)
+points()
+windows()
+
+points(clip$lon_lowestmode,clip$lat_lowestmode, col="red")
+points(vpm_metrics6$lon_lowestmode,vpm_metrics6$lat_lowestmode)
+
+windows()
+# Load the library
+library(leaflet)
+leaflet() %>%
+  addCircleMarkers(clip$lon_lowestmode,
+                   clip$lat_lowestmode,
+                   radius = 1,
+                   opacity = 1,
+                   color = "red")  %>%
+  addScaleBar(options = list(imperial = FALSE)) %>%
+  addPolygons(data=polygon_spdf,weight=1,col = 'white',
+              opacity = 1, fillOpacity = 0) %>%
+  addProviderTiles(providers$Esri.WorldImagery)
 
 #### function readLevel1b
 ws<-"E:\\gedi_level1a"
