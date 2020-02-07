@@ -153,17 +153,17 @@ cliplevel2ah5Geometry = function(level2a, polygon_spdf, output="") {
   close(pb)
 
   message("Writing new HDF5 file...")
+
+  results = list()
   for (pol_id in names(polygon_masks)) {
     output2 = gsub("\\.h5$", paste0("_", pol_id,".h5"), output)
-    newFile = clipByMask2A(level2a,
-                         polygon_masks[[pol_id]],
-                         output2)
+    results[[""]] = clipByMask2A(level2a,
+                                 polygon_masks[[pol_id]],
+                                 output2)
   }
-  output = newFile@h5$filename
-  hdf5r::h5close(newFile@h5)
-  result = readlevel2a(output)
+  names(results) = NULL
 
-  return (result)
+  return (results)
 }
 
 
@@ -234,7 +234,6 @@ clipByMask2A = function(level2a, masks, output = "") {
     }
 
     hdf5r::createGroup(newFile, group)
-
     createAttributesWithinGroup(level2a@h5, newFile, group)
 
     # Datasets to loop
