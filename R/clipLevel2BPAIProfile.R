@@ -35,7 +35,7 @@
 #'  addScaleBar(options = list(imperial = FALSE)) %>%
 #'  addProviderTiles(providers$Esri.WorldImagery)
 #'@export
-clipLevel2BVPM = function(x,xleft, xright, ybottom, ytop){
+clipLevel2BPAIProfile = function(x,xleft, xright, ybottom, ytop){
   # xleft ybottom xright ytop
   mask =
     x$lon_lowestmode >= xleft &
@@ -91,14 +91,13 @@ clipLevel2BVPM = function(x,xleft, xright, ybottom, ytop){
 #'              opacity = 1, fillOpacity = 0) %>%
 #'  addProviderTiles(providers$Esri.WorldImagery)
 #'@export
-clipLevel2BVPMGeometry = function(x, polygon_spdf, split_by=NULL) {
+clipLevel2BPAIProfileGeometry = function(x, polygon_spdf, split_by=NULL) {
   exshp<-raster::extent(polygon_spdf)
-  level2bdt<-clipLevel2BVPM(x, xleft=exshp[1], xright=exshp[2], ybottom=exshp[3], ytop=exshp[4])
+  level2bdt<-clipLevel2BPAIProfile(x, xleft=exshp[1], xright=exshp[2], ybottom=exshp[3], ytop=exshp[4])
 
   if (nrow(level2bdt) == 0) {print("The polygon does not overlap the GEDI data")} else {
     points = sp::SpatialPointsDataFrame(coords=matrix(c(level2bdt$lon_lowestmode, level2bdt$lat_lowestmode), ncol=2),
                                         data=data.frame(id=1:length(level2bdt$lon_lowestmode)), proj4string = polygon_spdf@proj4string)
-    points(points, col="red")
     pts = raster::intersect(points, polygon_spdf)
 
     if (!is.null(split_by)){

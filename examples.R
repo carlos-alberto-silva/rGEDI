@@ -196,6 +196,13 @@ rgdal::writeOGR(shpi,"C:\\trina\\03_files","GEDI02_B_2019108080338_O01964_T05337
 
 level2b6<-readLevel2B("E:\\GEDI02_B_2019108080338_O01964_T05337_02_001_01.h5")
 
-hdf5r::list.groups(level2b6@h5, recursive = F)
+polygon_spdf<-raster::shapefile("C:\\Users\\carlo\\OneDrive\\01_Projeto_PrevFogo\\01_data\\01_shp\\03_UCs_shp\\ucs_brazil2.shp")
+ext<-extent(polygon_spdf)
 
 paiz<-getLevel2BPAIProfile(x=level2b6)
+paiz_clip1<-clipLevel2BPAIProfileGeometry(paiz,polygon_spdf)
+paiz_clip2<-clipLevel2BPAIProfile(paiz,xleft=ext[1], xright=ext[2], ybottom=ext[3], ytop=ext[4])
+
+pavz<-getLevel2BPAVDProfile(x=level2b6)
+pavz_clip1<-clipLevel2BPAVDProfileGeometry(pavz,polygon_spdf)
+pavz_clip2<-clipLevel2BPAVDProfile(pavz,xleft=ext[1], xright=ext[2], ybottom=ext[3], ytop=ext[4])

@@ -97,7 +97,6 @@ clipLevel2AMGeometry = function(x, polygon_spdf, split_by="id") {
     if (nrow(level2adt) == 0) {print("The polygon does not overlap the GEDI data")} else {
       points = sp::SpatialPointsDataFrame(coords=matrix(c(level2adt$lon_lowestmode, level2adt$lat_lowestmode), ncol=2),
                                           data=data.frame(id=1:length(level2adt$lon_lowestmode)), proj4string = polygon_spdf@proj4string)
-      points(points, col="red")
       pts = raster::intersect(points, polygon_spdf)
       if (!is.null(split_by)){
 

@@ -15,27 +15,27 @@
 #'@importFrom data.table data.table
 #'@importFrom sp SpatialPointsDataFrame
 #'@export
-getLevel2BPAVDProfile<-function(level2b){
-  level2b<-level2b@data
+getLevel2BPAVDProfile<-function(x){
+  x<-x@data
   groups_id<-grep("BEAM\\d{4}$",gsub("/","",
-                                     hdf5r::list.groups(level2b, recursive = F)), value = T)
+                                     hdf5r::list.groups(x, recursive = F)), value = T)
   m.dt<-data.table::data.table()
   pb <- utils::txtProgressBar(min = 0, max = length(groups_id), style = 3)
   i.s=0
   for ( i in groups_id){
     i.s<-i.s+1
     utils::setTxtProgressBar(pb, i.s)
-    level2b_i<-level2b[[i]]
+    x_i<-x[[i]]
     m<-data.table::data.table(
-      beam<-rep(i,length(level2b_i[["shot_number"]][])),
-      shot_number=level2b_i[["shot_number"]][],
-      lat_lowestmode=level2b_i[["geolocation/lat_lowestmode"]][],
-      lon_lowestmode=level2b_i[["geolocation/lon_lowestmode"]][],
-      elev_highestreturn=level2b_i[["geolocation/elev_highestreturn"]][],
-      elev_lowestmode=level2b_i[["geolocation/elev_lowestmode"]][],
-      height_lastbin=level2b_i[["geolocation/height_lastbin"]][],
-      height_bin0=level2b_i[["geolocation/height_bin0"]][],
-      pavd_z=t(level2b_i[["pavd_z"]][,1:level2b_i[["pavd_z"]]$dims[2]]))
+      beam<-rep(i,length(x_i[["shot_number"]][])),
+      shot_number=x_i[["shot_number"]][],
+      lat_lowestmode=x_i[["geolocation/lat_lowestmode"]][],
+      lon_lowestmode=x_i[["geolocation/lon_lowestmode"]][],
+      elev_highestreturn=x_i[["geolocation/elev_highestreturn"]][],
+      elev_lowestmode=x_i[["geolocation/elev_lowestmode"]][],
+      height_lastbin=x_i[["geolocation/height_lastbin"]][],
+      height_bin0=x_i[["geolocation/height_bin0"]][],
+      pavd_z=t(x_i[["pavd_z"]][,1:x_i[["pavd_z"]]$dims[2]]))
     m.dt<-rbind(m.dt,m)
   }
   colnames(m.dt)<-c("beam","shot_number","lat_lowestmode",

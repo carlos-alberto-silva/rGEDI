@@ -15,27 +15,27 @@
 #'@importFrom data.table data.table
 #'@importFrom sp SpatialPointsDataFrame
 #'@export
-getLevel2AM<-function(level2a){
-  level2a<-level2a@h5
+getxM<-function(x){
+  x<-x@h5
   groups_id<-grep("BEAM\\d{4}$",gsub("/","",
-                                     hdf5r::list.groups(level2a, recursive = F)), value = T)
+                                     hdf5r::list.groups(x, recursive = F)), value = T)
   rh.dt<-data.table::data.table()
   pb <- utils::txtProgressBar(min = 0, max = length(groups_id), style = 3)
   i.s=0
   for ( i in groups_id){
     i.s<-i.s+1
     utils::setTxtProgressBar(pb, i.s)
-    level2a_i<-level2a[[i]]
+    x_i<-x[[i]]
     rhs<-data.table::data.table(
-      beam<-rep(i,length(level2a_i[["shot_number"]][])),
-      shot_number=level2a_i[["shot_number"]][],
-      lat_lowestmode=level2a_i[["lat_lowestmode"]][],
-      lon_lowestmode=level2a_i[["lon_lowestmode"]][],
-      elev_highestreturn=level2a_i[["elev_highestreturn"]][],
-      elev_lowestmode=level2a_i[["elev_lowestmode"]][],
-      t(level2a_i[["rh"]][,level2a_i[["rh"]]$dims[2]]))
+      beam<-rep(i,length(x_i[["shot_number"]][])),
+      shot_number=x_i[["shot_number"]][],
+      lat_lowestmode=x_i[["lat_lowestmode"]][],
+      lon_lowestmode=x_i[["lon_lowestmode"]][],
+      elev_highestreturn=x_i[["elev_highestreturn"]][],
+      elev_lowestmode=x_i[["elev_lowestmode"]][],
+      t(x_i[["rh"]][,x_i[["rh"]]$dims[2]]))
     rh.dt<-rbind(rh.dt,rhs)
-    }
+  }
   colnames(rh.dt)<-c("beam","shot_number","lat_lowestmode","lon_lowestmode",
                      "elev_highestreturn","elev_lowestmode",paste0("rh",seq(0,100)))
   close(pb)
