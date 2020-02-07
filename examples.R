@@ -196,4 +196,6 @@ rgdal::writeOGR(shpi,"C:\\trina\\03_files","GEDI02_B_2019108080338_O01964_T05337
 
 level2b6<-readLevel2B("E:\\GEDI02_B_2019108080338_O01964_T05337_02_001_01.h5")
 
-paiz<-getLevel2BPAIProfile(level2b6)
+hdf5r::list.groups(level2b6@h5, recursive = F)
+
+paiz<-getLevel2BPAIProfile(x=level2b6)

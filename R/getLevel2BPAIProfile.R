@@ -22,13 +22,10 @@ getLevel2BPAIProfile<-function(x){
   m.dt<-data.table::data.table()
   pb <- utils::txtProgressBar(min = 0, max = length(groups_id), style = 3)
   i.s=0
-  i=groups_id[1]
   for ( i in groups_id){
     i.s<-i.s+1
     utils::setTxtProgressBar(pb, i.s)
     x_i<-x[[i]]
-    hdf5r::list.groups(x)
-
     m<-data.table::data.table(
       beam<-rep(i,length(x_i[["shot_number"]][])),
       shot_number=x_i[["shot_number"]][],
