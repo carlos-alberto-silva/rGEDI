@@ -187,9 +187,13 @@ for ( i in l.list){
 
 
 shpi<-rgdal::readOGR("C:\\trina\\03_files\\GEDI02_B_2019108080338_O01964_T05337_02_001_01.shp")
-
 raster::crs(shpi)<-"+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs +towgs84=0,0,0"
-
 raster::projection(shpi)
-
 rgdal::writeOGR(shpi,"C:\\trina\\03_files","GEDI02_B_2019108080338_O01964_T05337_02_001_01_projection.shp", drive="ESRI Shapefile")
+
+
+###########
+
+level2b6<-readLevel2B("E:\\GEDI02_B_2019108080338_O01964_T05337_02_001_01.h5")
+
+paiz<-getLevel2BPAIProfile(level2b6)
