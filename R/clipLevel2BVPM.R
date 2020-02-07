@@ -91,20 +91,22 @@ clipLevel2BVPM = function(level2BVPMdt,xleft, xright, ybottom, ytop){
 #'              opacity = 1, fillOpacity = 0) %>%
 #'  addProviderTiles(providers$Esri.WorldImagery)
 #'@export
-clipLevel2BVPMGeometry = function(level2BVPMdt, polygon_spdf, split_by="id") {
+clipLevel2BVPMGeometry = function(level2BVPMdt, polygon_spdf, split_by=NULL) {
   exshp<-raster::extent(polygon_spdf)
   level2bdt<-clipLevel2BVPM(level2BVPMdt, xleft=exshp[1], xright=exshp[2], ybottom=exshp[3], ytop=exshp[4])
+
   if (nrow(level2bdt) == 0) {print("The polygon does not overlap the GEDI data")} else {
   points = sp::SpatialPointsDataFrame(coords=matrix(c(level2bdt$lon_lowestmode, level2bdt$lat_lowestmode), ncol=2),
                                       data=data.frame(id=1:length(level2bdt$lon_lowestmode)), proj4string = polygon_spdf@proj4string)
   points(points, col="red")
   pts = raster::intersect(points, polygon_spdf)
+
   if (!is.null(split_by)){
 
     if ( any(names(polygon_spdf)==split_by)){
-      mask = as.integer(paste0("pts@data$",split_by))
+      mask = as.integer(pts@data$id)
       newFile<-level2bdt[mask,]
-      newFile$poly_id<-mask
+      newFile$poly_id<-pts@data[,split_by]
     } else {stop(paste("The",split_by,"is not included in the attribute table.
                        Please check the names in the attribute table"))}
 

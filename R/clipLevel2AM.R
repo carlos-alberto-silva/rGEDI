@@ -102,9 +102,9 @@ clipLevel2AMGeometry = function(level2AMdt, polygon_spdf, split_by="id") {
       if (!is.null(split_by)){
 
         if ( any(names(polygon_spdf)==split_by)){
-          mask = as.integer(paste0("pts@data$",split_by))
+          mask = as.integer(pts@data$id)
           newFile<-level2adt[mask,]
-          newFile$poly_id<-mask
+          newFile$poly_id<-pts@data[,split_by]
         } else {stop(paste("The",split_by,"is not included in the attribute table.
                        Please check the names in the attribute table"))}
 

@@ -135,22 +135,14 @@ x<-x[ids[!x[,"pai"]==-9999],]
 
 maps<-level2BVPMGridStats(x=x,func=mean(pai), res = 0.5)
 
-plot(maps)
-
-head(vpm_metrics1)
-
 polygon_spdf<-raster::shapefile("C:\\Users\\carlo\\OneDrive\\01_Projeto_PrevFogo\\01_data\\01_shp\\03_UCs_shp\\ucs_brazil2.shp")
+clip<-clipLevel2BVPMGeometry(vpm_metrics6,polygon_spdf, split_by = "ID_UC0")
+points(clip$lon_lowestmode,clip$lat_lowestmode, col=clip$poly_id)
 
-raster::extent(polygon_spdf)
-
-clip<-clipLevel2BVPMGeometry(vpm_metrics6,polygon_spdf)
-head(vpm_metrics6)
-plot(polygon_spdf)
-points()
-windows()
-
-points(clip$lon_lowestmode,clip$lat_lowestmode, col="red")
-points(vpm_metrics6$lon_lowestmode,vpm_metrics6$lat_lowestmode)
+unique(clip$poly_id)
+col<-clip$poly_id
+col[col=="355"]<-"red"
+col[col=="894"]<-"green"
 
 windows()
 # Load the library
@@ -160,7 +152,7 @@ leaflet() %>%
                    clip$lat_lowestmode,
                    radius = 1,
                    opacity = 1,
-                   color = "red")  %>%
+                   color = col)  %>%
   addScaleBar(options = list(imperial = FALSE)) %>%
   addPolygons(data=polygon_spdf,weight=1,col = 'white',
               opacity = 1, fillOpacity = 0) %>%
