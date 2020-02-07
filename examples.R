@@ -38,7 +38,9 @@ worldshp<-rgdal::readOGR("C:\\Users\\carlo\\Downloads\\countries_shp\\countries.
 
 ### clip level1bdt
 require(rgdal)
-polygon_spdf<-raster::shapefile("C:\\Users\\carlo\\Downloads\\countries_shp\\study_area.shp")
+#polygon_spdf<-raster::shapefile("C:\\Users\\carlo\\Documents\\GEDI_package\\bioma.shp")
+#polygon_spdf<-raster::shapefile("C:\\Users\\carlo\\Documents\\rGEDI\\inst\\extdata\\study_area.shp")
+polygon_spdf<-raster::shapefile("C:\\Users\\carlo\\OneDrive\\01_Projeto_PrevFogo\\01_data\\01_shp\\03_UCs_shp\\ucs_brazil.shp")
 
 require(raster)
 # Rectangle area for cliping
@@ -48,10 +50,11 @@ ybottom = 46.75208
 ytop = 46.84229
 
 # clip by extent boundary box
-level1b_clip<-clipLevel1Bh5(level1b,xleft, xright, ybottom, ytop)
+level1b_clip<-clipLevel1BGeo(level1bGeo,xleft, xright, ybottom, ytop)
 
 # clip by geometry
-level1b_clip<-clipLevel1Bh5Geometry(level1b,polygon_spdf = polygon_spdf)
+level1b_clip<-clipLevel1BGeoGeometry(level1bGeo, polygon_spdf = polygon_spdf)
+
 geo<-getLevel1BGeo(clipLevel1BGeometrytest)
 
 windows()
@@ -72,10 +75,27 @@ leaflet() %>%
 # read level2A
 
 level2a<-readLevel2A("C:\\Users\\carlo\\Documents\\GEDI_package\\GEDI02_A_2019108002011_O01959_T03909_02_001_01.h5")
-level2a2<-readLevel2A("E:\\GEDI02_A_2019108015252_O01960_T03910_02_001_01.h5")
+#level2a2<-readLevel2A("E:\\GEDI02_A_2019108015252_O01960_T03910_02_001_01.h5")
 
 rhmetrics1<-getLevel2AM(level2a)
-rhmetrics2<-getLevel2AM(level2a2)
+#rhmetrics2<-getLevel2AM(level2a2)
+
+summary(rhmetrics1)
+
+require(raster)
+# Rectangle area for cliping
+xleft = -116.4683
+xright = -116.4583
+ybottom = 46.75208
+ytop = 46.84229
+
+# clip by extent boundary box
+level1b_clip<-clipLevel1BGeo(level1bGeo,xleft, xright, ybottom, ytop)
+
+kkjp<-clipLevel2AMGeometry(rhmetrics1,polygon_spdf)
+head(rhmetrics1)
+
+head(rhmetrics1)
 
 rhmetrics<-data.table::rbindlist(list(rhmetrics1,rhmetrics2))
 maps<-level2AGridStats(x=rhmetrics,func=mySetOfMetrics(rh100),res = 0.5)
@@ -117,3 +137,39 @@ x<-x[ids[!x[,"pai"]==-9999],]
 maps<-level2BVPMGridStats(x=x,func=mean(pai), res = 0.5)
 
 plot(maps)
+
+head(vpm_metrics1)
+
+#### function readLevel1b
+ws<-"E:\\gedi_level1a"
+l.list<-list.files(ws,".h5$")
+for ( i in l.list[-1]){
+  print(i)
+  level1b_i<-readLevel2A(paste0(ws,"//",i))
+  getLevel2AM_i<-getLevel2AM(level1b_i)
+  spdf_i<-SpatialPointsDataFrame(getLevel2AM_i[,4:3], data= getLevel2AM_i[,4:3])
+  rgdal::writeOGR(spdf_i,ws,gsub(".h5","",i), drive="ESRI Shapefile", overwrite=T)
+}
+
+
+#### function readLevel1b
+ws<-"C:\\trina\\03_files"
+l.list<-list.files(ws,".h5$")
+
+for ( i in l.list){
+  print(i)
+  level1b_i<-readLevel2A(paste0(ws,"//",i))
+  getLevel2BVPM_i<-getLevel2BVPM(level1b_i)
+  head(getLevel2BVPM_i)
+  spdf_i<-SpatialPointsDataFrame(getLevel2BVPM_i[,5:4], data= getLevel2BVPM_i[,5:4])
+  rgdal::writeOGR(spdf_i,ws,gsub(".h5","",i), drive="ESRI Shapefile", overwrite=T)
+}
+
+
+shpi<-rgdal::readOGR("C:\\trina\\03_files\\GEDI02_B_2019108080338_O01964_T05337_02_001_01.shp")
+
+raster::crs(shpi)<-"+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs +towgs84=0,0,0"
+
+raster::projection(shpi)
+
+rgdal::writeOGR(shpi,"C:\\trina\\03_files","GEDI02_B_2019108080338_O01964_T05337_02_001_01_projection.shp", drive="ESRI Shapefile")

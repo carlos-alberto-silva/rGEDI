@@ -35,22 +35,25 @@
 #'  addScaleBar(options = list(imperial = FALSE)) %>%
 #'  addProviderTiles(providers$Esri.WorldImagery)
 #'@export
-clipLevel1Bdt = function(level1bdt,extent){
-  level1bdt<-level1bdt@dt
+clipLevel2AM = function(level2AMdt,xleft, xright, ybottom, ytop){
   # xleft ybottom xright ytop
   mask =
-    level1bdt$longitude_bin0 >= extent[1] &
-    level1bdt$longitude_bin0 <= extent[2] &
-    level1bdt$latitude_bin0 >= extent[3] &
-    level1bdt$latitude_bin0 <= extent[4] &
-    level1bdt$longitude_lastbin >= extent[1] &
-    level1bdt$longitude_lastbin <= extent[2] &
-    level1bdt$latitude_lastbin >= extent[3] &
-    level1bdt$latitude_lastbin <= extent[4]
+    level2AMdt$lon_lowestmode >= xleft &
+    level2AMdt$lon_lowestmode <= xright &
+    level2AMdt$lat_lowestmode >= ybottom &
+    level2AMdt$lat_lowestmode <=  ytop &
+    level2AMdt$lon_lowestmode >= xleft &
+    level2AMdt$lon_lowestmode <= xright &
+    level2AMdt$lat_lowestmode >= ybottom &
+    level2AMdt$lat_lowestmode <=  ytop
 
-  mask = (1:length(level1bdt$longitude_bin0))[mask]
-  newFile<- new("gedi.level1b.dt", dt = level1bdt[mask,])
-  return (newFile)
+  mask = (1:length(level2AMdt$longitude_bin0))[mask]
+  newFile<-level2AMdt[mask,]
+
+  if (nrow(newFile) == 0) {print("The polygon does not overlap the GEDI data")} else {
+    return (newFile)
+  }
+  #newFile<- new("gedi.level1b.dt", dt = level1bdt[mask,])
 }
 
 #'Clip GEDI Level1Bdt data by geometry
@@ -92,15 +95,20 @@ clipLevel1Bdt = function(level1bdt,extent){
 #'              opacity = 1, fillOpacity = 0) %>%
 #'  addProviderTiles(providers$Esri.WorldImagery)
 #'@export
-clipLevel1BdtGeometry = function(level1bdt, polygon_spdf) {
-  exshp<-extent(polygon_spdf)
-  level1bdt2<-clipLevel1Bdt(level1bdt, extent=exshp)
-  points = sp::SpatialPointsDataFrame(coords=matrix(c(level1bdt2@dt$longitude_bin0, level1bdt2@dt$latitude_bin0), ncol=2),
-                                      data=data.frame(id=1:length(level1bdt2@dt$longitude_bin0)), proj4string = polygon_spdf@proj4string)
-  pts = raster::intersect(points, polygon_spdf)
-  mask = as.integer(pts@data$id)
-  newFile<- new("gedi.level1b.dt", dt = level1bdt2@dt[mask,])
-  return (newFile)
+clipLevel2AMGeometry = function(level2AMdt, polygon_spdf) {
+  exshp<-raster::extent(polygon_spdf)
+  level1bdt<-clipLevel2AM(level2AMdt, xleft=exshp[1], xright=exshp[2], ybottom=exshp[3], ytop=exshp[4])
+
+  if (nrow(level1bdt) == 0) {print("The polygon does not overlap the GEDI data")} else {
+    points = sp::SpatialPointsDataFrame(coords=matrix(c(level1bdt$lon_lowestmode, level1bdt$lat_lowestmode), ncol=2),
+                                        data=data.frame(id=1:length(level1bdt$lon_lowestmode)), proj4string = polygon_spdf@proj4string)
+    pts = raster::intersect(points, polygon_spdf)
+    mask = as.integer(pts@data$id)
+    newFile<-level2AMdt[mask,]
+    #newFile<- new("gedi.level1b.dt", dt = level1bdt2@dt[mask,])
+    return (newFile)
+  }
+
 }
 
 
