@@ -145,11 +145,10 @@ cliplevel2bh5Geometry = function(level2b, polygon_spdf, output="") {
   results = list()
   for (pol_id in names(polygon_masks)) {
     output2 = gsub("\\.h5$", paste0("_", pol_id,".h5"), output)
-    results[[""]] = clipByMask2B(level2b,
+    results[[pol_id]] = clipByMask2B(level2b,
                                  polygon_masks[[pol_id]],
                                  output2)
   }
-  names(results) = NULL
 
   return (results)
 }
@@ -171,7 +170,6 @@ getSpatialData2B = function(level2b) {
       longitude_lastbin=level2b.h5[[paste0(i,"/geolocation/longitude_lastbin")]][]
     )
   }
-
   return (beams_spdf)
 }
 
