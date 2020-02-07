@@ -3,3 +3,8 @@
 .RData
 .Ruserdata
 notrack
+windows
+src/tools
+src/gedisimulator
+src/libclidar
+src/cmpfit-1.2
