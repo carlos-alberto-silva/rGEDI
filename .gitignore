@@ -11,3 +11,4 @@ src/cmpfit-1.2
 *.o
 *.dll
 *.obj
+**.vscode
