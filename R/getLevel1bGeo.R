@@ -17,10 +17,10 @@
 #'@importFrom data.table data.table
 #'@importFrom sp SpatialPointsDataFrame
 #'@export
-getLevel1BGeo<-function(level1b,select=c("latitude_bin0", "latitude_lastbin", "longitude_bin0", "longitude_lastbin", "shot_number")) {
-  level1b<-level1b@h5
+getxGeo<-function(x,select=c("latitude_bin0", "latitude_lastbin", "longitude_bin0", "longitude_lastbin", "shot_number")) {
+  x<-x@h5
 
-  datasets<-hdf5r::list.datasets(level1b, recursive = T)
+  datasets<-hdf5r::list.datasets(x, recursive = T)
   datasets_names<-basename(datasets)
 
   selected<-datasets_names %in% select
@@ -35,7 +35,7 @@ getLevel1BGeo<-function(level1b,select=c("latitude_bin0", "latitude_lastbin", "l
 
   dtse2<-datasets[selected][!grepl("geolocation/shot_number",datasets[selected])]
 
-# Set progress bar
+  # Set progress bar
   pb <- utils::txtProgressBar(min = 0, max = length(dtse2), style = 3)
   i.s=0
 
@@ -48,34 +48,34 @@ getLevel1BGeo<-function(level1b,select=c("latitude_bin0", "latitude_lastbin", "l
     name_i<-basename(i)
     if ( name_i =="shot_number"){
 
-      assign(name_i, bit64::c.integer64(get(name_i),level1b[[i]][]))
+      assign(name_i, bit64::c.integer64(get(name_i),x[[i]][]))
 
     } else {
 
-      assign(name_i, c(get(name_i), level1b[[i]][]))
+      assign(name_i, c(get(name_i), x[[i]][]))
 
     }
 
   }
 
   if ( "shot_number" %in% select){
-    level1b.dt<-data.table::data.table(get("shot_number"))[-1,]
-    colnames(level1b.dt)<-"shot_number"
+    x.dt<-data.table::data.table(get("shot_number"))[-1,]
+    colnames(x.dt)<-"shot_number"
     select2<-select[!select[]=="shot_number"]
 
   } else{
-    level1b.dt<-data.table::data.table(get(select[1]))
-    colnames(level1b.dt)<-select[1]
+    x.dt<-data.table::data.table(get(select[1]))
+    colnames(x.dt)<-select[1]
     select2<-select[-1]
   }
 
   for ( i in select2){
-    level1b.dt[,i]<-get(i)
+    x.dt[,i]<-get(i)
   }
 
-  #level1b.spdf<-sp::SpatialPointsDataFrame(cbind(as.numeric(level1b.dt$longitude_bin0),as.numeric(level1b.dt$latitude_bin0)),data=level1b.dt)
-  #level1b.dt<- methods::new("gedi.level1b.dt", dt = level1b.dt)
+  #x.spdf<-sp::SpatialPointsDataFrame(cbind(as.numeric(x.dt$longitude_bin0),as.numeric(x.dt$latitude_bin0)),data=x.dt)
+  #x.dt<- methods::new("gedi.x.dt", dt = x.dt)
   close(pb)
-  return(level1b.dt)
+  return(x.dt)
 }
 

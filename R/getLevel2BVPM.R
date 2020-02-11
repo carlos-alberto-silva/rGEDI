@@ -15,35 +15,37 @@
 #'@importFrom data.table data.table
 #'@importFrom sp SpatialPointsDataFrame
 #'@export
-getLevel2BVPM<-function(level2b){
-  level2b<-level2b@h5
+#'
+#'
+getxVPM<-function(x){
+  x<-x@h5
   groups_id<-grep("BEAM\\d{4}$",gsub("/","",
-                                     hdf5r::list.groups(level2b, recursive = F)), value = T)
+                                     hdf5r::list.groups(x, recursive = F)), value = T)
   m.dt<-data.table::data.table()
   pb <- utils::txtProgressBar(min = 0, max = length(groups_id), style = 3)
   i.s=0
   for ( i in groups_id){
     i.s<-i.s+1
     utils::setTxtProgressBar(pb, i.s)
-    level2b_i<-level2b[[i]]
+    x_i<-x[[i]]
     m<-data.table::data.table(
-      beam<-rep(i,length(level2b_i[["shot_number"]][])),
-      shot_number=level2b_i[["shot_number"]][],
-      delta_time=level2b_i[["delta_time"]][],
-      lat_lowestmode=level2b_i[["geolocation/lat_lowestmode"]][],
-      lon_lowestmode=level2b_i[["geolocation/lon_lowestmode"]][],
-      elev_highestreturn=level2b_i[["geolocation/elev_highestreturn"]][],
-      elev_lowestmode=level2b_i[["geolocation/elev_lowestmode"]][],
-      pai=level2b_i[["pai"]][],
-      fhd_normal=level2b_i[["fhd_normal"]][],
-      omega=level2b_i[["omega"]][],
-      pgap_theta=level2b_i[["pgap_theta"]][],
-      cover=level2b_i[["cover"]][])
+      beam<-rep(i,length(x_i[["shot_number"]][])),
+      shot_number=x_i[["shot_number"]][],
+      delta_time=x_i[["delta_time"]][],
+      lat_lowestmode=x_i[["geolocation/lat_lowestmode"]][],
+      lon_lowestmode=x_i[["geolocation/lon_lowestmode"]][],
+      elev_highestreturn=x_i[["geolocation/elev_highestreturn"]][],
+      elev_lowestmode=x_i[["geolocation/elev_lowestmode"]][],
+      pai=x_i[["pai"]][],
+      fhd_normal=x_i[["fhd_normal"]][],
+      omega=x_i[["omega"]][],
+      pgap_theta=x_i[["pgap_theta"]][],
+      cover=x_i[["cover"]][])
     m.dt<-rbind(m.dt,m)
   }
   colnames(m.dt)<-c("beam","shot_number","delta_time","lat_lowestmode","lon_lowestmode",
-                     "elev_highestreturn","elev_lowestmode","pai",
-                     "fhd_normal","omega","pgap_theta","cover")
+                    "elev_highestreturn","elev_lowestmode","pai",
+                    "fhd_normal","omega","pgap_theta","cover")
   close(pb)
   return(m.dt)
 }
