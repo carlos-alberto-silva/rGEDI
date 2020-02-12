@@ -1,76 +1,105 @@
 #include <R.h>
 #include <Rinternals.h>
+#include "gedisimulator/gediIO.h"
 #include "gedisimulator/gediMetric.h"
+#include "tools/tools.h"
 
 /*element reflectance*/
 float rhoG;
 float rhoC;
 
+float *REALSXP2pFloat(SEXP);
+char *INTSXP2pChar(SEXP);
+
+char *INTSXP2pChar(SEXP x)
+{
+    if (isNull(x))
+        return NULL;
+
+    char *result;
+    int size = LENGTH(x);
+    result = (char *)malloc(sizeof(result) * size);
+    for (int i = 0; i < size; i++)
+    {
+        result[i] = (char)INTEGER(x)[i];
+    }
+    return result;
+};
+
 metric_control *metric_makeControl(
-    const char* input,
+    // Input and output
+    const char *input,
     char writeFit,
     char writeGauss,
     char readBinLVIS,
     char readHDFlvis,
     char readHDFgedi,
-    const char* level2,
-    double* bounds,
+    const char *level2,
+    double *bounds,
+
+    // Switches
     char ground,
     char useInt,
     char useFrac,
-    float rhRes = 5,
-    float laiRes = 10.0,
-    float laiH = 30.0,
+    float rhRes,
+    float laiRes,
+    float laiH,
     char noRHgauss,
-    float gTol = 0.0,
-    float fhdHistRes = 0.001,
+    float gTol,
+    float fhdHistRes,
     char forcePsigma,
     char bayesGround,
     char dontTrustGround,
     char noRoundCoord,
-    NumericVector dcBias = NumericVector(0),
-    float nSig = 0.0,
-    int seed = 1,
-    float hNoise = 0.0,
-    NumericVector linkNoise = NumericVector(0),
-    float linkFsig = 5.5,
-    float linkPsig = 0.764331,
-    float trueSig = 5.0,
-    int bitRate = 12,
-    float maxDN = 4096.0,
-    char renoise = false,
-    float newPsig = 1.0,
-    float oldPsig = 0.764331,
-    float addDrift = 0.0,
-    char missGround = 0,
-    NumericVector minGap = NumericVector(0),
-    char photonCount = false,
-    float nPhotons = 2.1,
-    float photonWind = 200,
-    float noiseMult = 0.1,
-    float meanN = 0.0,
-    float thresh = 0.00000001,
-    char varNoise = false,
-    float varScale = 1.5,
-    float statsLen = 30.0,
-    char noiseTrack = false,
-    float sWidth = 0.0,
-    float psWidth = 0.0,
-    float msWidth = 0.0,
-    char preMatchF = false,
-    char postMatchF = false,
-    CharacterVector pFile = CharacterVector(0),
-    float gWidth = 1.2,
-    float minGsig = 0.764331,
-    float minWidth = 0,
-    char medNoise = false,
-    char varDrift = false,
-    NumericVector driftFac = NumericVector(0),
-    float varRhoG = 0.4,
-    float varRhoC = 0.57,
-    float pSigma = 1.0,
-    char gold = false,
-    float deconTol = 0.0000001)
+
+    // Adding noise
+    float dcBias,
+    float nSig,
+    int *seed,
+    float hNoise,
+    char *linkNoise,
+    float linkFsig,
+    float linkPsig,
+    float trueSig,
+    int *bitRate,
+    float maxDN,
+    char renoise,
+    float newPsig,
+    float oldPsig,
+    float addDrift,
+    char missGround,
+    float *minGap,
+
+    // Photon counting
+    char photonCount,
+    float nPhotons,
+    float photonWind,
+    float noiseMult,
+
+    // Denoising
+    float meanN,
+    float thresh,
+    char varNoise,
+    float varScale,
+    float statsLen,
+    char noiseTrack,
+    float sWidth,
+    float psWidth,
+    float msWidth,
+    char preMatchF,
+    char postMatchF,
+    const char *pFile,
+    float gWidth,
+    float minGsig,
+    float minWidth,
+    char medNoise,
+    char varDrift,
+    float *driftFac,
+    float varRhoG,
+    float varRhoC,
+    float pSigma,
+    char gold,
+    float deconTol)
 {
     metric_control *dimage = NULL;
 
@@ -235,7 +264,7 @@ metric_control *metric_makeControl(
     if (writeGauss)
         dimage->writeGauss = 1;
     if (dcBias)
-        dimage->noise.meanN = dimage->noise.offset = dcBias[0];
+        dimage->noise.meanN = dimage->noise.offset = dcBias;
     if (ground)
         dimage->gediIO.ground = 1;
     if (varNoise)
@@ -246,7 +275,7 @@ metric_control *metric_makeControl(
         dimage->gediIO.den->noiseTrack = 1;
     if (pFile)
     {
-        strcpy(dimage->gediIO.den->pNamen, pFile[0]);
+        strcpy(dimage->gediIO.den->pNamen, pFile);
         dimage->gediIO.den->deconGauss = 0;
     }
     if (gold)
@@ -278,13 +307,13 @@ metric_control *metric_makeControl(
     if (minGap)
     {
         dimage->noise.missGround = 1;
-        dimage->noise.minGap = minGap[0];
+        dimage->noise.minGap = *minGap;
     }
     if (bayesGround)
         dimage->bayesGround = 1;
     if (bitRate)
     {
-        dimage->noise.bitRate = bitRate;
+        dimage->noise.bitRate = *bitRate;
         dimage->noise.maxDN = pow(2.0, (float)dimage->noise.bitRate);
     }
     if (noRHgauss)
@@ -323,35 +352,508 @@ metric_control *metric_makeControl(
     {
         dimage->gediIO.den->corrDrift = 1;
         dimage->gediIO.den->varDrift = 0;
-        dimage->gediIO.den->fixedDrift = driftFac[0];
-#ifdef USEPHOTON
+        dimage->gediIO.den->fixedDrift = *driftFac;
     }
-    if (!strncasecmp(argv[i], "-photonCount", 12))
+    if (seed)
+        srand(*seed);
+
+#ifdef USEPHOTON
+    if (photonCount)
     {
         dimage->ice2 = 1;
     }
-    if (!strncasecmp(argv[i], "-nPhotons", 9))
+    if (nPhotons)
     {
-        checkArguments(1, i, argc, "-nPhotons");
-        dimage->photonCount.designval = atof(argv[++i]);
+        dimage->photonCount.designval = nPhotons;
     }
-    if (!strncasecmp(argv[i], "-photonWind", 11))
+    if (photonWind)
     {
-        checkArguments(1, i, argc, "-photonWind");
-        dimage->photonCount.H = atof(argv[++i]);
+        dimage->photonCount.H = photonWind;
     }
-    if (!strncasecmp(argv[i], "-noiseMult", 10))
+    if (noiseMult)
     {
-        checkArguments(1, i, argc, "-noiseMult");
-        dimage->photonCount.noise_mult = atof(argv[++i]);
+        dimage->photonCount.noise_mult = noiseMult;
     }
-    if (!strncasecmp(argv[i], "-rhoVrhoG", 9))
-    {
-        checkArguments(1, i, argc, "-rhoVrhoG");
-        dimage->photonCount.rhoVrhoG = atof(argv[++i]);
-    }
-    if (!strncasecmp(argv[i], "-photHDF", 8))
-    {
-        dimage->photonCount.writeHDF = 1;
 #endif
+
+    /*read deconvolution pulse if needed*/
+    if (dimage->gediIO.den->preMatchF || dimage->gediIO.den->preMatchF || dimage->gediIO.den->deconMeth >= 0)
+        readPulse(dimage->gediIO.den);
+    if ((!dimage->gediIO.ground) && (dimage->noise.missGround))
+    {
+        fprintf(stderr, "Noise option conflict. Cannot use missGround without ground\n");
+        exit(1);
     }
+
+    return dimage;
+}
+
+float *REALSXP2pFloat(SEXP x)
+{
+    if (isNull(x))
+        return NULL;
+
+    float *result;
+    int size = LENGTH(x);
+    result = (float *)malloc(sizeof(result) * size);
+    for (int i = 0; i < size; i++)
+    {
+        result[i] = (float)REAL(x)[i];
+    }
+    return result;
+}
+
+#define exit(n) return (ScalarInteger(n))
+SEXP C_gediMetrics(
+    // Input and output
+    SEXP input,
+    SEXP writeFit,
+    SEXP writeGauss,
+    SEXP readBinLVIS,
+    SEXP readHDFlvis,
+    SEXP readHDFgedi,
+    SEXP level2,
+    SEXP bounds,
+
+    // Switches
+    SEXP ground,
+    SEXP useInt,
+    SEXP useFrac,
+    SEXP rhRes,
+    SEXP laiRes,
+    SEXP laiH,
+    SEXP noRHgauss,
+    SEXP gTol,
+    SEXP fhdHistRes,
+    SEXP forcePsigma,
+    SEXP bayesGround,
+    SEXP dontTrustGround,
+    SEXP noRoundCoord,
+
+    // Adding noise
+    SEXP dcBias,
+    SEXP nSig,
+    SEXP seed,
+    SEXP hNoise,
+    SEXP linkNoise,
+    SEXP linkFsig,
+    SEXP linkPsig,
+    SEXP trueSig,
+    SEXP bitRate,
+    SEXP maxDN,
+    SEXP renoise,
+    SEXP newPsig,
+    SEXP oldPsig,
+    SEXP addDrift,
+    SEXP missGround,
+    SEXP minGap,
+
+    // Photon counting
+    SEXP photonCount,
+    SEXP nPhotons,
+    SEXP photonWind,
+    SEXP noiseMult,
+
+    // Denoising
+    SEXP meanN,
+    SEXP thresh,
+    SEXP varNoise,
+    SEXP varScale,
+    SEXP statsLen,
+    SEXP noiseTrack,
+    SEXP sWidth,
+    SEXP psWidth,
+    SEXP msWidth,
+    SEXP preMatchF,
+    SEXP postMatchF,
+    SEXP pFile,
+    SEXP gWidth,
+    SEXP minGsig,
+    SEXP minWidth,
+    SEXP medNoise,
+    SEXP varDrift,
+    SEXP driftFac,
+    SEXP varRhoG,
+    SEXP varRhoC,
+    SEXP pSigma,
+    SEXP gold,
+    SEXP deconTol)
+{
+    int i = 0;
+    metric_control *dimage = NULL;
+    dataStruct *data = NULL;
+    metStruct *metric = NULL;
+    void setL2ground(dataStruct *, int, metric_control *);
+    void findMetrics(metStruct *, float *, int, float *, float *, int, double *, metric_control *, dataStruct *);
+    void tidySMoothPulse();
+    void alignElevation(double, double, float *, int);
+    void writeResults(dataStruct *, metric_control *, metStruct *, int, float *, float *, char *);
+    void determineTruth(dataStruct *, metric_control *);
+    void modifyTruth(dataStruct *, noisePar *);
+    void checkWaveformBounds(dataStruct *, metric_control *);
+    void photonCountCloud(float *, dataStruct *, photonStruct *, char *, int, denPar *, noisePar *);
+    float *processed = NULL, *denoised = NULL;
+    ;
+    int j = 0;
+
+    /*read command Line*/
+    dimage = metric_makeControl(
+        // Input and output
+        CHAR(asChar(input)),
+        (char)asLogical(writeFit),
+        (char)asLogical(writeGauss),
+        (char)asLogical(readBinLVIS),
+        (char)asLogical(readHDFlvis),
+        (char)asLogical(readHDFgedi),
+        isNull(level2) ? NULL : CHAR(asChar(level2)),
+        isNull(bounds) ? NULL : REAL(bounds),
+
+        // Switches
+        (char)asLogical(ground),
+        (char)asLogical(useInt),
+        (char)asLogical(useFrac),
+        (float)asReal(rhRes),
+        (float)asReal(laiRes),
+        (float)asReal(laiH),
+        (char)asLogical(noRHgauss),
+        (float)asReal(gTol),
+        (float)asReal(fhdHistRes),
+        (char)asLogical(forcePsigma),
+        (char)asLogical(bayesGround),
+        (char)asLogical(dontTrustGround),
+        (char)asLogical(noRoundCoord),
+
+        // Adding noise
+        (float)asReal(dcBias),
+        (float)asReal(nSig),
+        isNull(seed) ? NULL : INTEGER(seed),
+        (float)asReal(hNoise),
+        INTSXP2pChar(linkNoise),
+        (float)asReal(linkFsig),
+        (float)asReal(linkPsig),
+        (float)asReal(trueSig),
+        isNull(bitRate) ? NULL : INTEGER(bitRate),
+        (float)asReal(maxDN),
+        (char)asLogical(renoise),
+        (float)asReal(newPsig),
+        (float)asReal(oldPsig),
+        (float)asReal(addDrift),
+        (char)asLogical(missGround),
+        REALSXP2pFloat(minGap),
+
+        // Photon counting
+        (char)asLogical(photonCount),
+        (float)asReal(nPhotons),
+        (float)asReal(photonWind),
+        (float)asReal(noiseMult),
+
+        // Denoising
+        (float)asReal(meanN),
+        (float)asReal(thresh),
+        (char)asLogical(varNoise),
+        (float)asReal(varScale),
+        (float)asReal(statsLen),
+        (char)asLogical(noiseTrack),
+        (float)asReal(sWidth),
+        (float)asReal(psWidth),
+        (float)asReal(msWidth),
+        (char)asLogical(preMatchF),
+        (char)asLogical(postMatchF),
+        isNull(pFile) ? NULL : CHAR(asChar(pFile)),
+        (float)asReal(gWidth),
+        (float)asReal(minGsig),
+        (float)asReal(minWidth),
+        (char)asLogical(medNoise),
+        (char)asLogical(varDrift),
+        REALSXP2pFloat(driftFac),
+        (float)asReal(varRhoG),
+        (float)asReal(varRhoC),
+        (float)asReal(pSigma),
+        (char)asLogical(gold),
+        (float)asReal(deconTol));
+
+    /*set link noise if needed*/
+    dimage->noise.linkSig = setNoiseSigma(
+        dimage->noise.linkM,
+        dimage->noise.linkCov,
+        dimage->gediIO.linkPsig,
+        dimage->gediIO.linkFsig,
+        rhoC,
+        rhoG);
+
+/*set photon rates if needed*/
+#ifdef USEPHOTON
+    if (dimage->ice2 || dimage->pclPhoton)
+        setPhotonRates(&dimage->photonCount);
+#endif
+
+    /*allocate metric array*/
+    if (!(metric = (metStruct *)calloc(1, sizeof(metStruct))))
+    {
+        fprintf(stderr, "error metric structure allocation.\n");
+        exit(1);
+    }
+
+    /*loop over files*/
+    for (i = 0; i < dimage->gediIO.nFiles; i++)
+    {
+        if ((i % dimage->gediIO.nMessages) == 0)
+            fprintf(
+                stdout,
+                "Wave %d of %d\n",
+                i + 1,
+                dimage->gediIO.nFiles);
+
+        /*read waveform*/
+        if (dimage->readBinLVIS)
+            data = readBinaryLVIS(dimage->gediIO.inList[0],
+                                  &dimage->lvis,
+                                  i,
+                                  &dimage->gediIO);
+        else if (dimage->readHDFlvis)
+            data = unpackHDFlvis(dimage->gediIO.inList[0],
+                                 &dimage->hdfLvis,
+                                 &dimage->gediIO,
+                                 i);
+        else if (dimage->readHDFgedi)
+            data = unpackHDFgedi(dimage->gediIO.inList[0],
+                                 &dimage->gediIO,
+                                 &dimage->hdfGedi,
+                                 i);
+        else
+            data = readASCIIdata(dimage->gediIO.inList[i],
+                                 &(dimage->gediIO));
+        if (dimage->readL2)
+            setL2ground(data, i, dimage);
+
+        /*check bounds if needed*/
+        if (dimage->useBounds)
+            checkWaveformBounds(data, dimage);
+
+        /*is the data usable*/
+        if (data->usable)
+        {
+            /*denoise and change pulse if needed*/
+            if (dimage->renoiseWave)
+                modifyTruth(data, &dimage->noise);
+
+            /*determine truths before noising*/
+            determineTruth(data, dimage);
+
+            /*add noise if needed*/
+            if (!dimage->pclPhoton)
+                addNoise(data, &dimage->noise,
+                         dimage->gediIO.fSigma,
+                         dimage->gediIO.pSigma,
+                         dimage->gediIO.res,
+                         rhoC,
+                         rhoG);
+            else
+                data->noised = uncompressPhotons(
+                    data->wave[data->useType],
+                    data,
+                    &dimage->photonCount,
+                    &dimage->noise,
+                    &dimage->gediIO);
+
+            /*process waveform*/
+            /*denoise, or*if we are doing PCL on photon counting, convert to photon count*/
+            denoised = processFloWave(data->noised,
+                                      data->nBins,
+                                      dimage->gediIO.den,
+                                      1.0);
+            if (dimage->pclPhoton)
+                for (j = 0; j < data->nBins; j++)
+                    fprintf(stdout,
+                            "wave %d %d %f %f %f\n",
+                            i,
+                            j,
+                            denoised[j],
+                            data->wave[0][j],
+                            data->noised[j]);
+
+            /*check that the wave is still usable*/
+            if (checkUsable(denoised, data->nBins))
+            {
+                /*are we in GEDI mode?*/
+                if (!dimage->ice2)
+                {
+
+                    /*Gaussian fit*/
+                    if (dimage->noRHgauss == 0)
+                        processed = processFloWave(
+                            denoised,
+                            data->nBins,
+                            dimage->gediIO.gFit,
+                            1.0);
+
+                    /*shift Gaussian centres to align to absolute elevation*/
+                    alignElevation(data->z[0],
+                                   data->z[data->nBins - 1],
+                                   dimage->gediIO.gFit->gPar,
+                                   dimage->gediIO.gFit->nGauss);
+
+                    /*determine metrics*/
+                    findMetrics(metric,
+                                dimage->gediIO.gFit->gPar,
+                                dimage->gediIO.gFit->nGauss,
+                                denoised,
+                                data->noised,
+                                data->nBins,
+                                data->z,
+                                dimage,
+                                data);
+
+                    /*write results*/
+                    if (dimage->readBinLVIS || dimage->readHDFlvis || dimage->readHDFgedi)
+                        writeResults(data,
+                                     dimage,
+                                     metric,
+                                     i,
+                                     denoised,
+                                     processed,
+                                     dimage->gediIO.inList[0]);
+                    else
+                        writeResults(data,
+                                     dimage,
+                                     metric,
+                                     i,
+                                     denoised,
+                                     processed,
+                                     dimage->gediIO.inList[i]);
+                }
+                else
+                { /*ICESat-2 mode*/
+                    photonCountCloud(denoised,
+                                     data,
+                                     &dimage->photonCount,
+                                     dimage->outRoot,
+                                     i,
+                                     dimage->gediIO.den,
+                                     &dimage->noise);
+                } /*operation mode switch*/
+            }
+            else
+            { /*still usable after denoising?*/
+                fprintf(stderr, "No longer usable\n");
+            }
+        } /*is the data usable*/
+
+        /*tidy as we go along*/
+        TIDY(processed);
+        TIDY(denoised);
+        if (data)
+        {
+            TIDY(data->noised);
+            if (dimage->readHDFgedi)
+            { /*pointer to array. do not free*/
+                data->wave[0] = NULL;
+                if (data->ground)
+                    data->ground[0] = NULL;
+            }
+            TTIDY((void **)data->ground, data->nWaveTypes);
+            TTIDY((void **)data->wave, data->nWaveTypes);
+            TIDY(data->totE);
+            TIDY(data->z);
+            TIDY(data);
+        }
+        TIDY(dimage->gediIO.gFit->gPar);
+        TIDY(dimage->gediIO.den->gPar);
+        dimage->gediIO.den->nGauss = 0;
+        dimage->gediIO.gFit->nGauss = 0;
+        TIDY(metric->rhMax);
+        TIDY(metric->rhInfl);
+        TIDY(metric->rhReal);
+        TIDY(metric->rh);
+        TIDY(metric->bGr);
+        TIDY(metric->tLAI);
+        TIDY(metric->gLAI);
+        TIDY(metric->hgLAI);
+        TIDY(metric->hiLAI);
+        TIDY(metric->hmLAI);
+        //TIDY(metric->LmomGau);
+        //TIDY(metric->LmomRea);
+        //TIDY(metric->LmomInf);
+        //TIDY(metric->LmomMax);
+    } /*file loop*/
+
+    /*TIDY LVIS data if it was read*/
+    if (dimage->readBinLVIS)
+        TIDY(dimage->lvis.data);
+    if (dimage->readHDFgedi)
+        dimage->hdfGedi = tidyGediHDF(dimage->hdfGedi);
+
+    if (dimage->writeGauss)
+        fprintf(stdout,
+                "Written to %s.gauss.txt\n",
+                dimage->outRoot);
+    if (!dimage->ice2)
+        fprintf(stdout,
+                "Written to %s.metric.txt\n",
+                dimage->outRoot);
+#ifdef USEPHOTON
+    else
+        fprintf(stdout,
+                "Written to %s\n",
+                dimage->photonCount.outNamen);
+#endif
+
+    /*tidy up arrays*/
+    tidySMoothPulse();
+    TIDY(metric);
+    if (dimage)
+    {
+        if (dimage->lvisL2)
+        {
+            TIDY(dimage->lvisL2->lfid);
+            TIDY(dimage->lvisL2->shotN);
+            TIDY(dimage->lvisL2->zG);
+            TIDY(dimage->lvisL2);
+        }
+        if (dimage->readBinLVIS || dimage->readHDFlvis || dimage->readHDFgedi)
+            TTIDY((void **)dimage->gediIO.inList, 1);
+        else
+            TTIDY((void **)dimage->gediIO.inList,
+                  dimage->gediIO.nFiles);
+        dimage->gediIO.inList = NULL;
+        TIDY(dimage->gediIO.noiseSigs.threshN);
+        TIDY(dimage->gediIO.noiseSigs.threshS);
+        TIDY(dimage->gediIO.noiseSigs.probNoise);
+        TIDY(dimage->gediIO.noiseSigs.probMiss);
+        if (dimage->opooMet)
+        {
+            fclose(dimage->opooMet);
+            dimage->opooMet = NULL;
+        }
+        if (dimage->opooGauss)
+        {
+            fclose(dimage->opooGauss);
+            dimage->opooGauss = NULL;
+        }
+#ifdef USEPHOTON
+        if (dimage->photonCount.opoo)
+        {
+            fclose(dimage->photonCount.opoo);
+            dimage->photonCount.opoo = NULL;
+        }
+        TIDY(dimage->photonCount.prob);
+#endif
+        if (dimage->gediIO.den)
+        {
+            TTIDY((void **)dimage->gediIO.den->pulse, 2);
+            TIDY(dimage->gediIO.den->matchPulse);
+            TIDY(dimage->gediIO.den->hardPulse);
+            TIDY(dimage->gediIO.den);
+        }
+        if (dimage->gediIO.gFit)
+        {
+            TTIDY((void **)dimage->gediIO.gFit->pulse, 2);
+            TIDY(dimage->gediIO.gFit);
+        }
+        dimage->hdfLvis = tidyLVISstruct(dimage->hdfLvis);
+        TIDY(dimage);
+    }
+    return (ScalarInteger(0));
+} /*main*/
+
+#undef exit
