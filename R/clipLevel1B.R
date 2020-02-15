@@ -3,7 +3,7 @@
 #'@description Clip GEDI Level1 data within a given bounding coordinates
 #'
 #'
-#'@param level1b h5file; S4 object of class H5File
+#'@param level1b h5file; S4 object of class H5File.
 #'@param xleft numeric. left x coordinates of rectangles.
 #'@param xright numeric. right x coordinates of rectangles.
 #'@param ybottom numeric. bottom y coordinates of rectangles.
