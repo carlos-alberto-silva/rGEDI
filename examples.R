@@ -16,14 +16,14 @@ level1bpath<-"E:\\GEDI01_B_2019109163004_O01985_T02206_02_003_01.h5"
 level1b<-readLevel1B(level1bpath)
 
 ### plot waveform
-x<-getLevel1BWF(level1b,shot_number="19850022900500000")
+x<-getxWF(level1b,shot_number="19850022900500000")
 windows()
 par(mfrow=c(1,2))
 par(cex.axis=1.5)
 plot(x,relative=FALSE,polygon=TRUE,type="l", lwd=2, col="forestgreen", xlab="", ylab="Elevation (m)")
 
 ### level1b to dt
-level1bGeo<-getLevel1BGeo(level1b,select=c("latitude_bin0","latitude_lastbin","longitude_bin0","longitude_lastbin","shot_number"))
+level1bGeo<-getxGeo(level1b,select=c("latitude_bin0","latitude_lastbin","longitude_bin0","longitude_lastbin","shot_number"))
 #require(rgdal)
 head(level1bGeo)
 
@@ -197,7 +197,7 @@ rgdal::writeOGR(shpi,"C:\\trina\\03_files","GEDI02_B_2019108080338_O01964_T05337
 level2b6<-readLevel2B("E:\\GEDI02_B_2019108080338_O01964_T05337_02_001_01.h5")
 
 polygon_spdf<-raster::shapefile("C:\\Users\\carlo\\OneDrive\\01_Projeto_PrevFogo\\01_data\\01_shp\\03_UCs_shp\\ucs_brazil2.shp")
-ext<-extent(polygon_spdf)
+ext<-raster::extent(polygon_spdf)
 
 paiz<-getLevel2BPAIProfile(x=level2b6)
 paiz_clip1<-clipLevel2BPAIProfileGeometry(paiz,polygon_spdf)
@@ -206,3 +206,90 @@ paiz_clip2<-clipLevel2BPAIProfile(paiz,xleft=ext[1], xright=ext[2], ybottom=ext[
 pavz<-getLevel2BPAVDProfile(x=level2b6)
 pavz_clip1<-clipLevel2BPAVDProfileGeometry(pavz,polygon_spdf)
 pavz_clip2<-clipLevel2BPAVDProfile(pavz,xleft=ext[1], xright=ext[2], ybottom=ext[3], ytop=ext[4])
+
+windows()
+
+plot(paiz_clip1$lat_lowestmode,paiz_clip1$lon_lowestmode)
+
+paiz_clip1_sub<-subset(paiz_clip1,paiz_clip1$beam=="BEAM0000" & paiz_clip1$elev_highestreturn<1000)
+
+plot(paiz_clip1_sub$lat_lowestmode,paiz_clip1_sub$lon_lowestmode)
+
+plot(1:nrow(paiz_clip1_sub),paiz_clip1_sub$elev_lowestmode, type="l", xlim=c(1000,1200), ylim=c(600,800))
+points(1:nrow(paiz_clip1_sub),paiz_clip1_sub$elev_highestreturn, col="green", type="l",xlim=c(1000,1200), ylim=c(600,800))
+
+head(paiz_clip1_sub)
+
+
+myColorRamp <- function(colors, values) {
+  ids<-values[values==-9999]
+  values[values==-9999]<-0
+  if (sum(values)==0){
+    cols<-rep(colors[1],length(values))
+  } else {
+  v <- (values - min(values))/diff(range(values))
+  x <- colorRamp(colors)(v)
+  cols<-rgb(x[,1], x[,2], x[,3], maxColorValue = 255)
+  }
+  cols[ids]<-colors[1]
+  return(cols)
+}
+
+library("RColorBrewer")
+colornames <- brewer.pal(n=8,name="Greens")
+
+# Color by height
+col<-function(x){
+  col <- myColorRamp(c("white",colornames),x)
+  return(col)
+}
+
+
+cols <-t(apply(paiz_clip1_sub[,9:38], 1, col))
+
+
+xs<-function(v){
+  xi<-NULL
+  for ( i in 1:length(v)){
+
+    xi<-c(xi,rep(v[i],30))
+
+  }
+
+  return(xi)
+}
+
+colslist<-NULL
+
+for ( i in 1:nrow(cols)){
+  colslist<-c(colslist,cols[i,])
+}
+
+xlist<-xs(v=1:nrow(paiz_clip1_sub))
+ylist<-rep(seq(5,150,5),nrow(paiz_clip1_sub))
+
+plot(xlist,ylist+paiz_clip1_sub$elev_lowestmode, col=colslist, pch=15,xlim=c(1100,1200))
+
+
+require(rgdal)
+register_google(key = "YOUR_API_KEY")
+library(ggmap)
+#plot the  hybrid Google Maps basemap
+map <- qmap(center=coordinates(polygon_spdf), zoom = 12, maptype = 'hybrid')
+#plot the crime points on top
+map + geom_point(data = crimes, aes(x = Longitude, y = Latitude), color="red", size=3, alpha=0.5)
+
+
+library(mapview)
+xyz<-SpatialPointsDataFrame(cbind(x=paiz_clip1$lon_lowestmode,
+                                  y=paiz_clip1$lat_lowestmode), data=data.frame(cbind(x=paiz_clip1$lon_lowestmode,
+                                                                           y=paiz_clip1$lat_lowestmode,
+                                                                           z=paiz_clip1$height_bin0-paiz_clip1$height_lastbin)))
+proj4string(xyz)<-"+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"
+proj4string(polygon_spdf)<-"+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"
+
+m1<-mapview(xyz, zcol = "z", map.types = "Esri.WorldImagery", legend = TRUE)
+
+kkj<-mapview(polygon_spdf, alpha.regions = 0.2, aplha = 1,map.types = "Esri.WorldImagery", legend = TRUE)
+
+kkj+m1
