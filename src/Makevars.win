@@ -43,9 +43,8 @@ OBJECTS = $(LIBCLIDAR_ROOT)/libLasProcess.o $(LIBCLIDAR_ROOT)/libLasRead.o \
 	$(LIBCLIDAR_ROOT)/libLidarHDF.o $(GEDIRAT_ROOT)/gediIO.o \
 	$(LIBCLIDAR_ROOT)/libOctree.o $(GEDIRAT_ROOT)/gediNoise.o \
   $(HANCOCKTOOLS_ROOT)/tools.o $(CMPFIT_ROOT)/mpfit.o \
-  $(GEDIRAT_ROOT)/photonCount.o  \
-  $(GEDIRAT_ROOT)/gediRat.o $(GEDIRAT_ROOT)/gediMetric.o \
-   gediMetrics.o gediSimulator.o
+  $(GEDIRAT_ROOT)/photonCount.o \
+   argParse.o gediMetrics.o gediSimulator.o addNoiseHDF.o
 
 
 VERSION = 2.2.3
@@ -61,7 +60,7 @@ PKG_LIBS += \
 	-lmfhdf -ldf -lxdr \
 	-lopenjp2 -ljasper -lpng16 -ljpeg -ltiff -lgeotiff -lgif -lxml2 -llzma -lszip -lz \
 	-lodbc32 -lodbccp32 -liconv -lpsapi -lws2_32 -lcrypt32 -lwldap32 -lsecur32 -lgdi32 \
-	-lgsl -lgslcblas
+	-lgsl
 
 all: winlibs deps
 
