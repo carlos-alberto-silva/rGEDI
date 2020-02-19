@@ -3,7 +3,7 @@
 #'@description Clip GEDI Level1 data within a given bounding coordinates
 #'
 #'
-#'@param level1b h5file; S4 object of class H5File.
+#'@param level1b h5file; S4 object of class H5File
 #'@param xleft numeric. left x coordinates of rectangles.
 #'@param xright numeric. right x coordinates of rectangles.
 #'@param ybottom numeric. bottom y coordinates of rectangles.
@@ -33,8 +33,12 @@
 #'@export
 #'
 clipLevel1Bh5 = function(level1b, xleft, xright, ybottom, ytop, output=""){
+  if (output == "") {
+    output = tempfile(fileext = ".h5")
+  }
+
   # Get all spatial data as a list of dataframes with spatial information
-  spData = getSpatialData(level1b)
+  spData = getSpatialData1B(level1b)
 
   masks = lapply(spData, function(x) {
     mask = x$longitude_bin0 >= xleft &
@@ -49,7 +53,7 @@ clipLevel1Bh5 = function(level1b, xleft, xright, ybottom, ytop, output=""){
     return ((1:length(x$longitude_bin0))[mask])
   })
 
-  newFile = clipByMask(level1b,
+  newFile = clipByMask1B(level1b,
                        masks,
                        output)
   output = newFile@h5$filename
@@ -90,7 +94,11 @@ clipLevel1Bh5 = function(level1b, xleft, xright, ybottom, ytop, output=""){
 #'
 #'@export
 clipLevel1Bh5Geometry = function(level1b, polygon_spdf, output="") {
-  spData = getSpatialData(level1b)
+  if (output == "") {
+    output = tempfile(fileext = ".h5")
+  }
+
+  spData = getSpatialData1B(level1b)
 
   xleft = polygon_spdf@bbox[1,1]
   xright = polygon_spdf@bbox[1,2]
@@ -113,6 +121,8 @@ clipLevel1Bh5Geometry = function(level1b, polygon_spdf, output="") {
   message("Intersecting with polygon...")
   pb = utils::txtProgressBar(min = 0, max = length(masks), style = 3)
   progress = 0
+  polygon_masks = list()
+
   for (beam in names(masks)) {
     mask = masks[[beam]]
 
@@ -122,7 +132,9 @@ clipLevel1Bh5Geometry = function(level1b, polygon_spdf, output="") {
     points = sp::SpatialPointsDataFrame(coords=matrix(c(spDataMasked$longitude_bin0, spDataMasked$latitude_bin0), ncol=2),
                                         data=data.frame(id=mask), proj4string = polygon_spdf@proj4string)
     pts = raster::intersect(points, polygon_spdf)
-    masks[[beam]] = as.integer(pts@data$id)
+    for (pol_id in levels(pts@data$d)) {
+      polygon_masks[[pol_id]][[beam]] = pts[pts@data$d == pol_id,]@data[,1]
+    }
 
     progress = progress + 1
     utils::setTxtProgressBar(pb, progress)
@@ -130,19 +142,20 @@ clipLevel1Bh5Geometry = function(level1b, polygon_spdf, output="") {
   close(pb)
 
   message("Writing new HDF5 file...")
-  newFile = clipByMask(level1b,
-                       masks,
-                       output)
-  output = newFile@h5$filename
-  hdf5r::h5close(newFile@h5)
-  result = readLevel1B(output)
+  results = list()
+  for (pol_id in names(polygon_masks)) {
+    output2 = gsub("\\.h5$", paste0("_", pol_id,".h5"), output)
+    results[[pol_id]] = clipByMask1B(level1b,
+                                     polygon_masks[[pol_id]],
+                                     output2)
+  }
 
-  return (result)
+  return (results)
 }
 
 
 # Helper function to return spatial data within a dataframe
-getSpatialData = function(level1b) {
+getSpatialData1B = function(level1b) {
   level1b.h5<-level1b@h5
   groups_id<-grep("BEAM\\d{4}$",gsub("/","",
                                      hdf5r::list.groups(level1b.h5, recursive = F)), value = T)
@@ -161,7 +174,7 @@ getSpatialData = function(level1b) {
   return (beams_spdf)
 }
 
-clipByMask = function(level1b, masks, output = "") {
+clipByMask1B = function(level1b, masks, output = "") {
   if (output == "") {
     tmp_filename <- tempfile(fileext = ".h5")
     newFile =  hdf5r::H5File$new(tmp_filename, mode="w")
@@ -226,6 +239,6 @@ clipByMask = function(level1b, masks, output = "") {
   }
 
   level1b@h5 = newFile
-  #spatial = getLevel1bGeo(level1b)
+  #spatial = level1B2dt(level1b)
   return (level1b)
 }
