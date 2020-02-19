@@ -2,3 +2,4 @@
 ^\.Rproj\.user$
 ^examples\.R$
 ^.*TODO-.*$
+^notrack.*$

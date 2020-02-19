@@ -2,3 +2,14 @@
 .Rhistory
 .RData
 .Ruserdata
+notrack
+windows
+src/tools
+src/gedisimulator
+src/libclidar
+src/cmpfit-1.2
+*.o
+*.dll
+*.obj
+**.vscode
+src/build
