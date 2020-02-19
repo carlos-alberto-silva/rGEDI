@@ -2,7 +2,7 @@
 #define RGEDI_ARGPARSE_H
 #include <Rinternals.h>
 
-#define PARSE_ARG(thename, n) thename##Arg(argv, &argc, #n, n)
+#define PARSE_ARG(typeName, n) typeName##Arg(argv, &argc, #n, n)
 
 void charArg(char **argv, int *pos, const char *argName, SEXP in);
 void integerArg(char **argv, int *pos, const char *argName, SEXP in);

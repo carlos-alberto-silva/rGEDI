@@ -12,3 +12,4 @@ src/cmpfit-1.2
 *.dll
 *.obj
 **.vscode
+src/build
