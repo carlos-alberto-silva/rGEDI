@@ -16,14 +16,14 @@ level1bpath<-"E:\\GEDI01_B_2019109163004_O01985_T02206_02_003_01.h5"
 level1b<-readLevel1B(level1bpath)
 
 ### plot waveform
-x<-getLevel1BWF(level1b,shot_number="19850022900500000")
+x<-getxWF(level1b,shot_number="19850022900500000")
 windows()
 par(mfrow=c(1,2))
 par(cex.axis=1.5)
 plot(x,relative=FALSE,polygon=TRUE,type="l", lwd=2, col="forestgreen", xlab="", ylab="Elevation (m)")
 
 ### level1b to dt
-level1bGeo<-getLevel1BGeo(level1b,select=c("latitude_bin0","latitude_lastbin","longitude_bin0","longitude_lastbin","shot_number"))
+level1bGeo<-getxGeo(level1b,select=c("latitude_bin0","latitude_lastbin","longitude_bin0","longitude_lastbin","shot_number"))
 #require(rgdal)
 head(level1bGeo)
 
