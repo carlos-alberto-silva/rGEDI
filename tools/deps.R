@@ -12,12 +12,14 @@ downloadDep = function(name, file, url, origName = "") {
 
 
 downloadDepBitBucket = function(name, file, origName) {
-  if(!file.exists(paste0("./",name,"/",file))) {
+  fileCheck = paste0("./",name,"/",file)
+  if(!file.exists(fileCheck)) {
     print(paste0("Downloading ",name,"..."))
     url = paste0("https://bitbucket.org/caiohamamura/",name,"/get/v0.3.0.zip")
     download.file(url, "lib.zip", quiet=FALSE)
     unzip("lib.zip", exdir=".")
     unlink("lib.zip")
+    file.remove(name, showWarnings=F)
     file.rename(origName, name)
   }
 }

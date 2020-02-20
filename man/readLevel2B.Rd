@@ -10,7 +10,7 @@ readLevel2B(level2Bpath)
 \item{level2Bpath}{file path pointing to GEDI level2B data (H5 format)}
 }
 \value{
-level2BFile; S4 object of class "gedi.level2b";
+level2bFile; S4 object of class "gedi.level2b";
 }
 \description{
 This function reads GEDI level2B data
