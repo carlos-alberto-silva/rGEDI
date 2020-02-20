@@ -7,7 +7,7 @@
 readLevel2A(level2Apath)
 }
 \arguments{
-\item{level2Apath}{file path pointing to GEDI level2A data (H5 format)}
+\item{level2bpath}{file path pointing to GEDI level2B data (H5 format)}
 }
 \value{
 level2AFile; S4 object of class "gedi.level2a";
