@@ -25,6 +25,8 @@ Single footprint, list of footprints, or grid of footprints}
 
 \item{listCoord}{name. Text file with list of coordinates. Pattern: X, Y, `[waveID]`, `[geoCoordsX]`, `[geoCoordsY]`. `[]` are optional.}
 
+\item{gridBound}{minX maxX minY maxY numeric vector. make a grid of waveforms in this box}
+
 \item{gridStep}{res. grid step size
 Lidar characteristics. Defaults are expected GEDI values. pSigmasig. set Gaussian pulse width as 1 sigma}
 
@@ -81,8 +83,6 @@ Using full-waveform input data (not tested)}
 \item{seed}{n integer. random number seed}
 
 \item{coord}{lon lat numeric vector. footprint coordinate in same system as lasfile}
-
-\item{gridBounds}{minX maxX minY maxY numeric vector. make a grid of waveforms in this box}
 }
 \description{
 Simulate GEDI full waveform data from Airborne Laser Scanning (ALS) 3-D point cloud
