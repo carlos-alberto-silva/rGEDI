@@ -8,8 +8,10 @@
 #define main gediRat
 #define control metric_control
 #define readCommands readCommands_rat
+#define fprintf(stdout, ...) Rprintf(__VA_ARGS__)
     #include "gedisimulator/gediRat.h"
     #include "gedisimulator/gediRat.c"
+#undef fprintf(stdout, ...)
 #undef readCommands
 #undef control
 #undef main

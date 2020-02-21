@@ -8,8 +8,10 @@
 #define main gediMetric
 #define control metric_control
 #define readCommands readCommands_metric
+#define fprintf(stdout, ...) Rprintf(__VA_ARGS__)
     #include "gedisimulator/gediMetric.h"
     #include "gedisimulator/gediMetric.c"
+#undef fprintf(stdout, ...)
 #undef readCommands
 #undef control
 #undef main
