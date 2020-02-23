@@ -10,6 +10,9 @@
 rGEDI: An R Package for NASA's Global Ecosystem Dynamics Investigation (GEDI) data 
 downloading, visualization and processing. 
 
+Authors: Carlos A. Silva, Caio Hamamura, Ruben Valbuena, Steve Hancock, Carine Klauberg, Eben Broadbent, Danilo R. A. de Almeida,
+Celso H. L. S. Junior  
+
 The rGEDI package provides functions to i) download GEDI data, ii) visualize GEDI data, including Full-waveform, iii) Clip GEDI data, iv) Grid GEDI data,and v) Simulate GEDI data.
 
 ## Installation
