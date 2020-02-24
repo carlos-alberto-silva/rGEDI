@@ -1,9 +1,6 @@
-#'Clip GEDI Level2B data by Coordinates
+#'Clip GEDI level2b data
 #'
-#'@description This function extracts GEDI Level1B data within given bounding coordinates
-#'
-#'
-#'@usage clipLevel2B(level2b, xleft, xright, ybottom, ytop, output="")
+#'@description Clip GEDI Level2B data within a given bounding coordinates
 #'
 #'
 #'@param level1b A GEDI Level2B object (output of \code{\link[rGEDI:readLevel2B]{readLevel2B}} function). A S4 object of class "gedi.level2b".
@@ -14,7 +11,7 @@
 #'@param output Optional character path where to save the new hdf5 file. The default stores a temporary file only.
 #'@return An S4 object of class "gedi.level2b".
 #'
-#'@seealso https://lpdaac.usgs.gov/products/gedi01_bv001/
+#' #'@seealso https://lpdaac.usgs.gov/products/gedi01_bv001/
 #'
 #'@examples
 #'# specify the path and data file and read it
@@ -65,8 +62,8 @@ clipLevel2B = function(level2b, xleft, xright, ybottom, ytop, output=""){
     output = tempfile(fileext = ".h5")
   }
   newFile = clipByMask2B(level2b,
-                         masks,
-                         output)
+                       masks,
+                       output)
   output = newFile@h5$filename
   hdf5r::h5close(newFile@h5)
   result = readlevel2b(output)
@@ -77,8 +74,6 @@ clipLevel2B = function(level2b, xleft, xright, ybottom, ytop, output=""){
 #'Clip GEDI Level2B data by geometry
 #'
 #'@description This function extracts GEDI Level1B data within given geometry
-#'
-#'@usage clipLevel2BGeometry(level2b, polygon_spdf, output)
 #'
 #'@param level2b h5file; S4 object of class H5File
 #'@param polygon_spdf Polygon. An object of class \code{\link[sp]{SpatialPolygonsDataFrame-class}},
@@ -161,8 +156,8 @@ clipLevel2BGeometry = function(level2b, polygon_spdf, output="") {
   for (pol_id in names(polygon_masks)) {
     output2 = gsub("\\.h5$", paste0("_", pol_id,".h5"), output)
     results[[pol_id]] = clipByMask2B(level2b,
-                                     polygon_masks[[pol_id]],
-                                     output2)
+                                 polygon_masks[[pol_id]],
+                                 output2)
   }
 
   return (results)
