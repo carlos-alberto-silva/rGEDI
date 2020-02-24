@@ -1,3 +1,4 @@
+
 #'GEDI full waveform data processing
 #'
 #' @description GEDI full waveform data processing and metrics extraction
@@ -5,20 +6,26 @@
 #! \bold{Input output}
 #' @param input name. waveform  input filename
 #' @param outRoot name. output filename root
-#' @param inList list. input file list for multiple files
+# @param inList list. input file list for multiple files
 #' @param writeFit write fitted waveform
 #' @param writeGauss write Gaussian parameters
-#' @param readBinLVIS input is an LVIS binary file
-#' @param readHDFlvis read LVIS HDF5 input
-#' @param readHDFgedi read GEDI simulator HDF5 input
-#' @param level2 name. level2 filename for LVIS ZG
+
+# Always GEDI
+# @param readBinLVIS input is an LVIS binary file
+# @param readHDFlvis read LVIS HDF5 input
+# @param readHDFgedi read GEDI simulator HDF5 input
+# @param level2 name. level2 filename for LVIS ZG
 #' @param bounds minX minY maxX maxY. only analyse data within bounds
-#' @param beamList 11111111. 0/1 for whether or not to use beams 18
-#' @param skipBeams n. list of beam numbers to skip. No spaces between (eg 123)
-#' @param readBeams n. list of beam numbers to read. No spaces between (eg 123)
+
+# Not in use yet
+# @param beamList character. 0/1 for whether or not to use beams 18, default "11111111"
+# @param skipBeams character. list of beam numbers to skip. No spaces between (eg "123")
+# @param readBeams character. list of beam numbers to read. No spaces between (eg "123")
 #'
 #! \bold{Switches}
-#' @param ground read true ground from file
+
+# Always needed
+# @param ground read true ground from file
 #' @param useInt use discrete intensity instead of count
 #' @param useFrac use fractional hits rather than counts
 #' @param rhRes r. percentage energy resolution of RH metrics
@@ -96,17 +103,12 @@
 gediWFMetric = function(
   input,
   outRoot,
-  inList = NULL,
   writeFit = FALSE,
   writeGauss = FALSE,
-  readBinLVIS = FALSE,
-  readHDFlvis = FALSE,
-  readHDFgedi = FALSE,
-  level2 = NULL,
   bounds = NULL,
-  beamList = NULL,
-  skipBeams = NULL,
-  readBeams = NULL,
+  # beamList = NULL,
+  # skipBeams = NULL,
+  # readBeams = NULL,
   ground = FALSE,
   useInt = FALSE,
   useFrac = FALSE,
@@ -169,11 +171,92 @@ gediWFMetric = function(
   pSigma = NULL,
   gold = FALSE,
   deconTol = NULL) {
-  .Call("C_gediMetrics",
+
+  readBinLVIS = FALSE
+  readHDFlvis = FALSE
+  readHDFgedi = TRUE
+  level2 = NULL
+  beamList = NULL
+  skipBeams = NULL
+  readBeams = NULL
+  ground = FALSE
+
+  stopifnotMessage(
+    all(file.exists(input)),
+    all(fs::path_ext(input) == "h5"),
+    checkParentDir(outRoot, optional=FALSE),
+    checkLogical(writeFit),
+    checkLogical(writeGauss),
+    checkNumericLength(bounds, 4),
+    checkLogical(useInt),
+    checkLogical(useFrac),
+    checkNumeric(laiRes),
+    checkNumeric(laiH),
+    checkLogical(noRHgauss),
+    checkNumeric(gTol),
+    checkNumeric(fhdHistRes),
+    checkLogical(forcePsigma),
+    checkLogical(bayesGround),
+    checkLogical(dontTrustGround),
+    checkLogical(noRoundCoord),
+    checkLogical(noCanopy),
+    checkNumeric(dcBias),
+    checkNumeric(nSig),
+    checkInteger(seed),
+    checkNumeric(hNoise),
+    checkNumericLength(linkNoise, 2),
+    checkNumeric(linkFsig),
+    checkNumeric(linkPsig),
+    checkNumeric(trueSig),
+    checkInteger(bitRate),
+    checkNumeric(maxDN),
+    checkLogical(renoise),
+    checkNumeric(newPsig),
+    checkNumeric(oldPsig),
+    checkNumeric(addDrift),
+    checkLogical(missGround),
+    checkLogical(minGap),
+    checkLogical(photonCount),
+    checkLogical(pcl),
+    checkNumeric(nPhotons),
+    checkNumeric(photonWind),
+    checkNumeric(noiseMult),
+    checkNumeric(rhoVrhoG),
+    checkNumeric(nPhotC),
+    checkNumeric(nPhotG),
+    checkLogical(photHDF),
+    checkNumeric(meanN),
+    checkNumeric(thresh),
+    checkLogical(varNoise),
+    checkNumeric(varScale),
+    checkNumeric(statsLen),
+    checkLogical(noiseTrack),
+    checkNumeric(sWidth),
+    checkNumeric(psWidth),
+    checkNumeric(msWidth),
+    checkLogical(preMatchF),
+    checkLogical(postMatchF),
+    checkFilepath(pFile, newFile=FALSE, optional=TRUE),
+    checkNumeric(gWidth),
+    checkNumeric(minGsig),
+    checkNumeric(minWidth),
+    checkLogical(medNoise),
+    checkLogical(varDrift),
+    checkNumeric(driftFac),
+    checkNumeric(rhoG),
+    checkNumeric(rhoC),
+    checkNumeric(pSigma),
+    checkLogical(gold),
+    checkNumeric(deconTol)
+  )
+
+  inputInList = inputOrInList(input)
+
+  res = .Call("C_gediMetrics",
         # Input output
-        input,
+        inputInList[[1]],
         outRoot,
-        inList,
+        inputInList[[2]],
         writeFit,
         writeGauss,
         readBinLVIS,
@@ -255,15 +338,17 @@ gediWFMetric = function(
              gold,
              deconTol))
   unloadLibrary()
+  cleanInList(inputInList)
 
-  output = paste0(outRoot, ".metric.txt")
-  header = read.csv(output, sep=",", nrow=1, header = FALSE, as.is=TRUE)
-  header[ncol(header)] = NULL
-  header=gsub(" *\\d+ *([^ ]*)", "\\1", header)
-
-  metricData = read.csv(output, sep=" ", skip=1, na.strings = "?", header = FALSE)
-  if (ncol(metricData) == length(header)) {
-    names(metricData) = header
+  if (res==0) {
+    output = paste0(outRoot, ".metric.txt")
+    header = read.csv(output, sep=",", nrow=1, header = FALSE, as.is=TRUE)
+    header[ncol(header)] = NULL
+    header=gsub(" *\\d+ *([^ ]*)", "\\1", header)
+    metricData = read.csv(output, sep=" ", skip=1, na.strings = "?", header = FALSE)
+    if (ncol(metricData) == length(header)) {
+      names(metricData) = header
+    }
   }
 
   return (metricData)

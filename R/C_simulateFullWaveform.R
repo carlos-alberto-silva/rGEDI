@@ -66,6 +66,20 @@
 # @param nnGround find mean ground elevation and slope through nearest neighbour
 #' @param seed n integer. random number seed
 #'
+#' @examples
+#' las.sample=system.file("extdata/sample.las", package="rGEDI")
+#'
+#' output=tempfile(fileext=".h5")
+#'
+#' out.WF=gediWFSimulator(
+#'   input=las.sample,
+#'   output=output,
+#'   coords = c(278215, 602215))
+#'
+#'
+#' print(out.WF)
+#'
+#'
 #' @import hdf5r
 #' @useDynLib rGEDI
 #' @export
@@ -122,66 +136,54 @@ gediWFSimulator = function(
   nnGround = FALSE
 
   # Check values
-  tryCatch(
-    stopifnot(
-      all(file.exists(input)),
-      fs::path_ext(input) == "las",
-      dir.exists(fs::path_dir(output)),
-      is.null(waveID) || length(coords) == 2, # If waveID should only work along with coords
-      checkNumericLength(coords, 2),
-      is.null(listCoord) || file.exists(listCoord),
-      checkNumericLength(gridBound, 4),
-      checkNumeric(gridStep),
-      checkNumeric(pFWHM),
-      checkFilepath(readPulse, newFile=FALSE, optional=TRUE),
-      checkNumeric(fSigma),
-      checkFilepath(wavefront, newFile=FALSE, optional=TRUE),
-      checkNumeric(res),
-      checkLogical(topHat),
-      checkLogical(sideLobe),
-      checkNumeric(lobeAng),
-      checkLogical(checkCover),
-      checkNumeric(maxScanAng),
-      checkNumeric(decimate),
-      checkNumeric(pBuff),
-      checkInteger(maxBins),
-      checkLogical(countOnly),
-      checkLogical(pulseAfter),
-      checkLogical(pulseBefore),
-      checkLogical(noNorm),
-      checkLogical(noOctree),
-      checkInteger(octLevels),
-      checkInteger(nOctPix),
-      checkLogical(keepOld),
-      checkLogical(useShadow),
-      checkLogical(polyGround),
-      checkInteger(seed)
-    ),
-    error=function(e) {
-    stop(paste0("\n\nInput arguments are invalid!\n",
-                e$message))
-  })
+  stopifnotMessage(
+    all(file.exists(input)),
+    all(fs::path_ext(input) == "las"),
+    dir.exists(fs::path_dir(output)),
+    is.null(waveID) || length(coords) == 2, # If waveID should only work along with coords
+    checkNumericLength(coords, 2),
+    is.null(listCoord) || file.exists(listCoord),
+    checkNumericLength(gridBound, 4),
+    checkNumeric(gridStep),
+    checkNumeric(pFWHM),
+    checkFilepath(readPulse, newFile=FALSE, optional=TRUE),
+    checkNumeric(fSigma),
+    checkFilepath(wavefront, newFile=FALSE, optional=TRUE),
+    checkNumeric(res),
+    checkLogical(topHat),
+    checkLogical(sideLobe),
+    checkNumeric(lobeAng),
+    checkLogical(checkCover),
+    checkNumeric(maxScanAng),
+    checkNumeric(decimate),
+    checkNumeric(pBuff),
+    checkInteger(maxBins),
+    checkLogical(countOnly),
+    checkLogical(pulseAfter),
+    checkLogical(pulseBefore),
+    checkLogical(noNorm),
+    checkLogical(noOctree),
+    checkInteger(octLevels),
+    checkInteger(nOctPix),
+    checkLogical(keepOld),
+    checkLogical(useShadow),
+    checkLogical(polyGround),
+    checkInteger(seed)
+  )
 
   if (is.null(coords) && is.null(listCoord) && is.null(gridBound)) {
     stop("Coordinates for the waveforms should be provided!\nTIP: Use coords, listCoord or gridBound.")
   }
 
-  inList=NULL
-  if (length(input) > 1) {
-    inList = tempfile(fileext=".txt")
-    fileHandle = file(inList, "w")
-    writeLines(input, fileHandle)
-    close(fileHandle)
-    inFile = fileHandle
-  }
+  inputInList = inputOrInList(input)
   if (fs::path_ext(output) != "h5") {
     output = paste0(output, ".h5")
   }
 
   .Call("C_gediSimulator",
-        input,
+        inputInList[[1]],
         output,
-        inList,
+        inputInList[[2]],
         ground,
         hdf,
         ascii,
@@ -231,9 +233,7 @@ gediWFSimulator = function(
 
   unloadLibrary()
 
-  if (!is.null(inList)) {
-    file.remove(inList)
-  }
+  cleanInList(inputInList)
   result = tryCatch(hdf5r::H5File$new(output, "r+"), error=function(e) stop("The output file was not created\nSomething went wrong!"))
 
   return(result)
