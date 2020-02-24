@@ -57,14 +57,15 @@ clipLevel2A = function(level2a, xleft, xright, ybottom, ytop, output=""){
   })
 
   newFile = clipByMask2A(level2a,
-                       masks,
-                       output)
+                         masks,
+                         output)
   output = newFile@h5$filename
   hdf5r::h5close(newFile@h5)
   result = readlevel2a(output)
 
   return (result)
 }
+
 
 #'Clip GEDI Level2A data by geometry
 #'
@@ -161,8 +162,8 @@ clipLevel2AGeometry = function(level2a, polygon_spdf, output="") {
   for (pol_id in names(polygon_masks)) {
     output2 = gsub("\\.h5$", paste0("_", pol_id,".h5"), output)
     results[[pol_id]] = clipByMask2A(level2a,
-                                 polygon_masks[[pol_id]],
-                                 output2)
+                                     polygon_masks[[pol_id]],
+                                     output2)
   }
   names(results) = NULL
 

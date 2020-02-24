@@ -44,13 +44,9 @@
 #'              opacity = 1, fillOpacity = 0) %>%
 #'  addProviderTiles(providers$Esri.WorldImagery)
 #'@export
-clipLevel1B = function(level1b, xleft, xright, ybottom, ytop, output=""){
-  if (output == "") {
-    output = tempfile(fileext = ".h5")
-  }
-
+clipLevel2B = function(level2b, xleft, xright, ybottom, ytop, output=""){
   # Get all spatial data as a list of dataframes with spatial information
-  spData = getSpatialData1B(level1b)
+  spData = getSpatialData2B(level2b)
 
   masks = lapply(spData, function(x) {
     mask = x$longitude_bin0 >= xleft &
@@ -65,12 +61,15 @@ clipLevel1B = function(level1b, xleft, xright, ybottom, ytop, output=""){
     return ((1:length(x$longitude_bin0))[mask])
   })
 
-  newFile = clipByMask1B(level1b,
+  if (output == "") {
+    output = tempfile(fileext = ".h5")
+  }
+  newFile = clipByMask2B(level2b,
                          masks,
                          output)
   output = newFile@h5$filename
   hdf5r::h5close(newFile@h5)
-  result = readLevel1B(output)
+  result = readlevel2b(output)
 
   return (result)
 }
@@ -108,12 +107,8 @@ clipLevel1B = function(level1b, xleft, xright, ybottom, ytop, output=""){
 #'level2b_clip_geometry <- clipLevel2BGeometry(level2BVPM,polygon_spdf=polygon_spdf)
 #'
 #'@export
-clipLevel1BGeometry = function(level1b, polygon_spdf, output="") {
-  if (output == "") {
-    output = tempfile(fileext = ".h5")
-  }
-
-  spData = getSpatialData1B(level1b)
+clipLevel2BGeometry = function(level2b, polygon_spdf, output="") {
+  spData = getSpatialData2B(level2b)
 
   xleft = polygon_spdf@bbox[1,1]
   xright = polygon_spdf@bbox[1,2]
@@ -156,11 +151,16 @@ clipLevel1BGeometry = function(level1b, polygon_spdf, output="") {
   }
   close(pb)
 
+
+  if (output == "") {
+    output = tempfile(fileext = ".h5")
+  }
+
   message("Writing new HDF5 file...")
   results = list()
   for (pol_id in names(polygon_masks)) {
     output2 = gsub("\\.h5$", paste0("_", pol_id,".h5"), output)
-    results[[pol_id]] = clipByMask1B(level1b,
+    results[[pol_id]] = clipByMask2B(level2b,
                                      polygon_masks[[pol_id]],
                                      output2)
   }
@@ -170,42 +170,37 @@ clipLevel1BGeometry = function(level1b, polygon_spdf, output="") {
 
 
 # Helper function to return spatial data within a dataframe
-getSpatialData1B = function(level1b) {
-  level1b.h5<-level1b@h5
+getSpatialData2B = function(level2b) {
+  level2b.h5<-level2b@h5
   groups_id<-grep("BEAM\\d{4}$",gsub("/","",
-                                     hdf5r::list.groups(level1b.h5, recursive = F)), value = T)
+                                     hdf5r::list.groups(level2b.h5, recursive = F)), value = T)
 
   beams_spdf = list()
 
   for ( i in gsub("/","",groups_id)){
     beams_spdf[[i]] = data.frame(
-      latitude_bin0=level1b.h5[[paste0(i,"/geolocation/latitude_bin0")]][],
-      latitude_lastbin=level1b.h5[[paste0(i,"/geolocation/latitude_lastbin")]][],
-      longitude_bin0=level1b.h5[[paste0(i,"/geolocation/longitude_bin0")]][],
-      longitude_lastbin=level1b.h5[[paste0(i,"/geolocation/longitude_lastbin")]][]
+      latitude_bin0=level2b.h5[[paste0(i,"/geolocation/latitude_bin0")]][],
+      latitude_lastbin=level2b.h5[[paste0(i,"/geolocation/latitude_lastbin")]][],
+      longitude_bin0=level2b.h5[[paste0(i,"/geolocation/longitude_bin0")]][],
+      longitude_lastbin=level2b.h5[[paste0(i,"/geolocation/longitude_lastbin")]][]
     )
   }
-
   return (beams_spdf)
 }
 
-clipByMask1B = function(level1b, masks, output = "") {
-  if (output == "") {
-    tmp_filename <- tempfile(fileext = ".h5")
-    newFile =  hdf5r::H5File$new(tmp_filename, mode="w")
-  } else {
-    newFile =  hdf5r::H5File$new(output, mode="w")
-  }
 
-  for (attr in hdf5r::list.attributes(level1b@h5)) {
-    hdf5r::h5attr(newFile, attr) = hdf5r::h5attr(level1b@h5, attr)
+clipByMask2B = function(level2b, masks, output = "") {
+  newFile =  hdf5r::H5File$new(output, mode="w")
+
+  for (attr in hdf5r::list.attributes(level2b@h5)) {
+    hdf5r::h5attr(newFile, attr) = hdf5r::h5attr(level2b@h5, attr)
   }
 
 
-  all_groups = hdf5r::list.groups(level1b@h5)
+  all_groups = hdf5r::list.groups(level2b@h5)
 
   # Setup progress bar
-  all_datasets = hdf5r::list.datasets(level1b@h5)
+  all_datasets = hdf5r::list.datasets(level2b@h5)
   total = length(all_datasets)
   pb = utils::txtProgressBar(min = 0, max = total, style = 3)
   progress = 0
@@ -216,33 +211,36 @@ clipByMask1B = function(level1b, masks, output = "") {
     mask_size = length(mask)
 
     if (mask_size == 0)  {
-      n_datasets = length(hdf5r::list.datasets(level1b@h5[[group]]))
+      n_datasets = length(hdf5r::list.datasets(level2b@h5[[group]]))
       progress = progress + n_datasets
       utils::setTxtProgressBar(pb, progress)
       next
     }
 
     hdf5r::createGroup(newFile,group)
+    createAttributesWithinGroup(level2b@h5, newFile, group)
 
-    for (dt in hdf5r::list.datasets(level1b@h5[[group]], recursive = FALSE, full.names = T)) {
-      beam_shot_n = level1b@h5[[beam_id]][["shot_number"]]$dims
-      dt_dim = level1b@h5[[dt]]$dims
+    for (dt in hdf5r::list.datasets(level2b@h5[[group]], recursive = FALSE, full.names = T)) {
+      beam_shot_n = level2b@h5[[beam_id]][["shot_number"]]$dims
+      dt_dim = level2b@h5[[dt]]$dims
 
       if (length(dt_dim) == 1) {
         if (dt_dim == 1) {
-          hdf5r::createDataSet(newFile,dt,level1b@h5[[dt]][])
+          hdf5r::createDataSet(newFile,dt,level2b@h5[[dt]][])
         } else if (dt_dim == beam_shot_n) {
-          hdf5r::createDataSet(newFile,dt,level1b@h5[[dt]][mask])
+          hdf5r::createDataSet(newFile,dt,level2b@h5[[dt]][mask])
         } else if ((dt_dim %% beam_shot_n) == 0) {
-          n_waveforms = level1b@h5[[dt]]$dims / beam_shot_n
+          n_waveforms = level2b@h5[[dt]]$dims / beam_shot_n
           v.seq = Vectorize(seq.default,vectorize.args = c("from"), SIMPLIFY=T)
           mask_init = mask*n_waveforms - (n_waveforms - 1)
           mask_waveform = matrix(v.seq(mask_init, len=n_waveforms), nrow=1)[1,]
-          waveform=level1b@h5[[dt]][mask_waveform]
+          waveform=level2b@h5[[dt]][mask_waveform]
           hdf5r::createDataSet(newFile,dt,waveform)
         }
       } else if (length(dt_dim) == 2 && dt_dim[1] == beam_shot_n) {
-        hdf5r::createDataSet(newFile,dt,level1b@h5[[dt]][mask,])
+        hdf5r::createDataSet(newFile,dt,level2b@h5[[dt]][mask,])
+      } else if (length(dt_dim) == 2 && dt_dim[2] == beam_shot_n){
+        hdf5r::createDataSet(newFile,dt,level2b@h5[[dt]][,mask])
       } else {
         stop(paste0("Don't know how to treat dataset: ", dt, "\nContact the maintainer of the package!"))
       }
@@ -253,7 +251,7 @@ clipByMask1B = function(level1b, masks, output = "") {
     }
   }
 
-  level1b@h5 = newFile
-  #spatial = level1B2dt(level1b)
-  return (level1b)
+  level2b@h5 = newFile
+  #spatial = level2b2dt(level2b)
+  return (level2b)
 }
