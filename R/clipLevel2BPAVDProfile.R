@@ -14,6 +14,8 @@
 #'
 #'@return An S4 object of class "gedi.level2b".
 #'
+#'@seealso https://lpdaac.usgs.gov/products/gedi02_bv001/
+#'
 #'@examples
 #'# specify the path and data file and read it
 #'level2bpath <- system.file("extdata", "GEDIexample_level02B.h5", package="rGEDI")
@@ -64,6 +66,8 @@ clipLevel2BPAVDProfile = function(x,xleft, xright, ybottom, ytop){
 #'@param split_by Polygon id. If defined, GEDI data will be clipped by each polygon using the polygon id from table of attribute defined by the user
 #'
 #'@return An S4 object of class \code{\link[data.table:data.table]{data.table-class}}.
+#'
+#'@seealso https://lpdaac.usgs.gov/products/gedi02_bv001/
 #'
 #'@examples
 #'

@@ -13,6 +13,8 @@
 #'
 #'@return An S4 object of class "gedi.level2a".
 #'
+#'@seealso https://lpdaac.usgs.gov/products/gedi02_av001/
+#'
 #'@examples
 #'# specify the path to GEDI level2A data
 #'level2apath <- system.file("extdata", "GEDIexample_level02A.h5", package="rGEDI")
@@ -76,6 +78,9 @@ clipLevel2A = function(level2a, xleft, xright, ybottom, ytop, output=""){
 #'@param output optional character path where to save the new h5file. Default "" (temporary file).
 #'
 #'@return Returns a S4 object of class "gedi.level2a".
+#'
+#'@seealso https://lpdaac.usgs.gov/products/gedi02_av001/
+#'
 #'@examples
 #'
 #'# specify the path to GEDI level2A data
@@ -94,7 +99,7 @@ clipLevel2A = function(level2a, xleft, xright, ybottom, ytop, output=""){
 #'level2a_clip <- clipLevel2AGeometry(level2a,polygon_spdf)
 #'
 #'@export
-cliplevel2ah5Geometry = function(level2a, polygon_spdf, output="") {
+clipLevel2AGeometry = function(level2a, polygon_spdf, output="") {
 
   if (output == "") {
     output = tempfile(fileext = ".h5")

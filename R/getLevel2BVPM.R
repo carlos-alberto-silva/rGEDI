@@ -1,4 +1,4 @@
-#'Get Vegetation Profile Biophysical Variables (GEDI Level2B)
+#'Get GEDI Vegetation Profile Biophysical Variables (GEDI Level2B)
 #'
 #'@description This function extracts information from GEDI Level2B data:
 #'Total Plant Area Index,	Foliage Height Diversity, Foliage Clumping Index,
@@ -11,6 +11,8 @@
 #'
 #'#'@return An S4 object of class \code{\link[data.table:data.table]{data.table-class}}
 #'containing the Vegetation Profile Biophysical Variables.
+#'
+#'@seealso https://lpdaac.usgs.gov/products/gedi02_bv001/
 #'
 #'@details These are the biophysical variables extracted:
 #'\itemize{
@@ -28,7 +30,7 @@
 #'# Reading GEDI level2B data
 #'level2b <- readLevel2B(level2bpath)
 #'
-#'# Get GEDI level2B geolocations
+#'# Get GEDI Vegetation Profile Biophysical Variables
 #'level2BVPM<-getLevel2BVPM(level2b)
 #'head(level2BVPM)
 #'

@@ -12,6 +12,8 @@
 #'@return A S4 object of class \code{\link[data.table:data.table]{data.table-class}}
 #'containting Statistics of GEDI level2BVPM defined metrics
 #'
+#'@seealso https://lpdaac.usgs.gov/products/gedi02_bv001/
+#'
 #'@examples
 #'\dontrun{
 #'# specify the path to GEDI Level 2B data
@@ -34,7 +36,7 @@
 #'# clipping level2BVPM by geometry
 #'level2BVPM_clip = clipLevel2BVPMGeometry(level2BVPM, polygon_spdf, split_by="id")
 #'
-#'#' Define your own function
+#'# Define your own function
 #'mySetOfMetrics = function(x)
 #'{
 #'metrics = list(
@@ -46,17 +48,17 @@
 #'  return(metrics)
 #'}
 #'
-#'#' Computing the max of the Total Plant Area Index for all observations
+#'# Computing the max of the Total Plant Area Index
 #'pai_max<-polyStatsLevel2BVPM(level2BVPM_clip,func=max(pai), id=NULL)
-#'head(pai_max)
+#'pai_max
 #'
-#'#' Computing the max of the Total Plant Area Index for all observation within each polygon
+#'# Computing the max of the Total Plant Area Index stratified by polygon
 #'pai_max_poly<-polyStatsLevel2BVPM(level2BVPM_clip,func=max(pai), id="id")
 #'head(pai_max_poly)
 #'
-#'#' Computing the serie of statistics of Foliage Clumping Index for all observation within each polygon
+#'# Computing the serie of statistics of Foliage Clumping Index stratified by polygon
 #'omega_metrics<-polyStatsLevel2BVPM(level2BVPM_clip,func=mySetOfMetrics(omega),
-#'                      id=level2AM_clip@data$id)
+#'                      id=level2BM_clip@data$id)
 #'head(omega_metrics)
 #'}
 #'@export

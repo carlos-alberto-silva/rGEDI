@@ -9,6 +9,7 @@
 #'
 #'@return S4 object of class "gedi.level1a".
 #'
+#'@seealso https://lpdaac.usgs.gov/products/gedi02_av001/
 #'
 #'#'@examples
 #'# specify the path and data file to be read

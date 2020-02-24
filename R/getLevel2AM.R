@@ -1,4 +1,4 @@
-#'Get Elevation and Height Metrics (GEDI Level2A)
+#'Get GEDI Elevation and Height Metrics (GEDI Level2A)
 #'
 #'@description This function extracts Elevation and Relative Height (RH) metrics from GEDI Level2A data .
 #'
@@ -9,14 +9,16 @@
 #'@return An S4 object of class \code{\link[data.table:data.table]{data.table-class}}
 #'containing the elevation and relative heights.
 #'
-#'@examples
-#'# specify the path to GEDI Level 1B data
-#'level2apath <- system.file("extdata", "GEDIexample_level01B.h5", package="rGEDI")
+#'@seealso https://lpdaac.usgs.gov/products/gedi02_av001/
 #'
-#'# Reading GEDI level1B data
+#'@examples
+#'# specify the path to GEDI Level 2A data
+#'level2apath <- system.file("extdata", "GEDIexample_level02A.h5", package="rGEDI")
+#'
+#'# Reading GEDI level2A data
 #'level2a <- readLevel2A(level2apath)
 #'
-#'# Get GEDI level1B geolocations
+#'# Get GEDI Elevation and Height Metrics
 #'level2AM<-getLevel2AM(level2a)
 #'head(level2AM)
 #'

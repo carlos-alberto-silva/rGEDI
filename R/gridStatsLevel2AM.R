@@ -11,6 +11,8 @@
 #'
 #'@return Returns raster layer(s) of selected GEDI Elevation and Height Metric(s)
 #'
+#'@seealso https://lpdaac.usgs.gov/products/gedi02_av001/
+#'
 #'@examples
 #'\dontrun{
 #'# specify the path to GEDI Level 2A data

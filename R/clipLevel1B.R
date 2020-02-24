@@ -13,6 +13,8 @@
 #'
 #'@return An S4 object of class "gedi.level1b".
 #'
+#'@seealso https://lpdaac.usgs.gov/products/gedi01_bv001/
+#'
 #'@examples
 #'# specify the path to GEDI data
 #'level1bpath <- system.file("extdata", "GEDIexample_level01B.h5", package="rGEDI")

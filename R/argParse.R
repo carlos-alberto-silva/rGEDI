@@ -44,5 +44,5 @@ checkFilepath = function(x, newFile=TRUE, optional = TRUE) {
   if (!newFile)
     return (file.exists(x))
 
-  return TRUE
+  return (TRUE)
 }

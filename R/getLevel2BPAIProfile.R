@@ -1,4 +1,4 @@
-#'Get Plant Area Index (PAI) Profile (GEDI Level2B)
+#'Get GEDI Plant Area Index (PAI) Profile (GEDI Level2B)
 #'
 #'@description This function extracts a Plant Area Index (PAI) Profile from GEDI Level2B data.
 #'
@@ -6,9 +6,22 @@
 #'
 #'@param level2b A GEDI Level2B object (output of \code{\link[rGEDI:readLevel2B]{readLevel2B}} function). A S4 object of class "gedi.level2b".
 #'
-#'@return S4 object of class data.table;
+#'@return An S4 object of class \code{\link[data.table:data.table]{data.table-class}}
+#'containing the elevation and relative heights.
 #'
-#'@seealso \code{\link[h5]{h5file}} in the \emph{h5} package.
+#'@examples
+#'
+#'@seealso https://lpdaac.usgs.gov/products/gedi02_bv001/
+#'
+#'#'# specify the path to GEDI Level 2B data
+#'level2bpath <- system.file("extdata", "GEDIexample_level02B.h5", package="rGEDI")
+#'
+#'# Reading GEDI level2B data
+#'level2b <- readLevel2B(level2bpath)
+#'
+#'# Get GEDI Plant Area Index (PAI) Profile (GEDI Level2B)
+#'level2BPAIProfile<-getLevel2BPAIProfile(level2b)
+#'head(level2BPAIProfile)
 #'
 #'@import hdf5r
 #'@import utils

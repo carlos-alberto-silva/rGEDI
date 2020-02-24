@@ -14,6 +14,8 @@
 #'@param output Optional character path where to save the new hdf5 file. The default stores a temporary file only.
 #'@return An S4 object of class "gedi.level2b".
 #'
+#'@seealso https://lpdaac.usgs.gov/products/gedi01_bv001/
+#'
 #'@examples
 #'# specify the path and data file and read it
 #'level2bpath <- system.file("extdata", "GEDIexample_level02B.h5", package="rGEDI")
@@ -83,6 +85,8 @@ clipLevel2B = function(level2b, xleft, xright, ybottom, ytop, output=""){
 #'which can be loaded as an ESRI shapefile using \code{\link[rgdal:readOGR]{readOGR}} function in the \emph{rgdal} package.
 #'@param output optional character path where to save the new h5file. Default "" (temporary file).
 #'@return An S4 object of class "gedi.level2b".
+#'
+#'@seealso https://lpdaac.usgs.gov/products/gedi01_bv001/
 #'
 #'@examples
 #'
