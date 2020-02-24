@@ -10,7 +10,7 @@
 #define readCommands readCommands_addNoise
 #define fprintf(stdout, ...) Rprintf(__VA_ARGS__)
     #include "gedisimulator/addNoiseHDF.c"
-#undef fprintf(stdout, ...)
+#undef fprintf
 #undef readCommands
 #undef control
 #undef main

@@ -11,7 +11,7 @@
 #define fprintf(stdout, ...) Rprintf(__VA_ARGS__)
     #include "gedisimulator/gediRat.h"
     #include "gedisimulator/gediRat.c"
-#undef fprintf(stdout, ...)
+#undef fprintf
 #undef readCommands
 #undef control
 #undef main
