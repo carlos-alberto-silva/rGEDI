@@ -1,6 +1,6 @@
-#'Get Pulse FullWaveform Geolocation (GEDI Level1B)
+#'Get GEDI Pulse Full-Waveform Geolocation (GEDI Level1B)
 #'
-#'@description This function extracts Pulse FullWaveform Geolocation from GEDI Level1B data
+#'@description This function extracts Pulse Full-Waveform Geolocation from GEDI Level1B data
 #'
 #'@usage getLevel1BGeo(level1b, select = c("latitude_bin0", "latitude_lastbin", "longitude_bin0", "longitude_lastbin", "shot_number") )
 #'
@@ -8,6 +8,8 @@
 #'@param select A character vector specifying the fields to extract from GEDI Level1B data. The default is set to extract \emph{latitude_bin0}, \emph{latitude_lastbin}, \emph{longitude_bin0}, \emph{longitude_lastbin}, and \emph{shot_number}. See details for more options.
 #'
 #'@return A S4 object of class \code{\link[data.table:data.table]{data.table-class}}.
+#'
+#'@seealso https://lpdaac.usgs.gov/products/gedi01_bv001/
 #'
 #'@details Besides of the fields specified as defaul, GEDI mission level 1B description (https://lpdaac.usgs.gov/products/gedi01_bv001/) details all the information that can be extracted:
 #'\itemize{

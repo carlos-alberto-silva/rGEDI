@@ -107,7 +107,7 @@
 #' ii) gediSimulator: https://bitbucket.org/StevenHancock/gedisimulator/src/master/
 #'
 #' @examples
-#'#'# specify the path to ALS data
+#'# specify the path to ALS data
 #'LASfile <- system.file("extdata", "LASexample1.las", package="rGEDI")
 #'
 #'# Simulate GEDI full-waveform

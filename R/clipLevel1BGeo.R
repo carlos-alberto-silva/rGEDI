@@ -13,6 +13,8 @@
 #'
 #'@return An S4 object of class \code{\link[data.table:data.table]{data.table-class}}.
 #'
+#'@seealso https://lpdaac.usgs.gov/products/gedi01_bv001/
+#'
 #'@examples
 #'# specify the path to GEDI Level 1B data
 #'level1bpath <- system.file("extdata", "GEDIexample_level01B.h5", package="rGEDI")
@@ -76,6 +78,8 @@ clipLevel1BGeo = function(level1BGeo,xleft, xright, ybottom, ytop){
 #'@param split_by Polygon id. If defined, GEDI data will be clipped by each polygon using the polygon id from table of attribute defined by the user
 #'@return A S4 object of class \code{\link[data.table:data.table]{data.table-class}}.
 #'
+#'@seealso https://lpdaac.usgs.gov/products/gedi01_bv001/
+#'
 #'@examples
 #'
 #'# specify the path to GEDI Level 1B data
@@ -108,7 +112,7 @@ clipLevel1BGeo = function(level1BGeo,xleft, xright, ybottom, ytop){
 #'              opacity = 1, fillOpacity = 0) %>%
 #'  addProviderTiles(providers$Esri.WorldImagery)
 #'@export
-clipxGeometry = function(level1BGeo, polygon_spdf, split_by="id") {
+clipLevel1BGeometry = function(level1BGeo, polygon_spdf, split_by="id") {
   exshp<-raster::extent(polygon_spdf)
   level1BGeo<-clipLevel2BVPM(level1BGeo, xleft=exshp[1], xright=exshp[2], ybottom=exshp[3], ytop=exshp[4])
   if (nrow(level1BGeo) == 0) {print("The polygon does not overlap the GEDI data")} else {

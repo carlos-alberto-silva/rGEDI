@@ -1,4 +1,4 @@
-#'Get Plant Area Volume Density (PAVD) Index (GEDI Level2B)
+#'Get GEDI Plant Area Volume Density (PAVD) Index (GEDI Level2B)
 #'
 #'@description This function extracts Plant Area Volume Density (PAVD) Index from GEDI Level2B data.
 #'
@@ -9,6 +9,8 @@
 #'@return An S4 object of class \code{\link[data.table:data.table]{data.table-class}}
 #'containing the PAVD Index.
 #'
+#'@seealso https://lpdaac.usgs.gov/products/gedi02_bv001/
+#'
 #'@examples
 #'# specify the path to GEDI Level 2B data
 #'level2bpath <- system.file("extdata", "GEDIexample_level01B.h5", package="rGEDI")
@@ -16,7 +18,7 @@
 #'# Reading GEDI level2B data
 #'level2b <- readLevel2B(level2bpath)
 #'
-#'# Get GEDI level2B geolocations
+#'# Getting GEDI Plant Area Volume Density (PAVD) Index
 #'level2BPAVDProfile<-getLevel2BPAVDProfile(level2b)
 #'head(level2BPAVDProfile)
 #'

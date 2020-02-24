@@ -2,7 +2,7 @@
 #'
 #'@description This function finds the path to GEDI data within a boundary box coordinates provided
 #'
-#'#'@usage gedifinder(level2BPAVDProfile, xleft, xright, ybottom, ytop, output="")
+#'#'@usage gedifinder(level2BPAVDProfile, xleft, xright, ybottom, ytop)
 #'
 #'@param level GEDI data level; Options: "GEDI01_B", "GEDI02_A" or "GEDI02_B"
 #'@param xleft numeric. left x coordinates of rectangles (degree).

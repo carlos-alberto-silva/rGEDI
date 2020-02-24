@@ -1,4 +1,4 @@
-#'Clip level2BPAIProfile data by Coordinates
+#'Clip GEDI Plant Area Index profile data by Coordinates
 #'
 #'@description This function clips GEDI level2B-derived
 #'Plant Area Index profile within given bounding coordinates
@@ -15,6 +15,8 @@
 #'@param output Optional character path where to save the new hdf5file. The default stores a temporary file only.
 #'
 #'@return An S4 object of class "gedi.level2b".
+#'
+#'@seealso https://lpdaac.usgs.gov/products/gedi02_bv001/
 #'
 #'@examples
 #'# specify the path and data file and read it
@@ -53,7 +55,7 @@ clipLevel2BPAIProfile = function(x,xleft, xright, ybottom, ytop){
 
 }
 
-#'Clip level2BPAIProfile data by geometry
+#'Clip GEDI Plant Area Index profile data by geometry
 #'
 #'@description This function clips GEDI level2B-derived
 #'Plant Area Index profile within given geometry
@@ -66,6 +68,8 @@ clipLevel2BPAIProfile = function(x,xleft, xright, ybottom, ytop){
 #'@param split_by Polygon id. If defined, GEDI data will be clipped by each polygon using the polygon id from table of attribute defined by the user
 #'
 #'@return An S4 object of class \code{\link[data.table:data.table]{data.table-class}}.
+#'
+#'@seealso https://lpdaac.usgs.gov/products/gedi02_bv001/
 #'
 #'@examples
 #'

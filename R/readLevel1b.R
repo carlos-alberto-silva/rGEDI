@@ -2,13 +2,13 @@
 #'
 #'@description This function reads GEDI level1B products: geolocated Waveforms
 #'
-#'
 #'@usage readLevel1B(level1Bpath)
 #'
 #'@param level1Bpath file path pointing to GEDI level1B data. Data in HDF5 Hierarchical Data Format (.h5).
 #'
 #'@return S4 object of class "gedi.level1b".
-#'@seealso \code{\link[hdf5r]{hdf5rfile}} in the \emph{hdf5r} package.
+#'@seealso \code{\link[hdf5r]{hdf5rfile}} in the \emph{hdf5r} package and
+#'https://lpdaac.usgs.gov/products/gedi01_bv001/
 #'
 #'@examples
 #'# specify the path and data file to be read

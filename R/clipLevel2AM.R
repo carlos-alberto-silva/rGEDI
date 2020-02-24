@@ -14,6 +14,8 @@
 #'
 #'@return An S4 object of class "gedi.level2a".
 #'
+#'@seealso https://lpdaac.usgs.gov/products/gedi02_av001/
+#'
 #'@examples
 #'#' GEDI level2A file path
 #'level2afilepath = system.file("extdata", "lvis_level1_clip.h5", package="rGEDI")
@@ -35,7 +37,7 @@
 #'
 #'@import hdf5r
 #'@export
-cliplevel2AM = function(level2AM,xleft, xright, ybottom, ytop){
+clipLevel2AM = function(level2AM,xleft, xright, ybottom, ytop){
   # xleft ybottom xright ytop
   mask =
     level2AM$lon_lowestmode >= xleft &
