@@ -52,6 +52,11 @@
 #'# specify the path to ALS data
 #'LASfile <- system.file("extdata", "LASexample1.las", package="rGEDI")
 #'
+#'Reading and plot LASfile
+#'library(lidR)
+#'LAS<-readLAS(LASfile)
+#'plot(LAS)
+#'
 #'# Simulate GEDI full-waveform
 #'wf<-gediWFSimulator(input=LASfile,output="gediSimulation.h5")
 #'

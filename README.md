@@ -164,6 +164,7 @@ level1BPAIProfile_clip_bb <- clipLevel1BPAIProfile(level1BPAIProfile,xleft, xrig
 level2BPAVDProfile_clip_bb <- clipLevel2BPAVDProfile(level2BPAVDProfile,xleft, xright, ybottom, ytop)
 
 ## Clip GEDI data by geometry
+
 # specify the path to shapefile for the study area
 polygon_filepath <- system.file("extdata", "shp_np.shp", package="rGEDI")
 
@@ -275,12 +276,45 @@ rh100maps
 ```
 ![](https://github.com/carlos-alberto-silva/rGEDI/blob/master/readme/fig5.png)
 
+## Compute Grids with descriptive statistics of GEDI-derived Canopy Cover and Vertical Profile Metrics (Level2B)
+```r
+# Computing the max of the Total Plant Area Index only
+pai_metrics<-gridStatsLevel2BVPM(level2BVPM = level2BVPM, func=mySetOfMetrics(pai), res=0.0005)
+
+# View maps
+pai_maps<-levelplot(pai_metrics,
+          layout=c(2, 2),
+          margin=FALSE,
+          colorkey=list(
+            space='right',
+            labels=list(at=seq(0, 1, 0.2), font=4),
+            axis.line=list(col='black'),
+            width=1),
+          par.settings=list(
+            strip.border=list(col='transparent'),
+            strip.background=list(col='transparent'),
+            axis.line=list(col='transparent')
+          ),
+          scales=list(draw=TRUE),
+          col.regions=viridis,
+          at=seq(0, 1, len=101),
+          names.attr=c("min of PAI","max of PAI","mean of PAI", "sd of PAI"))
+
+pai_maps
+```
+![](https://github.com/carlos-alberto-silva/rGEDI/blob/master/readme/fig6.png)
+
 
 ## Simulating GEDI full-waveform data from Airborne Laser Scanning (ALS) 3-D point cloud
 and extracting canopy derived metrics
 ```r
 # specify the path to ALS data
 LASfile <- system.file("extdata", "LASexample1.las", package="rGEDI")
+
+# plot LASfile
+library(lidR)
+LAS<-readLAS(LASfile)
+plot(LAS)
 
 # Simulate GEDI full-waveform
 wf<-gediWFSimulator(input=LASfile,output="gediSimulation.h5")
@@ -292,7 +326,7 @@ wfn<-gediWFNoise(input=wf,output="gediSimulation_noise.h5")
 wfmetrics<-gediWFMetrics(input=wfn,outRoot=getwd())
 head(wfmetrics)
 ```
-![](https://github.com/carlos-alberto-silva/rGEDI/blob/master/readme/fig6.png)
+![](https://github.com/carlos-alberto-silva/rGEDI/blob/master/readme/fig7.png)
 
 ### References
 Dubayah, R., Blair, J.B., Goetz, S., Fatoyinbo, L., Hansen, M., Healey, S., Hofton, M., Hurtt, G.,         Kellner, J., Luthcke, S., & Armston, J. (2020) The Global Ecosystem Dynamics Investigation:         High-resolution laser ranging of the Earth’s forests and topography. Science of Remote             Sensing, p.100002.
@@ -301,7 +335,6 @@ Hancock, S., Armston, J., Hofton, M., Sun, X., Tang, H., Duncanson, L.I., Kellne
        J.R. and Dubayah, R., 2019. The GEDI simulator: A large‐footprint waveform lidar simulator
        for calibration and validation of spaceborne missions. Earth and Space Science.
        https://doi.org/10.1029/2018EA000506
-
 
 Silva, C. A.; Saatchi, S.; Alonso, M. G. ; Labriere, N. ; Klauberg, C. ; Ferraz, A. ; Meyer, V. ;        Jeffery, K. J. ; Abernethy, K. ; White, L. ; Zhao, K. ; Lewis, S. L. ; Hudak, A. T. (2018)         Comparison of Small- and Large-Footprint Lidar Characterization of Tropical Forest                 Aboveground Structure and Biomass: A Case Study from Central Gabon. IEEE Journal of Selected       Topics in Applied Earth Observations and Remote Sensing, p. 1-15.
       https://ieeexplore.ieee.org/document/8331845
@@ -312,7 +345,8 @@ GEDI02_Av001. Accessed on February 15 2020 <https://lpdaac.usgs.gov/products/ged
 GEDI02_Bv001. Accessed on February 15 2020 <https://lpdaac.usgs.gov/products/gedi02_bv001/>
 
 # Acknowledgements
-University of Maryland and NASA Goddard Space Flight Center for developing GEDI mission.
+University of Maryland and NASA Goddard Space Flight Center for developing GEDI mission
+
 Brazilian National Council for Scientific and Technological Development (CNPq) for funding the project entitled "Mapping fuel load and simulation of fire behaviour and spread in the Cerrado biome using modeling and remote sensing technologies" and" leaded by Prof. Dr. Carine Klauberg and
 Dr. Carlos Alberto Silva.
 
