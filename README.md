@@ -305,17 +305,19 @@ pai_maps
 ![](https://github.com/carlos-alberto-silva/rGEDI/blob/master/readme/fig6.png)
 
 
-## Simulating GEDI full-waveform data from Airborne Laser Scanning (ALS) 3-D point cloud
-and extracting canopy derived metrics
+## Simulating GEDI full-waveform data from Airborne Laser Scanning (ALS) 3-D point cloud and extracting canopy derived metrics
 ```r
 # specify the path to ALS data
 LASfile <- system.file("extdata", "LASexample1.las", package="rGEDI")
 
-# plot LASfile
+# Reading and plot ALS file
 library(lidR)
 LAS<-readLAS(LASfile)
 plot(LAS)
+```
+<img align="right" src="https://github.com/carlos-alberto-silva/rGEDI/blob/master/readme/fig7.gif">
 
+```
 # Simulate GEDI full-waveform
 wf<-gediWFSimulator(input=LASfile,output="gediSimulation.h5")
 
@@ -326,7 +328,7 @@ wfn<-gediWFNoise(input=wf,output="gediSimulation_noise.h5")
 wfmetrics<-gediWFMetrics(input=wfn,outRoot=getwd())
 head(wfmetrics)
 ```
-![](https://github.com/carlos-alberto-silva/rGEDI/blob/master/readme/fig7.png)
+![](https://github.com/carlos-alberto-silva/rGEDI/blob/master/readme/fig8.png)
 
 # References
 Dubayah, R., Blair, J.B., Goetz, S., Fatoyinbo, L., Hansen, M., Healey, S., Hofton, M., Hurtt, G.,         Kellner, J., Luthcke, S., & Armston, J. (2020) The Global Ecosystem Dynamics Investigation:         High-resolution laser ranging of the Earth’s forests and topography. Science of Remote             Sensing, p.100002.
