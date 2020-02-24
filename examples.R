@@ -191,10 +191,24 @@ raster::crs(shpi)<-"+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs +towgs84=0,
 raster::projection(shpi)
 rgdal::writeOGR(shpi,"C:\\trina\\03_files","GEDI02_B_2019108080338_O01964_T05337_02_001_01_projection.shp", drive="ESRI Shapefile")
 
+head(shpi@data)
 
+library(leaflet)
+leaflet() %>%
+  addMarkers(shpi$lon_lowestmode,
+             shpi$lat_lowestmode,
+                   radius = 1,
+                   opacity = 1,
+                   color = col)  %>%
+  addScaleBar(options = list(imperial = FALSE)) %>%
+  addPolygons(data=polygon_spdf,weight=1,col = 'white',
+              opacity = 1, fillOpacity = 0) %>%
+  addProviderTiles(providers$Esri.WorldImagery)
 ###########
 
-level2b6<-readLevel2B("E:\\GEDI02_B_2019108080338_O01964_T05337_02_001_01.h5")
+level2b6<-readLevel2B("C:\\Users\\carlo\\Documents\\GEDI_package\\GEDI02_B_2019108015252_O01960_T03910_02_001_01.h5")
+
+level2BVPM<-getLevel2BVPM(level2b6)
 
 polygon_spdf<-raster::shapefile("C:\\Users\\carlo\\OneDrive\\01_Projeto_PrevFogo\\01_data\\01_shp\\03_UCs_shp\\ucs_brazil2.shp")
 ext<-raster::extent(polygon_spdf)
@@ -280,16 +294,34 @@ map <- qmap(center=coordinates(polygon_spdf), zoom = 12, maptype = 'hybrid')
 map + geom_point(data = crimes, aes(x = Longitude, y = Latitude), color="red", size=3, alpha=0.5)
 
 
+require(maptools)
 library(mapview)
-xyz<-SpatialPointsDataFrame(cbind(x=paiz_clip1$lon_lowestmode,
-                                  y=paiz_clip1$lat_lowestmode), data=data.frame(cbind(x=paiz_clip1$lon_lowestmode,
-                                                                           y=paiz_clip1$lat_lowestmode,
-                                                                           z=paiz_clip1$height_bin0-paiz_clip1$height_lastbin)))
+head(level2BVPM)
+xyz<-SpatialPointsDataFrame(cbind(x=level2BVPM$lon_lowestmode,
+                                  y=level2BVPM$lat_lowestmode), data=data.frame(cbind(x=level2BVPM$lon_lowestmode,
+                                                                           y=level2BVPM$lat_lowestmode,
+                                                                           z=level2BVPM$elev_highestreturn-level2BVPM$elev_lowestmode)))
 proj4string(xyz)<-"+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"
 proj4string(polygon_spdf)<-"+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"
+xyz@data$z[xyz@data$z<0]<-0
+xyz@data$z[xyz@data$z>50]<-50
 
+summary(xyz@data$z)
+windows()
+hist(xyz@data$z)
 m1<-mapview(xyz, zcol = "z", map.types = "Esri.WorldImagery", legend = TRUE)
+
+windows()
 
 kkj<-mapview(polygon_spdf, alpha.regions = 0.2, aplha = 1,map.types = "Esri.WorldImagery", legend = TRUE)
 
 kkj+m1
+
+
+library(leaflet)
+windows()
+leaflet() %>%
+  addMarkers(xyz@data$x,
+             xyz@data$y)  %>%
+  addScaleBar(options = list(imperial = FALSE)) %>%
+  addProviderTiles(providers$Esri.WorldImagery)

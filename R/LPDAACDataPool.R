@@ -1,9 +1,12 @@
 #'Download GEDI data
 #'
-#'@description Download GEDI data from LP DAAC Data Pool
+#'@description Download GEDI data from LP DAAC Data Pool. Users will need to enter their
+#'Earth Explore login Information for downloading the data.
 #'
-#'@param filepath vector; path to the GEDI data
-#'@param outdir vector, output directory for downloading GEDI data
+#'@usage LPDAACDataPool(filepath,outdir)
+#'
+#'@param filepath Vector object; path to the GEDI data
+#'@param outdir Vector object, output directory for downloading GEDI data
 #'@references Credits to Cole Krehbiel. Code adpted from <https://git.earthdata.nasa.gov/projects/LPDUR/repos/daac_data_download_r/browse/DAACDataDownload.R>
 #'@examples
 #'\dontrun{
@@ -47,7 +50,7 @@ LPDAACDataPool<-function(filepath,outdir){
 
       cat(paste0("Downloading file ",filename," \n"))
       # Write file to disk (authenticating with netrc) using the current directory/filename
-      response <- httr::GET(files[i], httr::write_disk(paste0(outputdir,"\\",filename), overwrite = TRUE), httr::progress(),
+      response <- httr::GET(files[i], httr::write_disk(paste0(outdir,"\\",filename), overwrite = TRUE), httr::progress(),
                             httr::config(netrc = TRUE, netrc_file = netrc), httr::set_cookies("LC" = "cookies"))
 
       # Check to see if file downloaded correctly

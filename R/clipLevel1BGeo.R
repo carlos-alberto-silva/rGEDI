@@ -1,54 +1,61 @@
-#'Clip GEDI x data
+#'Clip Level1BGeo data by Coordinates
 #'
-#'@description Clip GEDI x data within a given bounding coordinates
+#'@description This function clips GEDI level1B extracted geolocation (level1BGeo)
+#' data within given bounding coordinates
 #'
+#'@usage clipLevel1BGeo(level1BGeo, xleft, xright, ybottom, ytop)
 #'
-#'@param x x; S4 object of class "gedi.level1b.dt"
-#'@param extent Extent object of a Spatial object .
-#'@return Returns An object of class "gedi.level1b.dt"; subset of GEDI Level1B data
+#'@param level1BGeo A GEDI Level1b object (output of \code{\link[rGEDI:readLevel1B]{readLevel1B}} function). A S4 object of class "gedi.level1b".
+#'@param xleft Numeric. West longitude (x) coordinate of bounding rectangle, in decimal degrees.
+#'@param xright Numeric. East longitude (x) coordinate of bounding rectangle, in decimal degrees.
+#'@param ybottom Numeric. South latitude (y) coordinate of bounding rectangle, in decimal degrees.
+#'@param ytop Numeric. North latitude (y) coordinate of bounding rectangle, in decimal degrees.
+#'
+#'@return An S4 object of class \code{\link[data.table:data.table]{data.table-class}}.
+#'
 #'@examples
+#'# specify the path to GEDI Level 1B data
+#'level1bpath <- system.file("extdata", "GEDIexample_level01B.h5", package="rGEDI")
 #'
-#'#' GEDI level1B file path
-#'level1_filepath = system.file("extdata", "lvis_level1_clip.h5", package="rLVIS")
+#'# Reading GEDI level1B data
+#'level1b <- readLevel1B(level1bpath)
 #'
-#'#' Reading LVIS level 2 file
-#'level1_waveform = readLevel1b(level1Bfilepath)
+#'# Get GEDI level1B geolocations
+#'level1BGeo<-getLevel1BGeo(level1b)
 #'
-#'# Rectangle area for cliping
-#'xmin = -116.4683
-#'xmax = -116.3177
-#'ymin = 46.75208
-#'ymax = 46.84229
+#'# Bounding rectangle coordinates
+#'xleft = -116.4683
+#'xright = -116.5583
+#'ybottom = 46.75208
+#'ytop = 46.84229
 #'
-#'# creating an exent object
-#'ext<-extent(c(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax))
-#'
-#'clipped_x = clipLevel1(x, extent=ext)
+#'# clip by boundary box coordinates
+#'level1bGeo_clip <- clipLevel1BGeo(level1BGeo,xleft, xright, ybottom, ytop)
 #'
 #'library(leaflet)
 #'leaflet() %>%
-#'  addCircleMarkers(clipped_x@dt$longitude_bin0,
-#'                   clipped_x@dt$latitude_bin0,
+#'  addCircleMarkers(level1bGeo_clip@dt$longitude_bin0,
+#'                   level1bGeo_clip@dt$latitude_bin0,
 #'                   radius = 1,
 #'                   opacity = 1,
 #'                   color = "red")  %>%
 #'  addScaleBar(options = list(imperial = FALSE)) %>%
 #'  addProviderTiles(providers$Esri.WorldImagery)
 #'@export
-clipx = function(x,xleft, xright, ybottom, ytop){
+clipLevel1BGeo = function(level1BGeo,xleft, xright, ybottom, ytop){
   # xleft ybottom xright ytop
   mask =
-    x$longitude_bin0 >= xleft &
-    x$longitude_bin0 <= xright &
-    x$latitude_bin0 >= ybottom &
-    x$latitude_bin0 <=  ytop &
-    x$longitude_lastbin >= xleft &
-    x$longitude_lastbin <= xright &
-    x$latitude_lastbin >= ybottom &
-    x$latitude_lastbin <=  ytop
+    level1BGeo$longitude_bin0 >= xleft &
+    level1BGeo$longitude_bin0 <= xright &
+    level1BGeo$latitude_bin0 >= ybottom &
+    level1BGeo$latitude_bin0 <=  ytop &
+    level1BGeo$longitude_lastbin >= xleft &
+    level1BGeo$longitude_lastbin <= xright &
+    level1BGeo$latitude_lastbin >= ybottom &
+    level1BGeo$latitude_lastbin <=  ytop
 
-  mask = (1:length(x$longitude_bin0))[mask]
-  newFile<-x[mask,]
+  mask = (1:length(level1BGeo$longitude_bin0))[mask]
+  newFile<-level1BGeo[mask,]
   #newFile<- new("gedi.level1b.dt", dt = x[mask,])
   if (nrow(newFile) == 0) {print("The polygon does not overlap the GEDI data")} else {
     return (newFile)
@@ -56,37 +63,43 @@ clipx = function(x,xleft, xright, ybottom, ytop){
 
 }
 
-#'Clip GEDI x data by geometry
+#'Clip Level1BGeo data by geometry
 #'
-#'@description Clip GEDI x data within a given geometry area
+#'@description This function clips GEDI level1B extracted geolocation (level1BGeo)
+#' data within given geometry
 #'
+#'@usage clipLevel1BGeo(level1BGeo, polygon_spdf, output)
 #'
-#'@param x x; S4 object of class "gedi.level1b.dt"
-#'@param polygon_spdf SpatialDataFrame. A polygon dataset for clipping the waveform
-#'@return Returns An object of class "gedi.level1b.dt"; subset of GEDI Level1B data
+#'@param level1BGeo A GEDI Level1b object (output of \code{\link[rGEDI:readLevel1B]{readLevel1B}} function). A S4 object of class "gedi.level1b".
+#'@param polygon_spdf Polygon. An object of class \code{\link[sp]{SpatialPolygonsDataFrame-class}},
+#'which can be loaded as an ESRI shapefile using \code{\link[rgdal:readOGR]{readOGR}} function in the \emph{rgdal} package.
+#'@param split_by Polygon id. If defined, GEDI data will be clipped by each polygon using the polygon id from table of attribute defined by the user
+#'@return A S4 object of class \code{\link[data.table:data.table]{data.table-class}}.
+#'
 #'@examples
 #'
-#'#' GEDI level1B file path
-#'level1Bfilepath = system.file("extdata", "lvis_level1_clip.h5", package="rGEDI")
+#'# specify the path to GEDI Level 1B data
+#'level1bpath <- system.file("extdata", "GEDIexample_level01B.h5", package="rGEDI")
 #'
-#'#' Reading GEDI level1B file
-#'level1b = readLevel1b(level1Bfilepath)
+#'# Reading GEDI level1B data
+#'level1b <- readLevel1B(level1bpath)
 #'
-#'#' Creating GEDI x object
-#'x = x(level1b)
+#'# Get GEDI level1B geolocations
+#'level1BGeo<-getLevel1BGeo(level1b)
 #'
-#'# Polgons file path
+#'# specify the path to shapefile
 #'polygon_filepath <- system.file("extdata", "clip_polygon.shp", package="rGEDI")
 #'
-#'# Reading GEDI level2B file
-#'polygon_spdf<-raster::shapefile(polygons_filepath)
+#'# Reading shapefile as SpatialPolygonsDataFrame object
+#'library(rgdal)
+#'polygon_spdf<-readOGR(polygons_filepath)
 #'
-#'clipped_x = clipLevel1Geometry(x, polygon_spdf)
+#'level1bGeo_clip = clipLevel1BGeometry(level1bGeo, polygon_spdf, split_by="id")
 #'
 #'library(leaflet)
 #'leaflet() %>%
-#'  addCircleMarkers(clipped_x@dt$longitude_bin0,
-#'                   clipped_x@dt$latitude_bin0,
+#'  addCircleMarkers(level1b_clip@dt$longitude_bin0,
+#'                   level1b_clip@dt$latitude_bin0,
 #'                   radius = 1,
 #'                   opacity = 1,
 #'                   color = "red")  %>%
@@ -95,26 +108,26 @@ clipx = function(x,xleft, xright, ybottom, ytop){
 #'              opacity = 1, fillOpacity = 0) %>%
 #'  addProviderTiles(providers$Esri.WorldImagery)
 #'@export
-clipxGeometry = function(x, polygon_spdf, split_by="id") {
+clipxGeometry = function(level1BGeo, polygon_spdf, split_by="id") {
   exshp<-raster::extent(polygon_spdf)
-  x<-clipLevel2BVPM(x, xleft=exshp[1], xright=exshp[2], ybottom=exshp[3], ytop=exshp[4])
-  if (nrow(x) == 0) {print("The polygon does not overlap the GEDI data")} else {
-    points = sp::SpatialPointsDataFrame(coords=matrix(c(x$lon_lowestmode, x$lat_lowestmode), ncol=2),
-                                        data=data.frame(id=1:length(x$lon_lowestmode)), proj4string = polygon_spdf@proj4string)
+  level1BGeo<-clipLevel2BVPM(level1BGeo, xleft=exshp[1], xright=exshp[2], ybottom=exshp[3], ytop=exshp[4])
+  if (nrow(level1BGeo) == 0) {print("The polygon does not overlap the GEDI data")} else {
+    points = sp::SpatialPointsDataFrame(coords=matrix(c(level1BGeo$lon_lowestmode, level1BGeo$lat_lowestmode), ncol=2),
+                                        data=data.frame(id=1:length(level1BGeo$lon_lowestmode)), proj4string = polygon_spdf@proj4string)
     points(points, col="red")
     pts = raster::intersect(points, polygon_spdf)
     if (!is.null(split_by)){
 
       if ( any(names(polygon_spdf)==split_by)){
         mask = as.integer(pts@data$id)
-        newFile<-x[mask,]
+        newFile<-level1BGeo[mask,]
         newFile$poly_id<-pts@data[,split_by]
       } else {stop(paste("The",split_by,"is not included in the attribute table.
                        Please check the names in the attribute table"))}
 
     } else {
       mask = as.integer(pts@data$id)
-      newFile<-x[mask,]
+      newFile<-level1BGeo[mask,]
     }
     #newFile<- new("gedi.level1b.dt", dt = x2@dt[mask,])
     return (newFile)}

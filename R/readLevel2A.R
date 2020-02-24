@@ -1,13 +1,24 @@
-#'Read GEDI Level2A data
+#'Read GEDI Basic Waveform Metrics (Level2A data)
 #'
-#'@description This function reads GEDI level2A data
+#'@description This function reads GEDI level2A products: ground elevation, canopy top height, and relative heights (RH).
 #'
-#'@param level2bpath file path pointing to GEDI level2B data (H5 format)
-#'@return level2AFile; S4 object of class "gedi.level2a";
+#'
+#'@usage readLevel2A(level2Apath)
+#'
+#'@param level2Apath file path pointing to GEDI level2A data. Data in HDF5 Hierarchical Data Format (.h5).
+#'
+#'@return S4 object of class "gedi.level1a".
+#'
+#'
+#'#'@examples
+#'# specify the path and data file to be read
+#'level2apath <- system.file("extdata", "GEDIexample_level02A.h5", package="rGEDI")
+#'
+#'# read the file
+#'gedilevel2a<-readLevel2A(level2apath)
 #'
 #'@import hdf5r
 #'@export
-#list.datasets(level1b., recursive = T))
 readLevel2A <-function(level2Apath) {
   level2a_h5 <- hdf5r::H5File$new(level2Apath, mode = 'r')
   level2a<- new("gedi.level2a", h5 = level2a_h5)

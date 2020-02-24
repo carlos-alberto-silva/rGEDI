@@ -1,42 +1,43 @@
-#'Get GEDI Level1B waveform
+#'Get Pulse Full-Waveform (GEDI Level1B)
 #'
-#'@description Extract GEDI Level1B waveform for a given shot number
+#'@description This function extracts the full waveform of a given pulse from GEDI Level1B data.
 #'
+#'@usage getLevel1BWF(level1b, shot_number)
 #'
-#'@param level1b h5file; S4 object of class H5File
-#'@param shot_number Shot number, an vector represeting
+#'@param level1b A GEDI Level1B object (output of \code{\link[rGEDI:readLevel1B]{readLevel1B}} function). A S4 object of class "gedi.level1b".
+#'@param shot_number Shot number. A scalar represeting the shot number of a giving pulse.
 #'
-#'@return Returns An object of class "gedi.waveform";
+#'@return Returns An object of class "gedi.fullwaveform".
+#'
+#'@details Shot numbers can be extracted using \code{\link[rGEDI:getLevel1B]{readLevel1B}} function.
 #'
 #'@examples
+#'# specify the path to GEDI Level 1B data
+#'level1bpath <- system.file("extdata", "GEDIexample_level01B.h5", package="rGEDI")
 #'
-#'#' LVIS level 2 file path
-#'level1_filepath = system.file("extdata", "lvis_level1_clip.h5", package="rLVIS")
+#'# Reading GEDI level1B data
+#'level1b <- readLevel1B(level1bpath)
 #'
-#'# Rectangle
-#'xleft = 9.35986
-#'xright = 9.35988
-#'ybottom = 0.5786
-#'ytop = 0.5790
+#'# extract the desired information into a dataframe
+#'wf <- getLevel1BWF(level1b, shot_number="19850022900500000")
 #'
-#'#' Reading LVIS level 2 file
-#'level1_waveform = readLevel1b(level1_filepath)
+#'# Plot Full-waveform
+#'par(mfrow = c(1,2), cex.axis = 1.5)
+#'plot(wf, relative=FALSE, polygon=TRUE, type="l", lwd=2, col="forestgreen",
+#'xlab="", ylab="Elevation (m)")
 #'
-#'output = tempfile(fileext="h5")
-#'
-#'clipped_waveform = clipLevel1(level1_waveform, output, xleft, xright, ybottom, ytop)
+#'plot(wf, relative=TRUE, polygon=TRUE, type="l", lwd=2, col="forestgreen",
+#'xlab="Waveform Amplitude (%)", ylab="Elevation (m)")
 #'
 #'@export
 #'
-getxWF<-function(x,shot_number){
-  x<-x@h5
+getLevel1BWF<-function(level1b,shot_number){
+  level1b<-level1b@h5
   groups_id<-grep("BEAM\\d{4}$",gsub("/","",
-                                     list.groups(x, recursive = F)), value = T)
+                                     list.groups(level1b, recursive = F)), value = T)
 
-  i = NULL
-  #k<-"BEAM1011"
   for ( k in groups_id){
-    gid<-max(x[[paste0(k,"/shot_number")]][]==shot_number)
+    gid<-max(level1b[[paste0(k,"/shot_number")]][]==shot_number)
     if (gid==1) {i=k}
   }
 
@@ -44,13 +45,13 @@ getxWF<-function(x,shot_number){
     stop(paste0("Shot number ", shot_number, " was not found within the dataset!"))
   }
 
-  shot_number_i<-x[[paste0(i,"/shot_number")]][]
+  shot_number_i<-level1b[[paste0(i,"/shot_number")]][]
   shot_number_id<-which(shot_number_i[]==shot_number)
-  elevation_bin0<-x[[paste0(i,"/geolocation/elevation_bin0")]][]
-  elevation_lastbin<-x[[paste0(i,"/geolocation/elevation_lastbin")]][]
-  rx_sample_count<-x[[paste0(i,"/rx_sample_count")]][]
-  rx_sample_start_index<-x[[paste0(i,"/rx_sample_start_index")]][]
-  rxwaveform_i<-x[[paste0(i,"/rxwaveform")]][rx_sample_start_index[shot_number_id]:(rx_sample_start_index[shot_number_id]+rx_sample_count[shot_number_id]-1)]
+  elevation_bin0<-level1b[[paste0(i,"/geolocation/elevation_bin0")]][]
+  elevation_lastbin<-level1b[[paste0(i,"/geolocation/elevation_lastbin")]][]
+  rx_sample_count<-level1b[[paste0(i,"/rx_sample_count")]][]
+  rx_sample_start_index<-level1b[[paste0(i,"/rx_sample_start_index")]][]
+  rxwaveform_i<-level1b[[paste0(i,"/rxwaveform")]][rx_sample_start_index[shot_number_id]:(rx_sample_start_index[shot_number_id]+rx_sample_count[shot_number_id]-1)]
   rxwaveform_inorm<-(rxwaveform_i-min(rxwaveform_i))/(max(rxwaveform_i)-min(rxwaveform_i))*100
   elevation_bin0_i<-elevation_bin0[shot_number_id]
   elevation_lastbin_i<-elevation_lastbin[shot_number_id]
