@@ -8,10 +8,10 @@
 #define main gediMetric
 #define control metric_control
 #define readCommands readCommands_metric
-#define fprintf(stdout, ...) Rprintf(__VA_ARGS__)
+#define fprintf(out, ...) (out) == stdout ? Rprintf(__VA_ARGS__) : fprintf(out, __VA_ARGS__)
     #include "gedisimulator/gediMetric.h"
     #include "gedisimulator/gediMetric.c"
-#undef fprintf(stdout, ...)
+#undef fprintf
 #undef readCommands
 #undef control
 #undef main
@@ -229,14 +229,14 @@ SEXP C_gediMetrics(
         SET_VECTOR_ELT(vec, i++, PROTECT(R_NilValue));
 
         C_gediMetrics(
-            mkString("E:/Documentos/sample.h5"),
+            mkString("E:/Documentos/sample_noised.h5"),
             mkString("E:/Documentos/sample"),
             R_NilValue,
             ScalarLogical(0),
             ScalarLogical(0),
             ScalarLogical(0),
             ScalarLogical(0),
-            ScalarLogical(0),
+            ScalarLogical(1),
             R_NilValue,
             R_NilValue,
             R_NilValue,
