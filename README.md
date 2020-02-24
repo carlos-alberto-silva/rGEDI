@@ -328,7 +328,7 @@ head(wfmetrics)
 ```
 ![](https://github.com/carlos-alberto-silva/rGEDI/blob/master/readme/fig7.png)
 
-### References
+# References
 Dubayah, R., Blair, J.B., Goetz, S., Fatoyinbo, L., Hansen, M., Healey, S., Hofton, M., Hurtt, G.,         Kellner, J., Luthcke, S., & Armston, J. (2020) The Global Ecosystem Dynamics Investigation:         High-resolution laser ranging of the Earth’s forests and topography. Science of Remote             Sensing, p.100002.
 
 Hancock, S., Armston, J., Hofton, M., Sun, X., Tang, H., Duncanson, L.I., Kellner,
@@ -339,13 +339,10 @@ Hancock, S., Armston, J., Hofton, M., Sun, X., Tang, H., Duncanson, L.I., Kellne
 Silva, C. A.; Saatchi, S.; Alonso, M. G. ; Labriere, N. ; Klauberg, C. ; Ferraz, A. ; Meyer, V. ;        Jeffery, K. J. ; Abernethy, K. ; White, L. ; Zhao, K. ; Lewis, S. L. ; Hudak, A. T. (2018)         Comparison of Small- and Large-Footprint Lidar Characterization of Tropical Forest                 Aboveground Structure and Biomass: A Case Study from Central Gabon. IEEE Journal of Selected       Topics in Applied Earth Observations and Remote Sensing, p. 1-15.
       https://ieeexplore.ieee.org/document/8331845
 
-GEDI webpage. Accessed on February 15 2020 <https://gedi.umd.edu/>
-
-GEDI01_Bv001. Accessed on February 15 2020 <https://lpdaac.usgs.gov/products/gedi01_bv001/> 
-
-GEDI02_Av001. Accessed on February 15 2020 <https://lpdaac.usgs.gov/products/gedi02_av001/> 
-
-GEDI02_Bv001. Accessed on February 15 2020 <https://lpdaac.usgs.gov/products/gedi02_bv001/> 
+GEDI webpage. Accessed on February 15 2020 https://gedi.umd.edu/ 
+GEDI01_Bv001. Accessed on February 15 2020 https://lpdaac.usgs.gov/products/gedi01_bv001/  GEDI02_Av001. Accessed on February 15 2020 https://lpdaac.usgs.gov/products/gedi02_av001/  
+GEDI02_Bv001. Accessed on February 15 2020 https://lpdaac.usgs.gov/products/gedi02_bv001/  
+GEDI Finder. Accessed on February 15 2020 https://lpdaacsvc.cr.usgs.gov/services/gedifinder
 
 # Acknowledgements
 University of Maryland and NASA Goddard Space Flight Center for developing GEDI mission
