@@ -1,4 +1,4 @@
-stopifnotMessage = function(msg, ...) {
+stopifnotMessage = function(...) {
   tryCatch(
     stopifnot(...),
     error=function(e) {
@@ -26,7 +26,7 @@ checkInteger = function(x) {
 }
 
 checkCharacter = function(x) {
-  return (is.null(x) || (length(x)) == 1 && is.character(x))
+  return (is.null(x) || (length(x) == 1 && is.character(x)))
 }
 
 checkFilepath = function(x, newFile=TRUE, optional = TRUE) {
@@ -44,5 +44,33 @@ checkFilepath = function(x, newFile=TRUE, optional = TRUE) {
   if (!newFile)
     return (file.exists(x))
 
-  return TRUE
+  return (TRUE)
 }
+
+checkParentDir = function(x, optional=FALSE) {
+  if (optional && is.null(x)) {
+    return (TRUE)
+  }
+  dirName = fs::path_dir(x)
+  return (fs::dir_exists(dirName)[[1]])
+}
+
+inputOrInList = function(input) {
+  inList=NULL
+  if (length(input) > 1) {
+    inList = tempfile(fileext=".txt")
+    fileHandle = file(inList, "w")
+    writeLines(input, fileHandle)
+    close(fileHandle)
+    inFile = fileHandle
+    return (list(NULL, inList))
+  }
+  return (list(input, NULL))
+}
+
+cleanInList = function(x) {
+  if (!is.null(x[[2]]) && file.exists(x[[2]])) {
+    file.remove(x[[2]])
+  }
+}
+

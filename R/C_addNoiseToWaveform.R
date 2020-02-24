@@ -17,13 +17,28 @@ gediWFNoise <- function(
   input,
   output,
   seed = NULL,
-  linkNoise = NULL,
+  linkNoise = c(3.0103, 0.95),
   dcBias = NULL,
   linkFsig = NULL,
-  linkPsig = NULL,
+  linkPsig = 6.6383,
   trueSig = NULL,
-  bitRate = NULL) {
-  loadLibrary()
+  bitRate = 12) {
+
+
+
+  # Check values
+  stopifnotMessage(
+    all(file.exists(input)),
+    all(fs::path_ext(input) == "h5"),
+    checkFilepath(output, newFile=TRUE, optional=FALSE),
+    checkInteger(seed),
+    checkNumericLength(linkNoise, 2),
+    checkNumeric(dcBias),
+    checkNumeric(linkFsig),
+    checkNumeric(linkPsig),
+    checkNumeric(trueSig),
+    checkInteger(bitRate)
+  )
   res = .Call("C_addNoiseHDF",
         input,
         output,
