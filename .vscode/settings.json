@@ -1,0 +1,25 @@
+{
+    "files.associations": {
+        "gediio.h": "c",
+        "*.rmd": "markdown",
+        "gedirat.h": "c",
+        "liblasread.h": "c",
+        "stdint.h": "c",
+        "gedimetric.h": "c",
+        "photoncount.h": "c",
+        "gedinoise.h": "c",
+        "argparse.h": "c",
+        "memory": "c",
+        "tuple": "c",
+        "type_traits": "c",
+        "utility": "c",
+        "xmemory0": "c",
+        "xtr1common": "c",
+        "xutility": "c",
+        "system_error": "c",
+        "tools.h": "c",
+        "liblasprocess.h": "c",
+        "liblidvoxel.h": "c",
+        "rembedded.h": "c"
+    }
+}

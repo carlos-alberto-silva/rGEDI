@@ -1,38 +1,36 @@
-#'Clip GEDI level2a data
+#'Clip GEDI Level2A data by Coordinates
 #'
-#'@description Clip GEDI Level1 data within a given bounding coordinates
+#'@description This function clips GEDI Level2A data within given bounding coordinates
 #'
+#'@usage clipLevel2a(level2a, xleft, xright, ybottom, ytop, output)
 #'
-#'@param level2a h5file; S4 object of class H5File
-#'@param xleft numeric. left x coordinates of rectangles.
-#'@param xright numeric. right x coordinates of rectangles.
-#'@param ybottom numeric. bottom y coordinates of rectangles.
-#'@param ytop numeric. top y coordinates of rectangles.
-#'@param output optional character path where to save the new h5file. Default "" (temporary file).
+#'@param level2a A GEDI Level2A object (output of \code{\link[rGEDI:readLevel2A]{readLevel2A}} function). A S4 object of class "gedi.level2a".
+#'@param xleft Numeric. West longitude (x) coordinate of bounding rectangle, in decimal degrees.
+#'@param xright Numeric. East longitude (x) coordinate of bounding rectangle, in decimal degrees.
+#'@param ybottom Numeric. South latitude (y) coordinate of bounding rectangle, in decimal degrees.
+#'@param ytopNumeric. North latitude (y) coordinate of bounding rectangle, in decimal degrees.
+#'@param output Optional character path where to save the new hdf5file. The default stores a temporary file only.
 #'
-#'@return Returns An object of class H5File; subset of LVIS Level2 data
-#'@author Caio Hamamura
+#'@return An S4 object of class "gedi.level2a".
+#'
 #'@examples
+#'# specify the path to GEDI level2A data
+#'level2apath <- system.file("extdata", "GEDIexample_level02A.h5", package="rGEDI")
 #'
-#'#' LVIS level 2A file path
-#' #level2apath = system.file("extdata", "lvis_level1_clip.h5", package="rLVIS")
+#'# Reading GEDI level2A data
+#'level2a<-readLevel2a(level1bpath)
 #'
-#'# Rectangle
-#' #xleft = 81
-#' #xright = 83
-#' #ybottom = 2
-#' #ytop = 4
+#'# Bounding rectangle coordinates
+#'xleft = -116.4683
+#'xright = -116.5583
+#'ybottom = 46.75208
+#'ytop = 46.84229
 #'
-#'#' Reading LVIS level 2 file
-#' #level1_waveform = readlevel2a(level2apath)
-#'
-#' #output = tempfile(fileext=".h5")
-#'
-#' #clipped_waveform = cliplevel2a(level1_waveform, output, xleft, xright, ybottom, ytop)
+#'# clip by extent boundary box
+#'level2a_clip <- clipLevel2A(level1a,xleft,xright,ybottom,ytop)
 #'
 #'@export
-#'
-cliplevel2ah5 = function(level2a, xleft, xright, ybottom, ytop, output=""){
+clipLevel2A = function(level2a, xleft, xright, ybottom, ytop, output=""){
   if (output == "") {
     output = tempfile(fileext = ".h5")
   }
@@ -66,34 +64,34 @@ cliplevel2ah5 = function(level2a, xleft, xright, ybottom, ytop, output=""){
   return (result)
 }
 
-#'Clip LVIS Level1 data by geometry
+#'Clip GEDI Level2A data by geometry
 #'
-#'@description Clip LVIS Level1 data within a given bounding coordinates
+#'@description This function clips GEDI Level2A data within given geometry
 #'
+#'@usage clipLevel2a(level2a, polygon_spdf, output)
 #'
-#'@param level2a h5file; S4 object of class H5File
-#'@param polygon_spdf SpatialDataFrame. A polygon dataset for clipping the waveform
+#'@param level2a A GEDI Level2A object (output of \code{\link[rGEDI:readLevel2A]{readLevel2A}} function). A S4 object of class "gedi.level2a".
+#'@param polygon_spdf Polygon. An object of class \code{\link[sp]{SpatialPolygonsDataFrame-class}},
+#'which can be loaded as an ESRI shapefile using \code{\link[rgdal:readOGR]{readOGR}} function in the \emph{rgdal} package.
 #'@param output optional character path where to save the new h5file. Default "" (temporary file).
 #'
-#'@return Returns An object of class H5File; subset of LVIS Level1 data
-#'@author Caio Hamamura
+#'@return Returns a S4 object of class "gedi.level2a".
 #'@examples
 #'
-#'#' LVIS level 2 file path
-#' #level1_filepath = system.file("extdata", "biomas.zip", package="rGEDI")
+#'# specify the path to GEDI level2A data
+#'level2apath <- system.file("extdata", "GEDIexample_level02A.h5", package="rGEDI")
 #'
-#'#' Reading LVIS level 2 file
-#' #level1_waveform = readlevel2a(level1_filepath)
+#'# Reading GEDI level2A data
+#'level2a<-readLevel2a(level1bpath)
 #'
-#'# Polgons file path
-#' #polygons_filepath <- system.file("extdata", "LVIS_Mondah_clip_polygon.shp", package="rLVIS")
+#'# specify the path to shapefile
+#'polygon_filepath <- system.file("extdata", "clip_polygon.shp", package="rGEDI")
 #'
-#'# Reading LVIS level 2 file
-#' #polygon_spdf<-raster::shapefile(polygons_filepath)
+#'# Reading shapefile as SpatialPolygonsDataFrame object
+#'library(rgdal)
+#'polygon_spdf<-readOGR(polygons_filepath)
 #'
-#' #output = tempfile(fileext="h5")
-#'
-#' #clipped_waveform = clipLevel1Geometry(level1_waveform, output, polygon_spdf)
+#'level2a_clip <- clipLevel2AGeometry(level2a,polygon_spdf)
 #'
 #'@export
 cliplevel2ah5Geometry = function(level2a, polygon_spdf, output="") {

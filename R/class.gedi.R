@@ -46,7 +46,43 @@ gedi.level2b <- setClass(
   slots = list(dt = "data.table")
 )
 
+
+#'Plot GEDI full-waveform
+#'
+#'@description Plots a single GEDI full-waveform (level1b)
+#'
+#'@usage plot(x, relative, polygon,...)
+#'
+#'@param x An object of class "gedi.fullwaveform". (output of \code{\link[rGEDI:getLevel1BWF]{getLevel1BWF}} function)
+#'@param relative if TRUE, the Wavform Amplitude will be showed in percentage (%)
+#'@param polygon if TRUE, polygon will be added to the plot
+#'
+#'@exemple
+#'#'# specify the path to GEDI Level 1B data
+#'level1bpath <- system.file("extdata", "GEDIexample_level01B.h5", package="rGEDI")
+#'
+#'# Reading GEDI level1B data
+#'level1b <- readLevel1B(level1bpath)
+#'
+#'# extract the desired information into a dataframe
+#'wf <- getLevel1BWF(level1b, shot_number="19850022900500000")
+#'
+#'# Plot Full-waveform
+#'par(mfrow = c(1,2), cex.axis = 1.5)
+#'plot(wf, relative=FALSE, polygon=TRUE, type="l", lwd=2, col="forestgreen",
+#'xlab="", ylab="Elevation (m)")
+#'
+#'plot(wf, relative=TRUE, polygon=TRUE, type="l", lwd=2, col="forestgreen",
+#'xlab="Waveform Amplitude (%)", ylab="Elevation (m)")
+#'
+#' @rdname plot
 setMethod("plot", signature("gedi.fullwaveform", y = "missing"), function(x,relative=FALSE,polygon=FALSE,...) {
+
+  if (!class(x)=="gedi.fullwaveform"){
+
+    print("Invalid input file. It should be an object of class 'gedi.fullwaveform' ")
+  } else {
+
 
   x0<-as.data.frame(x@dt)
   x<-x0[,1]
@@ -71,6 +107,6 @@ setMethod("plot", signature("gedi.fullwaveform", y = "missing"), function(x,rela
     } else {
       plot(x=x,y=z)
     }
-
+  }
 })
 

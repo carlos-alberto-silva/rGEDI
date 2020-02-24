@@ -1,0 +1,34 @@
+{
+    "configurations": [
+        {
+            "name": "Win64",
+            "includePath": [
+                "${workspaceFolder}/src/**",
+                "${workspaceFolder}/windows/gdal2-2.2.3/include/gdal",
+                "${workspaceFolder}/windows/libgeotiff-1.4.3",
+                "${workspaceFolder}/windows/libtiff-4.0.9/include",
+                "${workspaceFolder}/windows/mingw64-libhdf5-dev-1.8.20/include",
+                "C:/Program Files/R/R-3.5.3/include"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE",
+                "WIN32",
+                "_WIN32",
+                "DEBUG",
+                "DLLEXPORT",
+                "_USE_MATH_DEFINES",
+                "H5_BUILT_AS_DYNAMIC_LIB",
+                "DLL_EXPORTS",
+                "USEPHOTON"
+            ],
+            "windowsSdkVersion": "10.0.17763.0",
+            "cStandard": "c11",
+            "cppStandard": "c++17",
+            "compilerPath": "C:/RBuildTools/3.5/mingw_64/bin/gcc.exe",
+            "intelliSenseMode": "gcc-x64"
+        }
+    ],
+    "version": 4
+}

@@ -1,40 +1,43 @@
-#'Clip GEDI Level1B data
+#'Clip GEDI Level1B data by Coordinates
 #'
-#'@description Clip GEDI Level1 data within a given bounding coordinates
+#'@description This function clips GEDI Level1B data within given bounding coordinates
 #'
+#'@usage clipLevel1B(level1b, xleft, xright, ybottom, ytop, output)
 #'
-#'@param level1b h5file; S4 object of class H5File.
-#'@param xleft numeric. left x coordinates of rectangles.
-#'@param xright numeric. right x coordinates of rectangles.
-#'@param ybottom numeric. bottom y coordinates of rectangles.
-#'@param ytop numeric. top y coordinates of rectangles.
-#'@param output optional character path where to save the new h5file. Default "" (temporary file).
+#'@param level1b A GEDI Level1B object (output of \code{\link[rGEDI:readLevel1B]{readLevel1B}} function). A S4 object of class "gedi.level1b".
+#'@param xleft Numeric. West longitude (x) coordinate of bounding rectangle, in decimal degrees.
+#'@param xright Numeric. East longitude (x) coordinate of bounding rectangle, in decimal degrees.
+#'@param ybottom Numeric. South latitude (y) coordinate of bounding rectangle, in decimal degrees.
+#'@param ytopNumeric. North latitude (y) coordinate of bounding rectangle, in decimal degrees.
+#'@param output Optional character path where to save the new hdf5file. The default stores a temporary file only.
 #'
-#'@return Returns An object of class H5File; subset of LVIS Level1 data
-#'@author Caio Hamamura
+#'@return An S4 object of class "gedi.level1b".
+#'
 #'@examples
+#'# specify the path to GEDI data
+#'level1bpath <- system.file("extdata", "GEDIexample_level01B.h5", package="rGEDI")
 #'
-#'#' LVIS level 2 file path
-#' #level1bpath = system.file("extdata", "lvis_level1_clip.h5", package="rLVIS")
+#'# Reading GEDI level1B file
+#'level1b<-readLevel1b(level1bpath)
 #'
-#'# Rectangle
-#' #xleft = 82
-#' #xright = 82.8
-#' #ybottom = 0
-#' #ytop = 20
+#'# Bounding rectangle coordinates
+#'xleft = -116.4683
+#'xright = -116.5583
+#'ybottom = 46.75208
+#'ytop = 46.84229
 #'
-#'#' Reading LVIS level 2 file
-#' #level1_waveform = readLevel1B(level1bpath)
+#'# clip by extent boundary box
+#'level1b_clip <- clipLevel1B(level1b,xleft, xright, ybottom, ytop)
 #'
-#' #output = tempfile(fileext=".h5")
-#'
-#' #clipped_waveform = clipLevel1B(level1_waveform, output, xleft, xright, ybottom, ytop)
-#'
+#'@import hdf5r
 #'@export
-#'
-clipLevel1Bh5 = function(level1b, xleft, xright, ybottom, ytop, output=""){
+clipLevel1B = function(level1b, xleft, xright, ybottom, ytop, output=""){
+  if (output == "") {
+    output = tempfile(fileext = ".h5")
+  }
+
   # Get all spatial data as a list of dataframes with spatial information
-  spData = getSpatialData(level1b)
+  spData = getSpatialData1B(level1b)
 
   masks = lapply(spData, function(x) {
     mask = x$longitude_bin0 >= xleft &
@@ -49,7 +52,7 @@ clipLevel1Bh5 = function(level1b, xleft, xright, ybottom, ytop, output=""){
     return ((1:length(x$longitude_bin0))[mask])
   })
 
-  newFile = clipByMask(level1b,
+  newFile = clipByMask1B(level1b,
                        masks,
                        output)
   output = newFile@h5$filename
@@ -59,38 +62,44 @@ clipLevel1Bh5 = function(level1b, xleft, xright, ybottom, ytop, output=""){
   return (result)
 }
 
-#'Clip LVIS Level1 data by geometry
+#'Clip GEDI Level1B data by geometry
 #'
-#'@description Clip LVIS Level1 data within a given bounding coordinates
+#'@description This function clips GEDI Level1B data within a bounding geometry
 #'
+#'@usage clipLevel1BGeometry(level1b, polygon_spdf, output)
 #'
-#'@param level1b h5file; S4 object of class H5File
-#'@param polygon_spdf SpatialDataFrame. A polygon dataset for clipping the waveform
-#'@param output optional character path where to save the new h5file. Default "" (temporary file).
+#'@param level1b A GEDI Level1B object (output of \code{\link[rGEDI:readLevel1B]{readLevel1B}} function). A S4 object of class "gedi.level1b".
+#'@param polygon_spdf Polygon. An object of class \code{\link[sp]{SpatialPolygonsDataFrame-class}},
+#'which can be loaded as an ESRI shapefile using \code{\link[rgdal:readOGR]{readOGR}} function in the \emph{rgdal} package.
+#'@param output Optional character path where to save the new hdf5file. The default stores a temporary file only.
 #'
-#'@return Returns An object of class H5File; subset of LVIS Level1 data
-#'@author Caio Hamamura
+#'@return An S4 object of class "gedi.level1b".
+#'
 #'@examples
+#'# specify the path to GEDI data
+#'level1bpath <- system.file("extdata", "GEDIexample_level01B.h5", package="rGEDI")
 #'
-#'#' LVIS level 2 file path
-#' #level1_filepath = system.file("extdata", "lvis_level1_clip.h5", package="rLVIS")
+#'# Reading GEDI level1B file
+#'level1b<-readLevel1b(level1bpath)
 #'
-#'#' Reading LVIS level 2 file
-#' #level1_waveform = readLevel1b(level1_filepath)
+#'# specify the path to shapefile
+#'polygon_filepath <- system.file("extdata", "clip_polygon.shp", package="rGEDI")
 #'
-#'# Polgons file path
-#' #polygons_filepath <- system.file("extdata", "LVIS_Mondah_clip_polygon.shp", package="rLVIS")
+#'# Reading shapefile as SpatialPolygonsDataFrame object
+#'library(rgdal)
+#'polygon_spdf<-readOGR(polygons_filepath)
 #'
-#'# Reading LVIS level 2 file
-#' #polygon_spdf<-raster::shapefile(polygons_filepath)
+#'# clip by extent boundary box
+#'level1b_clip <- clipLevel1BGeometry(level1b, polygon_spdf = polygon_spdf)
 #'
-#' #output = tempfile(fileext="h5")
-#'
-#' #clipped_waveform = clipLevel1Geometry(level1_waveform, output, polygon_spdf)
-#'
+#'@import hdf5r
 #'@export
-clipLevel1Bh5Geometry = function(level1b, polygon_spdf, output="") {
-  spData = getSpatialData(level1b)
+clipLevel1BGeometry = function(level1b, polygon_spdf, output="") {
+  if (output == "") {
+    output = tempfile(fileext = ".h5")
+  }
+
+  spData = getSpatialData1B(level1b)
 
   xleft = polygon_spdf@bbox[1,1]
   xright = polygon_spdf@bbox[1,2]
@@ -113,6 +122,8 @@ clipLevel1Bh5Geometry = function(level1b, polygon_spdf, output="") {
   message("Intersecting with polygon...")
   pb = utils::txtProgressBar(min = 0, max = length(masks), style = 3)
   progress = 0
+  polygon_masks = list()
+
   for (beam in names(masks)) {
     mask = masks[[beam]]
 
@@ -122,7 +133,9 @@ clipLevel1Bh5Geometry = function(level1b, polygon_spdf, output="") {
     points = sp::SpatialPointsDataFrame(coords=matrix(c(spDataMasked$longitude_bin0, spDataMasked$latitude_bin0), ncol=2),
                                         data=data.frame(id=mask), proj4string = polygon_spdf@proj4string)
     pts = raster::intersect(points, polygon_spdf)
-    masks[[beam]] = as.integer(pts@data$id)
+    for (pol_id in levels(pts@data$d)) {
+      polygon_masks[[pol_id]][[beam]] = pts[pts@data$d == pol_id,]@data[,1]
+    }
 
     progress = progress + 1
     utils::setTxtProgressBar(pb, progress)
@@ -130,19 +143,20 @@ clipLevel1Bh5Geometry = function(level1b, polygon_spdf, output="") {
   close(pb)
 
   message("Writing new HDF5 file...")
-  newFile = clipByMask(level1b,
-                       masks,
-                       output)
-  output = newFile@h5$filename
-  hdf5r::h5close(newFile@h5)
-  result = readLevel1B(output)
+  results = list()
+  for (pol_id in names(polygon_masks)) {
+    output2 = gsub("\\.h5$", paste0("_", pol_id,".h5"), output)
+    results[[pol_id]] = clipByMask1B(level1b,
+                                     polygon_masks[[pol_id]],
+                                     output2)
+  }
 
-  return (result)
+  return (results)
 }
 
 
 # Helper function to return spatial data within a dataframe
-getSpatialData = function(level1b) {
+getSpatialData1B = function(level1b) {
   level1b.h5<-level1b@h5
   groups_id<-grep("BEAM\\d{4}$",gsub("/","",
                                      hdf5r::list.groups(level1b.h5, recursive = F)), value = T)
@@ -161,7 +175,7 @@ getSpatialData = function(level1b) {
   return (beams_spdf)
 }
 
-clipByMask = function(level1b, masks, output = "") {
+clipByMask1B = function(level1b, masks, output = "") {
   if (output == "") {
     tmp_filename <- tempfile(fileext = ".h5")
     newFile =  hdf5r::H5File$new(tmp_filename, mode="w")
@@ -226,6 +240,6 @@ clipByMask = function(level1b, masks, output = "") {
   }
 
   level1b@h5 = newFile
-  #spatial = getLevel1bGeo(level1b)
+  #spatial = level1B2dt(level1b)
   return (level1b)
 }

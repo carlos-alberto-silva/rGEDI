@@ -1,9 +1,22 @@
-#'Read GEDI Level1B data
+#'Read Geolocated Waveforms (GEDI Level1B)
 #'
-#'@description This function reads GEDI level1B data
+#'@description This function reads GEDI level1B products: geolocated Waveforms
 #'
-#'@param level1Bpath file path pointing to GEDI level1B data (H5 format)
-#'@return level1BFile; S4 object of class "gedi.level1b";
+#'
+#'@usage readLevel1B(level1Bpath)
+#'
+#'@param level1Bpath file path pointing to GEDI level1B data. Data in HDF5 Hierarchical Data Format (.h5).
+#'
+#'@return S4 object of class "gedi.level1b".
+#'@seealso \code{\link[hdf5r]{hdf5rfile}} in the \emph{hdf5r} package.
+#'
+#'@examples
+#'# specify the path and data file to be read
+#'level1bpath <- system.file("extdata", "GEDIexample_level01B.h5", package="rGEDI")
+#'
+#'# read the file
+#'gedilevel1b<-readLevel1B(level1bpath)
+#'
 #'
 #'@import hdf5r
 #'@export

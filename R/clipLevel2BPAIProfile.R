@@ -1,39 +1,40 @@
-#'Clip GEDI level2bdt data
+#'Clip level2BPAIProfile data by Coordinates
 #'
-#'@description Clip GEDI level2bdt data within a given bounding coordinates
+#'@description This function clips GEDI level2B-derived
+#'Plant Area Index profile within given bounding coordinates
 #'
 #'
-#'@param level2bdt level2bdt; S4 object of class "gedi.level1b.dt"
-#'@param extent Extent object of a Spatial object .
-#'@return Returns An object of class "gedi.level1b.dt"; subset of GEDI Level1B data
+#'@usage clipLevel2BPAIProfile(level2BPAIProfile, xleft, xright, ybottom, ytop, output="")
+#'
+#'
+#'@param level2BPAIProfile A GEDI Level2B object (output of \code{\link[rGEDI:getLevel2BPAIProfile]{getLevel2BPAIProfile}} function). A S4 object of class "gedi.level2b".
+#'@param xleft Numeric. West longitude (x) coordinate of bounding rectangle, in decimal degrees.
+#'@param xright Numeric. East longitude (x) coordinate of bounding rectangle, in decimal degrees.
+#'@param ybottom Numeric. South latitude (y) coordinate of bounding rectangle, in decimal degrees.
+#'@param ytopNumeric. North latitude (y) coordinate of bounding rectangle, in decimal degrees.
+#'@param output Optional character path where to save the new hdf5file. The default stores a temporary file only.
+#'
+#'@return An S4 object of class "gedi.level2b".
+#'
 #'@examples
+#'# specify the path and data file and read it
+#'level2bpath <- system.file("extdata", "GEDIexample_level02B.h5", package="rGEDI")
 #'
-#'#' GEDI level1B file path
-#'level1_filepath = system.file("extdata", "lvis_level1_clip.h5", package="rLVIS")
+#'# Reading GEDI level2B data
+#'level2b <- readLevel2B(level2bpath)
 #'
-#'#' Reading LVIS level 2 file
-#'level1_waveform = readLevel1b(level1Bfilepath)
+#'# Get Plant Area Index profile
+#'level2BPAIProfile<-getLevel2BPAIProfile(level2b)
 #'
-#'# Rectangle area for cliping
-#'xmin = -116.4683
-#'xmax = -116.3177
-#'ymin = 46.75208
-#'ymax = 46.84229
+#'# Bounding rectangle coordinates
+#'xleft = -116.4683
+#'xright = -116.5583
+#'ybottom = 46.75208
+#'ytop = 46.84229
 #'
-#'# creating an exent object
-#'ext<-extent(c(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax))
+#'# clip level2BVPM by extent boundary box
+#'level2b_clip <- clipLevel2BPAIProfile(level2BPAIProfile,xleft, xright, ybottom, ytop)
 #'
-#'clipped_level2bdt = clipLevel1(level2bdt, extent=ext)
-#'
-#'library(leaflet)
-#'leaflet() %>%
-#'  addCircleMarkers(clipped_level2bdt@dt$longitude_bin0,
-#'                   clipped_level2bdt@dt$latitude_bin0,
-#'                   radius = 1,
-#'                   opacity = 1,
-#'                   color = "red")  %>%
-#'  addScaleBar(options = list(imperial = FALSE)) %>%
-#'  addProviderTiles(providers$Esri.WorldImagery)
 #'@export
 clipLevel2BPAIProfile = function(x,xleft, xright, ybottom, ytop){
   # xleft ybottom xright ytop
@@ -52,44 +53,41 @@ clipLevel2BPAIProfile = function(x,xleft, xright, ybottom, ytop){
 
 }
 
-#'Clip GEDI level2bdt data by geometry
+#'Clip level2BPAIProfile data by geometry
 #'
-#'@description Clip GEDI level2bdt data within a given geometry area
+#'@description This function clips GEDI level2B-derived
+#'Plant Area Index profile within given geometry
 #'
+#'@usage clipLevel2BPAIProfileGeometry(level2BPAIProfile, polygon_spdf, output)
 #'
-#'@param level2bdt level2bdt; S4 object of class "gedi.level1b.dt"
-#'@param polygon_spdf SpatialDataFrame. A polygon dataset for clipping the waveform
-#'@return Returns An object of class "gedi.level1b.dt"; subset of GEDI Level1B data
+#'@param level2BPAIProfile A GEDI Level2B object (output of \code{\link[rGEDI:getLevel2BPAIProfile]{getLevel2BPAIProfile}} function). A S4 object of class "gedi.level2b".
+#'@param polygon_spdf Polygon. An object of class \code{\link[sp]{SpatialPolygonsDataFrame-class}},
+#'which can be loaded as an ESRI shapefile using \code{\link[rgdal:readOGR]{readOGR}} function in the \emph{rgdal} package.
+#'@param split_by Polygon id. If defined, GEDI data will be clipped by each polygon using the polygon id from table of attribute defined by the user
+#'
+#'@return An S4 object of class \code{\link[data.table:data.table]{data.table-class}}.
+#'
 #'@examples
 #'
-#'#' GEDI level1B file path
-#'level1Bfilepath = system.file("extdata", "lvis_level1_clip.h5", package="rGEDI")
+#'# specify the path and data file and read it
+#'level2bpath <- system.file("extdata", "GEDIexample_level02B.h5", package="rGEDI")
 #'
-#'#' Reading GEDI level1B file
-#'level1b = readLevel1b(level1Bfilepath)
+#'#'# reading GEDI level2B data
+#'level2b <- readLevel2B(level2bpath)
 #'
-#'#' Creating GEDI level2bdt object
-#'level2bdt = level2bdt(level1b)
+#'# Get Plant Area Index profile
+#'level2BPAIProfile<-getLevel2BPAIProfile(level2b)
 #'
-#'# Polgons file path
+#'# specify the path to shapefile
 #'polygon_filepath <- system.file("extdata", "clip_polygon.shp", package="rGEDI")
 #'
-#'# Reading GEDI level2B file
-#'polygon_spdf<-raster::shapefile(polygons_filepath)
+#'# Reading shapefile as SpatialPolygonsDataFrame object
+#'library(rgdal)
+#'polygon_spdf<-readOGR(polygons_filepath)
 #'
-#'clipped_level2bdt = clipLevel1Geometry(level2bdt, polygon_spdf)
+#'# clip level2BPAIProfile by geometry
+#'level2b_clip_geometry <- clipLevel2BPAIGeometry(level2BPAIProfile,polygon_spdf, split_by="id")
 #'
-#'library(leaflet)
-#'leaflet() %>%
-#'  addCircleMarkers(clipped_level2bdt@dt$longitude_bin0,
-#'                   clipped_level2bdt@dt$latitude_bin0,
-#'                   radius = 1,
-#'                   opacity = 1,
-#'                   color = "red")  %>%
-#'  addScaleBar(options = list(imperial = FALSE)) %>%
-#'  addPolygons(data=polygon_spdf,weight=1,col = 'white',
-#'              opacity = 1, fillOpacity = 0) %>%
-#'  addProviderTiles(providers$Esri.WorldImagery)
 #'@export
 clipLevel2BPAIProfileGeometry = function(x, polygon_spdf, split_by=NULL) {
   exshp<-raster::extent(polygon_spdf)
