@@ -339,8 +339,8 @@ Hancock, S., Armston, J., Hofton, M., Sun, X., Tang, H., Duncanson, L.I., Kellne
 Silva, C. A.; Saatchi, S.; Alonso, M. G. ; Labriere, N. ; Klauberg, C. ; Ferraz, A. ; Meyer, V. ;        Jeffery, K. J. ; Abernethy, K. ; White, L. ; Zhao, K. ; Lewis, S. L. ; Hudak, A. T. (2018)         Comparison of Small- and Large-Footprint Lidar Characterization of Tropical Forest                 Aboveground Structure and Biomass: A Case Study from Central Gabon. IEEE Journal of Selected       Topics in Applied Earth Observations and Remote Sensing, p. 1-15.
       https://ieeexplore.ieee.org/document/8331845
 
-GEDI webpage. Accessed on February 15 2020 https://gedi.umd.edu/ 
-GEDI01_Bv001. Accessed on February 15 2020 https://lpdaac.usgs.gov/products/gedi01_bv001/  GEDI02_Av001. Accessed on February 15 2020 https://lpdaac.usgs.gov/products/gedi02_av001/  
+GEDI webpage. Accessed on February 15 2020 https://gedi.umd.edu/  
+GEDI01_Bv001. Accessed on February 15 2020 https://lpdaac.usgs.gov/products/gedi01_bv001/   GEDI02_Av001. Accessed on February 15 2020 https://lpdaac.usgs.gov/products/gedi02_av001/  
 GEDI02_Bv001. Accessed on February 15 2020 https://lpdaac.usgs.gov/products/gedi02_bv001/  
 GEDI Finder. Accessed on February 15 2020 https://lpdaacsvc.cr.usgs.gov/services/gedifinder
 
@@ -350,4 +350,4 @@ University of Maryland and NASA Goddard Space Flight Center for developing GEDI 
 Brazilian National Council for Scientific and Technological Development (CNPq) for funding the project entitled "Mapping fuel load and simulation of fire behaviour and spread in the Cerrado biome using modeling and remote sensing technologies" and" leaded by Prof. Dr. Carine Klauberg and
 Dr. Carlos Alberto Silva.
 
-rGEDI package has been not developted by the GEDI team. The authors assumes no responsibility whatsoever for its use, and makes no guarantees, expressed or implied, about its quality, reliability, or any other characteristic.
+**rGEDI package has been not developted by the GEDI team. The authors assumes no responsibility whatsoever for its use, and makes no guarantees, expressed or implied, about its quality, reliability, or any other characteristic.**
