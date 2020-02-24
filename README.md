@@ -7,8 +7,8 @@
 ![R_Forge](https://img.shields.io/badge/R_Forge-0.0.1-green.svg) 
 ![Downloads](https://cranlogs.r-pkg.org/badges/grand-total/rGEDI)
 
-rGEDI: An R Package for NASA's Global Ecosystem Dynamics Investigation (GEDI) data 
-downloading, visualizing and processing. 
+**rGEDI: An R Package for NASA's Global Ecosystem Dynamics Investigation (GEDI) data 
+downloading, visualizing and processing.**
 
 Authors: Carlos A. Silva, Caio Hamamura, Ruben Valbuena, Steve Hancock, Adrian Cardil, Eben Broadbent, Danilo R. A. de Almeida, Celso H. L. Silva Junior and Carine Klauberg  
 
