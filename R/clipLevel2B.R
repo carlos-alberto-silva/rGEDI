@@ -3,36 +3,45 @@
 #'@description Clip GEDI Level2B data within a given bounding coordinates
 #'
 #'
-#'@param level2b h5file; S4 object of class H5File
-#'@param xleft numeric. left x coordinates of rectangles.
-#'@param xright numeric. right x coordinates of rectangles.
-#'@param ybottom numeric. bottom y coordinates of rectangles.
-#'@param ytop numeric. top y coordinates of rectangles.
-#'@param output optional character path where to save the new h5file. Default "" (temporary file).
+#'@param level1b A GEDI Level2B object (output of \code{\link[rGEDI:readLevel2B]{readLevel2B}} function). A S4 object of class "gedi.level2b".
+#'@param xleft Numeric. West longitude (x) coordinate of bounding rectangle, in decimal degrees.
+#'@param xright Numeric. East longitude (x) coordinate of bounding rectangle, in decimal degrees.
+#'@param ybottom Numeric. South latitude (y) coordinate of bounding rectangle, in decimal degrees.
+#'@param ytopNumeric. North latitude (y) coordinate of bounding rectangle, in decimal degrees.
+#'@param output Optional character path where to save the new hdf5 file. The default stores a temporary file only.
+#'@return An S4 object of class "gedi.level2b".
 #'
-#'@return Returns An object of class H5File; subset of LVIS Level2 data
-#'@author Caio Hamamura
+#' #'@seealso https://lpdaac.usgs.gov/products/gedi01_bv001/
+#'
 #'@examples
+#'# specify the path and data file and read it
+#'level2bpath <- system.file("extdata", "GEDIexample_level02B.h5", package="rGEDI")
 #'
-#'#' LVIS level 2A file path
-#' #level2bpath = system.file("extdata", "lvis_level1_clip.h5", package="rLVIS")
+#'# reading GEDI level2B data
+#'level2b <- readLevel2B(level2bpath)
 #'
-#'# Rectangle
-#' #xleft = 81
-#' #xright = 83
-#' #ybottom = 2
-#' #ytop = 4
+#'# Bounding rectangle coordinates
+#'xleft = -116.4683
+#'xright = -116.5583
+#'ybottom = 46.75208
+#'ytop = 46.84229
 #'
-#'#' Reading LVIS level 2 file
-#' #level1_waveform = readlevel2b(level2bpath)
+#'# clip level2BVPM by extent boundary box
+#'level2b_clip <- level2BVPM(level2BVPM,xleft, xright, ybottom, ytop)
 #'
-#' #output = tempfile(fileext=".h5")
-#'
-#' #clipped_waveform = cliplevel2b(level1_waveform, output, xleft, xright, ybottom, ytop)
-#'
+#'library(leaflet)
+#'leaflet() %>%
+#'  addCircleMarkers(level2b_clip@dt$longitude_bin0,
+#'                   level2b_clip@dt$latitude_bin0,
+#'                   radius = 1,
+#'                   opacity = 1,
+#'                   color = "red")  %>%
+#'  addScaleBar(options = list(imperial = FALSE)) %>%
+#'  addPolygons(data=polygon_spdf,weight=1,col = 'white',
+#'              opacity = 1, fillOpacity = 0) %>%
+#'  addProviderTiles(providers$Esri.WorldImagery)
 #'@export
-#'
-clipLevel2Bh5 = function(level2b, xleft, xright, ybottom, ytop, output=""){
+clipLevel2B = function(level2b, xleft, xright, ybottom, ytop, output=""){
   # Get all spatial data as a list of dataframes with spatial information
   spData = getSpatialData2B(level2b)
 
@@ -52,6 +61,8 @@ clipLevel2Bh5 = function(level2b, xleft, xright, ybottom, ytop, output=""){
   if (output == "") {
     output = tempfile(fileext = ".h5")
   }
+  output = fs::path_ext_set(output, "h5")
+
   newFile = clipByMask2B(level2b,
                        masks,
                        output)
@@ -62,37 +73,38 @@ clipLevel2Bh5 = function(level2b, xleft, xright, ybottom, ytop, output=""){
   return (result)
 }
 
-#'Clip LVIS Level1 data by geometry
+#'Clip GEDI Level2B data by geometry
 #'
-#'@description Clip LVIS Level1 data within a given bounding coordinates
-#'
+#'@description This function extracts GEDI Level1B data within given geometry
 #'
 #'@param level2b h5file; S4 object of class H5File
-#'@param polygon_spdf SpatialDataFrame. A polygon dataset for clipping the waveform
+#'@param polygon_spdf Polygon. An object of class \code{\link[sp]{SpatialPolygonsDataFrame-class}},
+#'which can be loaded as an ESRI shapefile using \code{\link[rgdal:readOGR]{readOGR}} function in the \emph{rgdal} package.
 #'@param output optional character path where to save the new h5file. Default "" (temporary file).
+#'@return An S4 object of class "gedi.level2b".
 #'
-#'@return Returns An object of class H5File; subset of LVIS Level1 data
-#'@author Caio Hamamura
+#'@seealso https://lpdaac.usgs.gov/products/gedi01_bv001/
+#'
 #'@examples
 #'
-#'#' LVIS level 2 file path
-#' #level1_filepath = system.file("extdata", "lvis_level1_clip.h5", package="rLVIS")
+#'# specify the path and data file and read it
+#'level2bpath <- system.file("extdata", "GEDIexample_level02B.h5", package="rGEDI")
 #'
-#'#' Reading LVIS level 2 file
-#' #level1_waveform = readlevel2b(level1_filepath)
+#'# reading GEDI level2B data
+#'level2b <- readLevel2B(level2bpath)
 #'
-#'# Polgons file path
-#' #polygons_filepath <- system.file("extdata", "LVIS_Mondah_clip_polygon.shp", package="rLVIS")
+#'# specify the path to shapefile
+#'polygon_filepath <- system.file("extdata", "clip_polygon.shp", package="rGEDI")
 #'
-#'# Reading LVIS level 2 file
-#' #polygon_spdf<-raster::shapefile(polygons_filepath)
+#'# Reading shapefile as SpatialPolygonsDataFrame object
+#'library(rgdal)
+#'polygon_spdf<-readOGR(polygons_filepath)
 #'
-#' #output = tempfile(fileext="h5")
-#'
-#' #clipped_waveform = clipLevel1Geometry(level1_waveform, output, polygon_spdf)
+#'# clip level2BVPM by geometry
+#'level2b_clip_geometry <- clipLevel2BGeometry(level2BVPM,polygon_spdf=polygon_spdf)
 #'
 #'@export
-cliplevel2bh5Geometry = function(level2b, polygon_spdf, output="") {
+clipLevel2BGeometry = function(level2b, polygon_spdf, output="") {
   spData = getSpatialData2B(level2b)
 
   xleft = polygon_spdf@bbox[1,1]
@@ -127,8 +139,12 @@ cliplevel2bh5Geometry = function(level2b, polygon_spdf, output="") {
     points = sp::SpatialPointsDataFrame(coords=matrix(c(spDataMasked$longitude_bin0, spDataMasked$latitude_bin0), ncol=2),
                                         data=data.frame(id=mask), proj4string = polygon_spdf@proj4string)
     pts = raster::intersect(points, polygon_spdf)
-    for (pol_id in levels(pts@data$d)) {
-      polygon_masks[[pol_id]][[beam]] = pts[pts@data$d == pol_id,]@data[,1]
+
+    if (is.null(split_by)) {
+        polygon_masks[[""]][[beam]] = pts@data[,1]
+    } else {
+    for (pol_id in as.character(unique(pts@data[[split_by]]))) {
+      polygon_masks[[pol_id]][[beam]] = pts[pts@data[[split_by]] == pol_id,]@data[,1]
     }
 
     progress = progress + 1
@@ -140,6 +156,7 @@ cliplevel2bh5Geometry = function(level2b, polygon_spdf, output="") {
   if (output == "") {
     output = tempfile(fileext = ".h5")
   }
+  output = fs::path_ext_set(output, "h5")
 
   message("Writing new HDF5 file...")
   results = list()
