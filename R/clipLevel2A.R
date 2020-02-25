@@ -36,6 +36,7 @@ cliplevel2ah5 = function(level2a, xleft, xright, ybottom, ytop, output=""){
   if (output == "") {
     output = tempfile(fileext = ".h5")
   }
+  output = fs::path_ext_set(output, "h5")
 
   # Get all spatial data as a list of dataframes with spatial information
   spData = getSpatialData2A(level2a)
@@ -55,7 +56,7 @@ cliplevel2ah5 = function(level2a, xleft, xright, ybottom, ytop, output=""){
     })
     return (masks2)
   })
-
+output = "level2a.h5"
   newFile = clipByMask2A(level2a,
                        masks,
                        output)
@@ -96,11 +97,12 @@ cliplevel2ah5 = function(level2a, xleft, xright, ybottom, ytop, output=""){
 #' #clipped_waveform = clipLevel1Geometry(level1_waveform, output, polygon_spdf)
 #'
 #'@export
-cliplevel2ah5Geometry = function(level2a, polygon_spdf, output="") {
+cliplevel2ah5Geometry = function(level2a, polygon_spdf, split_by = "id", output="") {
 
   if (output == "") {
     output = tempfile(fileext = ".h5")
   }
+  output = fs::path_ext_set(output, "h5")
 
   spData = getSpatialData2A(level2a)
 
@@ -141,9 +143,14 @@ cliplevel2ah5Geometry = function(level2a, polygon_spdf, output="") {
       points = sp::SpatialPointsDataFrame(coords=matrix(c(spDataMasked$longitude_highest, spDataMasked$latitude_highest), ncol=2),
                                           data=data.frame(id=mask), proj4string = polygon_spdf@proj4string)
       pts = raster::intersect(points, polygon_spdf)
-      for (pol_id in levels(pts@data$d)) {
-        mask_name = names(masks2)[i]
-        polygon_masks[[pol_id]][[beam]][[mask_name]] = pts[pts@data$d == pol_id,]@data[,1]
+
+      mask_name = names(masks2)[i]
+      if (is.null(split_by)) {
+        polygon_masks[[""]][[beam]][[mask_name]] = pts@data[,1]
+      } else {
+        for (pol_id in as.character(unique(pts@data[split_by])[,1])) {
+          polygon_masks[[pol_id]][[beam]][[mask_name]] = pts[(pts@data[split_by] == pol_id)[,1],]@data[,1]
+        }
       }
 
       progress = progress + 1
@@ -152,10 +159,15 @@ cliplevel2ah5Geometry = function(level2a, polygon_spdf, output="") {
   }
   close(pb)
 
-  message("Writing new HDF5 file...")
+  message("Writing new HDF5 files...")
 
   results = list()
+  output="level2a_res.h5"
+  i = 0
+  len_masks = length(polygon_masks)
   for (pol_id in names(polygon_masks)) {
+    i = i + 1
+    message(gettextf("Writing %s='%s': %d of %d", split_by, pol_id, i, len_masks))
     output2 = gsub("\\.h5$", paste0("_", pol_id,".h5"), output)
     results[[pol_id]] = clipByMask2A(level2a,
                                  polygon_masks[[pol_id]],
@@ -203,7 +215,7 @@ getSpatialData2A = function(level2a) {
 
   return (beams_spdf)
 }
-
+output="level2a_.h5"
 clipByMask2A = function(level2a, masks, output = "") {
   newFile =  hdf5r::H5File$new(output, mode="w")
 
