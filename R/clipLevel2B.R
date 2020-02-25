@@ -160,7 +160,11 @@ clipLevel2BGeometry = function(level2b, polygon_spdf, output="") {
 
   message("Writing new HDF5 file...")
   results = list()
+  i = 0
+  len_masks = length(polygon_masks)
   for (pol_id in names(polygon_masks)) {
+    i = i + 1
+    message(gettextf("Writing %s='%s': %d of %d", split_by, pol_id, i, len_masks))
     output2 = gsub("\\.h5$", paste0("_", pol_id,".h5"), output)
     results[[pol_id]] = clipByMask2B(level2b,
                                  polygon_masks[[pol_id]],
