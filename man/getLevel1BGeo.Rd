@@ -2,7 +2,7 @@
 % Please edit documentation in R/getLevel1bGeo.R
 \name{getLevel1BGeo}
 \alias{getLevel1BGeo}
-\title{Get Pulse FullWaveform Geolocation (GEDI Level1B)}
+\title{Get GEDI Pulse Full-Waveform Geolocation (GEDI Level1B)}
 \usage{
 getLevel1BGeo(level1b, select = c("latitude_bin0", "latitude_lastbin", "longitude_bin0", "longitude_lastbin", "shot_number") )
 }
@@ -15,7 +15,7 @@ getLevel1BGeo(level1b, select = c("latitude_bin0", "latitude_lastbin", "longitud
 A S4 object of class \code{\link[data.table:data.table]{data.table-class}}.
 }
 \description{
-This function extracts Pulse FullWaveform Geolocation from GEDI Level1B data
+This function extracts Pulse Full-Waveform Geolocation from GEDI Level1B data
 }
 \details{
 Besides of the fields specified as defaul, GEDI mission level 1B description (https://lpdaac.usgs.gov/products/gedi01_bv001/) details all the information that can be extracted:
@@ -119,4 +119,7 @@ level1bGeo<-getLevel1BGeo(level1b,select=c("latitude_bin0", "longitude_bin0","sh
 head(level1bGeo)
 
 
+}
+\seealso{
+https://lpdaac.usgs.gov/products/gedi01_bv001/
 }

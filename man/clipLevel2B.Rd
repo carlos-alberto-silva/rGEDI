@@ -2,9 +2,9 @@
 % Please edit documentation in R/clipLevel2B.R
 \name{clipLevel2B}
 \alias{clipLevel2B}
-\title{Clip GEDI Level2B data by Coordinates}
+\title{Clip GEDI level2b data}
 \usage{
-clipLevel2B(level2b, xleft, xright, ybottom, ytop, output="")
+clipLevel2B(level2b, xleft, xright, ybottom, ytop, output = "")
 }
 \arguments{
 \item{xleft}{Numeric. West longitude (x) coordinate of bounding rectangle, in decimal degrees.}
@@ -21,9 +21,11 @@ clipLevel2B(level2b, xleft, xright, ybottom, ytop, output="")
 }
 \value{
 An S4 object of class "gedi.level2b".
+
+#'@seealso https://lpdaac.usgs.gov/products/gedi01_bv001/
 }
 \description{
-This function extracts GEDI Level1B data within given bounding coordinates
+Clip GEDI Level2B data within a given bounding coordinates
 }
 \examples{
 # specify the path and data file and read it

@@ -1,8 +1,7 @@
 unloadLibrary = function() {
   if (isLibraryLoaded()) {
-    library.dynam.unload("rGEDI", find.package("rGEDI"))
+    unloadNamespace("rGEDI")
   }
-  unloadNamespace("rGEDI")
   require("rGEDI", quietly = T)
   invisible()
 }

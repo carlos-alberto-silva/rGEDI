@@ -61,6 +61,8 @@ clipLevel2B = function(level2b, xleft, xright, ybottom, ytop, output=""){
   if (output == "") {
     output = tempfile(fileext = ".h5")
   }
+  output = fs::path_ext_set(output, "h5")
+
   newFile = clipByMask2B(level2b,
                          masks,
                          output)
@@ -137,8 +139,13 @@ clipLevel2BGeometry = function(level2b, polygon_spdf, output="") {
     points = sp::SpatialPointsDataFrame(coords=matrix(c(spDataMasked$longitude_bin0, spDataMasked$latitude_bin0), ncol=2),
                                         data=data.frame(id=mask), proj4string = polygon_spdf@proj4string)
     pts = raster::intersect(points, polygon_spdf)
-    for (pol_id in levels(pts@data$d)) {
-      polygon_masks[[pol_id]][[beam]] = pts[pts@data$d == pol_id,]@data[,1]
+
+    if (is.null(split_by)) {
+        polygon_masks[[""]][[beam]] = pts@data[,1]
+    } else {
+      for (pol_id in as.character(unique(pts@data[[split_by]]))) {
+        polygon_masks[[pol_id]][[beam]] = pts[pts@data[[split_by]] == pol_id,]@data[,1]
+      }
     }
 
     progress = progress + 1
@@ -150,10 +157,15 @@ clipLevel2BGeometry = function(level2b, polygon_spdf, output="") {
   if (output == "") {
     output = tempfile(fileext = ".h5")
   }
+  output = fs::path_ext_set(output, "h5")
 
   message("Writing new HDF5 file...")
   results = list()
+  i = 0
+  len_masks = length(polygon_masks)
   for (pol_id in names(polygon_masks)) {
+    i = i + 1
+    message(gettextf("Writing %s='%s': %d of %d", split_by, pol_id, i, len_masks))
     output2 = gsub("\\.h5$", paste0("_", pol_id,".h5"), output)
     results[[pol_id]] = clipByMask2B(level2b,
                                      polygon_masks[[pol_id]],

@@ -1,8 +1,11 @@
-#' Add noise to simulated GEDI full-waveform
+#' Add noise to simulated GEDI waveform
 #'
-#' @description This function adds noise to the simulated GEDI full-waveform (output of gediWFSimulator)
-#'
-#' @usage gediWFNoise(input,output,seed,linkNoise,dcBias,linkFsig,linkPsig,trueSig,bitRate)
+#' @description
+#' This function is intended to be used after the simulation process (\code{\link{gediWFSimulator}}).
+#' Given the known laser power, optical efficiences, mean atmospheric
+#' transmission at 1,064 nm, expected canopy and ground reflectance,
+#' range of background illumination intensities, and the detector response
+#' the expected performance is calculated according to \href{https://doi.org/10.1109/26.8924}{Davidson and Sun (1988)}.
 #'
 #' @param input \code{\link{character}}. Waveform input filename
 #' @param output \code{\link{character}}. Output filename
@@ -39,13 +42,28 @@ gediWFNoise <- function(
   input,
   output,
   seed = NULL,
-  linkNoise = NULL,
+  linkNoise = c(3.0103, 0.95),
   dcBias = NULL,
   linkFsig = NULL,
-  linkPsig = NULL,
+  linkPsig = 6.6383,
   trueSig = NULL,
-  bitRate = NULL) {
-  loadLibrary()
+  bitRate = 12) {
+
+
+
+  # Check values
+  stopifnotMessage(
+    all(file.exists(input)),
+    all(fs::path_ext(input) == "h5"),
+    checkFilepath(output, newFile=TRUE, optional=FALSE),
+    checkInteger(seed),
+    checkNumericLength(linkNoise, 2),
+    checkNumeric(dcBias),
+    checkNumeric(linkFsig),
+    checkNumeric(linkPsig),
+    checkNumeric(trueSig),
+    checkInteger(bitRate)
+  )
   res = .Call("C_addNoiseHDF",
         input,
         output,

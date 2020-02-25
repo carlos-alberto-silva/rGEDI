@@ -4,7 +4,7 @@
 \alias{clipLevel2BGeometry}
 \title{Clip GEDI Level2B data by geometry}
 \usage{
-clipLevel2BGeometry(level2b, polygon_spdf, output)
+clipLevel2BGeometry(level2b, polygon_spdf, output = "")
 }
 \arguments{
 \item{level2b}{h5file; S4 object of class H5File}
@@ -38,4 +38,7 @@ polygon_spdf<-readOGR(polygons_filepath)
 # clip level2BVPM by geometry
 level2b_clip_geometry <- clipLevel2BGeometry(level2BVPM,polygon_spdf=polygon_spdf)
 
+}
+\seealso{
+https://lpdaac.usgs.gov/products/gedi01_bv001/
 }

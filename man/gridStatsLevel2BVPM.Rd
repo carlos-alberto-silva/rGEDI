@@ -59,3 +59,6 @@ plot(omega_mean)
 }
 
 }
+\seealso{
+https://lpdaac.usgs.gov/products/gedi02_bv001/
+}

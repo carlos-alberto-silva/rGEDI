@@ -2,7 +2,7 @@
 % Please edit documentation in R/getLevel2AM.R
 \name{getLevel2AM}
 \alias{getLevel2AM}
-\title{Get Elevation and Height Metrics (GEDI Level2A)}
+\title{Get GEDI Elevation and Height Metrics (GEDI Level2A)}
 \usage{
 getLevel2AM(level2a)
 }
@@ -17,14 +17,17 @@ containing the elevation and relative heights.
 This function extracts Elevation and Relative Height (RH) metrics from GEDI Level2A data .
 }
 \examples{
-# specify the path to GEDI Level 1B data
-level2apath <- system.file("extdata", "GEDIexample_level01B.h5", package="rGEDI")
+# specify the path to GEDI Level 2A data
+level2apath <- system.file("extdata", "GEDIexample_level02A.h5", package="rGEDI")
 
-# Reading GEDI level1B data
+# Reading GEDI level2A data
 level2a <- readLevel2A(level2apath)
 
-# Get GEDI level1B geolocations
+# Get GEDI Elevation and Height Metrics
 level2AM<-getLevel2AM(level2a)
 head(level2AM)
 
+}
+\seealso{
+https://lpdaac.usgs.gov/products/gedi02_av001/
 }

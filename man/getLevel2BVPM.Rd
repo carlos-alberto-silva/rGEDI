@@ -2,7 +2,7 @@
 % Please edit documentation in R/getLevel2BVPM.R
 \name{getLevel2BVPM}
 \alias{getLevel2BVPM}
-\title{Get Vegetation Profile Biophysical Variables (GEDI Level2B)}
+\title{Get GEDI Vegetation Profile Biophysical Variables (GEDI Level2B)}
 \usage{
 getLevel2BVPM(level2b)
 }
@@ -35,8 +35,11 @@ level2bpath <- system.file("extdata", "GEDIexample_level01B.h5", package="rGEDI"
 # Reading GEDI level2B data
 level2b <- readLevel2B(level2bpath)
 
-# Get GEDI level2B geolocations
+# Get GEDI Vegetation Profile Biophysical Variables
 level2BVPM<-getLevel2BVPM(level2b)
 head(level2BVPM)
 
+}
+\seealso{
+https://lpdaac.usgs.gov/products/gedi02_bv001/
 }

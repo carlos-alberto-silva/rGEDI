@@ -31,12 +31,13 @@
 #'# clip by extent boundary box
 #'level1b_clip <- clipLevel1B(level1b,xleft, xright, ybottom, ytop)
 #'
-#'@import hdf5r
+#'@import hdf5r fs
 #'@export
 clipLevel1B = function(level1b, xleft, xright, ybottom, ytop, output=""){
   if (output == "") {
     output = tempfile(fileext = ".h5")
   }
+  output = fs::path_ext_set(output, "h5")
 
   # Get all spatial data as a list of dataframes with spatial information
   spData = getSpatialData1B(level1b)
@@ -96,10 +97,11 @@ clipLevel1B = function(level1b, xleft, xright, ybottom, ytop, output=""){
 #'
 #'@import hdf5r
 #'@export
-clipLevel1BGeometry = function(level1b, polygon_spdf, output="") {
+clipLevel1BGeometry = function(level1b, polygon_spdf, output="", split_by=NULL) {
   if (output == "") {
     output = tempfile(fileext = ".h5")
   }
+  output = fs::path_ext_set(output, "h5")
 
   spData = getSpatialData1B(level1b)
 
@@ -135,8 +137,12 @@ clipLevel1BGeometry = function(level1b, polygon_spdf, output="") {
     points = sp::SpatialPointsDataFrame(coords=matrix(c(spDataMasked$longitude_bin0, spDataMasked$latitude_bin0), ncol=2),
                                         data=data.frame(id=mask), proj4string = polygon_spdf@proj4string)
     pts = raster::intersect(points, polygon_spdf)
-    for (pol_id in levels(pts@data$d)) {
-      polygon_masks[[pol_id]][[beam]] = pts[pts@data$d == pol_id,]@data[,1]
+    if (is.null(split_by)) {
+      polygon_masks[[""]][[beam]] = pts@data[,1]
+    } else {
+      for (pol_id in as.character(unique(pts@data[[split_by]]))) {
+        polygon_masks[[pol_id]][[beam]] = pts[pts@data[[split_by]] == pol_id,]@data[,1]
+      }
     }
 
     progress = progress + 1
@@ -146,7 +152,11 @@ clipLevel1BGeometry = function(level1b, polygon_spdf, output="") {
 
   message("Writing new HDF5 file...")
   results = list()
+  i = 0
+  len_masks = length(polygon_masks)
   for (pol_id in names(polygon_masks)) {
+    i = i + 1
+    message(gettextf("Writing %s='%s': %d of %d", split_by, pol_id, i, len_masks))
     output2 = gsub("\\.h5$", paste0("_", pol_id,".h5"), output)
     results[[pol_id]] = clipByMask1B(level1b,
                                      polygon_masks[[pol_id]],

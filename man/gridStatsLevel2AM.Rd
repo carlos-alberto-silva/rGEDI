@@ -58,3 +58,6 @@ plot(ZGmean)
 }
 
 }
+\seealso{
+https://lpdaac.usgs.gov/products/gedi02_av001/
+}

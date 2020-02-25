@@ -8,7 +8,9 @@
 #define main addNoiseHDF
 #define control addNoise_control
 #define readCommands readCommands_addNoise
+#define fprintf(stdout, ...) Rprintf(__VA_ARGS__)
     #include "gedisimulator/addNoiseHDF.c"
+#undef fprintf
 #undef readCommands
 #undef control
 #undef main
@@ -75,12 +77,12 @@ SEXP C_addNoiseHDF(
             mkString("E:/Documentos/sample.h5"),
             mkString("E:/Documentos/sample_noised.h5"),
             R_NilValue,
-            linkNoise,
             R_NilValue,
-            ScalarReal(22.0),
-            ScalarReal(6.6383),
             R_NilValue,
-            ScalarInteger(12));
+            R_NilValue,
+            R_NilValue,
+            R_NilValue,
+            R_NilValue);
 
             UNPROTECT(1);
     }

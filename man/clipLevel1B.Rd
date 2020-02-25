@@ -42,3 +42,6 @@ ytop = 46.84229
 level1b_clip <- clipLevel1B(level1b,xleft, xright, ybottom, ytop)
 
 }
+\seealso{
+https://lpdaac.usgs.gov/products/gedi01_bv001/
+}

@@ -55,14 +55,17 @@ metrics = list(
  return(metrics)
 }
 
-#' Computing the maximum of RH100 by the entire file
+# Computing the maximum of RH100
 RH100max<-polyStatsLevel2AM(level2AM_clip,func=max(RH100), id=NULL)
 
-#' Computing the maximum of RH100 by polygon id
+# Computing the maximum of RH100 stratified by polygon
 RH100max_poly<-polyStatsLevel2AM(level2AM_clip,func=max(RH100), id=NULL)
 
-#'Computing a serie of GEDI metrics by polygon id
+# Computing a serie statistics for GEDI metrics stratified by polygon
 RH100metrics<-polyStatsLevel2AM(level2AM_clip,func=mySetOfMetrics(RH100),
                      id=level2AM_clip@data$id)
 }
+}
+\seealso{
+https://lpdaac.usgs.gov/products/gedi02_av001/
 }

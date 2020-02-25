@@ -42,3 +42,6 @@ ytop = 46.84229
 level2a_clip <- clipLevel2A(level1a,xleft,xright,ybottom,ytop)
 
 }
+\seealso{
+https://lpdaac.usgs.gov/products/gedi02_av001/
+}

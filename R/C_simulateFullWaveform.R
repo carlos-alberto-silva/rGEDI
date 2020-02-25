@@ -1,43 +1,72 @@
-#' GEDI full-waveform data simulation
+#'GEDI full-waveform data simulation
 #'
 #'@description Simulate GEDI full-waveform data from Airborne Laser Scanning (ALS) 3-D point cloud
 #'
-#'@usage gediWFSimulator(input,output,waveID,coords,listCoord,gridBound,gridStep,pSigma,pFWHM,readPulse,
-#'fSigma,wavefront,res,topHat,sideLobe,lobeAng,checkCover,maxScanAng,decimate,pBuff,maxBins,countOnly,
-#'pulseAfter,pulseBefore,noNorm,noOctree,octLevels,nOctPix,keepOld,useShadow,polyGround,seed)
-#'
-#' @param input A standard LAS data file (ASPRS)
-#' @param output Output file name
+#' Input output filenames and format
+#' @param input name. lasfile input filename
+# inList should be parsed from vector input
+# @param inList list. input file list (ASCII file) for multiple files
+#' @param output name. output filename
+
+#Ground should always be true
+# @param ground record separate ground and canopy waveforms
+
+#Always HDF
+# @param hdf write output as HDF5. Best with gridded or list of coords
+# @param ascii write output as ASCII (default). Good for quick tests
 #' @param waveID id. supply a waveID to pass to the output (only for single footprints)
-#' @param coord lon and lat informations as numeric vector. footprint coordinate in same system as lasfile
+#' Single footprint, list of footprints, or grid of footprints
+#' @param coord lon lat numeric vector. footprint coordinate in same system as lasfile
 #' @param listCoord name. Text file with list of coordinates. Pattern: X, Y, `[waveID]`, `[geoCoordsX]`, `[geoCoordsY]`. `[]` are optional.
 #' @param gridBound minX maxX minY maxY numeric vector. make a grid of waveforms in this box
 #' @param gridStep res. grid step size
-#' @param pFWHM fhwm. set Gaussian pulse width as FWHM in ns. Defaults are expected GEDI values. pSigmasig. set Gaussian pulse width as 1 sigma
+#' Lidar characteristics. Defaults are expected GEDI values. pSigmasig. set Gaussian pulse width as 1 sigma
+#' @param pFWHM fhwm. set Gaussian pulse width as FWHM in ns
 #' @param readPulse file. read pulse shape and width from a file insteda of making Gaussian
 #' @param fSigma sig. set footprint width
 #' @param wavefront file. read wavefront shape from file instead of setting Gaussian. Note that footprint width is still set by fSigma
 #' @param res res. range resolution of waveform digitisation to output, in units of ALS data
+
+# Not LVIS
+# @param LVIS use LVIS pulse length, sigma=6. 25m
 #' @param topHat use a top hat wavefront
 #' @param sideLobe use side lobes
 #' @param lobeAng ang. lobe axis azimuth
+#' Input data quality filters
 #' @param checkCover check that the footprint is covered by ALS data. Do not output if not
 #' @param maxScanAng ang. maximum scan angle, degrees
 #' @param decimate x. probability of accepting an ALS beam
+#' Computational speed options
 #' @param pBuff s. point reading buffer size in Gbytes
 #' @param maxBins for HDF5, limit number of bins to save trimming.
 #' @param countOnly only use count method
 #' @param pulseAfter apply the pulse smoothing after binning for computational speed, at the risk of aliasing (default)
 #' @param pulseBefore apply the pulse smoothing before binning to avoid the risk of aliasing, at the expense of computational speed
 #' @param noNorm don't normalise for ALS density
+
+#' Octree
 #' @param noOctree do not use an octree
 #' @param octLevels n. number of octree levels to use
 #' @param nOctPix n. number of octree pixels along a side for the top level
+
+#' Using full-waveform input data (not tested)
+# Not supported yet
+# @param decon deconvolve
+# @param indDecon deconvolve individual beams
+# @param readWave read full-waveform where available
+# Miscellaneous
+
+# R user should never only list files
+# @param listFiles list files. Do not read them
 #' @param keepOld do not overwrite old files, if they exist
 #' @param useShadow account for shadowing in discrete return data through voxelisation
 #' @param polyGround find mean ground elevation and slope through fitting a polynomial
+
+# nnGround is not working yet
+# @param nnGround find mean ground elevation and slope through nearest neighbour
 #' @param seed n integer. random number seed
-#'
+#' 
+#' #'
 #' @return A S4 object of class \code{\link[hdf5r]{hdf5rfile}} in the \emph{hdf5r} package.
 #'
 #' @seealso
@@ -116,66 +145,54 @@ gediWFSimulator = function(
   nnGround = FALSE
 
   # Check values
-  tryCatch(
-    stopifnot(
-      all(file.exists(input)),
-      fs::path_ext(input) == "las",
-      dir.exists(fs::path_dir(output)),
-      is.null(waveID) || length(coords) == 2, # If waveID should only work along with coords
-      checkNumericLength(coords, 2),
-      is.null(listCoord) || file.exists(listCoord),
-      checkNumericLength(gridBound, 4),
-      checkNumeric(gridStep),
-      checkNumeric(pFWHM),
-      checkFilepath(readPulse, newFile=FALSE, optional=TRUE),
-      checkNumeric(fSigma),
-      checkFilepath(wavefront, newFile=FALSE, optional=TRUE),
-      checkNumeric(res),
-      checkLogical(topHat),
-      checkLogical(sideLobe),
-      checkNumeric(lobeAng),
-      checkLogical(checkCover),
-      checkNumeric(maxScanAng),
-      checkNumeric(decimate),
-      checkNumeric(pBuff),
-      checkInteger(maxBins),
-      checkLogical(countOnly),
-      checkLogical(pulseAfter),
-      checkLogical(pulseBefore),
-      checkLogical(noNorm),
-      checkLogical(noOctree),
-      checkInteger(octLevels),
-      checkInteger(nOctPix),
-      checkLogical(keepOld),
-      checkLogical(useShadow),
-      checkLogical(polyGround),
-      checkInteger(seed)
-    ),
-    error=function(e) {
-    stop(paste0("\n\nInput arguments are invalid!\n",
-                e$message))
-  })
+  stopifnotMessage(
+    all(file.exists(input)),
+    all(fs::path_ext(input) == "las"),
+    dir.exists(fs::path_dir(output)),
+    is.null(waveID) || length(coords) == 2, # If waveID should only work along with coords
+    checkNumericLength(coords, 2),
+    is.null(listCoord) || file.exists(listCoord),
+    checkNumericLength(gridBound, 4),
+    checkNumeric(gridStep),
+    checkNumeric(pFWHM),
+    checkFilepath(readPulse, newFile=FALSE, optional=TRUE),
+    checkNumeric(fSigma),
+    checkFilepath(wavefront, newFile=FALSE, optional=TRUE),
+    checkNumeric(res),
+    checkLogical(topHat),
+    checkLogical(sideLobe),
+    checkNumeric(lobeAng),
+    checkLogical(checkCover),
+    checkNumeric(maxScanAng),
+    checkNumeric(decimate),
+    checkNumeric(pBuff),
+    checkInteger(maxBins),
+    checkLogical(countOnly),
+    checkLogical(pulseAfter),
+    checkLogical(pulseBefore),
+    checkLogical(noNorm),
+    checkLogical(noOctree),
+    checkInteger(octLevels),
+    checkInteger(nOctPix),
+    checkLogical(keepOld),
+    checkLogical(useShadow),
+    checkLogical(polyGround),
+    checkInteger(seed)
+  )
 
   if (is.null(coords) && is.null(listCoord) && is.null(gridBound)) {
     stop("Coordinates for the waveforms should be provided!\nTIP: Use coords, listCoord or gridBound.")
   }
 
-  inList=NULL
-  if (length(input) > 1) {
-    inList = tempfile(fileext=".txt")
-    fileHandle = file(inList, "w")
-    writeLines(input, fileHandle)
-    close(fileHandle)
-    inFile = fileHandle
-  }
+  inputInList = inputOrInList(input)
   if (fs::path_ext(output) != "h5") {
     output = paste0(output, ".h5")
   }
 
   .Call("C_gediSimulator",
-        input,
+        inputInList[[1]],
         output,
-        inList,
+        inputInList[[2]],
         ground,
         hdf,
         ascii,
@@ -225,9 +242,7 @@ gediWFSimulator = function(
 
   unloadLibrary()
 
-  if (!is.null(inList)) {
-    file.remove(inList)
-  }
+  cleanInList(inputInList)
   result = tryCatch(hdf5r::H5File$new(output, "r+"), error=function(e) stop("The output file was not created\nSomething went wrong!"))
 
   return(result)
