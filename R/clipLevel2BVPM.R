@@ -35,21 +35,19 @@
 #'  addScaleBar(options = list(imperial = FALSE)) %>%
 #'  addProviderTiles(providers$Esri.WorldImagery)
 #'@export
-clipLevel2BVPM = function(x,xleft, xright, ybottom, ytop){
+clipLevel2BVPM = function(level2BVPM, xleft, xright, ybottom, ytop){
   # xleft ybottom xright ytop
   mask =
-    x$lon_lowestmode >= xleft &
-    x$lon_lowestmode <= xright &
-    x$lat_lowestmode >= ybottom &
-    x$lat_lowestmode <=  ytop
+    level2BVPM$lon_lowestmode >= xleft &
+    level2BVPM$lon_lowestmode <= xright &
+    level2BVPM$lat_lowestmode >= ybottom &
+    level2BVPM$lat_lowestmode <=  ytop
 
-  mask = (1:length(x$lon_lowestmode))[mask]
-  newFile<-x[mask,]
-  #newFile<- new("gedi.level1b.dt", dt = level2bdt[mask,])
-  if (nrow(newFile) == 0) {print("The polygon does not overlap the GEDI data")} else {
-    return (newFile)
-  }
 
+  mask = (1:length(level2BVPM$lat_lowestmode))[mask]
+  newFile<-level2BVPM[mask,]
+  #newFile<- new("gedi.level1b.dt", dt = level1bdt[mask,])
+  return (newFile)
 }
 
 #'Clip GEDI level2bdt data by geometry
