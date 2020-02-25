@@ -68,7 +68,7 @@ clipLevel2B = function(level2b, xleft, xright, ybottom, ytop, output=""){
                          output)
   output = newFile@h5$filename
   hdf5r::h5close(newFile@h5)
-  result = readlevel2b(output)
+  result = readLevel2B(output)
 
   return (result)
 }
@@ -104,7 +104,7 @@ clipLevel2B = function(level2b, xleft, xright, ybottom, ytop, output=""){
 #'level2b_clip_geometry <- clipLevel2BGeometry(level2BVPM,polygon_spdf=polygon_spdf)
 #'
 #'@export
-clipLevel2BGeometry = function(level2b, polygon_spdf, output="") {
+clipLevel2BGeometry = function(level2b, polygon_spdf, output="", split_by="id") {
   spData = getSpatialData2B(level2b)
 
   xleft = polygon_spdf@bbox[1,1]
