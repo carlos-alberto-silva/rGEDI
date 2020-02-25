@@ -67,6 +67,7 @@ clipLevel2A = function(level2a, xleft, xright, ybottom, ytop, output=""){
 }
 
 
+
 #'Clip GEDI Level2A data by geometry
 #'
 #'@description This function clips GEDI Level2A data within given geometry
@@ -88,7 +89,7 @@ clipLevel2A = function(level2a, xleft, xright, ybottom, ytop, output=""){
 #'level2apath <- system.file("extdata", "GEDIexample_level02A.h5", package="rGEDI")
 #'
 #'# Reading GEDI level2A data
-#'level2a<-readLevel2a(level1bpath)
+#'level2a<-readLevel2A(level1bpath)
 #'
 #'# specify the path to shapefile
 #'polygon_filepath <- system.file("extdata", "stands_cerrado.shp", package="rGEDI")
