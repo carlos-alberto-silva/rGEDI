@@ -36,7 +36,6 @@ clipLevel2A = function(level2a, xleft, xright, ybottom, ytop, output=""){
   if (output == "") {
     output = tempfile(fileext = ".h5")
   }
-  output = fs::path_ext_set(output, "h5")
 
   # Get all spatial data as a list of dataframes with spatial information
   spData = getSpatialData2A(level2a)
@@ -56,7 +55,7 @@ clipLevel2A = function(level2a, xleft, xright, ybottom, ytop, output=""){
     })
     return (masks2)
   })
-output = "level2a.h5"
+
   newFile = clipByMask2A(level2a,
                          masks,
                          output)
@@ -66,6 +65,7 @@ output = "level2a.h5"
 
   return (result)
 }
+
 
 
 #'Clip GEDI Level2A data by geometry
@@ -89,7 +89,7 @@ output = "level2a.h5"
 #'level2apath <- system.file("extdata", "GEDIexample_level02A.h5", package="rGEDI")
 #'
 #'# Reading GEDI level2A data
-#'level2a<-readLevel2a(level1bpath)
+#'level2a<-readLevel2A(level1bpath)
 #'
 #'# specify the path to shapefile
 #'polygon_filepath <- system.file("extdata", "stands_cerrado.shp", package="rGEDI")
@@ -101,7 +101,7 @@ output = "level2a.h5"
 #'level2a_clip <- clipLevel2AGeometry(level2a,polygon_spdf)
 #'
 #'@export
-clipLevel2AGeometry= function(level2a, polygon_spdf, output="") {
+clipLevel2AGeometry = function(level2a, polygon_spdf, output="") {
 
   if (output == "") {
     output = tempfile(fileext = ".h5")
