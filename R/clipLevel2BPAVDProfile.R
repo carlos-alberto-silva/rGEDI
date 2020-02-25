@@ -27,10 +27,10 @@
 #'level2BPAVDProfile<-getLevel2BPAVDProfile(level2b)
 #'
 #'# Bounding rectangle coordinates
-#'xleft = -116.4683
-#'xright = -116.5583
-#'ybottom = 46.75208
-#'ytop = 46.84229
+#'xleft = -44.15036
+#'xright = -44.10066
+#'ybottom = -13.75831
+#'ytop = -13.71244
 #'
 #'# clip level2BVPM by extent boundary box
 #'level2BPAVDProfile_clip <- clipLevel2BPAVDProfile(level2BPAVDProfile,xleft, xright, ybottom, ytop)
@@ -81,7 +81,7 @@ clipLevel2BPAVDProfile = function(x,xleft, xright, ybottom, ytop){
 #'level2BPAVDProfile<-getLevel2BPAVDProfile(level2b)
 #'
 #'# specify the path to shapefile
-#'polygon_filepath <- system.file("extdata", "clip_polygon.shp", package="rGEDI")
+#'polygon_filepath <- system.file("extdata", "stands_cerrado.shp", package="rGEDI")
 #'
 #'# Reading shapefile as SpatialPolygonsDataFrame object
 #'library(rgdal)
