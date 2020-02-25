@@ -144,10 +144,10 @@ head(level2BVPM)
 ```r
 ## Clip GEDI data by coordinates
 # Study area boundary box
-xmin<--45.62009
-ymin<--15.71073
-xmax<--44.51999
-ymax<--14.46284
+#'xleft = -44.15036
+#'xright = -44.10066
+#'ybottom = -13.75831
+#'ytop = -13.71244
 
 ## clipping GEDI data within boundary box
 
@@ -166,7 +166,7 @@ level2BPAVDProfile_clip_bb <- clipLevel2BPAVDProfile(level2BPAVDProfile,xleft, x
 ## Clip GEDI data by geometry
 
 # specify the path to shapefile for the study area
-polygon_filepath <- system.file("extdata", "shp_np.shp", package="rGEDI")
+polygon_filepath <- system.file("extdata", "stands_cerrado.shp", package="rGEDI")
 
 # Reading shapefile as SpatialPolygonsDataFrame object
 library(rgdal)

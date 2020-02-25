@@ -20,7 +20,7 @@
 #'level2apath <- system.file("extdata", "GEDIexample_level02A.h5", package="rGEDI")
 #'
 #'# Reading GEDI level2A data
-#'level2a<-readLevel2a(level1bpath)
+#'level2a<-readLevel2A(level1bpath)
 #'
 #'# Bounding rectangle coordinates
 #'xleft = -44.15036
@@ -61,7 +61,7 @@ clipLevel2A = function(level2a, xleft, xright, ybottom, ytop, output=""){
                          output)
   output = newFile@h5$filename
   hdf5r::h5close(newFile@h5)
-  result = readlevel2a(output)
+  result = readLevel2A(output)
 
   return (result)
 }
