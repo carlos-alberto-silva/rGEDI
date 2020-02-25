@@ -53,11 +53,8 @@ clipLevel2BVPM = function(level2BVPM,xleft, xright, ybottom, ytop){
     level2BVPM$lon_lowestmode >= xleft &
     level2BVPM$lon_lowestmode <= xright &
     level2BVPM$lat_lowestmode >= ybottom &
-    level2BVPM$lat_lowestmode <=  ytop &
-    level2BVPM$lon_lowestmode >= xleft &
-    level2BVPM$lon_lowestmode <= xright &
-    level2BVPM$lat_lowestmode >= ybottom &
     level2BVPM$lat_lowestmode <=  ytop
+
 
   mask = (1:length(level2BVPM$lat_lowestmode))[mask]
   newFile<-level2BVPM[mask,]
