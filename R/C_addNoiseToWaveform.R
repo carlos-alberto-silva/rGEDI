@@ -1,6 +1,12 @@
-#' GEDI add noise to simulated waveform
+#' Add noise to simulated GEDI waveform
 #'
-#' @description Add noise to HDF output from gediWFSimulator
+#' @description
+#' This function is intended to be used after the simulation process (\code{\link{gediWFSimulator}}).
+#' Given the known laser power, optical efficiences, mean atmospheric
+#' transmission at 1,064 nm, expected canopy and ground reflectance,
+#' range of background illumination intensities, and the detector response
+#' the expected performance is calculated according to \href{https://doi.org/10.1109/26.8924}{Davidson and Sun (1988)}.
+#'
 #'
 #' @param input \code{\link{character}}. Waveform  input filename
 #' @param output \code{\link{character}}. Output filename
