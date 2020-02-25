@@ -26,10 +26,10 @@
 #'level1BGeo<-getLevel1BGeo(level1b)
 #'
 #'# Bounding rectangle coordinates
-#'xleft = -116.4683
-#'xright = -116.5583
-#'ybottom = 46.75208
-#'ytop = 46.84229
+#'xleft = -44.15036
+#'xright = -44.10066
+#'ybottom = -13.75831
+#'ytop = -13.71244
 #'
 #'# clip by boundary box coordinates
 #'level1bGeo_clip <- clipLevel1BGeo(level1BGeo,xleft, xright, ybottom, ytop)
@@ -92,7 +92,7 @@ clipLevel1BGeo = function(level1BGeo,xleft, xright, ybottom, ytop){
 #'level1BGeo<-getLevel1BGeo(level1b)
 #'
 #'# specify the path to shapefile
-#'polygon_filepath <- system.file("extdata", "clip_polygon.shp", package="rGEDI")
+#'polygon_filepath <- system.file("extdata", "stands_cerrado.shp", package="rGEDI")
 #'
 #'# Reading shapefile as SpatialPolygonsDataFrame object
 #'library(rgdal)

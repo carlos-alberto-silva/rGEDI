@@ -4,7 +4,7 @@
 #'Canopy Cover and Vertical Profile metrics within given bounding coordinates
 #'
 #'
-#'@usage clipLevel2BVPM(level2BVPM, xleft, xright, ybottom, ytop, output="")
+#'@usage clipLevel2BVPM(level2BVPM, xleft, xright, ybottom, ytop)
 #'
 #'
 #'@param level2BVPM A GEDI Level2B object (output of \code{\link[rGEDI:readLevel1B]{readLevel1B}} function). A S4 object of class "gedi.level2b".
@@ -27,10 +27,10 @@
 #'level2BVPM<-getlevel2BVPM(level2b)
 #'
 #'# Bounding rectangle coordinates
-#'xleft = -116.4683
-#'xright = -116.5583
-#'ybottom = 46.75208
-#'ytop = 46.84229
+#'xleft = -44.15036
+#'xright = -44.10066
+#'ybottom = -13.75831
+#'ytop = -13.71244
 #'
 #'# clip level2BVPM by extent boundary box
 #'level2b_clip <- level2BVPM(level2BVPM,xleft, xright, ybottom, ytop)
@@ -94,7 +94,7 @@ clipLevel2BVPM = function(level2BVPM,xleft, xright, ybottom, ytop){
 #'level2BVPM<-getlevel2BVPM(level2b)
 #'
 #'# specify the path to shapefile
-#'polygon_filepath <- system.file("extdata", "clip_polygon.shp", package="rGEDI")
+#'polygon_filepath <- system.file("extdata", "stands_cerrado.shp", package="rGEDI")
 #'
 #'# Reading shapefile as SpatialPolygonsDataFrame object
 #'library(rgdal)

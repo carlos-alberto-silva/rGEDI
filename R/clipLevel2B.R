@@ -21,10 +21,10 @@
 #'level2b <- readLevel2B(level2bpath)
 #'
 #'# Bounding rectangle coordinates
-#'xleft = -116.4683
-#'xright = -116.5583
-#'ybottom = 46.75208
-#'ytop = 46.84229
+#'xleft = -44.15036
+#'xright = -44.10066
+#'ybottom = -13.75831
+#'ytop = -13.71244
 #'
 #'# clip level2BVPM by extent boundary box
 #'level2b_clip <- level2BVPM(level2BVPM,xleft, xright, ybottom, ytop)
@@ -94,7 +94,7 @@ clipLevel2B = function(level2b, xleft, xright, ybottom, ytop, output=""){
 #'level2b <- readLevel2B(level2bpath)
 #'
 #'# specify the path to shapefile
-#'polygon_filepath <- system.file("extdata", "clip_polygon.shp", package="rGEDI")
+#'polygon_filepath <- system.file("extdata", "stands_cerrado.shp", package="rGEDI")
 #'
 #'# Reading shapefile as SpatialPolygonsDataFrame object
 #'library(rgdal)
