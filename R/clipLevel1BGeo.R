@@ -44,7 +44,7 @@
 #'  addScaleBar(options = list(imperial = FALSE)) %>%
 #'  addProviderTiles(providers$Esri.WorldImagery)
 #'@export
-clipLevel1BGeo = function(level1BGeo,xleft, xright, ybottom, ytop){
+clipLevel1BGeo = function(level1BGeo,xleft, xright, ybottom, ytop, spdf=TRUE){
   # xleft ybottom xright ytop
   mask =
     level1BGeo$longitude_bin0 >= xleft &

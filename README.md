@@ -72,23 +72,16 @@ gedilevel2b<-readLevel1B(level2bpath = paste0(getwd(),"//",basename(GEDI02_B_url
 
 ## Get GEDI Pulse Full-Waveform Geolocation (GEDI Level1B)
 ```r
-level1bGeo<-getLevel1BGeo(level1b,select=c("elevation_bin0", "elevation_lastbin"))
+level1bGeo<-getLevel1BGeo(level1b,select=NULL)
 head(level1bGeo)
 
-         shot_number latitude_bin0 latitude_lastbin longitude_bin0 longitude_lastbin elevation_bin0
-1: 19640002800109382     -13.75903        -13.75901      -44.17219         -44.17219       784.8348
-2: 19640003000109383     -13.75862        -13.75859      -44.17188         -44.17188       799.0491
-3: 19640003200109384     -13.75821        -13.75818      -44.17156         -44.17156       814.4647
-4: 19640003400109385     -13.75780        -13.75777      -44.17124         -44.17124       820.1437
-5: 19640003600109386     -13.75738        -13.75736      -44.17093         -44.17093       821.7012
-6: 19640003800109387     -13.75697        -13.75695      -44.17061         -44.17061       823.2526
-   elevation_lastbin
-1:          669.0229
-2:          679.0421
-3:          694.9071
-4:          705.0807
-5:          707.9866
-6:          708.0397
+##           shot_number latitude_bin0 latitude_lastbin longitude_bin0 longitude_lastbin
+##  1: 19640002800109382     -13.75903        -13.75901      -44.17219         -44.17219
+##  2: 19640003000109383     -13.75862        -13.75859      -44.17188         -44.17188
+##  3: 19640003200109384     -13.75821        -13.75818      -44.17156         -44.17156
+##  4: 19640003400109385     -13.75780        -13.75777      -44.17124         -44.17124
+##  5: 19640003600109386     -13.75738        -13.75736      -44.17093         -44.17093
+##  6: 19640003800109387     -13.75697        -13.75695      -44.17061         -44.17061
     
 library(leaflet)
 leaflet() %>%
