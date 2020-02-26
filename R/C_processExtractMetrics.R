@@ -1,9 +1,8 @@
-
-#'GEDI full waveform data processing
+#'Simulated GEDI full-waveform data processing
 #'
-#' @description GEDI full waveform data processing and metrics extraction
+#' @description GEDI full waveform data processing and canopy metrics extraction
 #'
-#! \bold{Input output}
+#! \bold{Input and output file info}
 #' @param input name. waveform  input filename
 #' @param outRoot name. output filename root
 # @param inList list. input file list for multiple files
@@ -94,13 +93,33 @@
 #' @param gold deconvolve with Gold's method
 #' @param deconTol deconvolution tolerance
 #'
-#' @examples
+#' @return A S4 object of class \code{\link[hdf5r]{hdf5rfile}} in the \emph{hdf5r} package.
 #'
+#' @seealso
+#' i) Hancock, S., Armston, J., Hofton, M., Sun, X., Tang, H., Duncanson, L.I., Kellner,
+#' J.R. and Dubayah, R., 2019. The GEDI simulator: A large‐footprint waveform lidar simulator
+#' for calibration and validation of spaceborne missions. Earth and Space Science.
+#' https://doi.org/10.1029/2018EA000506
+#'
+#' ii) gediSimulator: https://bitbucket.org/StevenHancock/gedisimulator/src/master/
+#'
+#' @examples
+#'# specify the path to ALS data
+#'LASfile <- system.file("extdata", "LASexample1.las", package="rGEDI")
+#'
+#'# Simulate GEDI full-waveform
+#'wf<-gediWFSimulator(input=LASfile,output="gediSimulation.h5")
+#'
+#'# Adding noise to GEDI full-waveform
+#'wfn<-gediWFNoise(input=wf,output="gediSimulation_noise.h5")
+#'
+#'# Extracting GEDI feull-waveform derived metrics
+#'wfmetrics<-gediWFMetrics(input=wfn,outRoot=getwd())
 #'
 #' @useDynLib rGEDI
 #' @import methods
 #' @export
-gediWFMetric = function(
+gediWFMetrics = function(
   input,
   outRoot,
   writeFit = FALSE,
@@ -171,7 +190,7 @@ gediWFMetric = function(
   pSigma = NULL,
   gold = FALSE,
   deconTol = NULL) {
-
+    
   readBinLVIS = FALSE
   readHDFlvis = FALSE
   readHDFgedi = TRUE

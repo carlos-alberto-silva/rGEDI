@@ -1,6 +1,6 @@
-#' GEDI full waveform data simulation
+#' GEDI full-waveform data simulation
 #'
-#' @description Simulate GEDI full waveform data from Airborne Laser Scanning (ALS) 3-D point cloud
+#'@description Simulate GEDI full-waveform data from Airborne Laser Scanning (ALS) 3-D point cloud
 #'
 #' Input output filenames and format
 #' @param input name. lasfile input filename
@@ -61,24 +61,32 @@
 #' @param keepOld do not overwrite old files, if they exist
 #' @param useShadow account for shadowing in discrete return data through voxelisation
 #' @param polyGround find mean ground elevation and slope through fitting a polynomial
-
+ 
 # nnGround is not working yet
 # @param nnGround find mean ground elevation and slope through nearest neighbour
 #' @param seed n integer. random number seed
 #'
+#' @return A S4 object of class \code{\link[hdf5r]{hdf5rfile}} in the \emph{hdf5r} package.
+#'
+#' @seealso
+#' i) Hancock, S., Armston, J., Hofton, M., Sun, X., Tang, H., Duncanson, L.I., Kellner,
+#' J.R. and Dubayah, R., 2019. The GEDI simulator: A large‐footprint waveform lidar simulator
+#' for calibration and validation of spaceborne missions. Earth and Space Science.
+#' https://doi.org/10.1029/2018EA000506
+#'
+#' ii) gediSimulator: https://bitbucket.org/StevenHancock/gedisimulator/src/master/
+#'
 #' @examples
-#' las.sample=system.file("extdata/sample.las", package="rGEDI")
+#'# specify the path to ALS data
+#'LASfile <- system.file("extdata", "LASexample1.las", package="rGEDI")
 #'
-#' output=tempfile(fileext=".h5")
+#'Reading and plot LASfile
+#'library(lidR)
+#'LAS<-readLAS(LASfile)
+#'plot(LAS)
 #'
-#' out.WF=gediWFSimulator(
-#'   input=las.sample,
-#'   output=output,
-#'   coords = c(278215, 602215))
-#'
-#'
-#' print(out.WF)
-#'
+#'# Simulate GEDI full-waveform
+#'wf<-gediWFSimulator(input=LASfile,output="gediSimulation.h5")
 #'
 #' @import hdf5r
 #' @useDynLib rGEDI
@@ -139,37 +147,37 @@ gediWFSimulator = function(
   stopifnotMessage(
     all(file.exists(input)),
     all(fs::path_ext(input) == "las"),
-    dir.exists(fs::path_dir(output)),
-    is.null(waveID) || length(coords) == 2, # If waveID should only work along with coords
-    checkNumericLength(coords, 2),
-    is.null(listCoord) || file.exists(listCoord),
-    checkNumericLength(gridBound, 4),
-    checkNumeric(gridStep),
-    checkNumeric(pFWHM),
-    checkFilepath(readPulse, newFile=FALSE, optional=TRUE),
-    checkNumeric(fSigma),
-    checkFilepath(wavefront, newFile=FALSE, optional=TRUE),
-    checkNumeric(res),
-    checkLogical(topHat),
-    checkLogical(sideLobe),
-    checkNumeric(lobeAng),
-    checkLogical(checkCover),
-    checkNumeric(maxScanAng),
-    checkNumeric(decimate),
-    checkNumeric(pBuff),
-    checkInteger(maxBins),
-    checkLogical(countOnly),
-    checkLogical(pulseAfter),
-    checkLogical(pulseBefore),
-    checkLogical(noNorm),
-    checkLogical(noOctree),
-    checkInteger(octLevels),
-    checkInteger(nOctPix),
-    checkLogical(keepOld),
-    checkLogical(useShadow),
-    checkLogical(polyGround),
-    checkInteger(seed)
-  )
+      dir.exists(fs::path_dir(output)),
+      is.null(waveID) || length(coords) == 2, # If waveID should only work along with coords
+      checkNumericLength(coords, 2),
+      is.null(listCoord) || file.exists(listCoord),
+      checkNumericLength(gridBound, 4),
+      checkNumeric(gridStep),
+      checkNumeric(pFWHM),
+      checkFilepath(readPulse, newFile=FALSE, optional=TRUE),
+      checkNumeric(fSigma),
+      checkFilepath(wavefront, newFile=FALSE, optional=TRUE),
+      checkNumeric(res),
+      checkLogical(topHat),
+      checkLogical(sideLobe),
+      checkNumeric(lobeAng),
+      checkLogical(checkCover),
+      checkNumeric(maxScanAng),
+      checkNumeric(decimate),
+      checkNumeric(pBuff),
+      checkInteger(maxBins),
+      checkLogical(countOnly),
+      checkLogical(pulseAfter),
+      checkLogical(pulseBefore),
+      checkLogical(noNorm),
+      checkLogical(noOctree),
+      checkInteger(octLevels),
+      checkInteger(nOctPix),
+      checkLogical(keepOld),
+      checkLogical(useShadow),
+      checkLogical(polyGround),
+      checkInteger(seed)
+    )
 
   if (is.null(coords) && is.null(listCoord) && is.null(gridBound)) {
     stop("Coordinates for the waveforms should be provided!\nTIP: Use coords, listCoord or gridBound.")

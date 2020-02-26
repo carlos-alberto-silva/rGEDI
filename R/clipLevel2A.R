@@ -1,38 +1,37 @@
-#'Clip GEDI level2a data
+#'Clip GEDI Level2A data by Coordinates
 #'
-#'@description Clip GEDI Level1 data within a given bounding coordinates
+#'@description This function clips GEDI Level2A data within given bounding coordinates
 #'
 #'
-#'@param level2a h5file; S4 object of class H5File
-#'@param xleft numeric. left x coordinates of rectangles.
-#'@param xright numeric. right x coordinates of rectangles.
-#'@param ybottom numeric. bottom y coordinates of rectangles.
-#'@param ytop numeric. top y coordinates of rectangles.
-#'@param output optional character path where to save the new h5file. Default "" (temporary file).
+#'@param level2a A GEDI Level2A object (output of \code{\link[rGEDI:readLevel2A]{readLevel2A}} function). A S4 object of class "gedi.level2a".
+#'@param xleft Numeric. West longitude (x) coordinate of bounding rectangle, in decimal degrees.
+#'@param xright Numeric. East longitude (x) coordinate of bounding rectangle, in decimal degrees.
+#'@param ybottom Numeric. South latitude (y) coordinate of bounding rectangle, in decimal degrees.
+#'@param ytopNumeric. North latitude (y) coordinate of bounding rectangle, in decimal degrees.
+#'@param output Optional character path where to save the new hdf5file. The default stores a temporary file only.
 #'
-#'@return Returns An object of class H5File; subset of LVIS Level2 data
-#'@author Caio Hamamura
+#'@return An S4 object of class "gedi.level2a".
+#'
+#'@seealso https://lpdaac.usgs.gov/products/gedi02_av001/
+#'
 #'@examples
+#'# specify the path to GEDI level2A data
+#'level2apath <- system.file("extdata", "GEDIexample_level02A.h5", package="rGEDI")
 #'
-#'#' LVIS level 2A file path
-#' #level2apath = system.file("extdata", "lvis_level1_clip.h5", package="rLVIS")
+#'# Reading GEDI level2A data
+#'level2a<-readLevel2A(level1bpath)
 #'
-#'# Rectangle
-#' #xleft = 81
-#' #xright = 83
-#' #ybottom = 2
-#' #ytop = 4
+#'# Bounding rectangle coordinates
+#'xleft = -44.15036
+#'xright = -44.10066
+#'ybottom = -13.75831
+#'ytop = -13.71244
 #'
-#'#' Reading LVIS level 2 file
-#' #level1_waveform = readlevel2a(level2apath)
-#'
-#' #output = tempfile(fileext=".h5")
-#'
-#' #clipped_waveform = cliplevel2a(level1_waveform, output, xleft, xright, ybottom, ytop)
+#'# clip by extent boundary box
+#'level2a_clip <- clipLevel2A(level1a,xleft,xright,ybottom,ytop)
 #'
 #'@export
-#'
-cliplevel2ah5 = function(level2a, xleft, xright, ybottom, ytop, output=""){
+clipLevel2A = function(level2a, xleft, xright, ybottom, ytop, output=""){
   if (output == "") {
     output = tempfile(fileext = ".h5")
   }
@@ -56,48 +55,50 @@ cliplevel2ah5 = function(level2a, xleft, xright, ybottom, ytop, output=""){
     })
     return (masks2)
   })
-output = "level2a.h5"
+
   newFile = clipByMask2A(level2a,
-                       masks,
-                       output)
+                         masks,
+                         output)
   output = newFile@h5$filename
-  hdf5r::h5close(newFile@h5)
-  result = readlevel2a(output)
+  newFile@h5$close_all()
+  result = readLevel2A(output)
 
   return (result)
 }
 
-#'Clip LVIS Level1 data by geometry
+#'Clip GEDI Level2A data by geometry
 #'
-#'@description Clip LVIS Level1 data within a given bounding coordinates
+#'@description This function clips GEDI Level2A data within given geometry
 #'
 #'
-#'@param level2a h5file; S4 object of class H5File
-#'@param polygon_spdf SpatialDataFrame. A polygon dataset for clipping the waveform
+#'@param level2a A GEDI Level2A object (output of \code{\link[rGEDI:readLevel2A]{readLevel2A}} function). A S4 object of class "gedi.level2a".
+#'@param polygon_spdf Polygon. An object of class \code{\link[sp]{SpatialPolygonsDataFrame-class}},
+#'which can be loaded as an ESRI shapefile using \code{\link[rgdal:readOGR]{readOGR}} function in the \emph{rgdal} package.
 #'@param output optional character path where to save the new h5file. Default "" (temporary file).
 #'
-#'@return Returns An object of class H5File; subset of LVIS Level1 data
-#'@author Caio Hamamura
+#'@return Returns a S4 object of class "gedi.level2a".
+#'
+#'@seealso https://lpdaac.usgs.gov/products/gedi02_av001/
+#'
 #'@examples
 #'
-#'#' LVIS level 2 file path
-#' #level1_filepath = system.file("extdata", "biomas.zip", package="rGEDI")
+#'# specify the path to GEDI level2A data
+#'level2apath <- system.file("extdata", "GEDIexample_level02A.h5", package="rGEDI")
 #'
-#'#' Reading LVIS level 2 file
-#' #level1_waveform = readlevel2a(level1_filepath)
+#'# Reading GEDI level2A data
+#'level2a<-readLevel2A(level1bpath)
 #'
-#'# Polgons file path
-#' #polygons_filepath <- system.file("extdata", "LVIS_Mondah_clip_polygon.shp", package="rLVIS")
+#'# specify the path to shapefile
+#'polygon_filepath <- system.file("extdata", "stands_cerrado.shp", package="rGEDI")
 #'
-#'# Reading LVIS level 2 file
-#' #polygon_spdf<-raster::shapefile(polygons_filepath)
+#'# Reading shapefile as SpatialPolygonsDataFrame object
+#'library(rgdal)
+#'polygon_spdf<-readOGR(polygons_filepath)
 #'
-#' #output = tempfile(fileext="h5")
-#'
-#' #clipped_waveform = clipLevel1Geometry(level1_waveform, output, polygon_spdf)
+#'level2a_clip <- clipLevel2AGeometry(level2a, polygon_spdf)
 #'
 #'@export
-cliplevel2ah5Geometry = function(level2a, polygon_spdf, split_by = "id", output="") {
+clipLevel2AGeometry = function(level2a, polygon_spdf, split_by = NULL, output="") {
 
   if (output == "") {
     output = tempfile(fileext = ".h5")
@@ -142,7 +143,7 @@ cliplevel2ah5Geometry = function(level2a, polygon_spdf, split_by = "id", output=
       spDataMasked = spData[[beam]][[i]][mask,]
       points = sp::SpatialPointsDataFrame(coords=matrix(c(spDataMasked$longitude_highest, spDataMasked$latitude_highest), ncol=2),
                                           data=data.frame(id=mask), proj4string = polygon_spdf@proj4string)
-      pts = raster::intersect(points, polygon_spdf)
+      pts = suppressPackageStartupMessages(raster::intersect(points, polygon_spdf))
 
       mask_name = names(masks2)[i]
       if (is.null(split_by)) {
@@ -170,8 +171,8 @@ cliplevel2ah5Geometry = function(level2a, polygon_spdf, split_by = "id", output=
     message(gettextf("Writing %s='%s': %d of %d", split_by, pol_id, i, len_masks))
     output2 = gsub("\\.h5$", paste0("_", pol_id,".h5"), output)
     results[[pol_id]] = clipByMask2A(level2a,
-                                 polygon_masks[[pol_id]],
-                                 output2)
+                                     polygon_masks[[pol_id]],
+                                     output2)
   }
   names(results) = NULL
 
@@ -215,7 +216,7 @@ getSpatialData2A = function(level2a) {
 
   return (beams_spdf)
 }
-output="level2a_.h5"
+
 clipByMask2A = function(level2a, masks, output = "") {
   newFile =  hdf5r::H5File$new(output, mode="w")
 
@@ -275,24 +276,41 @@ clipByMask2A = function(level2a, masks, output = "") {
 
       beam_shot_n = level2a@h5[[beam_id]][["shot_number"]]$dims
       dt_dim = level2a@h5[[dt]]$dims
+      h5_dt = level1b@h5[[dt]]
+      dtype = h5_dt$get_type()
+      if (is.na(all(h5_dt$chunk_dims))) {
+        chunkdims = NULL
+      } else {
+        chunkdims = h5_dt$chunk_dims
+      }
 
       if (length(dt_dim)[1] == 1) {
         if (dt_dim == 1) {
-          hdf5r::createDataSet(newFile,dt,level2a@h5[[dt]][])
+          hdf5r::createDataSet(newFile,dt,h5_dt[], dtype=dtype, chunk_dim=chunkdims)
         } else if (dt_dim == beam_shot_n) {
-          hdf5r::createDataSet(newFile,dt,level2a@h5[[dt]][mask])
+          hdf5r::createDataSet(newFile,dt,h5_dt[mask], dtype=dtype, chunk_dim=chunkdims)
         } else if ((dt_dim %% beam_shot_n) == 0) {
-          n_waveforms = level2a@h5[[dt]]$dims / beam_shot_n
+          n_waveforms = h5_dt$dims / beam_shot_n
           v.seq = Vectorize(seq.default,vectorize.args = c("from"), SIMPLIFY=T)
           mask_init = mask*n_waveforms - (n_waveforms - 1)
           mask_waveform = matrix(v.seq(mask_init, len=n_waveforms), nrow=1)[1,]
-          waveform=level2a@h5[[dt]][mask_waveform]
-          hdf5r::createDataSet(newFile,dt,waveform)
+          total_size = n_waveforms*mask_size
+          chunk_part = 1
+          dt_res=hdf5r::createDataSet(newFile, dt, dtype=dtype, chunk_dim=chunkdims, dims=total_size)
+          while (chunk_part < total_size) {
+            end = chunk_part+chunkdims-1
+            if (end > total_size) {
+              end = total_size
+            }
+            get_part = mask_waveform[(chunk_part):(end)]
+            dt_res[get_part] =  h5_dt[get_part]
+            chunk_part = end+1
+          }
         }
       } else if (length(dt_dim) == 2 && dt_dim[1] == beam_shot_n) {
-        hdf5r::createDataSet(newFile,dt,level2a@h5[[dt]][mask,][])
+        hdf5r::createDataSet(newFile,dt,h5_dt[mask,][])
       } else if (dt_dim[2] == beam_shot_n) {
-        newFile$create_dataset(dt,level2a@h5[[dt]][1:dt_dim[1],mask])
+        newFile$create_dataset(dt,h5_dt[1:dt_dim[1],mask])
       }
       else {
         stop(paste0("Don't know how to handle the dataset: ", dt, "\nContact the maintainer of the package!"))
