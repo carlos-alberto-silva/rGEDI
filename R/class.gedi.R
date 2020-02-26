@@ -1,6 +1,7 @@
 #setClass("gedi.level1b", representation(h5="H5File",level1b.spdf='SpatialPointsDataFrame'))
 #' @importFrom hdf5r H5File
 setRefClass("H5File")
+requireNamespace("data.table")
 
 #' Class for GEDI level1B
 #'
@@ -57,7 +58,7 @@ gedi.level2b <- setClass(
 #'@param relative if TRUE, the Wavform Amplitude will be showed in percentage (%)
 #'@param polygon if TRUE, polygon will be added to the plot
 #'
-#'@exemple
+#'@examples
 #'#'# specify the path to GEDI Level 1B data
 #'level1bpath <- system.file("extdata", "GEDIexample_level01B.h5", package="rGEDI")
 #'
