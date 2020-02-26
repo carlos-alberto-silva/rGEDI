@@ -1,20 +1,25 @@
-downloadDep = function(name, file, url) {
+downloadDep = function(name, file, url, origName = "") {
   if(!file.exists(paste0("./",name,"/",file))) {
     print(paste0("Downloading ",name,"..."))
     download.file(url, "lib.tar.gz", quiet=FALSE)
     untar("lib.tar.gz", exdir=".")
     unlink("lib.tar.gz")
+    if (origName != "") {
+    	file.rename(origName, name)
+    }
   }
 }
 
 
 downloadDepBitBucket = function(name, file, origName) {
-  if(!file.exists(paste0("./",name,"/",file))) {
+  fileCheck = paste0("./",name,"/",file)
+  if(!file.exists(fileCheck)) {
     print(paste0("Downloading ",name,"..."))
-    url = paste0("https://bitbucket.org/caiohamamura/",name,"/get/v0.1.2.zip")
+    url = paste0("https://bitbucket.org/caiohamamura/",name,"/get/v0.3.0.zip")
     download.file(url, "lib.zip", quiet=FALSE)
     unzip("lib.zip", exdir=".")
     unlink("lib.zip")
+    file.remove(name, showWarnings=F)
     file.rename(origName, name)
   }
 }
@@ -22,12 +27,14 @@ downloadDepBitBucket = function(name, file, origName) {
 downloadDep("cmpfit-1.2",
             "mpfit.h",
             "https://www.physics.wisc.edu/~craigm/idl/down/cmpfit-1.2.tar.gz")
+downloadDep("libclidar",
+	    "libLasProcess.h",
+	    "https://github.com/caiohamamura/libclidar/archive/v0.1.tar.gz",
+	    "libclidar-0.1")
 downloadDepBitBucket("gedisimulator",
                      "gediRat.c",
-                     "caiohamamura-gedisimulator-daf127f577c4")
-downloadDepBitBucket("tools",
-                     "tools.c",
-                     "caiohamamura-tools-51f4756ba29f")
-downloadDepBitBucket("libclidar",
-                     "libLasProcess.h",
-                     "caiohamamura-libclidar-bf4cf5fe087a")
+                     "caiohamamura-gedisimulator-cbf4905e9405")
+downloadDep("tools",
+            "tools.c",
+            "https://github.com/caiohamamura/tools/archive/v0.1.tar.gz",
+	    "tools-0.1")
