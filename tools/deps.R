@@ -5,6 +5,7 @@ downloadDep = function(name, file, url, origName = "") {
     untar("lib.tar.gz", exdir=".")
     unlink("lib.tar.gz")
     if (origName != "") {
+      unlink(name, recursive=TRUE)
     	file.rename(origName, name)
     }
   }
@@ -19,7 +20,7 @@ downloadDepBitBucket = function(name, file, origName) {
     download.file(url, "lib.zip", quiet=FALSE)
     unzip("lib.zip", exdir=".")
     unlink("lib.zip")
-    file.remove(name, showWarnings=F)
+    unlink(name, recursive=TRUE)
     file.rename(origName, name)
   }
 }
