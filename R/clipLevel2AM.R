@@ -3,7 +3,7 @@
 #'@description This function clips GEDI Level2A extracted Elevation and Height Metrics (Level2AM)
 #' within given bounding coordinates
 #'
-#'@usage cliplevel2AM(level2a, xleft, xright, ybottom, ytop, output)
+#'@usage clipLevel2AM(level2a, xleft, xright, ybottom, ytop, output)
 #'
 #'@param level2AM A GEDI Level2A object (output of \code{\link[rGEDI:readLevel2A]{readLevel2A}} function). A S4 object of class "gedi.level2a".
 #'@param xleft Numeric. West longitude (x) coordinate of bounding rectangle, in decimal degrees.

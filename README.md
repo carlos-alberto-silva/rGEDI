@@ -54,14 +54,19 @@ LPDAACDataPool(filepath=gLevel2B,outdir)
 ## Reading GEDI data
 ```r
 # specify the path to GEDI data
-level1bpath <- system.file("extdata", "GEDIexample_level01B.h5", package="rGEDI")
-level2apath <- system.file("extdata", "GEDIexample_level02A.h5", package="rGEDI")
-level2bpath <- system.file("extdata", "GEDIexample_level02B.h5", package="rGEDI")
+GEDI01_B_urlfile="https://github.com/carlos-alberto-silva/rGEDI/blob/master/inst/extdata/GEDI01_B_2019108080338_O01964_T05337_02_003_01_sub.h5"
+GEDI02_A_urlfile="https://github.com/carlos-alberto-silva/rGEDI/blob/master/inst/extdata/GEDI02_A_2019108080338_O01964_T05337_02_001_01_sub.h5"
+GEDI02_B_urlfile="https://github.com/carlos-alberto-silva/rGEDI/blob/master/inst/extdata/GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub.h5"
+
+# Download GEDI samples for the example. The files will be downloaded in the current working directory [see getwd()]
+download.file(GEDI01_B_urlfile, destfile = paste0(getwd(),"//",basename(GEDI01_B_urlfile)))
+download.file(GEDI02_A_urlfile, destfile = paste0(getwd(),"//",basename(GEDI02_A_urlfile)))
+download.file(GEDI02_B_urlfile, destfile = paste0(getwd(),"//",basename(GEDI02_B_urlfile)))
 
 # Reading GEDI data
-gedilevel1b<-readLevel1B(level1bpath)
-gedilevel2a<-readLevel1B(level2apath)
-gedilevel2b<-readLevel1B(level2bpath)
+gedilevel1b<-readLevel1B(level1bpath = paste0(getwd(),"//",basename(GEDI01_B_urlfile)))
+gedilevel2a<-readLevel1B(level2apath = paste0(getwd(),"//",basename(GEDI02_A_urlfile)))
+gedilevel2b<-readLevel1B(level2bpath = paste0(getwd(),"//",basename(GEDI02_B_urlfile)))
 ```
 
 ## Get GEDI Pulse Full-Waveform Geolocation (GEDI Level1B)
