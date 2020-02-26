@@ -69,11 +69,11 @@ clipLevel1B = function(level1b, xleft, xright, ybottom, ytop, output=""){
 #'
 #'@description This function clips GEDI Level1B data within a bounding geometry
 #'
-#'@usage clipLevel1BGeometry(level1b, polygon_spdf, output)
 #'
 #'@param level1b A GEDI Level1B object (output of \code{\link[rGEDI:readLevel1B]{readLevel1B}} function). A S4 object of class "gedi.level1b".
 #'@param polygon_spdf Polygon. An object of class \code{\link[sp]{SpatialPolygonsDataFrame-class}},
 #'which can be loaded as an ESRI shapefile using \code{\link[rgdal:readOGR]{readOGR}} function in the \emph{rgdal} package.
+#'@param split_by Polygon id. If defined, GEDI data will be clipped by each polygon using the polygon id from table of attribute defined by the user
 #'@param output Optional character path where to save the new hdf5file. The default stores a temporary file only.
 #'
 #'@return An S4 object of class "gedi.level1b".
