@@ -98,16 +98,16 @@ leaflet() %>%
 ## Get GEDI Pulse Full-Waveform (GEDI Level1B)
 ```r
 # Extracting GEDI full-waveform for a giving shotnumber
-wf <- getLevel1BWF(gedilevel1b, shot_number="19850022900500000")
+wf <- getLevel1BWF(level1b, shot_number="19640521100108408")
 
 # Plot full-waveform
 par(mfrow = c(1,2), cex.axis = 1.5)
 
 plot(wf, relative=FALSE, polygon=TRUE, type="l", lwd=2, col="forestgreen",
-xlab="Waveform Amplitude", ylab="Elevation (m)")
+     xlab="Waveform Amplitude", ylab="Elevation (m)")
 
 plot(wf, relative=TRUE, polygon=FALSE, type="l", lwd=2, col="forestgreen",
-xlab="Waveform Amplitude (%)", ylab="Elevation (m)")
+     xlab="Waveform Amplitude (%)", ylab="Elevation (m)")
 ```
 ![](https://github.com/carlos-alberto-silva/rGEDI/blob/master/readme/fig3.PNG)
 
@@ -116,38 +116,58 @@ xlab="Waveform Amplitude (%)", ylab="Elevation (m)")
 ```r
 # Get GEDI Elevation and Height Metrics
 level2AM<-getLevel2AM(level2a)
-head(level2AM)
+head(level2AM[,c("beam","shot_number","rh100")]) 
 
-    ##   id  min   max   mean        sd
-    ##   1 2.06 65.40 32.48820  9.996999
-    ##   3 2.47 57.26 37.95028 12.054305
-    ##   2 6.92 59.78 37.23889  5.176369
+##         beam       shot_number rh100
+##  1: BEAM0000 19640002800109382  5.58
+##  2: BEAM0000 19640003000109383  5.58
+##  3: BEAM0000 19640003200109384  5.58
+##  4: BEAM0000 19640003400109385  5.58
+##  5: BEAM0000 19640003600109386  5.58
+##  6: BEAM0000 19640003800109387  5.58
 ```
 
 ## Get GEDI Plant Area Index (PAI) Profile (GEDI Level2B)
 ```r
 level2BPAIProfile<-getLevel2BPAIProfile(level2b)
-head(level2BPAIProfile)
+head(level2BPAIProfile[,c("beam","shot_number","pai_z0_5m","pai_z5_10m")])
 
-    ##   id  min   max   mean        sd
-    ##   1 2.06 65.40 32.48820  9.996999
-    ##   3 2.47 57.26 37.95028 12.054305
-    ##   2 6.92 59.78 37.23889  5.176369
+##          beam       shot_number   pai_z0_5m   pai_z5_10m
+##   1: BEAM0000 19640002800109382 0.007661204 0.0000000000
+##   2: BEAM0000 19640003000109383 0.086218357 0.0581122264
+##   3: BEAM0000 19640003200109384 0.299524575 0.0497199222
+##   4: BEAM0000 19640003400109385 0.079557180 0.0004457365
+##   5: BEAM0000 19640003600109386 0.018724868 0.0000000000
+##   6: BEAM0000 19640003800109387 0.017654873 0.0000000000
 ```
+
 ## Get GEDI Plant Area Volume Density (PAVD) Index (GEDI Level2B)
 ```r
 level2BPAVDProfile<-getLevel2BPAVDProfile(level2b)
-head(level2BPAVDProfile)
+head(level2BPAVDProfile[,c("beam","shot_number","pavd_z0_5m","pavd_z5_10m")])
 
-    ##   id  min   max   mean        sd
-    ##   1 2.06 65.40 32.48820  9.996999
-    ##   3 2.47 57.26 37.95028 12.054305
-    ##   2 6.92 59.78 37.23889  5.176369
+##          beam       shot_number  pavd_z0_5m  pavd_z5_10m
+##   1: BEAM0000 19640002800109382 0.001532241 0.0007661204
+##   2: BEAM0000 19640003000109383 0.005621226 0.0086218351
+##   3: BEAM0000 19640003200109384 0.049960934 0.0299524590
+##   4: BEAM0000 19640003400109385 0.015822290 0.0079557188
+##   5: BEAM0000 19640003600109386 0.003744974 0.0018724868
+##   6: BEAM0000 19640003800109387 0.003530974 0.0017654872
 ```
+
 ## Get GEDI Vegetation Profile Biophysical Variables (GEDI Level2B)
 ```r
 level2BVPM<-getLevel2BVPM(level2b)
-head(level2BVPM)
+head(level2BVPM[,c("beam","shot_number","pai","fhd_normal","omega","pgap_theta","cover")])
+
+##          beam       shot_number         pai fhd_normal omega pgap_theta       cover
+##   1: BEAM0000 19640002800109382 0.007661204  0.6365142     1  0.9961758 0.003823273
+##   2: BEAM0000 19640003000109383 0.086218357  2.2644432     1  0.9577964 0.042192958
+##   3: BEAM0000 19640003200109384 0.299524575  1.8881851     1  0.8608801 0.139084846
+##   4: BEAM0000 19640003400109385 0.079557180  1.6625489     1  0.9609926 0.038997617
+##   5: BEAM0000 19640003600109386 0.018724868  1.5836401     1  0.9906789 0.009318732
+##   6: BEAM0000 19640003800109387 0.017654873  1.2458609     1  0.9912092 0.008788579
+
 ```
 # Clip GEDI data 
 ```r

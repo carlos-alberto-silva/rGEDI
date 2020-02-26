@@ -54,7 +54,7 @@ getLevel2BPAIProfile<-function(level2b){
   colnames(m.dt)<-c("beam","shot_number","lat_lowestmode",
                     "lon_lowestmode","elev_highestreturn",
                     "elev_lowestmode","height_lastbin",
-                    "height_bin0",paste0("pai_z",seq(5,30*5,5),"m"))
+                    "height_bin0",paste0("pai_z",seq(0,30*5,5)[-31],"_",seq(5,30*5,5),"m"))
   close(pb)
   return(m.dt)
 }

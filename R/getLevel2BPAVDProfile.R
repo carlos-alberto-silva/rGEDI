@@ -24,7 +24,7 @@
 #'
 #'@export
 getLevel2BPAVDProfile<-function(level2b){
-  level2b<-level2b@data
+  level2b<-level2b@h5
   groups_id<-grep("BEAM\\d{4}$",gsub("/","",
                                      hdf5r::list.groups(level2b, recursive = F)), value = T)
   m.dt<-data.table::data.table()
@@ -49,7 +49,7 @@ getLevel2BPAVDProfile<-function(level2b){
   colnames(m.dt)<-c("beam","shot_number","lat_lowestmode",
                     "lon_lowestmode","elev_highestreturn",
                     "elev_lowestmode","height_lastbin",
-                    "height_bin0",paste0("pavd_z",seq(5,30*5,5),"m"))
+                    "height_bin0",paste0("pavd_z",seq(0,30*5,5)[-31],"_",seq(5,30*5,5),"m"))
   close(pb)
   return(m.dt)
 }
