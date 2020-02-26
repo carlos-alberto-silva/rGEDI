@@ -50,9 +50,7 @@ gedi.level2b <- setClass(
 
 #'Plot GEDI full-waveform
 #'
-#'@description Plots a single GEDI full-waveform (level1b)
-#'
-#'@usage plot(x, relative, polygon,...)
+#'Plots a single GEDI full-waveform (level1b)
 #'
 #'@param x An object of class "gedi.fullwaveform". (output of \code{\link[rGEDI:getLevel1BWF]{getLevel1BWF}} function)
 #'@param relative if TRUE, the Wavform Amplitude will be showed in percentage (%)
@@ -75,7 +73,12 @@ gedi.level2b <- setClass(
 #'
 #'plot(wf, relative=TRUE, polygon=TRUE, type="l", lwd=2, col="forestgreen",
 #'xlab="Waveform Amplitude (%)", ylab="Elevation (m)")
-#'
+#' @export
+#' @method plot gedi.fullwaveform
+setGeneric("plot", function(x, y, ...)
+  standardGeneric("plot"))
+
+#' @export
 #' @rdname plot
 setMethod("plot", signature("gedi.fullwaveform", y = "missing"), function(x,relative=FALSE,polygon=FALSE,...) {
 
