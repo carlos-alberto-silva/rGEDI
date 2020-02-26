@@ -93,7 +93,7 @@ leaflet() %>%
   addScaleBar(options = list(imperial = FALSE)) %>%
   addProviderTiles(providers$Esri.WorldImagery)
 ```
-![](https://github.com/carlos-alberto-silva/rGEDI/blob/master/readme/fig2.png)
+![](https://github.com/carlos-alberto-silva/rGEDI/blob/master/readme/fig2.PNG)
 
 ## Get GEDI Pulse Full-Waveform (GEDI Level1B)
 ```r
@@ -109,7 +109,7 @@ xlab="Waveform Amplitude", ylab="Elevation (m)")
 plot(wf, relative=TRUE, polygon=FALSE, type="l", lwd=2, col="forestgreen",
 xlab="Waveform Amplitude (%)", ylab="Elevation (m)")
 ```
-![](https://github.com/carlos-alberto-silva/rGEDI/blob/master/readme/fig3.png)
+![](https://github.com/carlos-alberto-silva/rGEDI/blob/master/readme/fig3.PNG)
 
 
 ## Get GEDI Elevation and Height Metrics (GEDI Level2A)

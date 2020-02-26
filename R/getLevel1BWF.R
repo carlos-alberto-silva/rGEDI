@@ -34,18 +34,20 @@
 #'@export
 #'
 getLevel1BWF<-function(level1b,shot_number){
+
   level1b<-level1b@h5
   groups_id<-grep("BEAM\\d{4}$",gsub("/","",
-                                     list.groups(level1b, recursive = F)), value = T)
+                                     hdf5r::list.groups(level1b, recursive = F)), value = T)
 
+  i=NULL
   for ( k in groups_id){
     gid<-max(level1b[[paste0(k,"/shot_number")]][]==shot_number)
     if (gid==1) {i=k}
   }
 
   if(is.null(i)) {
-    stop(paste0("Shot number ", shot_number, " was not found within the dataset!"))
-  }
+    cat(paste0("Shot number ", shot_number, " was not found within the dataset!. Please try another shot number"))
+  } else{
 
   shot_number_i<-level1b[[paste0(i,"/shot_number")]][]
   shot_number_id<-which(shot_number_i[]==shot_number)
@@ -53,7 +55,8 @@ getLevel1BWF<-function(level1b,shot_number){
   elevation_lastbin<-level1b[[paste0(i,"/geolocation/elevation_lastbin")]][]
   rx_sample_count<-level1b[[paste0(i,"/rx_sample_count")]][]
   rx_sample_start_index<-level1b[[paste0(i,"/rx_sample_start_index")]][]
-  rxwaveform_i<-level1b[[paste0(i,"/rxwaveform")]][rx_sample_start_index[shot_number_id]:(rx_sample_start_index[shot_number_id]+rx_sample_count[shot_number_id]-1)]
+  rx_sample_start_index_n<-rx_sample_start_index-min(rx_sample_start_index)+1
+  rxwaveform_i<-level1b[[paste0(i,"/rxwaveform")]][rx_sample_start_index_n[shot_number_id]:(rx_sample_start_index_n[shot_number_id]+rx_sample_count[shot_number_id]-1)]
   rxwaveform_inorm<-(rxwaveform_i-min(rxwaveform_i))/(max(rxwaveform_i)-min(rxwaveform_i))*100
   elevation_bin0_i<-elevation_bin0[shot_number_id]
   elevation_lastbin_i<-elevation_lastbin[shot_number_id]
@@ -62,5 +65,5 @@ getLevel1BWF<-function(level1b,shot_number){
   waveform<-new("gedi.fullwaveform", dt = data.table::data.table(rxwaveform=rxwaveform_i,elevation=z))
 
   return(waveform)
+ }
 }
-

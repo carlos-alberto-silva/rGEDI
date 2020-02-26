@@ -88,6 +88,7 @@ setMethod("plot", signature("gedi.fullwaveform", y = "missing"), function(x,rela
   } else {
 
 
+
   x0<-as.data.frame(x@dt)
   x<-x0[,1]
   z<-x0[,2]
@@ -106,10 +107,10 @@ setMethod("plot", signature("gedi.fullwaveform", y = "missing"), function(x,rela
       xl<-c(min(x),min(x),xstart,rev(x),xend,min(x))
       yl<-c(max(z, na.rm=T),min(z, na.rm=T),min(z, na.rm=T),rev(z),max(z, na.rm=T),max(z, na.rm=T))
 
-      plot(xl,yl,...)
-      suppressWarnings(polygon(xl,yl,...))
+      suppressWarnings({plot(xl,yl,...)})
+      suppressWarnings({polygon(xl,yl,...)})
     } else {
-      plot(x=x,y=z)
+      suppressWarnings({plot(x=x,y=z,...)})
     }
   }
 })
