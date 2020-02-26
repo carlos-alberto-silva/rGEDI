@@ -2,26 +2,16 @@
 % Please edit documentation in R/readLevel2B.R
 \name{readLevel2B}
 \alias{readLevel2B}
-\title{Read GEDI Biophysical Metrics (Level2B data)}
+\title{Read GEDI Level2B data}
 \usage{
 readLevel2B(level2Bpath)
 }
 \arguments{
-\item{level2Bpath}{file path pointing to GEDI level2B data. Data in HDF5 Hierarchical Data Format (.h5).}
+\item{level2Bpath}{file path pointing to GEDI level2B data (H5 format)}
 }
 \value{
-S4 object of class "gedi.level1b".
-
-
-#'@examples
-# specify the path and data file to be read
-level2bpath <- system.file("extdata", "GEDIexample_level02B.h5", package="rGEDI")
-
-# read the file
-gedilevel2b<-readLevel2B(level2bpath)
+level2BFile; S4 object of class "gedi.level2b";
 }
 \description{
-This function reads GEDI level2B products: canopy cover, Plant Area Index (PAI), Plant Area Volume Density (PAVD), and Foliage Height Diversity (FHD).
-
-#'
+This function reads GEDI level2B data
 }

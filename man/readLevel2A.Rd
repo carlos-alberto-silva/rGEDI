@@ -2,26 +2,16 @@
 % Please edit documentation in R/readLevel2A.R
 \name{readLevel2A}
 \alias{readLevel2A}
-\title{Read GEDI Basic Waveform Metrics (Level2A data)}
+\title{Read GEDI Level2A data}
 \usage{
 readLevel2A(level2Apath)
 }
 \arguments{
-\item{level2Apath}{file path pointing to GEDI level2A data. Data in HDF5 Hierarchical Data Format (.h5).}
+\item{level2Apath}{file path pointing to GEDI level2A data (H5 format)}
 }
 \value{
-S4 object of class "gedi.level1a".
+level2AFile; S4 object of class "gedi.level2a";
 }
 \description{
-This function reads GEDI level2A products: ground elevation, canopy top height, and relative heights (RH).
-}
-\seealso{
-https://lpdaac.usgs.gov/products/gedi02_av001/
-
-#'@examples
-# specify the path and data file to be read
-level2apath <- system.file("extdata", "GEDIexample_level02A.h5", package="rGEDI")
-
-# read the file
-gedilevel2a<-readLevel2A(level2apath)
+This function reads GEDI level2A data
 }
