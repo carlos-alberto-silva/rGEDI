@@ -13,3 +13,5 @@ src/cmpfit-1.2
 *.obj
 **.vscode
 src/build
+man
+NAMESPACE

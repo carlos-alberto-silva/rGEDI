@@ -119,7 +119,7 @@
 #' @useDynLib rGEDI
 #' @import methods
 #' @export
-gediWFMetric = function(
+gediWFMetrics = function(
   input,
   outRoot,
   writeFit = FALSE,
@@ -190,7 +190,6 @@ gediWFMetric = function(
   pSigma = NULL,
   gold = FALSE,
   deconTol = NULL) {
-
   readBinLVIS = FALSE
   readHDFlvis = FALSE
   readHDFgedi = TRUE
