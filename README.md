@@ -30,10 +30,10 @@ devtools::install_github("carlos-alberto-silva/rGEDI")
 ```r
 # Find GEDI data within your study area
 # Study area boundary box
-xmin<--45.62009
-ymin<--15.71073
-xmax<--44.51999
-ymax<--14.46284
+xmin<- -44.17246
+ymin<- -44.0654
+xmax<- -13.76913
+ymax<- -13.67646
 
 # Get path to GEDI data
 gLevel1B<-gediFinder(level="GEDI01_B",xleft, xright, ybottom, ytop)
@@ -53,7 +53,8 @@ LPDAACDataPool(filepath=gLevel2B,outdir)
 
 ## Reading GEDI data
 ```r
-# specify the path to GEDI data
+# As it takes time for downloading GEDI data, herein we will be using only samples 
+# specify the path to GEDI samples
 GEDI01_B_urlfile="https://github.com/carlos-alberto-silva/rGEDI/blob/master/inst/extdata/GEDI01_B_2019108080338_O01964_T05337_02_003_01_sub.h5"
 GEDI02_A_urlfile="https://github.com/carlos-alberto-silva/rGEDI/blob/master/inst/extdata/GEDI02_A_2019108080338_O01964_T05337_02_001_01_sub.h5"
 GEDI02_B_urlfile="https://github.com/carlos-alberto-silva/rGEDI/blob/master/inst/extdata/GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub.h5"
@@ -71,21 +72,31 @@ gedilevel2b<-readLevel1B(level2bpath = paste0(getwd(),"//",basename(GEDI02_B_url
 
 ## Get GEDI Pulse Full-Waveform Geolocation (GEDI Level1B)
 ```r
-level1bGeo<-getLevel1BGeo(gedilevel1b,select=c("latitude_bin0", "longitude_bin0","shot_number"))
+level1bGeo<-getLevel1BGeo(level1b,select=c("elevation_bin0", "elevation_lastbin"))
 head(level1bGeo)
 
-    ##   id  min   max   mean        sd
-    ##   1 2.06 65.40 32.48820  9.996999
-    ##   3 2.47 57.26 37.95028 12.054305
-    ##   2 6.92 59.78 37.23889  5.176369
+         shot_number latitude_bin0 latitude_lastbin longitude_bin0 longitude_lastbin elevation_bin0
+1: 19640002800109382     -13.75903        -13.75901      -44.17219         -44.17219       784.8348
+2: 19640003000109383     -13.75862        -13.75859      -44.17188         -44.17188       799.0491
+3: 19640003200109384     -13.75821        -13.75818      -44.17156         -44.17156       814.4647
+4: 19640003400109385     -13.75780        -13.75777      -44.17124         -44.17124       820.1437
+5: 19640003600109386     -13.75738        -13.75736      -44.17093         -44.17093       821.7012
+6: 19640003800109387     -13.75697        -13.75695      -44.17061         -44.17061       823.2526
+   elevation_lastbin
+1:          669.0229
+2:          679.0421
+3:          694.9071
+4:          705.0807
+5:          707.9866
+6:          708.0397
     
 library(leaflet)
 leaflet() %>%
-  addCircleMarkers(llevel1bGeo@data$longitude_bin0,
-                   level1bGeo@data$latitude_bin0,
+  addCircleMarkers(level1bGeo$longitude_bin0,
+                   level1bGeo$latitude_bin0,
                    radius = 1,
                    opacity = 1,
-                   color = "green")  %>%
+                   color = "red")  %>%
   addScaleBar(options = list(imperial = FALSE)) %>%
   addProviderTiles(providers$Esri.WorldImagery)
 ```

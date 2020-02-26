@@ -1,13 +1,15 @@
 #'Get GEDI Pulse Full-Waveform Geolocation (GEDI Level1B)
 #'
-#'@description This function extracts Pulse Full-Waveform Geolocation from GEDI Level1B data
+#'@description This function extracts Pulse Full-Waveform Geolocations from GEDI Level1B data
 #'
-#'@usage getLevel1BGeo(level1b, select = c("latitude_bin0", "latitude_lastbin", "longitude_bin0", "longitude_lastbin", "shot_number") )
+#'@usage getLevel1BGeo(level1b, select)
 #'
 #'@param level1b A GEDI Level1B object (output of \code{\link[rGEDI:readLevel1B]{readLevel1B}} function). A S4 object of class "gedi.level1b".
-#'@param select A character vector specifying the fields to extract from GEDI Level1B data. The default is set to extract \emph{latitude_bin0}, \emph{latitude_lastbin}, \emph{longitude_bin0}, \emph{longitude_lastbin}, and \emph{shot_number}. See details for more options.
+#'@param select A character vector specifying the fields to extract from GEDI Level1B data. If NULL,
+#'by default it will extract \emph{latitude_bin0}, \emph{latitude_lastbin}, \emph{longitude_bin0}, \emph{longitude_lastbin}, and \emph{shot_number}. See details for more options.
 #'
-#'@return A S4 object of class \code{\link[data.table:data.table]{data.table-class}}.
+#'@return A S4 object of class \code{\link[data.table:data.table]{data.table-class}} containing
+#'
 #'
 #'@seealso https://lpdaac.usgs.gov/products/gedi01_bv001/
 #'
@@ -108,12 +110,14 @@
 #'level1b <- readLevel1B(level1bpath)
 #'
 #'# Get GEDI level1B geolocations
-#'level1bGeo<-getLevel1BGeo(level1b,select=c("latitude_bin0", "longitude_bin0","shot_number"))
+#'level1bGeo<-getLevel1BGeo(level1b,select=c("elevation_bin0", "elevation_lastbin"))
 #'head(level1bGeo)
 #'
 #'
 #'@export
-getLevel1BGeo<-function(level1b,select=c("latitude_bin0", "latitude_lastbin", "longitude_bin0", "longitude_lastbin", "shot_number")) {
+getLevel1BGeo<-function(level1b,select=NULL) {
+
+  select<-unique(c("latitude_bin0", "latitude_lastbin", "longitude_bin0", "longitude_lastbin","shot_number",select))
   level1b<-level1b@h5
 
   datasets<-hdf5r::list.datasets(level1b, recursive = T)

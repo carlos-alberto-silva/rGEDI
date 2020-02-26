@@ -127,6 +127,10 @@ clipLevel1BGeometry = function(level1b, polygon_spdf, output="", split_by=NULL) 
   pb = utils::txtProgressBar(min = 0, max = length(masks), style = 3)
   progress = 0
   polygon_masks = list()
+  masknames = (polygon_spdf@data[[split_by]])
+  for (m in masknames) {
+    polygon_masks[[m]] = list()
+  }
 
   for (beam in names(masks)) {
     mask = masks[[beam]]
@@ -135,13 +139,19 @@ clipLevel1BGeometry = function(level1b, polygon_spdf, output="", split_by=NULL) 
 
     spDataMasked = spData[[beam]][mask,]
     points = sp::SpatialPointsDataFrame(coords=matrix(c(spDataMasked$longitude_bin0, spDataMasked$latitude_bin0), ncol=2),
-                                        data=data.frame(id=mask), proj4string = polygon_spdf@proj4string)
+                                        data=data.frame(idrownames=mask), proj4string = polygon_spdf@proj4string)
     pts = suppressPackageStartupMessages(raster::intersect(points, polygon_spdf))
+    if (ncol(pts@data) == 2) {
+      split_by2 = 2
+    } else {
+      split_by2 = split_by
+    }
     if (is.null(split_by)) {
       polygon_masks[[""]][[beam]] = pts@data[,1]
     } else {
-      for (pol_id in as.character(unique(pts@data[[split_by]]))) {
-        polygon_masks[[pol_id]][[beam]] = pts[pts@data[[split_by]] == pol_id,]@data[,1]
+      for (pol_id in unique(as.character(paste0(pts@data[[split_by2]])))) {
+
+        polygon_masks[[pol_id]][[beam]] = pts[pts@data[[split_by2]] == pol_id,]@data[,1]
       }
     }
 
@@ -253,6 +263,9 @@ clipByMask1B = function(level1b, masks, output = "") {
           }
         }
       } else if (length(dt_dim) == 2 && dt_dim[1] == beam_shot_n) {
+        if (length(mask) == 1) {
+          chunkdims = chunkdims[[2]]
+        }
         hdf5r::createDataSet(newFile,dt,level1b@h5[[dt]][mask,], dtype=dtype, chunk_dim=chunkdims)
       } else {
         stop(paste0("Don't know how to treat dataset: ", dt, "\nContact the maintainer of the package!"))

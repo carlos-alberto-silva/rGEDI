@@ -3,10 +3,10 @@
 #'@description Simulate GEDI full-waveform data from Airborne Laser Scanning (ALS) 3-D point cloud
 #'
 #' Input output filenames and format
-#' @param input name. lasfile input filename
+#' @param input character vector. lasfile input filename
 # inList should be parsed from vector input
 # @param inList list. input file list (ASCII file) for multiple files
-#' @param output name. output filename
+#' @param output character. output filename
 
 #Ground should always be true
 # @param ground record separate ground and canopy waveforms
@@ -17,7 +17,7 @@
 #' @param waveID id. supply a waveID to pass to the output (only for single footprints)
 #' Single footprint, list of footprints, or grid of footprints
 #' @param coord lon lat numeric vector. footprint coordinate in same system as lasfile
-#' @param listCoord name. Text file with list of coordinates. Pattern: X, Y, `[waveID]`, `[geoCoordsX]`, `[geoCoordsY]`. `[]` are optional.
+#' @param listCoord name. Text file with list of coordinates. Pattern: X Y `[waveID]` `[geoCoordsX]` `[geoCoordsY]`. `[]` are optional, separated by spaces.
 #' @param gridBound minX maxX minY maxY numeric vector. make a grid of waveforms in this box
 #' @param gridStep res. grid step size
 #' Lidar characteristics. Defaults are expected GEDI values. pSigmasig. set Gaussian pulse width as 1 sigma
@@ -65,7 +65,7 @@
 # nnGround is not working yet
 # @param nnGround find mean ground elevation and slope through nearest neighbour
 #' @param seed n integer. random number seed
-#' 
+#'
 #' #'
 #' @return A S4 object of class \code{\link[hdf5r]{hdf5rfile}} in the \emph{hdf5r} package.
 #'
