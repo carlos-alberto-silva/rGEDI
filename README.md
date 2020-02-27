@@ -190,39 +190,40 @@ ymax = -13.71244
 
 ## clipping GEDI data within boundary box
 level1b_clip_bb <- clipLevel1B(gedilevel1b, xmin, xmax, ymin, ymax,output=paste0(outdir,"//level1b_clip_bb.h5"))
-level2a_clip_bb <- clipLevel2A(gedilevel2a, xmin, xmax, ymin, ytop,output=paste0(outdir,"//level2a_clip_bb.h5"))
-level2b_clip_bb <- clipLevel2B(gedilevel2b, xmin, xmax, ymin, ytop,output=paste0(outdir,"//level2b_clip_bb.h5"))
+level2a_clip_bb <- clipLevel2A(gedilevel2a, xmin, xmax, ymin, ymax, output=paste0(outdir,"//level2a_clip_bb.h5"))
+level2b_clip_bb <- clipLevel2B(gedilevel2b, xmin, xmax, ymin, ymax,output=paste0(outdir,"//level2b_clip_bb.h5"))
 
-
-## Clip GEDI data by geometry
+## Clipping GEDI data by geometry
 # specify the path to shapefile for the study area
 polygon_filepath <- system.file("extdata", "stands_cerrado.shp", package="rGEDI")
 
 # Reading shapefile as SpatialPolygonsDataFrame object
 library(rgdal)
-polygon_spdf<-readOGR(polygons_filepath)
+polygon_spdf<-readOGR(polygon_filepath)
+head(polygon_spdf@data) # column id name "id"
+split_by="id"
 
-# Clip h5 files
-level1b_clip_gb <- clipLevel1BGeometry(level1b,polygon_spdf,output=paste0(getwd(),"//level1b_clip_gb.h5"), split_by="id")
-level2a_clip_gb <- clipLevel2AGeometry(level2a,polygon_spdf,output=paste0(getwd(),"//level2a_clip_gb.h5"), split_by="id")
-level2b_clip_gb <- clipLevel2BGeometry(level2b,polygon_spdf,output=paste0(getwd(),"//level2b_clip_gb.h5"), split_by="id")
-
+# Clipping h5 files
+level1b_clip_gb <- clipLevel1BGeometry(gedilevel1b,polygon_spdf,output=paste0(outdir,"//level1b_clip_gb.h5"), split_by=split_by)
+level2a_clip_gb <- clipLevel2AGeometry(gedilevel2a,polygon_spdf,output=paste0(outdir,"//level2a_clip_gb.h5"), split_by=split_by)
+level2b_clip_gb <- clipLevel2BGeometry(gedilevel2b,polygon_spdf,output=paste0(outdir,"//level2b_clip_gb.h5"), split_by=split_by)
 ```
 # Clip GEDI data (data.table objects)
 ```r
-## clipping GEDI data within boundary box
-level1BGeo_clip_bb <-clipLevel1BGeo(level1BGeo, xmin, xmax, ymin, ymax)
-level2AM_clip_bb <- clipLevel2AM(level2AM,xleft, xmin, xmax, ymin, ymax)
+## Clipping GEDI data within boundary box
+level1BGeo_clip_bb <-clipLevel1BGeo(level1bGeo, xmin, xmax, ymin, ymax)
+level2AM_clip_bb <- clipLevel2AM(level2AM, xmin, xmax, ymin, ymax)
 level2BVPM_clip_bb <- clipLevel2BVPM(level2BVPM, xmin, xmax, ymin, ymax)
-level1BPAIProfile_clip_bb <- clipLevel1BPAIProfile(level1BPAIProfile, xmin, xmax, ymin, ymax)
+level1BPAIProfile_clip_bb <- clipLevel2BPAIProfile(level2BPAIProfile, xmin, xmax, ymin, ymax)
 level2BPAVDProfile_clip_bb <- clipLevel2BPAVDProfile(level2BPAVDProfile, xmin, xmax, ymin, ymax)
 
-## Clip GEDI data by geometry
-level1BGeo_clip_gb <- clipLevel1BGeo(level1BGeo,polygon_spdf, split_by="id")
-level2AM_clip_gb <- clipLevel2AM(level2AM,polygon_spdf, split_by="id")
-level2BVPM_clip_gb <- clipLevel2BVPM(level2BVPM,polygon_spdf, split_by="id")
-level1BPAIProfile_clip_gb <- clipLevel1BPAIProfile(level1BPAIProfile,polygon_spdf, split_by="id")
-level2BPAVDProfile_clip_gb <- clipLevel2BPAVDProfile(level2BPAVDProfile,polygon_spdf, split_by="id")
+## Clipping GEDI data by geometry
+level1BGeo_clip_gb <- clipLevel1BGeoGeometry(level1bGeo,polygon_spdf, split_by=split_by)
+level2AM_clip_gb <- clipLevel2AMGeometry(level2AM,polygon_spdf, split_by=split_by)
+level2BVPM_clip_gb <- clipLevel2BVPMGeometry(level2BVPM,polygon_spdf, split_by=split_by)
+level1BPAIProfile_clip_gb <- clipLevel2BPAIProfileGeometry(level2BPAIProfile,polygon_spdf, split_by=split_by)
+level2BPAVDProfile_clip_gb <- clipLevel2BPAVDProfileGeometry(level2BPAVDProfile,polygon_spdf, split_by=split_by)
+
 
 ## View GEDI clipped data by bbox
 m1<-leaflet() %>%
@@ -283,23 +284,51 @@ metrics = list(
 }
 
 # Computing the maximum of RH100 stratified by polygon
-RH100max_st<-polyStatsLevel2AM(level2AM_clip_gb,func=max(RH100), id="poly_id")
-head(RH100max_st)
+rh100max_st<-polyStatsLevel2AM(level2AM_clip_gb,func=max(rh100), id="poly_id")
+head(rh100max_st)
+
+##    poly_id   max
+## 1:       2 12.81
+## 2:       1 12.62
+## 3:       5  9.96
+## 4:       6  8.98
+## 5:       4 10.33
+## 6:       8  8.72
 
 # Computing a serie statistics for GEDI metrics stratified by polygon
-RH100metrics_st<-polyStatsLevel2AM(level2AM_clip,func=mySetOfMetrics(RH100),
-                      id="poly_id")
-head(RH100metrics_st)
+rh100metrics_st<-polyStatsLevel2AM(level2AM_clip_gb,func=mySetOfMetrics(rh100),
+id="poly_id")
+head(rh100metrics_st)
 
-# Computing the max of the Total Plant Area Index 
-pai_max<-polyStatsLevel2BVPM(level2BVPM_clip,func=max(pai), id=NULL)
+##     poly_id   max
+##  1:       2 12.81
+##  2:       1 12.62
+##  3:       5  9.96
+##  4:       6  8.98
+##  5:       4 10.33
+##  6:       8  8.72
+
+# Computing the max of the Total Plant Area Index
+pai_max<-polyStatsLevel2BVPM(level2BVPM_clip_gb,func=max(pai), id=NULL)
 pai_max
 
-# Computing the serie of statistics of Foliage Clumping Index stratified by polygon
-omega_metrics_st<-polyStatsLevel2BVPM(level2BVPM_clip,func=mySetOfMetrics(omega),
-                      id="poly_id")
-head(omega_metrics_st)
+##          max
+#   1: 1.224658
+
+# Computing the serie of statistics of Canopy Cover stratified by polygon
+cover_metrics_st<-polyStatsLevel2BVPM(level2BVPM_clip_gb,func=mySetOfMetrics(cover),
+id="poly_id")
+head(cover_metrics_st)
+
+##     poly_id          min       max       mean         sd
+##  1:       2 0.0010017310 0.3479594 0.05156159 0.05817241
+##  2:       1 0.0003717059 0.3812594 0.04829096 0.06346548
+##  3:       5 0.0020242794 0.4262614 0.03577852 0.06407325
+##  4:       6 0.0028748326 0.2392146 0.03094646 0.05577988
+##  5:       4 0.0022404396 0.3501986 0.11343149 0.09354305
+##  6:       8 0.0050588539 0.1457105 0.04784596 0.04427151
 ```
+
 ## Compute Grids with descriptive statistics of GEDI-derived Elevation and Height Metrics (Level2A)
 
 <img align="right" src="https://github.com/carlos-alberto-silva/rGEDI/blob/master/readme/fig5.png" width="300">
@@ -330,11 +359,11 @@ rh100maps<-levelplot(rh100metrics,
                      col.regions=viridis,
                      at=seq(0, 18, len=101),
                      names.attr=c("rh100 min","rh100 max","rh100 mean", "rh100 sd"))
+
+# Exporting maps 
 png("fig6.png", width = 6, height = 8, units = 'in', res = 300)
 rh100maps
 dev.off()
-
-
 
 
 
@@ -369,10 +398,10 @@ pai_maps<-levelplot(pai_metrics,
                     at=seq(0, 1.5, len=101),
                     names.attr=c("PAI min","PAI max","PAI mean", "PAI sd"))
 
+# Exporting maps 
 png("fig6.png", width = 6, height = 8, units = 'in', res = 300)
 pai_maps
 dev.off()
-
 
 
 

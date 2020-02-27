@@ -51,18 +51,17 @@
 clipLevel2BVPM = function(level2BVPM,xmin, xmax, ymin, ymax){
   # xmin ymin xmax ymax
   mask =
-    level2BVPM$longitude_bin0 >= xleft &
-    level2BVPM$longitude_bin0 <= xright &
-    level2BVPM$latitude_bin0 >= ybottom &
-    level2BVPM$latitude_bin0 <=  ytop &
-    level2BVPM$longitude_lastbin >= xleft &
-    level2BVPM$longitude_lastbin <= xright &
-    level2BVPM$latitude_lastbin >= ybottom &
-    level2BVPM$latitude_lastbin <=  ytop
+    level2BVPM$longitude_bin0 >= xmin &
+    level2BVPM$longitude_bin0 <= xmax &
+    level2BVPM$latitude_bin0 >= ymin &
+    level2BVPM$latitude_bin0 <=  ymax &
+    level2BVPM$longitude_lastbin >= xmin &
+    level2BVPM$longitude_lastbin <= xmax &
+    level2BVPM$latitude_lastbin >= ymin &
+    level2BVPM$latitude_lastbin <=  ymax
 
   mask = (1:length(level2BVPM$longitude_bin0))[mask]
   newFile<-level2BVPM[mask,]
-  #newFile<- new("gedi.level1b.dt", dt = level1bdt[mask,])
   return (newFile)
 }
 
@@ -118,27 +117,28 @@ clipLevel2BVPM = function(level2BVPM,xmin, xmax, ymin, ymax){
 #'@export
 clipLevel2BVPMGeometry = function(level2BVPM, polygon_spdf, split_by=NULL) {
   exshp<-raster::extent(polygon_spdf)
-  level2bdt<-clipLevel2BVPM(level2BVPM, xleft=exshp[1], xright=exshp[2], ybottom=exshp[3], ytop=exshp[4])
+  level2bdt<-clipLevel2BVPM(level2BVPM, xmin=exshp[1], xmax=exshp[2], ymin=exshp[3], ymax=exshp[4])
 
   if (nrow(level2bdt) == 0) {print("The polygon does not overlap the GEDI data")} else {
   points = sp::SpatialPointsDataFrame(coords=matrix(c(level2bdt$longitude_lastbin, level2bdt$latitude_lastbin), ncol=2),
                                       data=data.frame(id=1:length(level2bdt$longitude_lastbin)), proj4string = polygon_spdf@proj4string)
   pts = raster::intersect(points, polygon_spdf)
+  colnames(pts@data)<-c("rowids",names(polygon_spdf))
 
   if (!is.null(split_by)){
 
     if ( any(names(polygon_spdf)==split_by)){
-      mask = as.integer(pts@data$id)
+
+      mask = as.integer(pts@data$rowids)
       newFile<-level2bdt[mask,]
       newFile$poly_id<-pts@data[,split_by]
     } else {stop(paste("The",split_by,"is not included in the attribute table.
                        Please check the names in the attribute table"))}
 
   } else {
-  mask = as.integer(pts@data$id)
+  mask = as.integer(pts@data$rowids)
   newFile<-level2bdt[mask,]
   }
-  #newFile<- new("gedi.level1b.dt", dt = level2bdt2@dt[mask,])
   return (newFile)}
 }
 

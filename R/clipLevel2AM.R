@@ -40,14 +40,14 @@
 clipLevel2AM = function(level2AM,xmin, xmax, ymin, ymax){
   # xmin ymin xmax ymax
   mask =
-    level2AM$lon_lowestmode >= xleft &
-    level2AM$lon_lowestmode <= xright &
-    level2AM$lat_lowestmode >= ybottom &
-    level2AM$lat_lowestmode <=  ytop &
-    level2AM$lon_lowestmode >= xleft &
-    level2AM$lon_lowestmode <= xright &
-    level2AM$lat_lowestmode >= ybottom &
-    level2AM$lat_lowestmode <=  ytop
+    level2AM$lon_lowestmode >= xmin &
+    level2AM$lon_lowestmode <= xmax &
+    level2AM$lat_lowestmode >= ymin &
+    level2AM$lat_lowestmode <=  ymax &
+    level2AM$lon_lowestmode >= xmin &
+    level2AM$lon_lowestmode <= xmax &
+    level2AM$lat_lowestmode >= ymin &
+    level2AM$lat_lowestmode <=  ymax
 
   mask = (1:length(level2AM$lat_lowestmode))[mask]
   newFile<-level2AM[mask,]
@@ -103,7 +103,7 @@ clipLevel2AM = function(level2AM,xmin, xmax, ymin, ymax){
 #'@export
 clipLevel2AMGeometry = function(level2AM, polygon_spdf, split_by="id") {
   exshp<-raster::extent(polygon_spdf)
-  level2adt<-clipLevel2AM(level2AM, xleft=exshp[1], xright=exshp[2], ybottom=exshp[3], ytop=exshp[4])
+  level2adt<-clipLevel2AM(level2AM, xmin=exshp[1], xmax=exshp[2], ymin=exshp[3], ymax=exshp[4])
   if (nrow(level2adt) == 0) {print("The polygon does not overlap the GEDI data")} else {
     points = sp::SpatialPointsDataFrame(coords=matrix(c(level2adt$lon_lowestmode, level2adt$lat_lowestmode), ncol=2),
                                         data=data.frame(id=1:length(level2adt$lon_lowestmode)), proj4string = polygon_spdf@proj4string)

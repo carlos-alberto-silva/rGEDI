@@ -47,14 +47,14 @@
 clipLevel1BGeo = function(level1BGeo,xmin, xmax, ymin, ymax){
   # xmin ymin xmax ymax
   mask =
-    level1BGeo$longitude_bin0 >= xleft &
-    level1BGeo$longitude_bin0 <= xright &
-    level1BGeo$latitude_bin0 >= ybottom &
-    level1BGeo$latitude_bin0 <=  ytop &
-    level1BGeo$longitude_lastbin >= xleft &
-    level1BGeo$longitude_lastbin <= xright &
-    level1BGeo$latitude_lastbin >= ybottom &
-    level1BGeo$latitude_lastbin <=  ytop
+    level1BGeo$longitude_bin0 >= xmin &
+    level1BGeo$longitude_bin0 <= xmax &
+    level1BGeo$latitude_bin0 >= ymin &
+    level1BGeo$latitude_bin0 <=  ymax &
+    level1BGeo$longitude_lastbin >= xmin &
+    level1BGeo$longitude_lastbin <= xmax &
+    level1BGeo$latitude_lastbin >= ymin &
+    level1BGeo$latitude_lastbin <=  ymax
 
   mask = (1:length(level1BGeo$longitude_bin0))[mask]
   newFile<-level1BGeo[mask,]
@@ -114,7 +114,7 @@ clipLevel1BGeo = function(level1BGeo,xmin, xmax, ymin, ymax){
 #'@export
 clipLevel1BGeoGeometry = function(level1BGeo, polygon_spdf, split_by="id") {
   exshp<-raster::extent(polygon_spdf)
-  level1BGeo<-clipLevel1BGeo(level1BGeo, xleft=exshp[1], xright=exshp[2], ybottom=exshp[3], ytop=exshp[4])
+  level1BGeo<-clipLevel1BGeo(level1BGeo,xmin=exshp[1], xmax=exshp[2], ymin=exshp[3], ymax=exshp[4])
 
   if (nrow(level1BGeo) == 0) {print("The polygon does not overlap the GEDI data")} else {
     points = sp::SpatialPointsDataFrame(coords=matrix(c(level1BGeo$longitude_bin0, level1BGeo$latitude_lastbin), ncol=2),
