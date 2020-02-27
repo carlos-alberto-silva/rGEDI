@@ -1,11 +1,20 @@
 Package: rGEDI
 Type: Package
-Title: What the Package Does (Title Case)
-Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
+Title: rGEDI: NASA's Global Ecosystem Dynamics Investigation (GEDI) Data Visualization and Processing
+Version: 0.0.1
+Authors@R: c(
+    person("Carlos Alberto", "Silva", email = "carlos_engflorestal@outlook.com", role = c("aut", "cre", "cph")),
+    person("Caio", "Hamamura", email = "caiohamamura@gmail.com", role = c("aut", "cre", "cph")),
+    person("Ruben", "Valbuena", email = "r.valbuena@bangor.ac.uk", role = c("cph","ctb")),
+    person("Steve", "Hancock", email = "steven.hancock@ed.ac.uk", role = ("ctb"), comment = "Reviews the documentation"),
+    person("Adrian", "Cardil", email = "adriancardil@gmail.com", role = ("ctb"), comment = "Reviews the documentation"),
+    person("Eben North", "Broadbent", email = "eben@ufl.edu", role = ("ctb"), comment = "Reviews the documentation"),
+    person("Danilo Roberti Alves de", "Almeida", email = "daniloflorestas@gmail.com", role = ("ctb"), comment = "Reviews the documentation"),
+    person("Celso H. L.", "Silva Junior", email = "celso.junior@inpe.br", role = ("ctb"), comment = "Reviews the documentation"),
+    person("Carine", "Klauberg", email = "carine_klauberg@hotmail.com", role = ("ctb"), comment = "Reviews the documentation"))
+
+Maintainer: Carlos Alberto Silva <carlos_engflorestal@outlook.com> and Caio Hamamura <caiohamamura@gmail.com>
+Description: Set of tools for downloading, reading, visualizing and processing GEDI data for forestry applications.
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
