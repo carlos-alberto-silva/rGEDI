@@ -39,10 +39,10 @@
 clipLevel2BPAVDProfile = function(x,xmin, xmax, ymin, ymax){
   # xmin ymin xmax ymax
   mask =
-    x$lon_lowestmode >= xleft &
-    x$lon_lowestmode <= xright &
-    x$lat_lowestmode >= ybottom &
-    x$lat_lowestmode <=  ytop
+    x$lon_lowestmode >= xmin &
+    x$lon_lowestmode <= xmax &
+    x$lat_lowestmode >= ymin &
+    x$lat_lowestmode <=  ymax
 
   mask = (1:length(x$lon_lowestmode))[mask]
   newFile<-x[mask,]
@@ -93,24 +93,26 @@ clipLevel2BPAVDProfile = function(x,xmin, xmax, ymin, ymax){
 #'@export
 clipLevel2BPAVDProfileGeometry = function(x, polygon_spdf, split_by=NULL) {
   exshp<-raster::extent(polygon_spdf)
-  level2bdt<-clipLevel2BPAIProfile(x, xleft=exshp[1], xright=exshp[2], ybottom=exshp[3], ytop=exshp[4])
+  level2bdt<-clipLevel2BPAIProfile(x, xmin=exshp[1], xmax=exshp[2], ymin=exshp[3], ymax=exshp[4])
 
   if (nrow(level2bdt) == 0) {print("The polygon does not overlap the GEDI data")} else {
     points = sp::SpatialPointsDataFrame(coords=matrix(c(level2bdt$lon_lowestmode, level2bdt$lat_lowestmode), ncol=2),
                                         data=data.frame(id=1:length(level2bdt$lon_lowestmode)), proj4string = polygon_spdf@proj4string)
     pts = raster::intersect(points, polygon_spdf)
+    colnames(pts@data)<-c("rowids",names(polygon_spdf))
 
     if (!is.null(split_by)){
 
       if ( any(names(polygon_spdf)==split_by)){
-        mask = as.integer(pts@data$id)
+
+        mask = as.integer(pts@data$rowids)
         newFile<-level2bdt[mask,]
         newFile$poly_id<-pts@data[,split_by]
       } else {stop(paste("The",split_by,"is not included in the attribute table.
                        Please check the names in the attribute table"))}
 
     } else {
-      mask = as.integer(pts@data$id)
+      mask = as.integer(pts@data$rowids)
       newFile<-level2bdt[mask,]
     }
     #newFile<- new("gedi.level1b.dt", dt = level2bdt2@dt[mask,])
