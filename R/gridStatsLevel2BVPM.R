@@ -64,20 +64,20 @@ gridStatsLevel2BVPM = function(level2BVPM, func, res = 0.5)
   `:=` <- data.table::`:=`
   func<-lazyeval::f_interp(func)
   vars<-all.names(func)[3:length(all.names(func))]
-  level2a.dt <- na.omit(level2BVPM[,names(level2BVPM) %in% c("longitude_lastbin","latitude_lastbin",vars), with=FALSE])
-  level2a.dt<-setNames(level2a.dt,c("y","x",vars))
-  layout    <- raster::raster(raster::extent(level2a.dt), res=res)
+  level2b.dt <- na.omit(level2BVPM[,names(level2BVPM) %in% c("longitude_lastbin","latitude_lastbin",vars), with=FALSE])
+  level2b.dt<-setNames(level2b.dt,c("y","x",vars))
+  layout    <- raster::raster(raster::extent(level2b.dt), res=res)
   call      <- lazyeval::as_call(func)
-  cells     <- raster::cellFromXY(layout, na.omit(level2a.dt[,2:1]))
-  metrics   <- level2a.dt[,eval(call), by = cells]
+  cells     <- raster::cellFromXY(layout, na.omit(level2b.dt[,2:1]))
+  metrics   <- level2b.dt[,eval(call), by = cells]
   xy_coords <- raster::xyFromCell(layout, metrics[[1]])
   metrics[, cells := NULL]
   output.dt<-na.omit(cbind(xy_coords,metrics))
-  output <- sp::SpatialPixelsDataFrame(output.dt[,1:2], output.dt[,-c(1:2)])#, proj4string = level2a.dt@proj4string)
+  output <- sp::SpatialPixelsDataFrame(output.dt[,1:2], output.dt[,-c(1:2)])#, proj4string = level2b.dt@proj4string)
   if (names(metrics)[1]=="V1") {
     names(output)<-all.names(func)[2]
   } else {names(output) <- names(metrics)}
   if (length(names(metrics)) > 1 ) {output<-raster::brick(output)} else {output<-raster::raster(output)}
-  rm(level2a.dt)
+  rm(level2b.dt)
   return(output)
 }

@@ -14,7 +14,9 @@ Authors: Carlos A. Silva, Caio Hamamura, Ruben Valbuena, Steve Hancock, Adrian C
 
 The rGEDI package provides functions for i) downloading, ii) visualizing, iii) clipping, iv) exporting, iv) Gridding and v) Simulating GEDI data.
 
-# Installation
+# Getting Started
+
+## Installation
 ```r
 #The CRAN version:
 install.packages("rGEDI")
@@ -24,50 +26,48 @@ library(devtools)
 devtools::install_github("carlos-alberto-silva/rGEDI")
 ```    
 
-# Getting Started
-
-## GEDIfinder tool
+## Find GEDI data within your study area (GEDI finder tool)
 ```r
-# Find GEDI data within your study area
-# Study area boundary box
+# Study area boundary box coordinates
 xmin<- -44.17246
-ymin<- -44.0654
-xmax<- -13.76913
+xmax<- -44.0654
+ymin<- -13.76913
 ymax<- -13.67646
 
 # Get path to GEDI data
-gLevel1B<-gediFinder(level="GEDI01_B",xleft, xright, ybottom, ytop)
-gLevel2A<-gediFinder(level="GEDI02_A",xleft, xright, ybottom, ytop)
-gLevel2B<-gediFinder(level="GEDI02_B",xleft, xright, ybottom, ytop)
+gLevel1B<-gedifinder(level="GEDI01_B",xmin, xmax, ymin, ymax)
+gLevel2A<-gedifinder(level="GEDI02_A",xmin, xmax, ymin, ymax)
+gLevel2B<-gedifinder(level="GEDI02_B",xmin, xmax, ymin, ymax)
 ```
 ## Downloading GEDI data
 ```r
 # Set output dir for downloading the files
-outdir=tempdir()
+outdir=getwd()
 
 # Downloading GEDI data
-LPDAACDataPool(filepath=gLevel1B,outdir)
-LPDAACDataPool(filepath=gLevel2A,outdir)
-LPDAACDataPool(filepath=gLevel2B,outdir)
-```
+LPDAACDataPool(filepath=gLevel1B,outdir=outdir)
+LPDAACDataPool(filepath=gLevel2A,outdir=outdir)
+LPDAACDataPool(filepath=gLevel2B,outdir=outdir)
 
-## Reading GEDI data
-```r
-# As it takes time for downloading GEDI data, herein we will be using only samples 
-# specify the path to GEDI samples
+#** Herein, we are using only a GEDI sample dataset for this tutorial.  
+# specify the path to GEDI sample dataset from github
 GEDI01_B_urlfile="https://github.com/carlos-alberto-silva/rGEDI/blob/master/inst/extdata/GEDI01_B_2019108080338_O01964_T05337_02_003_01_sub.h5"
 GEDI02_A_urlfile="https://github.com/carlos-alberto-silva/rGEDI/blob/master/inst/extdata/GEDI02_A_2019108080338_O01964_T05337_02_001_01_sub.h5"
 GEDI02_B_urlfile="https://github.com/carlos-alberto-silva/rGEDI/blob/master/inst/extdata/GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub.h5"
 
-# Download GEDI samples for the example. The files will be downloaded in the current working directory [see getwd()]
-download.file(GEDI01_B_urlfile, destfile = paste0(getwd(),"//",basename(GEDI01_B_urlfile)))
-download.file(GEDI02_A_urlfile, destfile = paste0(getwd(),"//",basename(GEDI02_A_urlfile)))
-download.file(GEDI02_B_urlfile, destfile = paste0(getwd(),"//",basename(GEDI02_B_urlfile)))
+# Downloading GEDI sample datasets. The files will be downloaded in the current working directory [see getwd()]
+download.file(GEDI01_B_urlfile, destfile = paste0(outdir,"//",basename(GEDI01_B_urlfile)))
+download.file(GEDI02_A_urlfile, destfile = paste0(outdir,"//",basename(GEDI02_A_urlfile)))
+download.file(GEDI02_B_urlfile, destfile = paste0(outdir,"//",basename(GEDI02_B_urlfile)))
 
+```
+
+## Reading GEDI data
+```r
 # Reading GEDI data
-gedilevel1b<-readLevel1B(level1bpath = paste0(getwd(),"//",basename(GEDI01_B_urlfile)))
-gedilevel2a<-readLevel1B(level2apath = paste0(getwd(),"//",basename(GEDI02_A_urlfile)))
-gedilevel2b<-readLevel1B(level2bpath = paste0(getwd(),"//",basename(GEDI02_B_urlfile)))
+gedilevel1b<-readLevel1B(level1bpath = paste0(outdir,"//",basename(GEDI01_B_urlfile)))
+gedilevel2a<-readLevel1B(level2apath = paste0(outdir,"//",basename(GEDI02_A_urlfile)))
+gedilevel2b<-readLevel1B(level2bpath = paste0(outdir,"//",basename(GEDI02_B_urlfile)))
 ```
 
 ## Get GEDI Pulse Full-Waveform Geolocation (GEDI Level1B)
@@ -96,6 +96,8 @@ leaflet() %>%
   addScaleBar(options = list(imperial = FALSE)) %>%
   addProviderTiles(providers$Esri.WorldImagery) %>%
   addLegend(colors = "red", labels= "Samples",title ="GEDI Level1B")
+
+  
 ```
 
 ## Get GEDI Pulse Full-waveform (GEDI Level1B)
@@ -118,15 +120,15 @@ grid()
 ```r
 # Get GEDI Elevation and Height Metrics
 level2AM<-getLevel2AM(level2a)
-head(level2AM[,c("beam","shot_number","rh100")]) 
+head(level2AM[,c("beam","shot_number","elev_highestreturn","elev_lowestmode","rh100")])
 
-##         beam       shot_number rh100
-##  1: BEAM0000 19640002800109382  4.41
-##  2: BEAM0000 19640003000109383  9.32
-##  3: BEAM0000 19640003200109384  7.19
-##  4: BEAM0000 19640003400109385  5.31
-##  5: BEAM0000 19640003600109386  4.75
-##  6: BEAM0000 19640003800109387  5.01
+##          beam       shot_number elev_highestreturn elev_lowestmode rh100
+##  1: BEAM0000 19640002800109382           740.7499        736.3301  4.41
+##  2: BEAM0000 19640003000109383           756.0878        746.7614  9.32
+##  3: BEAM0000 19640003200109384           770.3423        763.1509  7.19
+##  4: BEAM0000 19640003400109385           775.9838        770.6652  5.31
+##  5: BEAM0000 19640003600109386           777.8409        773.0841  4.75
+##  6: BEAM0000 19640003800109387           778.7181        773.6990  5.01
 ```
 
 ## Get GEDI Plant Area Index (PAI) Profile (GEDI Level2B)
@@ -403,16 +405,22 @@ plot(wf_cerrado, relative=TRUE, polygon=TRUE, type="l", lwd=2, col="green",
 xlab="Waveform Amplitude (%)", ylab="Elevation (m)", ylim=c(815,835))
 grid()
 dev.off()
+```
+![](https://github.com/carlos-alberto-silva/rGEDI/blob/master/readme/fig7.png)
 
 # Extracting GEDI feull-waveform derived metrics
+```
 wf_amazon_metrics<-gediWFMetrics(input=wf_amazon@h5$filename,outRoot=getwd())
 wf_cerrado_metrics<-gediWFMetrics(input=wf_cerrado@h5$filename,outRoot=getwd())
 
 metrics<-rbind(wf_amazon_metrics,wf_cerrado_metrics)
 rownames(metrics)<-c("Amazon","Cerrado")
 head(metrics[,1:8])
+
+#         #wave ID true ground true top ground slope ALS cover gHeight maxGround inflGround
+# Amazon         0      -1e+06   133.29       -1e+06        -1   94.97     99.84      95.19
+# Cerrado        0      -1e+06   831.51       -1e+06        -1  822.18    822.21     822.25
 ```
-![](https://github.com/carlos-alberto-silva/rGEDI/blob/master/readme/fig7.png)
 
 # References
 Dubayah, R., Blair, J.B., Goetz, S., Fatoyinbo, L., Hansen, M., Healey, S., Hofton, M., Hurtt, G.,         Kellner, J., Luthcke, S., & Armston, J. (2020) The Global Ecosystem Dynamics Investigation:         High-resolution laser ranging of the Earth’s forests and topography. Science of Remote             Sensing, p.100002.

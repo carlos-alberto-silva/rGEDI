@@ -2,13 +2,13 @@
 #'
 #'@description This function clips GEDI Level1B data within given bounding coordinates
 #'
-#'@usage clipLevel1B(level1b, xleft, xright, ybottom, ytop, output)
+#'@usage clipLevel1B(level1b, xmin, xmax, ymin, ymax, output)
 #'
 #'@param level1b A GEDI Level1B object (output of \code{\link[rGEDI:readLevel1B]{readLevel1B}} function). A S4 object of class "gedi.level1b".
-#'@param xleft Numeric. West longitude (x) coordinate of bounding rectangle, in decimal degrees.
-#'@param xright Numeric. East longitude (x) coordinate of bounding rectangle, in decimal degrees.
-#'@param ybottom Numeric. South latitude (y) coordinate of bounding rectangle, in decimal degrees.
-#'@param ytopNumeric. North latitude (y) coordinate of bounding rectangle, in decimal degrees.
+#'@param xmin Numeric. West longitude (x) coordinate of bounding rectangle, in decimal degrees.
+#'@param xmax Numeric. East longitude (x) coordinate of bounding rectangle, in decimal degrees.
+#'@param ymin Numeric. South latitude (y) coordinate of bounding rectangle, in decimal degrees.
+#'@param ymax Numeric. North latitude (y) coordinate of bounding rectangle, in decimal degrees.
 #'@param output Optional character path where to save the new hdf5file. The default stores a temporary file only.
 #'
 #'@return An S4 object of class "gedi.level1b".
@@ -23,17 +23,17 @@
 #'level1b<-readLevel1b(level1bpath)
 #'
 #'# Bounding rectangle coordinates
-#'xleft = -44.15036
-#'xright = -44.10066
-#'ybottom = -13.75831
-#'ytop = -13.71244
+#'xmin = -44.15036
+#'xmax = -44.10066
+#'ymin = -13.75831
+#'ymax = -13.71244
 #'
 #'# clip by extent boundary box
-#'level1b_clip <- clipLevel1B(level1b,xleft, xright, ybottom, ytop)
+#'level1b_clip <- clipLevel1B(level1b,xmin, xmax, ymin, ymax)
 #'
 #'@import hdf5r fs
 #'@export
-clipLevel1B = function(level1b, xleft, xright, ybottom, ytop, output=""){
+clipLevel1B = function(level1b, xmin, xmax, ymin, ymax, output=""){
   if (output == "") {
     output = tempfile(fileext = ".h5")
   }
@@ -43,14 +43,14 @@ clipLevel1B = function(level1b, xleft, xright, ybottom, ytop, output=""){
   spData = getSpatialData1B(level1b)
 
   masks = lapply(spData, function(x) {
-    mask = x$longitude_bin0 >= xleft &
-      x$longitude_bin0 <= xright &
-      x$latitude_bin0 >= ybottom &
-      x$latitude_bin0 <= ytop &
-      x$longitude_lastbin >= xleft &
-      x$longitude_lastbin <= xright &
-      x$latitude_lastbin >= ybottom &
-      x$latitude_lastbin <= ytop
+    mask = x$longitude_bin0 >= xmin &
+      x$longitude_bin0 <= xmax &
+      x$latitude_bin0 >= ymin &
+      x$latitude_bin0 <= ymax &
+      x$longitude_lastbin >= xmin &
+      x$longitude_lastbin <= xmax &
+      x$latitude_lastbin >= ymin &
+      x$latitude_lastbin <= ymax
 
     return ((1:length(x$longitude_bin0))[mask])
   })
@@ -105,20 +105,20 @@ clipLevel1BGeometry = function(level1b, polygon_spdf, output="", split_by=NULL) 
 
   spData = getSpatialData1B(level1b)
 
-  xleft = polygon_spdf@bbox[1,1]
-  xright = polygon_spdf@bbox[1,2]
-  ybottom = polygon_spdf@bbox[2,1]
-  ytop = polygon_spdf@bbox[2,2]
+  xmin = polygon_spdf@bbox[1,1]
+  xmax = polygon_spdf@bbox[1,2]
+  ymin = polygon_spdf@bbox[2,1]
+  ymax = polygon_spdf@bbox[2,2]
 
   masks = lapply(spData, function(x) {
-    mask = x$longitude_bin0 >= xleft &
-      x$longitude_bin0 <= xright &
-      x$latitude_bin0 >= ybottom &
-      x$latitude_bin0 <= ytop &
-      x$longitude_lastbin >= xleft &
-      x$longitude_lastbin <= xright &
-      x$latitude_lastbin >= ybottom &
-      x$latitude_lastbin <= ytop
+    mask = x$longitude_bin0 >= xmin &
+      x$longitude_bin0 <= xmax &
+      x$latitude_bin0 >= ymin &
+      x$latitude_bin0 <= ymax &
+      x$longitude_lastbin >= xmin &
+      x$longitude_lastbin <= xmax &
+      x$latitude_lastbin >= ymin &
+      x$latitude_lastbin <= ymax
 
     return ((1:length(x$longitude_bin0))[mask])
   })
