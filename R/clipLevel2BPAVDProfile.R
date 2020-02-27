@@ -3,16 +3,16 @@
 #'@description This function clips GEDI level2B-derived
 #'Plant Area Volume Density profile within given bounding coordinates
 #'
-#'@usage clipLevel2BPAVDProfile(level2BPAVDProfile, xleft, xright, ybottom, ytop, output="")
+#'@usage clipLevel2BPAVDProfile(level2BPAVDProfile, xmin, xmax, ymin, ymax, output="")
 #'
 #'@param level2BPAVDProfile A GEDI Level2B object (output of \code{\link[rGEDI:getLevel2BPAVDProfile]{getLevel2BPAVDProfile}} function). A S4 object of class "gedi.level2b".
-#'@param xleft Numeric. West longitude (x) coordinate of bounding rectangle, in decimal degrees.
-#'@param xright Numeric. East longitude (x) coordinate of bounding rectangle, in decimal degrees.
-#'@param ybottom Numeric. South latitude (y) coordinate of bounding rectangle, in decimal degrees.
-#'@param ytopNumeric. North latitude (y) coordinate of bounding rectangle, in decimal degrees.
-#'@param output Optional character path where to save the new hdf5file. The default stores a temporary file only.
+#'@param xmin Numeric. West longitude (x) coordinate of bounding rectangle, in decimal degrees.
+#'@param xmax Numeric. East longitude (x) coordinate of bounding rectangle, in decimal degrees.
+#'@param ymin Numeric. South latitude (y) coordinate of bounding rectangle, in decimal degrees.
+#'@param ymaxNumeric. North latitude (y) coordinate of bounding rectangle, in decimal degrees.
 #'
-#'@return An S4 object of class "gedi.level2b".
+#'@return An S4 object of class \code{\link[data.table:data.table]{data.table-class}}
+#'containing the Plant Area Volume Density profile data.
 #'
 #'@seealso https://lpdaac.usgs.gov/products/gedi02_bv001/
 #'
@@ -27,17 +27,17 @@
 #'level2BPAVDProfile<-getLevel2BPAVDProfile(level2b)
 #'
 #'# Bounding rectangle coordinates
-#'xleft = -44.15036
-#'xright = -44.10066
-#'ybottom = -13.75831
-#'ytop = -13.71244
+#'xmin = -44.15036
+#'xmax = -44.10066
+#'ymin = -13.75831
+#'ymax = -13.71244
 #'
 #'# clip level2BVPM by extent boundary box
-#'level2BPAVDProfile_clip <- clipLevel2BPAVDProfile(level2BPAVDProfile,xleft, xright, ybottom, ytop)
+#'level2BPAVDProfile_clip <- clipLevel2BPAVDProfile(level2BPAVDProfile,xmin, xmax, ymin, ymax)
 #'
 #'@export
-clipLevel2BPAVDProfile = function(x,xleft, xright, ybottom, ytop){
-  # xleft ybottom xright ytop
+clipLevel2BPAVDProfile = function(x,xmin, xmax, ymin, ymax){
+  # xmin ymin xmax ymax
   mask =
     x$lon_lowestmode >= xleft &
     x$lon_lowestmode <= xright &

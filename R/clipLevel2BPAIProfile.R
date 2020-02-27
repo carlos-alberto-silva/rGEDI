@@ -4,17 +4,17 @@
 #'Plant Area Index profile within given bounding coordinates
 #'
 #'
-#'@usage clipLevel2BPAIProfile(level2BPAIProfile, xleft, xright, ybottom, ytop, output="")
+#'@usage clipLevel2BPAIProfile(level2BPAIProfile, xmin, xmax, ymin, ymax, output="")
 #'
 #'
 #'@param level2BPAIProfile A GEDI Level2B object (output of \code{\link[rGEDI:getLevel2BPAIProfile]{getLevel2BPAIProfile}} function). A S4 object of class "gedi.level2b".
-#'@param xleft Numeric. West longitude (x) coordinate of bounding rectangle, in decimal degrees.
-#'@param xright Numeric. East longitude (x) coordinate of bounding rectangle, in decimal degrees.
-#'@param ybottom Numeric. South latitude (y) coordinate of bounding rectangle, in decimal degrees.
-#'@param ytopNumeric. North latitude (y) coordinate of bounding rectangle, in decimal degrees.
-#'@param output Optional character path where to save the new hdf5file. The default stores a temporary file only.
+#'@param xmin Numeric. West longitude (x) coordinate of bounding rectangle, in decimal degrees.
+#'@param xmax Numeric. East longitude (x) coordinate of bounding rectangle, in decimal degrees.
+#'@param ymin Numeric. South latitude (y) coordinate of bounding rectangle, in decimal degrees.
+#'@param ymaxNumeric. North latitude (y) coordinate of bounding rectangle, in decimal degrees.
 #'
-#'@return An S4 object of class "gedi.level2b".
+#'@return An S4 object of class \code{\link[data.table:data.table]{data.table-class}}
+#'containing the Plant Area Index profile data.
 #'
 #'@seealso https://lpdaac.usgs.gov/products/gedi02_bv001/
 #'
@@ -29,17 +29,17 @@
 #'level2BPAIProfile<-getLevel2BPAIProfile(level2b)
 #'
 #'# Bounding rectangle coordinates
-#'xleft = -44.15036
-#'xright = -44.10066
-#'ybottom = -13.75831
-#'ytop = -13.71244
+#'xmin = -44.15036
+#'xmax = -44.10066
+#'ymin = -13.75831
+#'ymax = -13.71244
 #'
 #'# clip level2BVPM by extent boundary box
-#'level2b_clip <- clipLevel2BPAIProfile(level2BPAIProfile,xleft, xright, ybottom, ytop)
+#'level2b_clip <- clipLevel2BPAIProfile(level2BPAIProfile,xmin, xmax, ymin, ymax)
 #'
 #'@export
-clipLevel2BPAIProfile = function(x,xleft, xright, ybottom, ytop){
-  # xleft ybottom xright ytop
+clipLevel2BPAIProfile = function(x,xmin, xmax, ymin, ymax){
+  # xmin ymin xmax ymax
   mask =
     x$lon_lowestmode >= xleft &
     x$lon_lowestmode <= xright &
