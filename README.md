@@ -297,7 +297,7 @@ head(omega_metrics_st)
 rh100metrics<-gridStatsLevel2AM(level2AM = level2AM, func=mySetOfMetrics(rh100), res=0.005)
 
 ```
-<img align="right" src="https://github.com/carlos-alberto-silva/rGEDI/blob/master/readme/fig5.PNG">
+<img align="right" src="https://github.com/carlos-alberto-silva/rGEDI/blob/master/readme/fig5.png">
 
 ```
 # View maps
@@ -333,7 +333,7 @@ level2BVPM$pai[level2BVPM$pai==-9999]<-NA # assing NA to -9999
 pai_metrics<-gridStatsLevel2BVPM(level2BVPM = level2BVPM, func=mySetOfMetrics(pai), res=0.0005)
 
 ```
-<img align="right" src="https://github.com/carlos-alberto-silva/rGEDI/blob/master/readme/fig6.PNG">
+<img align="right" src="https://github.com/carlos-alberto-silva/rGEDI/blob/master/readme/fig6.png">
 
 ```
 # View maps
@@ -411,7 +411,7 @@ metrics<-rbind(wf_amazon_metrics,wf_cerrado_metrics)
 rownames(metrics)<-c("Amazon","Cerrado")
 head(metrics[,1:8])
 ```
-![](https://github.com/carlos-alberto-silva/rGEDI/blob/master/readme/fig7.png width="400")
+![](https://github.com/carlos-alberto-silva/rGEDI/blob/master/readme/fig7.png)
 
 # References
 Dubayah, R., Blair, J.B., Goetz, S., Fatoyinbo, L., Hansen, M., Healey, S., Hofton, M., Hurtt, G.,         Kellner, J., Luthcke, S., & Armston, J. (2020) The Global Ecosystem Dynamics Investigation:         High-resolution laser ranging of the Earth’s forests and topography. Science of Remote             Sensing, p.100002.
