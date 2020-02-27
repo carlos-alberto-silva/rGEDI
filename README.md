@@ -380,7 +380,7 @@ lasfile_cerrado <- system.file("extdata", "Cerrado.las", package="rGEDI")
 
 # Reading and plot ALS file
 library(lidR)
-require(plot3D)
+library(plot3D)
 las_amazon<-readLAS(lasfile_amazon)
 las_cerrado<-readLAS(lasfile_cerrado)
 
