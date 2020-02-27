@@ -56,10 +56,10 @@
 #'pai_max_poly<-polyStatsLevel2BVPM(level2BVPM_clip,func=max(pai), id="id")
 #'head(pai_max_poly)
 #'
-#'# Computing the serie of statistics of Foliage Clumping Index stratified by polygon
-#'omega_metrics<-polyStatsLevel2BVPM(level2BVPM_clip,func=mySetOfMetrics(omega),
+#'# Computing the serie of statistics of canopy cover stratified by polygon
+#'cover_metrics<-polyStatsLevel2BVPM(level2BVPM_clip,func=mySetOfMetrics(cover),
 #'                      id=level2BM_clip@data$id)
-#'head(omega_metrics)
+#'head(cover_metrics)
 #'}
 #'@export
 polyStatsLevel2BVPM = function(level2BVPM, func=mean(pai), id = NULL)
