@@ -102,7 +102,6 @@ leaflet() %>%
   addLegend(colors = "red", labels= "Samples",title ="GEDI Level1B")
 
 
-  
 ```
 
 ## Get GEDI Pulse Full-waveform (GEDI Level1B)
