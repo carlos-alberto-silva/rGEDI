@@ -1,4 +1,4 @@
-#'Get GEDI Pulse Full-Waveform Geolocation (GEDI Level1B)
+#'Get GEDI Pulse Full-Waveform Geolocations (GEDI Level1B)
 #'
 #'@description This function extracts Pulse Full-Waveform Geolocations from GEDI Level1B data
 #'

@@ -3,7 +3,7 @@
 #'
 #'@description Simulate GEDI full-waveform data from Airborne Laser Scanning (ALS) 3-D point cloud
 #'
-#' Input output filenames and format
+#' Input and output filenames, and formats
 #' @param input character vector. lasfile input filename
 # inList should be parsed from vector input
 # @param inList list. input file list (ASCII file) for multiple files
