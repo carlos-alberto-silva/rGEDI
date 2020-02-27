@@ -66,8 +66,8 @@ download.file(GEDI02_B_urlfile, destfile = paste0(outdir,"//",basename(GEDI02_B_
 ```r
 # Reading GEDI data
 gedilevel1b<-readLevel1B(level1bpath = paste0(outdir,"//",basename(GEDI01_B_urlfile)))
-gedilevel2a<-readLevel1B(level2apath = paste0(outdir,"//",basename(GEDI02_A_urlfile)))
-gedilevel2b<-readLevel1B(level2bpath = paste0(outdir,"//",basename(GEDI02_B_urlfile)))
+gedilevel2a<-readLevel2A(level2apath = paste0(outdir,"//",basename(GEDI02_A_urlfile)))
+gedilevel2b<-readLevel2B(level2bpath = paste0(outdir,"//",basename(GEDI02_B_urlfile)))
 ```
 
 ## Get GEDI Pulse Full-Waveform Geolocation (GEDI Level1B)
@@ -86,7 +86,11 @@ head(level1BGeo)
 <img align="right" src="https://github.com/carlos-alberto-silva/rGEDI/blob/master/readme/fig2.PNG"  width="400">
 
 ```
+
+
 library(leaflet)
+library(leafsync)
+
 leaflet() %>%
   addCircleMarkers(level1bGeo$longitude_bin0,
                    level1bGeo$latitude_bin0,
@@ -96,6 +100,7 @@ leaflet() %>%
   addScaleBar(options = list(imperial = FALSE)) %>%
   addProviderTiles(providers$Esri.WorldImagery) %>%
   addLegend(colors = "red", labels= "Samples",title ="GEDI Level1B")
+
 
   
 ```
@@ -442,7 +447,7 @@ Silva, C. A.; Saatchi, S.; Alonso, M. G. ; Labriere, N. ; Klauberg, C. ; Ferraz,
       https://ieeexplore.ieee.org/document/8331845
 
 GEDI webpage. Accessed on February 15 2020 https://gedi.umd.edu/   
-GEDI01_Bv001. Accessed on February 15 2020 https://lpdaac.usgs.gov/products/gedi01_bv001/
+GEDI01_Bv001. Accessed on February 15 2020 https://lpdaac.usgs.gov/products/gedi01_bv001/   
 GEDI02_Av001. Accessed on February 15 2020 https://lpdaac.usgs.gov/products/gedi02_av001/  
 GEDI02_Bv001. Accessed on February 15 2020 https://lpdaac.usgs.gov/products/gedi02_bv001/  
 GEDI Finder. Accessed on February 15 2020 https://lpdaacsvc.cr.usgs.gov/services/gedifinder
