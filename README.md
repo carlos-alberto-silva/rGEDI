@@ -292,14 +292,13 @@ omega_metrics_st<-polyStatsLevel2BVPM(level2BVPM_clip,func=mySetOfMetrics(omega)
 head(omega_metrics_st)
 ```
 ## Compute Grids with descriptive statistics of GEDI-derived Elevation and Height Metrics (Level2A)
+
+<img align="right" src="https://github.com/carlos-alberto-silva/rGEDI/blob/master/readme/fig5.png" width="300">
+
 ```r
 # Computing the serie of statistics of GEDI RH100 metric
 rh100metrics<-gridStatsLevel2AM(level2AM = level2AM, func=mySetOfMetrics(rh100), res=0.005)
 
-```
-<img align="right" src="https://github.com/carlos-alberto-silva/rGEDI/blob/master/readme/fig5.png" width="400">
-
-```
 # View maps
 library(rasterVis)
 library(viridis)
@@ -322,19 +321,22 @@ rh100maps<-levelplot(rh100metrics,
                      col.regions=viridis,
                      at=seq(0, 18, len=101),
                      names.attr=c("rh100 min","rh100 max","rh100 mean", "rh100 sd"))
+png("fig6.png", width = 6, height = 8, units = 'in', res = 300)
 rh100maps
+dev.off()
+
+
 ```
 
-
 ## Compute Grids with descriptive statistics of GEDI-derived Canopy Cover and Vertical Profile Metrics (Level2B)
+
+<img align="right" src="https://github.com/carlos-alberto-silva/rGEDI/blob/master/readme/fig6.png" width="300">
+
 ```r
 # Computing the max of the Total Plant Area Index only
 level2BVPM$pai[level2BVPM$pai==-9999]<-NA # assing NA to -9999
 pai_metrics<-gridStatsLevel2BVPM(level2BVPM = level2BVPM, func=mySetOfMetrics(pai), res=0.0005)
 
-```
-<img align="right" src="https://github.com/carlos-alberto-silva/rGEDI/blob/master/readme/fig6.png" width="400">
-```
 # View maps
 pai_maps<-levelplot(pai_metrics,
                     layout=c(1, 4),
