@@ -83,7 +83,7 @@ head(level1BGeo)
 ##  5: 19640003600109386     -13.75738        -13.75736      -44.17093         -44.17093
 ##  6: 19640003800109387     -13.75697        -13.75695      -44.17061         -44.17061
 ```
-<img align="right" src="https://github.com/carlos-alberto-silva/rGEDI/blob/master/readme/fig2.PNG"  width="200">
+<img align="right" src="https://github.com/carlos-alberto-silva/rGEDI/blob/master/readme/fig2.PNG"  width="400">
 
 ```
 library(leaflet)
@@ -99,8 +99,6 @@ leaflet() %>%
 ```
 
 ## Get GEDI Pulse Full-waveform (GEDI Level1B)
-<img align="right" src="https://github.com/carlos-alberto-silva/rGEDI/blob/master/readme/fig3.png">
-
 ```r
 # Extracting GEDI full-waveform for a giving shotnumber
 wf <- getLevel1BWF(level1b, shot_number="19640521100108408")
@@ -114,7 +112,7 @@ plot(wf, relative=TRUE, polygon=FALSE, type="l", lwd=2, col="forestgreen",
      xlab="Waveform Amplitude (%)", ylab="Elevation (m)")
 grid()
 ```
-
+![](https://github.com/carlos-alberto-silva/rGEDI/blob/master/readme/fig3.png)
 
 ## Get GEDI Elevation and Height Metrics (GEDI Level2A)
 ```r
@@ -296,14 +294,18 @@ head(omega_metrics_st)
 ## Compute Grids with descriptive statistics of GEDI-derived Elevation and Height Metrics (Level2A)
 ```r
 # Computing the serie of statistics of GEDI RH100 metric
-RH100metrics<-gridStatsLevel2AM(level2AM = level2AM, func=mySetOfMetrics(rh100), res=0.005)
+rh100metrics<-gridStatsLevel2AM(level2AM = level2AM, func=mySetOfMetrics(rh100), res=0.005)
 
+```
+<img align="right" src="https://github.com/carlos-alberto-silva/rGEDI/blob/master/readme/fig5.PNG">
+
+```
 # View maps
 library(rasterVis)
 library(viridis)
 
-rh100maps<-levelplot(RH100metrics,
-                     layout=c(4, 1),
+rh100maps<-levelplot(rh100metrics,
+                     layout=c(1, 4),
                      margin=FALSE,
                      xlab = "Longitude (degree)", ylab = "Latitude (degree)",
                      colorkey=list(
@@ -322,7 +324,7 @@ rh100maps<-levelplot(RH100metrics,
                      names.attr=c("rh100 min","rh100 max","rh100 mean", "rh100 sd"))
 rh100maps
 ```
-![](https://github.com/carlos-alberto-silva/rGEDI/blob/master/readme/fig5.png)
+
 
 ## Compute Grids with descriptive statistics of GEDI-derived Canopy Cover and Vertical Profile Metrics (Level2B)
 ```r
@@ -330,9 +332,13 @@ rh100maps
 level2BVPM$pai[level2BVPM$pai==-9999]<-NA # assing NA to -9999
 pai_metrics<-gridStatsLevel2BVPM(level2BVPM = level2BVPM, func=mySetOfMetrics(pai), res=0.0005)
 
+```
+<img align="right" src="https://github.com/carlos-alberto-silva/rGEDI/blob/master/readme/fig6.PNG">
+
+```
 # View maps
 pai_maps<-levelplot(pai_metrics,
-                    layout=c(4, 1),
+                    layout=c(1, 4),
                     margin=FALSE,
                     xlab = "Longitude (degree)", ylab = "Latitude (degree)",
                     colorkey=list(
@@ -350,9 +356,10 @@ pai_maps<-levelplot(pai_metrics,
                     at=seq(0, 1.5, len=101),
                     names.attr=c("PAI min","PAI max","PAI mean", "PAI sd"))
 
+png("fig6.png", width = 6, height = 8, units = 'in', res = 300)
+pai_maps
+dev.off()
 ```
-![](https://github.com/carlos-alberto-silva/rGEDI/blob/master/readme/fig6.png)
-
 
 ## Simulating GEDI full-waveform data from Airborne Laser Scanning (ALS) 3-D point cloud and extracting canopy derived metrics
 ```r
@@ -404,7 +411,7 @@ metrics<-rbind(wf_amazon_metrics,wf_cerrado_metrics)
 rownames(metrics)<-c("Amazon","Cerrado")
 head(metrics[,1:8])
 ```
-![](https://github.com/carlos-alberto-silva/rGEDI/blob/master/readme/fig7.png)
+![](https://github.com/carlos-alberto-silva/rGEDI/blob/master/readme/fig7.png width="400")
 
 
 # References

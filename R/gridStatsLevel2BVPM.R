@@ -62,7 +62,7 @@ gridStatsLevel2BVPM = function(level2BVPM, func, res = 0.5)
 
   # Add data.table operator
   `:=` <- data.table::`:=`
-  func<<-lazyeval::f_interp(func)
+  func<-lazyeval::f_interp(func)
   vars<-all.names(func)[3:length(all.names(func))]
   level2a.dt <- na.omit(level2BVPM[,names(level2BVPM) %in% c("longitude_lastbin","latitude_lastbin",vars), with=FALSE])
   level2a.dt<-setNames(level2a.dt,c("y","x",vars))
