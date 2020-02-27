@@ -34,26 +34,12 @@
 #'@import hdf5r fs
 #'@export
 clipLevel1B = function(level1b, xmin, xmax, ymin, ymax, output=""){
-  if (output == "") {
-    output = tempfile(fileext = ".h5")
-  }
-  output = fs::path_ext_set(output, "h5")
+  output = checkOutput(output)
 
   # Get all spatial data as a list of dataframes with spatial information
   spData = getSpatialData1B(level1b)
 
-  masks = lapply(spData, function(x) {
-    mask = x$longitude_bin0 >= xmin &
-      x$longitude_bin0 <= xmax &
-      x$latitude_bin0 >= ymin &
-      x$latitude_bin0 <= ymax &
-      x$longitude_lastbin >= xmin &
-      x$longitude_lastbin <= xmax &
-      x$latitude_lastbin >= ymin &
-      x$latitude_lastbin <= ymax
-
-    return ((1:length(x$longitude_bin0))[mask])
-  })
+  masks = clipSpDataByExtentLevelB(spData, xmin, xmax, ymin, ymax)
 
   newFile = clipByMask1B(level1b,
                        masks,
@@ -98,10 +84,7 @@ clipLevel1B = function(level1b, xmin, xmax, ymin, ymax, output=""){
 #'@import hdf5r
 #'@export
 clipLevel1BGeometry = function(level1b, polygon_spdf, output="", split_by=NULL) {
-  if (output == "") {
-    output = tempfile(fileext = ".h5")
-  }
-  output = fs::path_ext_set(output, "h5")
+  output = checkOutput(output)
 
   spData = getSpatialData1B(level1b)
 
@@ -110,68 +93,9 @@ clipLevel1BGeometry = function(level1b, polygon_spdf, output="", split_by=NULL) 
   ymin = polygon_spdf@bbox[2,1]
   ymax = polygon_spdf@bbox[2,2]
 
-  masks = lapply(spData, function(x) {
-    mask = x$longitude_bin0 >= xmin &
-      x$longitude_bin0 <= xmax &
-      x$latitude_bin0 >= ymin &
-      x$latitude_bin0 <= ymax &
-      x$longitude_lastbin >= xmin &
-      x$longitude_lastbin <= xmax &
-      x$latitude_lastbin >= ymin &
-      x$latitude_lastbin <= ymax
-
-    return ((1:length(x$longitude_bin0))[mask])
-  })
-
-  message("Intersecting with polygon...")
-  pb = utils::txtProgressBar(min = 0, max = length(masks), style = 3)
-  progress = 0
-  polygon_masks = list()
-  masknames = (polygon_spdf@data[[split_by]])
-  for (m in masknames) {
-    polygon_masks[[m]] = list()
-  }
-
-  for (beam in names(masks)) {
-    mask = masks[[beam]]
-
-    if (length(mask) == 0) next
-
-    spDataMasked = spData[[beam]][mask,]
-    points = sp::SpatialPointsDataFrame(coords=matrix(c(spDataMasked$longitude_bin0, spDataMasked$latitude_bin0), ncol=2),
-                                        data=data.frame(idrownames=mask), proj4string = polygon_spdf@proj4string)
-    pts = suppressPackageStartupMessages(raster::intersect(points, polygon_spdf))
-    if (ncol(pts@data) == 2) {
-      split_by2 = 2
-    } else {
-      split_by2 = split_by
-    }
-    if (is.null(split_by)) {
-      polygon_masks[[""]][[beam]] = pts@data[,1]
-    } else {
-      for (pol_id in unique(as.character(paste0(pts@data[[split_by2]])))) {
-
-        polygon_masks[[pol_id]][[beam]] = pts[pts@data[[split_by2]] == pol_id,]@data[,1]
-      }
-    }
-
-    progress = progress + 1
-    utils::setTxtProgressBar(pb, progress)
-  }
-  close(pb)
-
-  message("Writing new HDF5 file...")
-  results = list()
-  i = 0
-  len_masks = length(polygon_masks)
-  for (pol_id in names(polygon_masks)) {
-    i = i + 1
-    message(gettextf("Writing %s='%s': %d of %d", split_by, pol_id, i, len_masks))
-    output2 = gsub("\\.h5$", paste0("_", pol_id,".h5"), output)
-    results[[pol_id]] = clipByMask1B(level1b,
-                                     masks = polygon_masks[[pol_id]],
-                                     output = output2)
-  }
+  masks = clipSpDataByExtentLevelB(spData, xmin, xmax, ymin, ymax)
+  polygon_masks = getPolygonMaskLevelB(spData, masks, polygon_spdf, split_by)
+  results = clipByMasks(level1b, polygon_masks, output, split_by, clipByMask1B)
 
   return (results)
 }

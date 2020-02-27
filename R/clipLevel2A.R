@@ -2,13 +2,13 @@
 #'
 #'@description This function clips GEDI Level2A data within given bounding coordinates
 #'
-#'@usage clipLevel2a(level2a, xleft, xright, ybottom, ytop, output)
+#'@usage clipLevel2a(level2a, xmin, xmax, ymin, ymax, output)
 #'
 #'@param level2a A GEDI Level2A object (output of \code{\link[rGEDI:readLevel2A]{readLevel2A}} function). A S4 object of class "gedi.level2a".
-#'@param xleft Numeric. West longitude (x) coordinate of bounding rectangle, in decimal degrees.
-#'@param xright Numeric. East longitude (x) coordinate of bounding rectangle, in decimal degrees.
-#'@param ybottom Numeric. South latitude (y) coordinate of bounding rectangle, in decimal degrees.
-#'@param ytopNumeric. North latitude (y) coordinate of bounding rectangle, in decimal degrees.
+#'@param xmin Numeric. West longitude (x) coordinate of bounding rectangle, in decimal degrees.
+#'@param xmax Numeric. East longitude (x) coordinate of bounding rectangle, in decimal degrees.
+#'@param ymin Numeric. South latitude (y) coordinate of bounding rectangle, in decimal degrees.
+#'@param ymaxNumeric. North latitude (y) coordinate of bounding rectangle, in decimal degrees.
 #'@param output Optional character path where to save the new hdf5file. The default stores a temporary file only.
 #'
 #'@return An S4 object of class "gedi.level2a".
@@ -23,16 +23,16 @@
 #'level2a<-readLevel2A(level1bpath)
 #'
 #'# Bounding rectangle coordinates
-#'xleft = -44.15036
-#'xright = -44.10066
-#'ybottom = -13.75831
-#'ytop = -13.71244
+#'xmin = -44.15036
+#'xmax = -44.10066
+#'ymin = -13.75831
+#'ymax = -13.71244
 #'
 #'# clip by extent boundary box
-#'level2a_clip <- clipLevel2A(level1a,xleft,xright,ybottom,ytop)
+#'level2a_clip <- clipLevel2A(level1a,xmin,xmax,ymin,ymax)
 #'
 #'@export
-clipLevel2A = function(level2a, xleft, xright, ybottom, ytop, output=""){
+clipLevel2A = function(level2a, xmin, xmax, ymin, ymax, output=""){
   if (output == "") {
     output = tempfile(fileext = ".h5")
   }
@@ -41,21 +41,7 @@ clipLevel2A = function(level2a, xleft, xright, ybottom, ytop, output=""){
   # Get all spatial data as a list of dataframes with spatial information
   spData = getSpatialData2A(level2a)
 
-  masks = lapply(spData, function(x) {
-    masks2 = lapply(x, function(y) {
-      mask = y$longitude_lowest >= xleft &
-        y$longitude_lowest <= xright &
-        y$latitude_highest >= ybottom &
-        y$latitude_highest <= ytop &
-        y$longitude_highest >= xleft &
-        y$longitude_highest <= xright &
-        y$latitude_lowest >= ybottom &
-        y$latitude_lowest <= ytop
-
-      return ((1:length(y$longitude_lowest))[mask])
-    })
-    return (masks2)
-  })
+  masks = clipSpDataByExtentLevel2A(spData, xmin, xmax, ymin, ymax)
 
   newFile = clipByMask2A(level2a,
                          masks,
@@ -88,7 +74,7 @@ clipLevel2A = function(level2a, xleft, xright, ybottom, ytop, output=""){
 #'level2apath <- system.file("extdata", "GEDIexample_level02A.h5", package="rGEDI")
 #'
 #'# Reading GEDI level2A data
-#'level2a<-readLevel2A(level1bpath)
+#'level2a<-readLevel2A(level2bpath)
 #'
 #'# specify the path to shapefile
 #'polygon_filepath <- system.file("extdata", "stands_cerrado.shp", package="rGEDI")
@@ -100,83 +86,24 @@ clipLevel2A = function(level2a, xleft, xright, ybottom, ytop, output=""){
 #'level2a_clip <- clipLevel2AGeometry(level2a, polygon_spdf)
 #'
 #'@export
-clipLevel2AGeometry = function(level2a, polygon_spdf, split_by = NULL, output="") {
-
-  if (output == "") {
-    output = tempfile(fileext = ".h5")
-  }
-  output = fs::path_ext_set(output, "h5")
+clipLevel2AGeometry = function(level2a, polygon_spdf, output="", split_by = NULL) {
+  output = checkOutput(output)
+  stopifnotMessage(
+    "split_by not in polygon_spdf"=is.null(split_by) || split_by %in% colnames(polygon_spdf@data)
+  )
 
   spData = getSpatialData2A(level2a)
 
-  xleft = polygon_spdf@bbox[1,1]
-  xright = polygon_spdf@bbox[1,2]
-  ybottom = polygon_spdf@bbox[2,1]
-  ytop = polygon_spdf@bbox[2,2]
+  xmin = polygon_spdf@bbox[1,1]
+  xmax = polygon_spdf@bbox[1,2]
+  ymin = polygon_spdf@bbox[2,1]
+  ymax = polygon_spdf@bbox[2,2]
 
-  masks = lapply(spData, function(x) {
-    masks2 = lapply(x, function(y) {
-      mask = y$longitude_lowest >= xleft &
-        y$longitude_lowest <= xright &
-        y$latitude_highest >= ybottom &
-        y$latitude_highest <= ytop &
-        y$longitude_highest >= xleft &
-        y$longitude_highest <= xright &
-        y$latitude_lowest >= ybottom &
-        y$latitude_lowest <= ytop
+  masks = clipSpDataByExtentLevel2A(spData, xmin, xmax, ymin, ymax)
 
-      return ((1:length(y$longitude_lowest))[mask])
-    })
-    return (masks2)
-  })
+  polygon_masks = getPolygonMaskLevel2A(spData, masks, polygon_spdf, split_by)
 
-  message("Intersecting with polygon...")
-  pb = utils::txtProgressBar(min = 0, max = length(masks), style = 3)
-  progress = 0
-  polygon_masks = list()
-
-  for (beam in names(masks)) {
-    masks2 = masks[[beam]]
-
-    for (i in 1:length(masks2)) {
-      mask = masks2[[i]]
-      if (length(mask) == 0) next
-
-      spDataMasked = spData[[beam]][[i]][mask,]
-      points = sp::SpatialPointsDataFrame(coords=matrix(c(spDataMasked$longitude_highest, spDataMasked$latitude_highest), ncol=2),
-                                          data=data.frame(id=mask), proj4string = polygon_spdf@proj4string)
-      pts = suppressPackageStartupMessages(raster::intersect(points, polygon_spdf))
-
-      mask_name = names(masks2)[i]
-      if (is.null(split_by)) {
-        polygon_masks[[""]][[beam]][[mask_name]] = pts@data[,1]
-      } else {
-        for (pol_id in as.character(unique(pts@data[split_by])[,1])) {
-          polygon_masks[[pol_id]][[beam]][[mask_name]] = pts[(pts@data[split_by] == pol_id)[,1],]@data[,1]
-        }
-      }
-
-      progress = progress + 1
-      utils::setTxtProgressBar(pb, progress)
-    }
-  }
-  close(pb)
-
-  message("Writing new HDF5 files...")
-
-  results = list()
-  output="level2a_res.h5"
-  i = 0
-  len_masks = length(polygon_masks)
-  for (pol_id in names(polygon_masks)) {
-    i = i + 1
-    message(gettextf("Writing %s='%s': %d of %d", split_by, pol_id, i, len_masks))
-    output2 = gsub("\\.h5$", paste0("_", pol_id,".h5"), output)
-    results[[pol_id]] = clipByMask2A(level2a,
-                                     polygon_masks[[pol_id]],
-                                     output2)
-  }
-  names(results) = NULL
+  results = clipByMasks(level2a, polygon_masks, output, split_by, clipByMask2A)
 
   return (results)
 }
@@ -277,8 +204,8 @@ clipByMask2A = function(level2a, masks, output = "") {
       }
 
       beam_shot_n = level2a@h5[[beam_id]][["shot_number"]]$dims
-      dt_dim = level2a@h5[[dt]]$dims
-      h5_dt = level1b@h5[[dt]]
+      h5_dt = level2a@h5[[dt]]
+      dt_dim = h5_dt$dims
       dtype = h5_dt$get_type()
       if (is.na(all(h5_dt$chunk_dims))) {
         chunkdims = NULL
@@ -310,6 +237,9 @@ clipByMask2A = function(level2a, masks, output = "") {
           }
         }
       } else if (length(dt_dim) == 2 && dt_dim[1] == beam_shot_n) {
+        if (length(mask) == 1) {
+          chunkdims = chunkdims[[2]]
+        }
         hdf5r::createDataSet(newFile,dt,h5_dt[mask,][])
       } else if (dt_dim[2] == beam_shot_n) {
         newFile$create_dataset(dt,h5_dt[1:dt_dim[1],mask])
