@@ -102,7 +102,7 @@
 #'level1bpath <- system.file("extdata", "GEDIexample_level01B.h5", package="rGEDI")
 #'
 #'# Reading GEDI level1B data
-#'level1b <- readLevel1B(level1bpath)
+#'level1b <- readLevel1B(level1Bpath=level1bpath)
 #'
 #'# Get GEDI level1B geolocations
 #'level1bGeo<-getLevel1BGeo(level1b,select=c("elevation_bin0", "elevation_lastbin"))
@@ -110,7 +110,7 @@
 #'
 #'
 #'@export
-getLevel1BGeo<-function(level1b,select=NULL) {
+getLevel1BGeo<-function(level1b,select=c("elevation_bin0", "elevation_lastbin")) {
 
   select<-unique(c("latitude_bin0", "latitude_lastbin", "longitude_bin0", "longitude_lastbin","shot_number",select))
   level1b<-level1b@h5
@@ -130,6 +130,7 @@ getLevel1BGeo<-function(level1b,select=NULL) {
 
   dtse2<-datasets[selected][!grepl("geolocation/shot_number",datasets[selected])]
 
+
   # Set progress bar
   pb <- utils::txtProgressBar(min = 0, max = length(dtse2), style = 3)
   i.s=0
@@ -139,19 +140,14 @@ getLevel1BGeo<-function(level1b,select=NULL) {
     utils::setTxtProgressBar(pb, i.s)
     name_i<-basename(i)
     if ( name_i =="shot_number"){
-
       assign(name_i, bit64::c.integer64(get(name_i),level1b[[i]][]))
-
     } else {
-
       assign(name_i, c(get(name_i), level1b[[i]][]))
-
     }
-
   }
 
-    level1b.dt<-data.table::data.table(get("shot_number"))[-1,]
-    select2<-select[!select[]=="shot_number"]
+  level1b.dt<-data.table::data.table(as.data.frame(get("shot_number")[-1]))
+  select2<-select[!select[]=="shot_number"]
 
   for ( i in select2){
     level1b.dt[,i]<-get(i)
