@@ -7,7 +7,7 @@
 #'@param xmin Numeric. West longitude (x) coordinate of bounding rectangle, in decimal degrees.
 #'@param xmax Numeric. East longitude (x) coordinate of bounding rectangle, in decimal degrees.
 #'@param ymin Numeric. South latitude (y) coordinate of bounding rectangle, in decimal degrees.
-#'@param ymaxNumeric. North latitude (y) coordinate of bounding rectangle, in decimal degrees.
+#'@param ymax Numeric. North latitude (y) coordinate of bounding rectangle, in decimal degrees.
 #'@param output Optional character path where to save the new hdf5 file. The default stores a temporary file only.
 #'@return An S4 object of class "gedi.level2b".
 #'

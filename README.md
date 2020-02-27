@@ -24,6 +24,9 @@ install.packages("rGEDI")
 #The development version:
 library(devtools)
 devtools::install_github("carlos-alberto-silva/rGEDI")
+
+# loading rGEDI package
+library(rGEDI)
 ```    
 
 ## Find GEDI data within your study area (GEDI finder tool)
@@ -56,37 +59,36 @@ GEDI02_A_urlfile="https://github.com/carlos-alberto-silva/rGEDI/blob/master/inst
 GEDI02_B_urlfile="https://github.com/carlos-alberto-silva/rGEDI/blob/master/inst/extdata/GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub.h5"
 
 # Downloading GEDI sample datasets. The files will be downloaded in the current working directory [see getwd()]
-download.file(GEDI01_B_urlfile, destfile = paste0(outdir,"//",basename(GEDI01_B_urlfile)))
-download.file(GEDI02_A_urlfile, destfile = paste0(outdir,"//",basename(GEDI02_A_urlfile)))
-download.file(GEDI02_B_urlfile, destfile = paste0(outdir,"//",basename(GEDI02_B_urlfile)))
+download.file(GEDI01_B_urlfile, destfile = paste0(outdir,"\\",basename(GEDI01_B_urlfile)))
+download.file(GEDI02_A_urlfile, destfile = paste0(outdir,"\\",basename(GEDI02_A_urlfile)))
+download.file(GEDI02_B_urlfile, destfile = paste0(outdir,"\\",basename(GEDI02_B_urlfile)))
 
 ```
 
 ## Reading GEDI data
 ```r
 # Reading GEDI data
-gedilevel1b<-readLevel1B(level1bpath = paste0(outdir,"//",basename(GEDI01_B_urlfile)))
-gedilevel2a<-readLevel2A(level2apath = paste0(outdir,"//",basename(GEDI02_A_urlfile)))
-gedilevel2b<-readLevel2B(level2bpath = paste0(outdir,"//",basename(GEDI02_B_urlfile)))
+gedilevel1b<-readLevel1B(level1Bpath = paste0(outdir,"\\",basename(GEDI01_B_urlfile)))
+gedilevel2a<-readLevel2A(level2Apath = paste0(outdir,"\\",basename(GEDI02_A_urlfile)))
+gedilevel2b<-readLevel2B(level2Bpath = paste0(outdir,"\\",basename(GEDI02_B_urlfile)))
 ```
 
 ## Get GEDI Pulse Full-Waveform Geolocation (GEDI Level1B)
 ```r
-level1BGeo<-getLevel1BGeo(level1b,select=NULL)
-head(level1BGeo)
+level1bGeo<-getLevel1BGeo(level1b=gedilevel1b,select=c("elevation_bin0"))
+head(level1bGeo)
 
-##           shot_number latitude_bin0 latitude_lastbin longitude_bin0 longitude_lastbin
-##  1: 19640002800109382     -13.75903        -13.75901      -44.17219         -44.17219
-##  2: 19640003000109383     -13.75862        -13.75859      -44.17188         -44.17188
-##  3: 19640003200109384     -13.75821        -13.75818      -44.17156         -44.17156
-##  4: 19640003400109385     -13.75780        -13.75777      -44.17124         -44.17124
-##  5: 19640003600109386     -13.75738        -13.75736      -44.17093         -44.17093
-##  6: 19640003800109387     -13.75697        -13.75695      -44.17061         -44.17061
+##           shot_number latitude_bin0 latitude_lastbin longitude_bin0 longitude_lastbin elevation_bin0
+##  1: 19640002800109382     -13.75903        -13.75901      -44.17219         -44.17219       784.8348
+##  2: 19640003000109383     -13.75862        -13.75859      -44.17188         -44.17188       799.0491
+##  3: 19640003200109384     -13.75821        -13.75818      -44.17156         -44.17156       814.4647
+##  4: 19640003400109385     -13.75780        -13.75777      -44.17124         -44.17124       820.1437
+##  5: 19640003600109386     -13.75738        -13.75736      -44.17093         -44.17093       821.7012
+##  6: 19640003800109387     -13.75697        -13.75695      -44.17061         -44.17061       823.2526
 ```
 <img align="right" src="https://github.com/carlos-alberto-silva/rGEDI/blob/master/readme/fig2.PNG"  width="400">
 
 ```
-
 
 library(leaflet)
 library(leafsync)
@@ -107,7 +109,7 @@ leaflet() %>%
 ## Get GEDI Pulse Full-waveform (GEDI Level1B)
 ```r
 # Extracting GEDI full-waveform for a giving shotnumber
-wf <- getLevel1BWF(level1b, shot_number="19640521100108408")
+wf <- getLevel1BWF(gedilevel1b, shot_number="19640521100108408")
 
 par(mfrow = c(2,1), mar=c(4,4,1,1), cex.axis = 1.5)
 
@@ -123,7 +125,7 @@ grid()
 ## Get GEDI Elevation and Height Metrics (GEDI Level2A)
 ```r
 # Get GEDI Elevation and Height Metrics
-level2AM<-getLevel2AM(level2a)
+level2AM<-getLevel2AM(gedilevel2a)
 head(level2AM[,c("beam","shot_number","elev_highestreturn","elev_lowestmode","rh100")])
 
 ##          beam       shot_number elev_highestreturn elev_lowestmode rh100
@@ -137,7 +139,7 @@ head(level2AM[,c("beam","shot_number","elev_highestreturn","elev_lowestmode","rh
 
 ## Get GEDI Plant Area Index (PAI) Profile (GEDI Level2B)
 ```r
-level2BPAIProfile<-getLevel2BPAIProfile(level2b)
+level2BPAIProfile<-getLevel2BPAIProfile(gedilevel2b)
 head(level2BPAIProfile[,c("beam","shot_number","pai_z0_5m","pai_z5_10m")])
 
 ##          beam       shot_number   pai_z0_5m   pai_z5_10m
@@ -151,7 +153,7 @@ head(level2BPAIProfile[,c("beam","shot_number","pai_z0_5m","pai_z5_10m")])
 
 ## Get GEDI Plant Area Volume Density (PAVD) Index (GEDI Level2B)
 ```r
-level2BPAVDProfile<-getLevel2BPAVDProfile(level2b)
+level2BPAVDProfile<-getLevel2BPAVDProfile(gedilevel2b)
 head(level2BPAVDProfile[,c("beam","shot_number","pavd_z0_5m","pavd_z5_10m")])
 
 ##          beam       shot_number  pavd_z0_5m  pavd_z5_10m
@@ -165,7 +167,7 @@ head(level2BPAVDProfile[,c("beam","shot_number","pavd_z0_5m","pavd_z5_10m")])
 
 ## Get GEDI Vegetation Profile Biophysical Variables (GEDI Level2B)
 ```r
-level2BVPM<-getLevel2BVPM(level2b)
+level2BVPM<-getLevel2BVPM(gedilevel2b)
 head(level2BVPM[,c("beam","shot_number","pai","fhd_normal","omega","pgap_theta","cover")])
 
 ##          beam       shot_number         pai fhd_normal omega pgap_theta       cover
@@ -187,9 +189,10 @@ ymin = -13.75831
 ymax = -13.71244
 
 ## clipping GEDI data within boundary box
-level1b_clip_bb <- clipLevel1BGeometry(level1b, xmin, xmax, ymin, ymax,output=paste0(getwd(),"//level1b_clip_gb.h5"))
-level2a_clip_bb <- clipLevel2AGeometry(level2a, xmin, xmax, ymin, ytop,output=paste0(getwd(),"//level2a_clip_gb.h5"))
-level2b_clip_bb <- clipLevel2BGeometry(level2b, xmin, xmax, ymin, ytop,output=paste0(getwd(),"//level2b_clip_gb.h5"))
+level1b_clip_bb <- clipLevel1B(gedilevel1b, xmin, xmax, ymin, ymax,output=paste0(outdir,"//level1b_clip_bb.h5"))
+level2a_clip_bb <- clipLevel2A(gedilevel2a, xmin, xmax, ymin, ytop,output=paste0(outdir,"//level2a_clip_bb.h5"))
+level2b_clip_bb <- clipLevel2B(gedilevel2b, xmin, xmax, ymin, ytop,output=paste0(outdir,"//level2b_clip_bb.h5"))
+
 
 ## Clip GEDI data by geometry
 # specify the path to shapefile for the study area
