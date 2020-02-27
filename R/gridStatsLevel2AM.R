@@ -64,7 +64,7 @@ gridStatsLevel2AM = function(level2AM, func, res = 0.5)
   `:=` <- data.table::`:=`
   func<-lazyeval::f_interp(func)
   vars<-all.names(func)[3:length(all.names(func))]
-  level2AM.dt <- x[,names(x) %in% c("lon_lowestmode","lat_lowestmode",vars), with=FALSE]
+  level2AM.dt <- level2AM[,names(level2AM) %in% c("lon_lowestmode","lat_lowestmode",vars), with=FALSE]
   level2AM.dt<-setNames(level2AM.dt,c("y","x",vars))
   layout    <- raster::raster(raster::extent(level2AM.dt), res=res)
   call      <- lazyeval::as_call(func)

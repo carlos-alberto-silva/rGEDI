@@ -64,7 +64,7 @@ gridStatsLevel2BVPM = function(level2BVPM, func, res = 0.5)
   `:=` <- data.table::`:=`
   func<<-lazyeval::f_interp(func)
   vars<-all.names(func)[3:length(all.names(func))]
-  level2a.dt <- na.omit(level2BVPM[,names(level2BVPM) %in% c("lon_lowestmode","lat_lowestmode",vars), with=FALSE])
+  level2a.dt <- na.omit(level2BVPM[,names(level2BVPM) %in% c("longitude_lastbin","latitude_lastbin",vars), with=FALSE])
   level2a.dt<-setNames(level2a.dt,c("y","x",vars))
   layout    <- raster::raster(raster::extent(level2a.dt), res=res)
   call      <- lazyeval::as_call(func)

@@ -159,13 +159,13 @@ getLevel1BGeo<-function(level1b,select=NULL) {
   }
 
     level1b.dt<-data.table::data.table(get("shot_number"))[-1,]
-    colnames(level1b.dt)<-"shot_number"
     select2<-select[!select[]=="shot_number"]
 
   for ( i in select2){
     level1b.dt[,i]<-get(i)
   }
 
+  colnames(level1b.dt)<-c("shot_number",select2)
   close(pb)
   return(level1b.dt)
 }

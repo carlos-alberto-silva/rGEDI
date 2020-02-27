@@ -49,7 +49,7 @@ clipLevel2AM = function(level2AM,xleft, xright, ybottom, ytop){
     level2AM$lat_lowestmode >= ybottom &
     level2AM$lat_lowestmode <=  ytop
 
-  mask = (1:length(level2AM$longitude_bin0))[mask]
+  mask = (1:length(level2AM$lat_lowestmode))[mask]
   newFile<-level2AM[mask,]
   #newFile<- new("gedi.level1b.dt", dt = level1bdt[mask,])
   return (newFile)
@@ -108,17 +108,20 @@ clipLevel2AMGeometry = function(level2AM, polygon_spdf, split_by="id") {
     points = sp::SpatialPointsDataFrame(coords=matrix(c(level2adt$lon_lowestmode, level2adt$lat_lowestmode), ncol=2),
                                         data=data.frame(id=1:length(level2adt$lon_lowestmode)), proj4string = polygon_spdf@proj4string)
     pts = raster::intersect(points, polygon_spdf)
+    colnames(pts@data)<-c("rowids",names(polygon_spdf))
+
     if (!is.null(split_by)){
 
       if ( any(names(polygon_spdf)==split_by)){
-        mask = as.integer(pts@data$id)
+
+        mask = as.integer(pts@data$rowids)
         newFile<-level2adt[mask,]
         newFile$poly_id<-pts@data[,split_by]
       } else {stop(paste("The",split_by,"is not included in the attribute table.
                        Please check the names in the attribute table"))}
 
     } else {
-      mask = as.integer(pts@data$id)
+      mask = as.integer(pts@data$rowids)
       newFile<-level2adt[mask,]
     }
     #newFile<- new("gedi.level1b.dt", dt = level2adt2@dt[mask,])

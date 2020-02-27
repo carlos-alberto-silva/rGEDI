@@ -49,15 +49,16 @@
 #'@export
 clipLevel2BVPM = function(level2BVPM,xleft, xright, ybottom, ytop){
   # xleft ybottom xright ytop
-  mask =
-    level2BVPM$lon_lowestmode >= xleft &
-    level2BVPM$lon_lowestmode <= xright &
-    level2BVPM$lat_lowestmode >= ybottom &
-    level2BVPM$lat_lowestmode <=  ytop &
-    level2BVPM$lon_lowestmode >= xleft &
-    level2BVPM$lon_lowestmode <= xright &
-    level2BVPM$lat_lowestmode >= ybottom &
-    level2BVPM$lat_lowestmode <=  ytop
+ head(level2BVPM)
+   mask =
+    level2BVPM$longitude_bin0 >= xleft &
+    level2BVPM$longitude_bin0 <= xright &
+    level2BVPM$latitude_bin0 >= ybottom &
+    level2BVPM$latitude_bin0 <=  ytop &
+    level2BVPM$longitude_lastbin >= xleft &
+    level2BVPM$longitude_lastbin <= xright &
+    level2BVPM$latitude_lastbin >= ybottom &
+    level2BVPM$latitude_lastbin <=  ytop
 
   mask = (1:length(level2BVPM$longitude_bin0))[mask]
   newFile<-level2BVPM[mask,]
@@ -120,8 +121,8 @@ clipLevel2BVPMGeometry = function(level2BVPM, polygon_spdf, split_by=NULL) {
   level2bdt<-clipLevel2BVPM(level2BVPM, xleft=exshp[1], xright=exshp[2], ybottom=exshp[3], ytop=exshp[4])
 
   if (nrow(level2bdt) == 0) {print("The polygon does not overlap the GEDI data")} else {
-  points = sp::SpatialPointsDataFrame(coords=matrix(c(level2bdt$lon_lowestmode, level2bdt$lat_lowestmode), ncol=2),
-                                      data=data.frame(id=1:length(level2bdt$lon_lowestmode)), proj4string = polygon_spdf@proj4string)
+  points = sp::SpatialPointsDataFrame(coords=matrix(c(level2bdt$longitude_lastbin, level2bdt$latitude_lastbin), ncol=2),
+                                      data=data.frame(id=1:length(level2bdt$longitude_lastbin)), proj4string = polygon_spdf@proj4string)
   pts = raster::intersect(points, polygon_spdf)
 
   if (!is.null(split_by)){

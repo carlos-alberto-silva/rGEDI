@@ -114,23 +114,26 @@ clipLevel1BGeo = function(level1BGeo,xleft, xright, ybottom, ytop, spdf=TRUE){
 #'@export
 clipLevel1BGeoGeometry = function(level1BGeo, polygon_spdf, split_by="id") {
   exshp<-raster::extent(polygon_spdf)
-  level1BGeo<-clipLevel2BVPM(level1BGeo, xleft=exshp[1], xright=exshp[2], ybottom=exshp[3], ytop=exshp[4])
+  level1BGeo<-clipLevel1BGeo(level1BGeo, xleft=exshp[1], xright=exshp[2], ybottom=exshp[3], ytop=exshp[4])
+
   if (nrow(level1BGeo) == 0) {print("The polygon does not overlap the GEDI data")} else {
-    points = sp::SpatialPointsDataFrame(coords=matrix(c(level1BGeo$lon_lowestmode, level1BGeo$lat_lowestmode), ncol=2),
-                                        data=data.frame(id=1:length(level1BGeo$lon_lowestmode)), proj4string = polygon_spdf@proj4string)
-    points(points, col="red")
+    points = sp::SpatialPointsDataFrame(coords=matrix(c(level1BGeo$longitude_bin0, level1BGeo$latitude_lastbin), ncol=2),
+                                        data=data.frame(id=1:length(level1BGeo$latitude_bin0)), proj4string = polygon_spdf@proj4string)
+
     pts = raster::intersect(points, polygon_spdf)
+    colnames(pts@data)<-c("rowids",names(polygon_spdf))
+
     if (!is.null(split_by)){
 
       if ( any(names(polygon_spdf)==split_by)){
-        mask = as.integer(pts@data$id)
+        mask = as.integer(pts@data$rowids)
         newFile<-level1BGeo[mask,]
         newFile$poly_id<-pts@data[,split_by]
       } else {stop(paste("The",split_by,"is not included in the attribute table.
                        Please check the names in the attribute table"))}
 
     } else {
-      mask = as.integer(pts@data$id)
+      mask = as.integer(pts@data$rowids)
       newFile<-level1BGeo[mask,]
     }
     #newFile<- new("gedi.level1b.dt", dt = x2@dt[mask,])

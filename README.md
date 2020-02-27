@@ -72,8 +72,8 @@ gedilevel2b<-readLevel1B(level2bpath = paste0(getwd(),"//",basename(GEDI02_B_url
 
 ## Get GEDI Pulse Full-Waveform Geolocation (GEDI Level1B)
 ```r
-level1bGeo<-getLevel1BGeo(level1b,select=NULL)
-head(level1bGeo)
+level1BGeo<-getLevel1BGeo(level1b,select=NULL)
+head(level1BGeo)
 
 ##           shot_number latitude_bin0 latitude_lastbin longitude_bin0 longitude_lastbin
 ##  1: 19640002800109382     -13.75903        -13.75901      -44.17219         -44.17219
@@ -91,7 +91,8 @@ leaflet() %>%
                    opacity = 1,
                    color = "red")  %>%
   addScaleBar(options = list(imperial = FALSE)) %>%
-  addProviderTiles(providers$Esri.WorldImagery)
+  addProviderTiles(providers$Esri.WorldImagery) %>%
+  addLegend(colors = "red", labels= "Samples",title ="GEDI Level1B")
 ```
 ![](https://github.com/carlos-alberto-silva/rGEDI/blob/master/readme/fig2.PNG)
 
@@ -100,14 +101,14 @@ leaflet() %>%
 # Extracting GEDI full-waveform for a giving shotnumber
 wf <- getLevel1BWF(level1b, shot_number="19640521100108408")
 
-# Plot full-waveform
-par(mfrow = c(1,2), cex.axis = 1.5)
+par(mfrow = c(2,1), mar=c(4,4,1,1), cex.axis = 1.5)
 
 plot(wf, relative=FALSE, polygon=TRUE, type="l", lwd=2, col="forestgreen",
      xlab="Waveform Amplitude", ylab="Elevation (m)")
-
+grid()
 plot(wf, relative=TRUE, polygon=FALSE, type="l", lwd=2, col="forestgreen",
      xlab="Waveform Amplitude (%)", ylab="Elevation (m)")
+grid()
 ```
 ![](https://github.com/carlos-alberto-silva/rGEDI/blob/master/readme/fig3.png)
 
@@ -119,12 +120,12 @@ level2AM<-getLevel2AM(level2a)
 head(level2AM[,c("beam","shot_number","rh100")]) 
 
 ##         beam       shot_number rh100
-##  1: BEAM0000 19640002800109382  5.58
-##  2: BEAM0000 19640003000109383  5.58
-##  3: BEAM0000 19640003200109384  5.58
-##  4: BEAM0000 19640003400109385  5.58
-##  5: BEAM0000 19640003600109386  5.58
-##  6: BEAM0000 19640003800109387  5.58
+##  1: BEAM0000 19640002800109382  4.41
+##  2: BEAM0000 19640003000109383  9.32
+##  3: BEAM0000 19640003200109384  7.19
+##  4: BEAM0000 19640003400109385  5.31
+##  5: BEAM0000 19640003600109386  4.75
+##  6: BEAM0000 19640003800109387  5.01
 ```
 
 ## Get GEDI Plant Area Index (PAI) Profile (GEDI Level2B)
@@ -169,31 +170,21 @@ head(level2BVPM[,c("beam","shot_number","pai","fhd_normal","omega","pgap_theta",
 ##   6: BEAM0000 19640003800109387 0.017654873  1.2458609     1  0.9912092 0.008788579
 
 ```
-# Clip GEDI data 
+# Clip GEDI data (h5 files; gedi.level1b, gedi.level2a and gedi.level2b objects)
 ```r
 ## Clip GEDI data by coordinates
 # Study area boundary box
-#'xleft = -44.15036
-#'xright = -44.10066
-#'ybottom = -13.75831
-#'ytop = -13.71244
+xleft = -44.15036
+xright = -44.10066
+ybottom = -13.75831
+ytop = -13.71244
 
 ## clipping GEDI data within boundary box
-
-# Clip h5 files
 level1b_clip_bb <- clipLevel1B(level1b,xleft, xright, ybottom, ytop)
 level2a_clip_bb <- clipLevel2A(level2a,xleft, xright, ybottom, ytop)
 level2b_clip_bb <- clipLevel2B(level2b,xleft, xright, ybottom, ytop)
 
-# Clip gedi.level1b, gedi.level2a and gedi.level2b objects
-level1BGeo_clip_bb <-clipLevel1BGeo(level1BGeo,xleft, xright, ybottom, ytop)
-level2AM_clip_bb <- clipLevel2AM(level2AM,xleft, xright, ybottom, ytop)
-level2BVPM_clip_bb <- clipLevel2BVPM(level2BVPM,xleft, xright, ybottom, ytop)
-level1BPAIProfile_clip_bb <- clipLevel1BPAIProfile(level1BPAIProfile,xleft, xright, ybottom, ytop)
-level2BPAVDProfile_clip_bb <- clipLevel2BPAVDProfile(level2BPAVDProfile,xleft, xright, ybottom, ytop)
-
 ## Clip GEDI data by geometry
-
 # specify the path to shapefile for the study area
 polygon_filepath <- system.file("extdata", "stands_cerrado.shp", package="rGEDI")
 
@@ -206,38 +197,64 @@ level1b_clip_gb <- clipLevel1BGeometry(level1b,polygon_spdf)
 level2a_clip_gb <- clipLevel2AGeometry(level2a,polygon_spdf)
 level2b_clip_gb <- clipLevel2BGeometry(level2b,polygon_spdf)
 
-# Clip gedi.level1b, gedi.level2a and gedi.level2b objects
+```
+# Clip GEDI data (data.table objects)
+```r
+## clipping GEDI data within boundary box
+level1BGeo_clip_bb <-clipLevel1BGeo(level1BGeo,xleft, xright, ybottom, ytop)
+level2AM_clip_bb <- clipLevel2AM(level2AM,xleft, xright, ybottom, ytop)
+level2BVPM_clip_bb <- clipLevel2BVPM(level2BVPM,xleft, xright, ybottom, ytop)
+level1BPAIProfile_clip_bb <- clipLevel1BPAIProfile(level1BPAIProfile,xleft, xright, ybottom, ytop)
+level2BPAVDProfile_clip_bb <- clipLevel2BPAVDProfile(level2BPAVDProfile,xleft, xright, ybottom, ytop)
+
+## Clip GEDI data by geometry
 level1BGeo_clip_gb <- clipLevel1BGeo(level1BGeo,polygon_spdf)
 level2AM_clip_gb <- clipLevel2AM(level2AM,polygon_spdf)
 level2BVPM_clip_gb <- clipLevel2BVPM(level2BVPM,polygon_spdf)
 level1BPAIProfile_clip_gb <- clipLevel1BPAIProfile(level1BPAIProfile,polygon_spdf)
 level2BPAVDProfile_clip_gb <- clipLevel2BPAVDProfile(level2BPAVDProfile,polygon_spdf)
 
-## visualizing clipped GEDI data
-library(sp)
-library(raster)
-library(mapview)
-library(leafsync)
+## View GEDI clipped data by bbox
+m1<-leaflet() %>%
+  addCircleMarkers(level2AM$lon_lowestmode,
+                   level2AM$lat_lowestmode,
+                   radius = 1,
+                   opacity = 1,
+                   color = "red")  %>%
+  addCircleMarkers(level2AM_clip_bb$lon_lowestmode,
+                   level2AM_clip_bb$lat_lowestmode,
+                   radius = 1,
+                   opacity = 1,
+                   color = "green")  %>%
+  addScaleBar(options = list(imperial = FALSE)) %>%
+  addProviderTiles(providers$Esri.WorldImagery)  %>%
+  addLegend(colors = c("red","green"), labels= c("All samples","Clip bbox"),title ="GEDI Level2A") 
 
-# Setting spatial coordinates to create a spatial object
-coordinates(level2AM_clip_bb) <- ~x+y
-coordinates(level2AM_clip_gb) <- ~x+y
-coordinates(level2BVPM_clip_bb) <- ~x+y
-coordinates(level2BVPM_clip_gb) <- ~x+y
+## View GEDI clipped data by geometry
+# color palette
+pal <- colorFactor(
+  palette = c('blue', 'green', 'purple', 'orange',"white","black","gray","yellow"),
+  domain = level2AM_clip_gb$poly_id
+)
 
-# Setting projection attributes to spatial object
-proj4string(level2AM_clip_bb) <- CRS("+init=epsg:4674")
-proj4string(level2AM_clip_gb) <- CRS("+init=epsg:4674")
-proj4string(level2BVPM_clip_bb) <- CRS("+init=epsg:4674")
-proj4string(level2BVPM_clip_gb) <- CRS("+init=epsg:4674")
+m2<-leaflet() %>%
+  addCircleMarkers(level2AM$lon_lowestmode,
+                   level2AM$lat_lowestmode,
+                   radius = 1,
+                   opacity = 1,
+                   color = "red")  %>%
+  addCircleMarkers(level2AM_clip_gb$lon_lowestmode,
+                   level2AM_clip_gb$lat_lowestmode,
+                   radius = 1,
+                   opacity = 1,
+                   color = pal(level2AM_clip_gb$poly_id))  %>%
+  addScaleBar(options = list(imperial = FALSE)) %>%
+  addPolygons(data=polygon_spdf,weight=1,col = 'white',
+              opacity = 1, fillOpacity = 0) %>%
+  addProviderTiles(providers$Esri.WorldImagery) %>%
+  addLegend(pal = pal, values = level2AM_clip_gb$poly_id,title ="Poly IDs" ) 
 
-# view GEDI-derived Canopy Height (RH100) and Plant Area Index
-m1 <- mapview(level2AM_clip_bb, zcol = "RH100", burst = TRUE)
-m2 <- mapview(level2AM_clip_bb, zcol = "RH100")
-m3 <- mapview(level2BVPM_clip_bb, zcol = "pai", map.types = "Esri.WorldImagery")
-m4 <- mapview(level2BVPM_clip_gb, zcol = "pai")
-
-sync(m1, m2, m3, m4) # 4 panels synchronised
+sync(m1, m2)
 ```
 ![](https://github.com/carlos-alberto-silva/rGEDI/blob/master/readme/fig4.png)
 
@@ -256,12 +273,12 @@ metrics = list(
 }
 
 # Computing the maximum of RH100 stratified by polygon
-RH100max_st<-polyStatsLevel2AM(level2AM_clip,func=max(RH100), id="id")
+RH100max_st<-polyStatsLevel2AM(level2AM_clip_gb,func=max(RH100), id="poly_id")
 head(RH100max_st)
 
 # Computing a serie statistics for GEDI metrics stratified by polygon
 RH100metrics_st<-polyStatsLevel2AM(level2AM_clip,func=mySetOfMetrics(RH100),
-                      id=level2AM_clip_gb@data$id)
+                      id="poly_id")
 head(RH100metrics_st)
 
 # Computing the max of the Total Plant Area Index 
@@ -270,7 +287,7 @@ pai_max
 
 # Computing the serie of statistics of Foliage Clumping Index stratified by polygon
 omega_metrics_st<-polyStatsLevel2BVPM(level2BVPM_clip,func=mySetOfMetrics(omega),
-                      id=level2BM_clip_gb@data$id)
+                      id="poly_id")
 head(omega_metrics_st)
 ```
 ## Compute Grids with descriptive statistics of GEDI-derived Elevation and Height Metrics (Level2A)
@@ -284,23 +301,23 @@ library(viridis)
 library(gridExtra)
 
 rh100maps<-levelplot(RH100metrics,
-          layout=c(2, 2),
-          margin=FALSE,
-          colorkey=list(
-            space='right',
-            labels=list(at=seq(0, 50, 5), font=4),
-            axis.line=list(col='black'),
-            width=1),
-          par.settings=list(
-            strip.border=list(col='transparent'),
-            strip.background=list(col='transparent'),
-            axis.line=list(col='transparent')
-          ),
-          scales=list(draw=TRUE),
-          col.regions=viridis,
-          at=seq(0, 50, len=101),
-          names.attr=c("min of RH100","max of RH100","mean of RH100", "sd of RH100"))
-
+                     layout=c(4, 1),
+                     margin=FALSE,
+                     xlab = "Longitude (degree)", ylab = "Latitude (degree)",
+                     colorkey=list(
+                       space='right',
+                       labels=list(at=seq(0, 18, 2), font=4),
+                       axis.line=list(col='black'),
+                       width=1),
+                     par.settings=list(
+                       strip.border=list(col='gray'),
+                       strip.background=list(col='gray'),
+                       axis.line=list(col='gray')
+                     ),
+                     scales=list(draw=TRUE),
+                     col.regions=viridis,
+                     at=seq(0, 18, len=101),
+                     names.attr=c("rh100 min","rh100 max","rh100 mean", "rh100 sd"))
 rh100maps
 ```
 ![](https://github.com/carlos-alberto-silva/rGEDI/blob/master/readme/fig5.png)
@@ -308,28 +325,29 @@ rh100maps
 ## Compute Grids with descriptive statistics of GEDI-derived Canopy Cover and Vertical Profile Metrics (Level2B)
 ```r
 # Computing the max of the Total Plant Area Index only
+level2BVPM$pai[level2BVPM$pai==-9999]<-NA # assing NA to -9999
 pai_metrics<-gridStatsLevel2BVPM(level2BVPM = level2BVPM, func=mySetOfMetrics(pai), res=0.0005)
 
 # View maps
 pai_maps<-levelplot(pai_metrics,
-          layout=c(2, 2),
-          margin=FALSE,
-          colorkey=list(
-            space='right',
-            labels=list(at=seq(0, 1, 0.2), font=4),
-            axis.line=list(col='black'),
-            width=1),
-          par.settings=list(
-            strip.border=list(col='transparent'),
-            strip.background=list(col='transparent'),
-            axis.line=list(col='transparent')
-          ),
-          scales=list(draw=TRUE),
-          col.regions=viridis,
-          at=seq(0, 1, len=101),
-          names.attr=c("min of PAI","max of PAI","mean of PAI", "sd of PAI"))
+                    layout=c(4, 1),
+                    margin=FALSE,
+                    xlab = "Longitude (degree)", ylab = "Latitude (degree)",
+                    colorkey=list(
+                      space='right',
+                      labels=list(at=seq(0, 1.5, 0.2), font=4),
+                      axis.line=list(col='black'),
+                      width=1),
+                    par.settings=list(
+                      strip.border=list(col='gray'),
+                      strip.background=list(col='gray'),
+                      axis.line=list(col='gray')
+                    ),
+                    scales=list(draw=TRUE),
+                    col.regions=viridis,
+                    at=seq(0, 1.5, len=101),
+                    names.attr=c("PAI min","PAI max","PAI mean", "PAI sd"))
 
-pai_maps
 ```
 ![](https://github.com/carlos-alberto-silva/rGEDI/blob/master/readme/fig6.png)
 

@@ -41,9 +41,11 @@ getLevel2AM<-function(level2a){
       lon_lowestmode=level2a_i[["lon_lowestmode"]][],
       elev_highestreturn=level2a_i[["elev_highestreturn"]][],
       elev_lowestmode=level2a_i[["elev_lowestmode"]][],
-      t(level2a_i[["rh"]][,level2a_i[["rh"]]$dims[2]]))
+      t(level2a_i[["rh"]][,1:level2a_i[["rh"]]$dims[2]]))
     rh.dt<-rbind(rh.dt,rhs)
   }
+
+
   colnames(rh.dt)<-c("beam","shot_number","lat_lowestmode","lon_lowestmode",
                      "elev_highestreturn","elev_lowestmode",paste0("rh",seq(0,100)))
   close(pb)

@@ -58,11 +58,15 @@
 #'RH100metrics<-polyStatsLevel2AM(level2AM_clip,func=mySetOfMetrics(RH100),
 #'                      id=level2AM_clip@data$id)
 #'}
+#'@import data.table
 #'@export
 polyStatsLevel2AM = function(level2AM, func=mean(rh100), id = NULL)
 {
+
   # this code has been adapted from the grid_metrics function in lidR package (Roussel et al. 2019)
   # https://github.com/Jean-Romain/lidR/blob/master/R/grid_metrics.r
+
+  requireNamespace("data.table")
 
   is_formula <- tryCatch(lazyeval::is_formula(func), error = function(e) FALSE)
   if (!is_formula) func <- lazyeval::f_capture(func)

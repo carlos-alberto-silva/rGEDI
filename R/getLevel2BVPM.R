@@ -50,8 +50,10 @@ getLevel2BVPM<-function(level2b){
       beam<-rep(i,length(level2b_i[["shot_number"]][])),
       shot_number=level2b_i[["shot_number"]][],
       delta_time=level2b_i[["delta_time"]][],
-      lat_lowestmode=level2b_i[["geolocation/lat_lowestmode"]][],
-      lon_lowestmode=level2b_i[["geolocation/lon_lowestmode"]][],
+      latitude_lastbin=level2b_i[["geolocation/latitude_lastbin"]][],
+      latitude_bin0=level2b_i[["geolocation/latitude_bin0"]][],
+      longitude_bin0=level2b_i[["geolocation/longitude_bin0"]][],
+      longitude_lastbin=level2b_i[["geolocation/longitude_lastbin"]][],
       elev_highestreturn=level2b_i[["geolocation/elev_highestreturn"]][],
       elev_lowestmode=level2b_i[["geolocation/elev_lowestmode"]][],
       pai=level2b_i[["pai"]][],
@@ -61,7 +63,8 @@ getLevel2BVPM<-function(level2b){
       cover=level2b_i[["cover"]][])
     m.dt<-rbind(m.dt,m)
   }
-  colnames(m.dt)<-c("beam","shot_number","delta_time","lat_lowestmode","lon_lowestmode",
+  colnames(m.dt)<-c("beam","shot_number","delta_time","latitude_lastbin","latitude_bin0",
+                    "longitude_lastbin","longitude_bin0",
                     "elev_highestreturn","elev_lowestmode","pai",
                     "fhd_normal","omega","pgap_theta","cover")
   close(pb)
