@@ -413,7 +413,6 @@ head(metrics[,1:8])
 ```
 ![](https://github.com/carlos-alberto-silva/rGEDI/blob/master/readme/fig7.png width="400")
 
-
 # References
 Dubayah, R., Blair, J.B., Goetz, S., Fatoyinbo, L., Hansen, M., Healey, S., Hofton, M., Hurtt, G.,         Kellner, J., Luthcke, S., & Armston, J. (2020) The Global Ecosystem Dynamics Investigation:         High-resolution laser ranging of the Earth’s forests and topography. Science of Remote             Sensing, p.100002.
 
