@@ -82,7 +82,10 @@ head(level1BGeo)
 ##  4: 19640003400109385     -13.75780        -13.75777      -44.17124         -44.17124
 ##  5: 19640003600109386     -13.75738        -13.75736      -44.17093         -44.17093
 ##  6: 19640003800109387     -13.75697        -13.75695      -44.17061         -44.17061
-    
+```
+<img align="right" src="https://github.com/carlos-alberto-silva/rGEDI/blob/master/readme/fig2.PNG"  width="200">
+
+```
 library(leaflet)
 leaflet() %>%
   addCircleMarkers(level1bGeo$longitude_bin0,
@@ -94,9 +97,10 @@ leaflet() %>%
   addProviderTiles(providers$Esri.WorldImagery) %>%
   addLegend(colors = "red", labels= "Samples",title ="GEDI Level1B")
 ```
-![](https://github.com/carlos-alberto-silva/rGEDI/blob/master/readme/fig2.PNG)
 
-## Get GEDI Pulse Full-Waveform (GEDI Level1B)
+## Get GEDI Pulse Full-waveform (GEDI Level1B)
+<img align="right" src="https://github.com/carlos-alberto-silva/rGEDI/blob/master/readme/fig3.png">
+
 ```r
 # Extracting GEDI full-waveform for a giving shotnumber
 wf <- getLevel1BWF(level1b, shot_number="19640521100108408")
@@ -110,7 +114,6 @@ plot(wf, relative=TRUE, polygon=FALSE, type="l", lwd=2, col="forestgreen",
      xlab="Waveform Amplitude (%)", ylab="Elevation (m)")
 grid()
 ```
-![](https://github.com/carlos-alberto-silva/rGEDI/blob/master/readme/fig3.png)
 
 
 ## Get GEDI Elevation and Height Metrics (GEDI Level2A)
@@ -293,12 +296,11 @@ head(omega_metrics_st)
 ## Compute Grids with descriptive statistics of GEDI-derived Elevation and Height Metrics (Level2A)
 ```r
 # Computing the serie of statistics of GEDI RH100 metric
-#'RH100metrics<-gridStatsLevel2AM(level2AM = level2AM, func=mySetOfMetrics(RH100), res=0.0005)
+RH100metrics<-gridStatsLevel2AM(level2AM = level2AM, func=mySetOfMetrics(rh100), res=0.005)
 
 # View maps
 library(rasterVis)
 library(viridis)
-library(gridExtra)
 
 rh100maps<-levelplot(RH100metrics,
                      layout=c(4, 1),

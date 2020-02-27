@@ -50,7 +50,7 @@
 #'omega_mean<-gridStatsLevel2BVPM(level2AM = level2AM, func=mean(omega), res=0.5)
 #'plot(omega_mean)
 #'}
-#'
+#'@export
 gridStatsLevel2BVPM = function(level2BVPM, func, res = 0.5)
 {
   requireNamespace("data.table")
