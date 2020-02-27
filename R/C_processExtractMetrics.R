@@ -105,16 +105,32 @@
 #'
 #' @examples
 #'# specify the path to ALS data
-#'LASfile <- system.file("extdata", "LASexample1.las", package="rGEDI")
+#'lasfile_amazon <- system.file("extdata", "Amazon.las", package="rGEDI")
+#'lasfile_cerrado <- system.file("extdata", "Cerrado.las", package="rGEDI")
 #'
-#'# Simulate GEDI full-waveform
-#'wf<-gediWFSimulator(input=LASfile,output="gediSimulation.h5")
+#'# Reading and plot ALS file
+#'library(lidR)
+#'library(plot3D)
+#'las_amazon<-readLAS(lasfile_amazon)
+#'las_cerrado<-readLAS(lasfile_cerrado)
 #'
-#'# Adding noise to GEDI full-waveform
-#'wfn<-gediWFNoise(input=wf,output="gediSimulation_noise.h5")
+#'# Extracting plot center geolocations
+#'xcenter_amazon = mean(las_amazon@bbox[1,])
+#'ycenter_amazon = mean(las_amazon@bbox[2,])
+#'xcenter_cerrado = mean(las_cerrado@bbox[1,])
+#'ycenter_cerrado = mean(las_cerrado@bbox[2,])
+#'
+#'# Simulating GEDI full-waveform
+#'wf_amazon<-gediWFSimulator(input=lasfile_amazon,output=paste0(getwd(),"//gediWF_amazon_simulation.h5"),coords = c(xcenter_amazon, ycenter_amazon))
+#'wf_cerrado<-gediWFSimulator(input=lasfile_cerrado,output=paste0(getwd(),"//gediWF_cerrado_simulation.h5"),coords = c(xcenter_cerrado, ycenter_cerrado))
 #'
 #'# Extracting GEDI feull-waveform derived metrics
-#'wfmetrics<-gediWFMetrics(input=wfn,outRoot=getwd())
+#'wf_amazon_metrics<-gediWFMetrics(input=wf_amazon@h5$filename,outRoot=getwd())
+#'wf_cerrado_metrics<-gediWFMetrics(input=wf_cerrado@h5$filename,outRoot=getwd())
+#'
+#'metrics<-rbind(wf_amazon_metrics,wf_cerrado_metrics)
+#'rownames(metrics)<-c("Amazon","Cerrado")
+#'head(metrics)
 #'
 #' @useDynLib rGEDI
 #' @import methods
