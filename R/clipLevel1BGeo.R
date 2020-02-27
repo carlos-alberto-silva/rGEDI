@@ -3,13 +3,13 @@
 #'@description This function clips GEDI level1B extracted geolocation (level1BGeo)
 #' data within given bounding coordinates
 #'
-#'@usage clipLevel1BGeo(level1BGeo, xleft, xright, ybottom, ytop)
+#'@usage clipLevel1BGeo(level1BGeo, xmin, xmax, ymin, ymax)
 #'
 #'@param level1BGeo A GEDI Level1b object (output of \code{\link[rGEDI:readLevel1B]{readLevel1B}} function). A S4 object of class "gedi.level1b".
-#'@param xleft Numeric. West longitude (x) coordinate of bounding rectangle, in decimal degrees.
-#'@param xright Numeric. East longitude (x) coordinate of bounding rectangle, in decimal degrees.
-#'@param ybottom Numeric. South latitude (y) coordinate of bounding rectangle, in decimal degrees.
-#'@param ytop Numeric. North latitude (y) coordinate of bounding rectangle, in decimal degrees.
+#'@param xmin Numeric. West longitude (x) coordinate of bounding rectangle, in decimal degrees.
+#'@param xmax Numeric. East longitude (x) coordinate of bounding rectangle, in decimal degrees.
+#'@param ymin Numeric. South latitude (y) coordinate of bounding rectangle, in decimal degrees.
+#'@param ymax Numeric. North latitude (y) coordinate of bounding rectangle, in decimal degrees.
 #'
 #'@return An S4 object of class \code{\link[data.table:data.table]{data.table-class}}.
 #'
@@ -26,13 +26,13 @@
 #'level1BGeo<-getLevel1BGeo(level1b)
 #'
 #'# Bounding rectangle coordinates
-#'xleft = -44.15036
-#'xright = -44.10066
-#'ybottom = -13.75831
-#'ytop = -13.71244
+#'xmin = -44.15036
+#'xmax = -44.10066
+#'ymin = -13.75831
+#'ymax = -13.71244
 #'
 #'# clip by boundary box coordinates
-#'level1bGeo_clip <- clipLevel1BGeo(level1BGeo,xleft, xright, ybottom, ytop)
+#'level1bGeo_clip <- clipLevel1BGeo(level1BGeo,xmin, xmax, ymin, ymax)
 #'
 #'library(leaflet)
 #'leaflet() %>%
@@ -44,8 +44,8 @@
 #'  addScaleBar(options = list(imperial = FALSE)) %>%
 #'  addProviderTiles(providers$Esri.WorldImagery)
 #'@export
-clipLevel1BGeo = function(level1BGeo,xleft, xright, ybottom, ytop, spdf=TRUE){
-  # xleft ybottom xright ytop
+clipLevel1BGeo = function(level1BGeo,xmin, xmax, ymin, ymax){
+  # xmin ymin xmax ymax
   mask =
     level1BGeo$longitude_bin0 >= xleft &
     level1BGeo$longitude_bin0 <= xright &

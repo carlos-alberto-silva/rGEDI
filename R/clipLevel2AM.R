@@ -3,16 +3,16 @@
 #'@description This function clips GEDI Level2A extracted Elevation and Height Metrics (Level2AM)
 #' within given bounding coordinates
 #'
-#'@usage clipLevel2AM(level2a, xleft, xright, ybottom, ytop, output)
+#'@usage clipLevel2AM(level2a, xmin, xmax, ymin, ymax, output)
 #'
 #'@param level2AM A GEDI Level2A object (output of \code{\link[rGEDI:readLevel2A]{readLevel2A}} function). A S4 object of class "gedi.level2a".
-#'@param xleft Numeric. West longitude (x) coordinate of bounding rectangle, in decimal degrees.
-#'@param xright Numeric. East longitude (x) coordinate of bounding rectangle, in decimal degrees.
-#'@param ybottom Numeric. South latitude (y) coordinate of bounding rectangle, in decimal degrees.
-#'@param ytop Numeric. North latitude (y) coordinate of bounding rectangle, in decimal degrees.
-#'@param output Optional character path where to save the new hdf5file. The default stores a temporary file only.
+#'@param xmin Numeric. West longitude (x) coordinate of bounding rectangle, in decimal degrees.
+#'@param xmax Numeric. East longitude (x) coordinate of bounding rectangle, in decimal degrees.
+#'@param ymin Numeric. South latitude (y) coordinate of bounding rectangle, in decimal degrees.
+#'@param ymax Numeric. North latitude (y) coordinate of bounding rectangle, in decimal degrees.
 #'
-#'@return An S4 object of class "gedi.level2a".
+#'@return An S4 object of class \code{\link[data.table:data.table]{data.table-class}}
+#'containing the elevation and relative heights.
 #'
 #'@seealso https://lpdaac.usgs.gov/products/gedi02_av001/
 #'
@@ -27,18 +27,18 @@
 #'level2AM = getLevel2AM(level2a)
 #'
 #'# Bounding rectangle coordinates
-#'xleft = -44.15036
-#'xright = -44.10066
-#'ybottom = -13.75831
-#'ytop = -13.71244
+#'xmin = -44.15036
+#'xmax = -44.10066
+#'ymin = -13.75831
+#'ymax = -13.71244
 #'
 #'# clip by extent boundary box
-#'level2AM_clip <- clipLevel2AM(level2AM,xleft, xright, ybottom, ytop)
+#'level2AM_clip <- clipLevel2AM(level2AM,xmin, xmax, ymin, ymax)
 #'
 #'@import hdf5r
 #'@export
-clipLevel2AM = function(level2AM,xleft, xright, ybottom, ytop){
-  # xleft ybottom xright ytop
+clipLevel2AM = function(level2AM,xmin, xmax, ymin, ymax){
+  # xmin ymin xmax ymax
   mask =
     level2AM$lon_lowestmode >= xleft &
     level2AM$lon_lowestmode <= xright &

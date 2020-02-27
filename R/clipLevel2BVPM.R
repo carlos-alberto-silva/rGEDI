@@ -4,17 +4,18 @@
 #'Canopy Cover and Vertical Profile metrics within given bounding coordinates
 #'
 #'
-#'@usage clipLevel2BVPM(level2BVPM, xleft, xright, ybottom, ytop)
+#'@usage clipLevel2BVPM(level2BVPM, xmin, xmax, ymin, ymax)
 #'
 #'
 #'@param level2BVPM A GEDI Level2B object (output of \code{\link[rGEDI:readLevel1B]{readLevel1B}} function). A S4 object of class "gedi.level2b".
-#'@param xleft Numeric. West longitude (x) coordinate of bounding rectangle, in decimal degrees.
-#'@param xright Numeric. East longitude (x) coordinate of bounding rectangle, in decimal degrees.
-#'@param ybottom Numeric. South latitude (y) coordinate of bounding rectangle, in decimal degrees.
-#'@param ytopNumeric. North latitude (y) coordinate of bounding rectangle, in decimal degrees.
+#'@param xmin Numeric. West longitude (x) coordinate of bounding rectangle, in decimal degrees.
+#'@param xmax Numeric. East longitude (x) coordinate of bounding rectangle, in decimal degrees.
+#'@param ymin Numeric. South latitude (y) coordinate of bounding rectangle, in decimal degrees.
+#'@param ymaxNumeric. North latitude (y) coordinate of bounding rectangle, in decimal degrees.
 #'@param output Optional character path where to save the new hdf5file. The default stores a temporary file only.
 #'
-#'@return An S4 object of class "gedi.level2b".
+#'@return An S4 object of class \code{\link[data.table:data.table]{data.table-class}}
+#'containing the Canopy Cover and Vertical Profile metrics.
 #'
 #'@seealso https://lpdaac.usgs.gov/products/gedi02_bv001/
 #'
@@ -27,13 +28,13 @@
 #'level2BVPM<-getlevel2BVPM(level2b)
 #'
 #'# Bounding rectangle coordinates
-#'xleft = -44.15036
-#'xright = -44.10066
-#'ybottom = -13.75831
-#'ytop = -13.71244
+#'xmin = -44.15036
+#'xmax = -44.10066
+#'ymin = -13.75831
+#'ymax = -13.71244
 #'
 #'# clip level2BVPM by extent boundary box
-#'level2b_clip <- level2BVPM(level2BVPM,xleft, xright, ybottom, ytop)
+#'level2b_clip <- level2BVPM(level2BVPM,xmin, xmax, ymin, ymax)
 #'
 #'library(leaflet)
 #'leaflet() %>%
@@ -47,10 +48,9 @@
 #'              opacity = 1, fillOpacity = 0) %>%
 #'  addProviderTiles(providers$Esri.WorldImagery)
 #'@export
-clipLevel2BVPM = function(level2BVPM,xleft, xright, ybottom, ytop){
-  # xleft ybottom xright ytop
- head(level2BVPM)
-   mask =
+clipLevel2BVPM = function(level2BVPM,xmin, xmax, ymin, ymax){
+  # xmin ymin xmax ymax
+  mask =
     level2BVPM$longitude_bin0 >= xleft &
     level2BVPM$longitude_bin0 <= xright &
     level2BVPM$latitude_bin0 >= ybottom &
