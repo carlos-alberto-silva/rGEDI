@@ -355,27 +355,55 @@ pai_maps<-levelplot(pai_metrics,
 ## Simulating GEDI full-waveform data from Airborne Laser Scanning (ALS) 3-D point cloud and extracting canopy derived metrics
 ```r
 # specify the path to ALS data
-LASfile <- system.file("extdata", "Amazon.las", package="rGEDI")
+lasfile_amazon <- system.file("extdata", "Amazon.las", package="rGEDI")
+lasfile_cerrado <- system.file("extdata", "Cerrado.las", package="rGEDI")
 
 # Reading and plot ALS file
 library(lidR)
-LAS<-readLAS(LASfile)
-plot(LAS)
-```
-<img align="right" src="https://github.com/carlos-alberto-silva/rGEDI/blob/master/readme/fig7.gif">
+require(plot3D)
+las_amazon<-readLAS(lasfile_amazon)
+las_cerrado<-readLAS(lasfile_cerrado)
 
-```
-# Simulate GEDI full-waveform
-wf<-gediWFSimulator(input=LASfile,output="gediSimulation.h5")
+# Extracting plot center geolocations
+xcenter_amazon = mean(las_amazon@bbox[1,])
+ycenter_amazon = mean(las_amazon@bbox[2,])
+xcenter_cerrado = mean(las_cerrado@bbox[1,])
+ycenter_cerrado = mean(las_cerrado@bbox[2,])
 
-# Adding noise to GEDI full-waveform
-wfn<-gediWFNoise(input=wf,output="gediSimulation_noise.h5")
+# Simulating GEDI full-waveform
+wf_amazon<-gediWFSimulator(input=lasfile_amazon,output=paste0(getwd(),"//gediWF_amazon_simulation.h5"),coords = c(xcenter_amazon, ycenter_amazon))
+wf_cerrado<-gediWFSimulator(input=lasfile_cerrado,output=paste0(getwd(),"//gediWF_cerrado_simulation.h5"),coords = c(xcenter_cerrado, ycenter_cerrado))
+
+# Plot ALS and GEDI simulated full-waveform
+png("gediWf.png", width = 8, height = 6, units = 'in', res = 300)
+
+par(mfrow=c(2,2), mar=c(4,4,0,0), oma=c(0,0,1,1),cex.axis = 1.2)
+scatter3D(las_amazon@data$X,las_amazon@data$Y,las_amazon@data$Z,pch = 16,colkey = FALSE, main="",
+          cex = 0.5,bty = "u",col.panel ="gray90",phi = 30,alpha=1,theta=45,
+          col.grid = "gray50", xlab="UTM Easting (m)", ylab="UTM Northing (m)", zlab="Elevation (m)")
+
+plot(wf_amazon, relative=TRUE, polygon=TRUE, type="l", lwd=2, col="forestgreen",
+     xlab="", ylab="Elevation (m)", ylim=c(90,140))
+grid()
+scatter3D(las_cerrado@data$X,las_cerrado@data$Y,las_cerrado@data$Z,pch = 16,colkey = FALSE, main="",
+          cex = 0.5,bty = "u",col.panel ="gray90",phi = 30,alpha=1,theta=45,
+          col.grid = "gray50", xlab="UTM Easting (m)", ylab="UTM Northing (m)", zlab="Elevation (m)")
+
+plot(wf_cerrado, relative=TRUE, polygon=TRUE, type="l", lwd=2, col="green",
+xlab="Waveform Amplitude (%)", ylab="Elevation (m)", ylim=c(815,835))
+grid()
+dev.off()
 
 # Extracting GEDI feull-waveform derived metrics
-wfmetrics<-gediWFMetrics(input=wfn,outRoot=getwd())
-head(wfmetrics)
+wf_amazon_metrics<-gediWFMetrics(input=wf_amazon@h5$filename,outRoot=getwd())
+wf_cerrado_metrics<-gediWFMetrics(input=wf_cerrado@h5$filename,outRoot=getwd())
+
+metrics<-rbind(wf_amazon_metrics,wf_cerrado_metrics)
+rownames(metrics)<-c("Amazon","Cerrado")
+head(metrics[,1:8])
 ```
-![](https://github.com/carlos-alberto-silva/rGEDI/blob/master/readme/fig8.png)
+![](https://github.com/carlos-alberto-silva/rGEDI/blob/master/readme/fig7.png)
+
 
 # References
 Dubayah, R., Blair, J.B., Goetz, S., Fatoyinbo, L., Hansen, M., Healey, S., Hofton, M., Hurtt, G.,         Kellner, J., Luthcke, S., & Armston, J. (2020) The Global Ecosystem Dynamics Investigation:         High-resolution laser ranging of the Earth’s forests and topography. Science of Remote             Sensing, p.100002.
