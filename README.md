@@ -328,6 +328,9 @@ rh100maps
 dev.off()
 
 
+
+
+
 ```
 
 ## Compute Grids with descriptive statistics of GEDI-derived Canopy Cover and Vertical Profile Metrics (Level2B)
@@ -362,6 +365,11 @@ pai_maps<-levelplot(pai_metrics,
 png("fig6.png", width = 6, height = 8, units = 'in', res = 300)
 pai_maps
 dev.off()
+
+
+
+
+
 ```
 
 ## Simulating GEDI full-waveform data from Airborne Laser Scanning (ALS) 3-D point cloud and extracting canopy derived metrics
