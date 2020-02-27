@@ -29,7 +29,6 @@
 #'\item \emph{rx_open} -	Time interval from time 0 to first stored RX sample.
 #'\item \emph{rx_sample_count} -	The number of sample intervals (elements) in each RX waveform.
 #'\item \emph{rx_sample_start_index} -	The index in the rxwaveform dataset of the first element of each RX waveform starting at 1.
-#'\item \emph{rxwaveform} -	The corrected receive RX waveforms using rx_sample_count and rx_sample_start_index to identify the location of each waveform.
 #'\item \emph{selection_stretchers_x} -	Commanded number of samples added to algorithm section on the left.
 #'\item \emph{selection_stretchers_y} -	Commanded number of samples added to algorithm section on the right.
 #'\item \emph{shot_number} -	Unique shot identifier.
@@ -49,10 +48,6 @@
 #'\item \emph{tx_pulseflag} -	Set to 1 if a pulse is detected in the TX waveform.
 #'\item \emph{tx_sample_count} -	The number of sample intervals (elements) in each transmit waveform.
 #'\item \emph{tx_sample_start_index} -	The index in the rxwaveform dataset of the first element of each RX waveform starting at 1.
-#'\item \emph{txwaveform} -	The corrected TX waveforms using tx_sample_count and tx_sample_start_index to identify the location of each waveform.
-#'\item \emph{master_time_epoch} -	Number of GPS seconds between the GPS epoch (1980-01-06T00:00:00Z) and the GEDI epoch (2018-01-01T00:00:00Z).
-#'\item \emph{mean_samples} -	Averaging window (shots) for non-repeated odd-even measurements from housekeeping.
-#'\item \emph{smoothing_width} -	The 1-sigma width of the gaussian kernel used to smooth the corrected waveform.
 #'\item \emph{altitude_instrument} -	Height of the instrument diffractive optical element (DOE) above the WGS84 ellipsoid.
 #'\item \emph{altitude_instrument_error} -	Error on altitude_instrument.
 #'\item \emph{bounce_time_offset_bin0} -	The difference between the TX time and the time at the start of the RX window.
@@ -139,10 +134,7 @@ getLevel1BGeo<-function(level1b,select=NULL) {
   pb <- utils::txtProgressBar(min = 0, max = length(dtse2), style = 3)
   i.s=0
 
-
-  # i = "BEAM0000/shot_number"
   for ( i in dtse2){
-    #print(i)
     i.s<-i.s+1
     utils::setTxtProgressBar(pb, i.s)
     name_i<-basename(i)
