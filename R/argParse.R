@@ -1,11 +1,16 @@
 stopifnotMessage = function(...) {
-  tryCatch(
-    stopifnot(...),
-    error=function(e) {
-      stop(paste0("\n\nInput arguments are invalid!\n",
-                  e$message))
+  ok = TRUE
+  errors = list()
+  listargs = list(...)
+  for (i in 1:length(listargs)) {
+    if (listargs[i] == FALSE) {
+      errors[[""]] = names(listargs)[i]
+      ok = FALSE
     }
-  )
+  }
+  if (ok == FALSE) {
+    stop(paste0("\n\nError validating the arguments:\n    ", paste(errors, collapse="\n    ")))
+  }
 }
 
 checkNumericLength = function(x, len) {

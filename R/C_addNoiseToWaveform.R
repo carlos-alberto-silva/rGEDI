@@ -53,16 +53,16 @@ gediWFNoise <- function(
 
   # Check values
   stopifnotMessage(
-    all(file.exists(input)),
-    all(fs::path_ext(input) == "h5"),
-    checkFilepath(output, newFile=TRUE, optional=FALSE),
-    checkInteger(seed),
-    checkNumericLength(linkNoise, 2),
-    checkNumeric(dcBias),
-    checkNumeric(linkFsig),
-    checkNumeric(linkPsig),
-    checkNumeric(trueSig),
-    checkInteger(bitRate)
+    "input file(s) do not exist!"=all(file.exists(input)),
+    "input file is not of *.h5 extension!"=all(fs::path_ext(input) == "h5"),
+    "output is invalid!"=checkFilepath(output, newFile=TRUE, optional=FALSE),
+    "seed is invalid!"=checkInteger(seed),
+    "linkNoise is invalid!"=checkNumericLength(linkNoise, 2),
+    "dcBias is invalid!"=checkNumeric(dcBias),
+    "linkFsig is invalid!"=checkNumeric(linkFsig),
+    "linkPsig is invalid!"=checkNumeric(linkPsig),
+    "trueSig is invalid!"=checkNumeric(trueSig),
+    "bitRate is invalid!"=checkInteger(bitRate)
   )
   res = .Call("C_addNoiseHDF",
         input,
