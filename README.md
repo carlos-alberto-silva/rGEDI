@@ -174,15 +174,15 @@ head(level2BVPM[,c("beam","shot_number","pai","fhd_normal","omega","pgap_theta",
 ```r
 ## Clip GEDI data by coordinates
 # Study area boundary box
-xleft = -44.15036
-xright = -44.10066
-ybottom = -13.75831
-ytop = -13.71244
+xmin = -44.15036
+xmax = -44.10066
+ymin = -13.75831
+ymax = -13.71244
 
 ## clipping GEDI data within boundary box
-level1b_clip_bb <- clipLevel1B(level1b,xleft, xright, ybottom, ytop)
-level2a_clip_bb <- clipLevel2A(level2a,xleft, xright, ybottom, ytop)
-level2b_clip_bb <- clipLevel2B(level2b,xleft, xright, ybottom, ytop)
+level1b_clip_bb <- clipLevel1BGeometry(level1b, xmin, xmax, ymin, ymax,output=paste0(getwd(),"//level1b_clip_gb.h5"))
+level2a_clip_bb <- clipLevel2AGeometry(level2a, xmin, xmax, ymin, ytop,output=paste0(getwd(),"//level2a_clip_gb.h5"))
+level2b_clip_bb <- clipLevel2BGeometry(level2b, xmin, xmax, ymin, ytop,output=paste0(getwd(),"//level2b_clip_gb.h5"))
 
 ## Clip GEDI data by geometry
 # specify the path to shapefile for the study area
@@ -193,26 +193,26 @@ library(rgdal)
 polygon_spdf<-readOGR(polygons_filepath)
 
 # Clip h5 files
-level1b_clip_gb <- clipLevel1BGeometry(level1b,polygon_spdf)
-level2a_clip_gb <- clipLevel2AGeometry(level2a,polygon_spdf)
-level2b_clip_gb <- clipLevel2BGeometry(level2b,polygon_spdf)
+level1b_clip_gb <- clipLevel1BGeometry(level1b,polygon_spdf,output=paste0(getwd(),"//level1b_clip_gb.h5"), split_by="id")
+level2a_clip_gb <- clipLevel2AGeometry(level2a,polygon_spdf,output=paste0(getwd(),"//level2a_clip_gb.h5"), split_by="id")
+level2b_clip_gb <- clipLevel2BGeometry(level2b,polygon_spdf,output=paste0(getwd(),"//level2b_clip_gb.h5"), split_by="id")
 
 ```
 # Clip GEDI data (data.table objects)
 ```r
 ## clipping GEDI data within boundary box
-level1BGeo_clip_bb <-clipLevel1BGeo(level1BGeo,xleft, xright, ybottom, ytop)
-level2AM_clip_bb <- clipLevel2AM(level2AM,xleft, xright, ybottom, ytop)
-level2BVPM_clip_bb <- clipLevel2BVPM(level2BVPM,xleft, xright, ybottom, ytop)
-level1BPAIProfile_clip_bb <- clipLevel1BPAIProfile(level1BPAIProfile,xleft, xright, ybottom, ytop)
-level2BPAVDProfile_clip_bb <- clipLevel2BPAVDProfile(level2BPAVDProfile,xleft, xright, ybottom, ytop)
+level1BGeo_clip_bb <-clipLevel1BGeo(level1BGeo, xmin, xmax, ymin, ymax)
+level2AM_clip_bb <- clipLevel2AM(level2AM,xleft, xmin, xmax, ymin, ymax)
+level2BVPM_clip_bb <- clipLevel2BVPM(level2BVPM, xmin, xmax, ymin, ymax)
+level1BPAIProfile_clip_bb <- clipLevel1BPAIProfile(level1BPAIProfile, xmin, xmax, ymin, ymax)
+level2BPAVDProfile_clip_bb <- clipLevel2BPAVDProfile(level2BPAVDProfile, xmin, xmax, ymin, ymax)
 
 ## Clip GEDI data by geometry
-level1BGeo_clip_gb <- clipLevel1BGeo(level1BGeo,polygon_spdf)
-level2AM_clip_gb <- clipLevel2AM(level2AM,polygon_spdf)
-level2BVPM_clip_gb <- clipLevel2BVPM(level2BVPM,polygon_spdf)
-level1BPAIProfile_clip_gb <- clipLevel1BPAIProfile(level1BPAIProfile,polygon_spdf)
-level2BPAVDProfile_clip_gb <- clipLevel2BPAVDProfile(level2BPAVDProfile,polygon_spdf)
+level1BGeo_clip_gb <- clipLevel1BGeo(level1BGeo,polygon_spdf, split_by="id")
+level2AM_clip_gb <- clipLevel2AM(level2AM,polygon_spdf, split_by="id")
+level2BVPM_clip_gb <- clipLevel2BVPM(level2BVPM,polygon_spdf, split_by="id")
+level1BPAIProfile_clip_gb <- clipLevel1BPAIProfile(level1BPAIProfile,polygon_spdf, split_by="id")
+level2BPAVDProfile_clip_gb <- clipLevel2BPAVDProfile(level2BPAVDProfile,polygon_spdf, split_by="id")
 
 ## View GEDI clipped data by bbox
 m1<-leaflet() %>%
@@ -355,7 +355,7 @@ pai_maps<-levelplot(pai_metrics,
 ## Simulating GEDI full-waveform data from Airborne Laser Scanning (ALS) 3-D point cloud and extracting canopy derived metrics
 ```r
 # specify the path to ALS data
-LASfile <- system.file("extdata", "LASexample1.las", package="rGEDI")
+LASfile <- system.file("extdata", "Amazon.las", package="rGEDI")
 
 # Reading and plot ALS file
 library(lidR)

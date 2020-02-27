@@ -36,6 +36,17 @@ gedi.level2b <- setClass(
   slots = list(h5 = "H5File")
 )
 
+#' Class for GEDI Full-Waveform Simulation
+#'
+#' @slot h5 Object of class H5File from hdf5r package
+#'
+#' @import methods
+#' @export
+gedi.level1bSim <- setClass(
+  Class="gedi.level1bSim",
+  slots = list(h5 = "H5File")
+)
+
 #' Class for GEDI level1B Full Waveform
 #'
 #' @slot dt Object of class data.table from data.table package

@@ -245,5 +245,7 @@ gediWFSimulator = function(
   cleanInList(inputInList)
   result = tryCatch(hdf5r::H5File$new(output, "r+"), error=function(e) stop("The output file was not created\nSomething went wrong!"))
 
+  result<- new("gedi.level1bSim", h5 = result)
+
   return(result)
 }
