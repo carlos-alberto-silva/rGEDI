@@ -52,25 +52,21 @@ LPDAACDataPool(filepath=gLevel1B,outdir=outdir)
 LPDAACDataPool(filepath=gLevel2A,outdir=outdir)
 LPDAACDataPool(filepath=gLevel2B,outdir=outdir)
 
-#** Herein, we are using only a GEDI sample dataset for this tutorial.  
-# specify the path to GEDI sample dataset from github
-GEDI01_B_urlfile="https://github.com/carlos-alberto-silva/rGEDI/blob/master/inst/extdata/GEDI01_B_2019108080338_O01964_T05337_02_003_01_sub.h5"
-GEDI02_A_urlfile="https://github.com/carlos-alberto-silva/rGEDI/blob/master/inst/extdata/GEDI02_A_2019108080338_O01964_T05337_02_001_01_sub.h5"
-GEDI02_B_urlfile="https://github.com/carlos-alberto-silva/rGEDI/blob/master/inst/extdata/GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub.h5"
+#** Herein, we are using only a GEDI sample dataset for this tutorial.
+# downloading zip file
+download.file("https://github.com/carlos-alberto-silva/rGEDI/releases/download/examples/examples.zip",destfile=outdir)
 
-# Downloading GEDI sample datasets. The files will be downloaded in the current working directory [see getwd()]
-download.file(GEDI01_B_urlfile, destfile = paste0(outdir,"\\",basename(GEDI01_B_urlfile)))
-download.file(GEDI02_A_urlfile, destfile = paste0(outdir,"\\",basename(GEDI02_A_urlfile)))
-download.file(GEDI02_B_urlfile, destfile = paste0(outdir,"\\",basename(GEDI02_B_urlfile)))
+# unzip file 
+unzip(paste0(outdir,"\\examples.zip"))
 
 ```
 
 ## Reading GEDI data
 ```r
 # Reading GEDI data
-gedilevel1b<-readLevel1B(level1Bpath = paste0(outdir,"\\",basename(GEDI01_B_urlfile)))
-gedilevel2a<-readLevel2A(level2Apath = paste0(outdir,"\\",basename(GEDI02_A_urlfile)))
-gedilevel2b<-readLevel2B(level2Bpath = paste0(outdir,"\\",basename(GEDI02_B_urlfile)))
+gedilevel1b<-readLevel1B(level1Bpath = paste0(outdir,"\\GEDI01_B_2019108080338_O01964_T05337_02_003_01_sub.h5"))
+gedilevel2a<-readLevel2A(level2Apath = paste0(outdir,"\\GEDI02_A_2019108080338_O01964_T05337_02_001_01_sub.h5"))
+gedilevel2b<-readLevel2B(level2Bpath = paste0(outdir,"\\","GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub.h5"))
 ```
 
 ## Get GEDI Pulse Full-Waveform Geolocation (GEDI Level1B)
