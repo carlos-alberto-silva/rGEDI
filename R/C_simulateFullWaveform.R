@@ -1,4 +1,3 @@
-
 #'GEDI full-waveform data simulation
 #'
 #'@description Simulate GEDI full-waveform data from Airborne Laser Scanning (ALS) 3-D point cloud

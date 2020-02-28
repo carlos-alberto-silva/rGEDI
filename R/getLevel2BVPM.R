@@ -1,74 +1,83 @@
-#'Get GEDI Vegetation Profile Biophysical Variables (GEDI Level2B)
+#'Compute Grids with descriptive statistics of
+#'GEDI-derived Canopy Cover and Vertical Profile Metrics (Level2B)
 #'
-#'@description This function extracts information from GEDI Level2B data:
-#'Total Plant Area Index,	Foliage Height Diversity, Foliage Clumping Index,
-#'Total Gap Probability (theta), and Total canopy cover.
+#'@description This function computes a series of user-defined descriptive statistics within
+#'each grid cell for GEDI-derived Canopy Cover and Vertical Profile Metrics (Level2B)
 #'
-#'@usage getLevel2BVPM(level2b)
+#'@usage gridStatsLevel2BVPM(level2VPM, func, res)
 #'
-#'@param level2b A GEDI Level2B object (output of \code{\link[rGEDI:readLevel2B]{readLevel2B}}
-#'function). A S4 object of class "gedi.level2b".
+#'@param level2BVPM A GEDI Level2AM object (output of \code{\link[rGEDI:getLevel2BVPM]{getLevel2BVPM}} function). A S4 object of class "data.table".
+#'@param func the function(s) to be applied to each cell
+#'@param res spatial resolution in decimal degrees for the output raster layer
 #'
-#'#'@return An S4 object of class \code{\link[data.table:data.table]{data.table-class}}
-#'containing the Vegetation Profile Biophysical Variables.
+#'@return Returns raster layer(s) of selected GEDI Canopy Cover and Vertical Profile Metric(s)
 #'
 #'@seealso https://lpdaac.usgs.gov/products/gedi02_bv001/
 #'
-#'@details These are the biophysical variables extracted:
-#'\itemize{
-#'\item \emph{pai} - Total Plant Area Index.
-#'\item \emph{fhd_normal} -	Foliage Height Diversity.
-#'\item \emph{omega} -	Foliage Clumping Index.
-#'\item \emph{pgap_theta} -	Total Gap Probability (theta).
-#'\item \emph{cover} -	Total canopy cover.
-#'}
-#'
 #'@examples
+#'\dontrun{
 #'# specify the path to GEDI Level 2B data
-#'level2bpath <- system.file("extdata", "GEDIexample_level01B.h5", package="rGEDI")
+#'level2bpath <- system.file("extdata", "GEDIexample_level02B.h5", package="rGEDI")
 #'
 #'# Reading GEDI level2B data
 #'level2b <- readLevel2B(level2bpath)
 #'
-#'# Get GEDI Vegetation Profile Biophysical Variables
+#'# Get GEDI-derived Canopy Cover and Vertical Profile Metrics
 #'level2BVPM<-getLevel2BVPM(level2b)
 #'head(level2BVPM)
 #'
+#'#' Define your own function
+#'mySetOfMetrics = function(x)
+#'{
+#'metrics = list(
+#'    min =min(x), # Min of z
+#'    max = max(x), # Max of z
+#'    mean = mean(x), # Mean of z
+#'    sd = sd(x)# Sd of z
+#'    )
+#'    return(metrics)
+#'}
+#'
+#'#' Computing a serie of statistics of GEDI-derived canopy cover
+#'cover_stats<-gridStatsLevel2BVPM(level2AM = level2AM, func=mySetOfMetrics(cover), res=0.5)
+#'plot(cover_stats)
+#'
+#'#' Computing the max of the Total Plant Area Index only
+#'pai_max<-gridStatsLevel2BVPM(level2AM = level2AM, func=max(pai), res=0.5)
+#'plot(pai_max)
+#'
+#'#' Computing the mean of Foliage Clumping Index only
+#'omega_mean<-gridStatsLevel2BVPM(level2AM = level2AM, func=mean(omega), res=0.5)
+#'plot(omega_mean)
+#'}
 #'@export
-getLevel2BVPM<-function(level2b){
-  level2b<-level2b@h5
-  groups_id<-grep("BEAM\\d{4}$",gsub("/","",
-                                     hdf5r::list.groups(level2b, recursive = F)), value = T)
-  m.dt<-data.table::data.table()
-  pb <- utils::txtProgressBar(min = 0, max = length(groups_id), style = 3)
-  i.s=0
-  for ( i in groups_id){
-    i.s<-i.s+1
-    utils::setTxtProgressBar(pb, i.s)
-    level2b_i<-level2b[[i]]
-    m<-data.table::data.table(
-      beam<-rep(i,length(level2b_i[["shot_number"]][])),
-      shot_number=level2b_i[["shot_number"]][],
-      delta_time=level2b_i[["delta_time"]][],
-      latitude_lastbin=level2b_i[["geolocation/latitude_lastbin"]][],
-      latitude_bin0=level2b_i[["geolocation/latitude_bin0"]][],
-      longitude_bin0=level2b_i[["geolocation/longitude_bin0"]][],
-      longitude_lastbin=level2b_i[["geolocation/longitude_lastbin"]][],
-      elev_highestreturn=level2b_i[["geolocation/elev_highestreturn"]][],
-      elev_lowestmode=level2b_i[["geolocation/elev_lowestmode"]][],
-      pai=level2b_i[["pai"]][],
-      fhd_normal=level2b_i[["fhd_normal"]][],
-      omega=level2b_i[["omega"]][],
-      pgap_theta=level2b_i[["pgap_theta"]][],
-      cover=level2b_i[["cover"]][])
-    m.dt<-rbind(m.dt,m)
-  }
-  colnames(m.dt)<-c("beam","shot_number","delta_time","latitude_lastbin","latitude_bin0",
-                    "longitude_lastbin","longitude_bin0",
-                    "elev_highestreturn","elev_lowestmode","pai",
-                    "fhd_normal","omega","pgap_theta","cover")
-  close(pb)
-  return(m.dt)
+gridStatsLevel2BVPM = function(level2BVPM, func, res = 0.5)
+{
+  requireNamespace("data.table")
+  # this code has been adapted from the grid_metrics function in lidR package (Roussel et al. 2019)
+  # https://github.com/Jean-Romain/lidR/blob/master/R/grid_metrics.r
+
+  is_formula <- tryCatch(lazyeval::is_formula(func), error = function(e) FALSE)
+  if (!is_formula) func <- lazyeval::f_capture(func)
+
+  # Add data.table operator
+  `:=` <- data.table::`:=`
+  func<-lazyeval::f_interp(func)
+  vars<-all.names(func)[3:length(all.names(func))]
+  level2b.dt <- na.omit(level2BVPM[,names(level2BVPM) %in% c("longitude_lastbin","latitude_lastbin",vars), with=FALSE])
+  level2b.dt<-setNames(level2b.dt,c("y","x",vars))
+  layout    <- raster::raster(raster::extent(level2b.dt), res=res)
+  call      <- lazyeval::as_call(func)
+  cells     <- raster::cellFromXY(layout, na.omit(level2b.dt[,2:1]))
+  metrics   <- with(level2b.dt, level2b.dt[,eval(call), by = cells])
+  xy_coords <- raster::xyFromCell(layout, metrics[[1]])
+  metrics[, cells := NULL]
+  output.dt<-na.omit(cbind(xy_coords,metrics))
+  output <- sp::SpatialPixelsDataFrame(output.dt[,1:2], output.dt[,-c(1:2)])#, proj4string = level2b.dt@proj4string)
+  if (names(metrics)[1]=="V1") {
+    names(output)<-all.names(func)[2]
+  } else {names(output) <- names(metrics)}
+  if (length(names(metrics)) > 1 ) {output<-raster::brick(output)} else {output<-raster::raster(output)}
+  rm(level2b.dt)
+  return(output)
 }
-
-

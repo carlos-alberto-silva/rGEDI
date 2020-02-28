@@ -452,7 +452,7 @@ dev.off()
 ```
 ![](https://github.com/carlos-alberto-silva/rGEDI/blob/master/readme/fig7.png)
 
-# Extracting GEDI feull-waveform derived metrics
+# Extracting GEDI full-waveform derived metrics
 ```
 wf_amazon_metrics<-gediWFMetrics(input=wf_amazon@h5$filename,outRoot=getwd())
 wf_cerrado_metrics<-gediWFMetrics(input=wf_cerrado@h5$filename,outRoot=getwd())

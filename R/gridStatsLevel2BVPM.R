@@ -69,7 +69,7 @@ gridStatsLevel2BVPM = function(level2BVPM, func, res = 0.5)
   layout    <- raster::raster(raster::extent(level2b.dt), res=res)
   call      <- lazyeval::as_call(func)
   cells     <- raster::cellFromXY(layout, na.omit(level2b.dt[,2:1]))
-  metrics   <- level2b.dt[,eval(call), by = cells]
+  metrics   <- with(level2b.dt, level2b.dt[,eval(call), by = cells])
   xy_coords <- raster::xyFromCell(layout, metrics[[1]])
   metrics[, cells := NULL]
   output.dt<-na.omit(cbind(xy_coords,metrics))

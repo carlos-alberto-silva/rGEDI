@@ -69,7 +69,7 @@ gridStatsLevel2AM = function(level2AM, func, res = 0.5)
   layout    <- raster::raster(raster::extent(level2AM.dt), res=res)
   call      <- lazyeval::as_call(func)
   cells     <- raster::cellFromXY(layout, na.omit(level2AM.dt[,2:1]))
-  metrics   <- level2AM.dt[,eval(call), by = cells]
+  metrics   <- with(level2AM.dt, level2AM.dt[,eval(call), by = cells])
   xy_coords <- raster::xyFromCell(layout, metrics[[1]])
   metrics[, cells := NULL]
   output.dt<-na.omit(cbind(xy_coords,metrics))
