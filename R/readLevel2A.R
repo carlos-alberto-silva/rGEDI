@@ -11,13 +11,15 @@
 #'
 #'@seealso https://lpdaac.usgs.gov/products/gedi02_av001/
 #'
-#'#'@examples
+#'@examples
+#'\dontrun{
 #'# specify the path and data file to be read
 #'level2apath <- system.file("extdata", "GEDIexample_level02A.h5", package="rGEDI")
 #'
 #'# read the file
 #'gedilevel2a<-readLevel2A(level2apath)
 #'
+#'}
 #'@import hdf5r
 #'@export
 readLevel2A <-function(level2Apath) {

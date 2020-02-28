@@ -81,12 +81,21 @@ clipLevel1BGeo = function(level1BGeo,xmin, xmax, ymin, ymax){
 #'@seealso https://lpdaac.usgs.gov/products/gedi01_bv001/
 #'
 #'@examples
+#'\dontrun{
+#'# specify the path to download GEDI example dataset
+#'outdir<-getwd()
 #'
-#'# specify the path to GEDI Level 1B data
-#'level1bpath <- system.file("extdata", "GEDIexample_level01B.h5", package="rGEDI")
+#'# downloading GEDI example dataset (zip file)
+#'download.file("https://github.com/carlos-alberto-silva/rGEDI/releases/download/examples/examples.zip",destfile=outdir)
 #'
-#'# Reading GEDI level1B data
-#'level1b <- readLevel1B(level1bpath)
+#'# unzip the file
+#'unzip(paste0(outdir,"\\examples.zip"))
+#'
+#'# specify the path to GEDI lebel1B data
+#'level1bpath = paste0(outdir,"\\GEDI01_B_2019108080338_O01964_T05337_02_003_01_sub.h5"))
+#'
+#'# Reading GEDI level1B file
+#'level1b<-readLevel1b(gedilevel1b)
 #'
 #'# Get GEDI level1B geolocations
 #'level1BGeo<-getLevel1BGeo(level1b)
@@ -111,6 +120,7 @@ clipLevel1BGeo = function(level1BGeo,xmin, xmax, ymin, ymax){
 #'  addPolygons(data=polygon_spdf,weight=1,col = 'white',
 #'              opacity = 1, fillOpacity = 0) %>%
 #'  addProviderTiles(providers$Esri.WorldImagery)
+#'}
 #'@export
 clipLevel1BGeoGeometry = function(level1BGeo, polygon_spdf, split_by="id") {
   exshp<-raster::extent(polygon_spdf)

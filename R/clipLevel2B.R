@@ -14,11 +14,21 @@
 #'@seealso https://lpdaac.usgs.gov/products/gedi01_bv001/
 #'
 #'@examples
-#'# specify the path and data file and read it
-#'level2bpath <- system.file("extdata", "GEDIexample_level02B.h5", package="rGEDI")
+#'\dontrun{
+#'# specify the path to download GEDI example dataset
+#'outdir<-getwd()
 #'
-#'# reading GEDI level2B data
-#'level2b <- readLevel2B(level2bpath)
+#'# downloading GEDI example dataset (zip file)
+#'download.file("https://github.com/carlos-alberto-silva/rGEDI/releases/download/examples/examples.zip",destfile=outdir)
+#'
+#'# unzip the file
+#'unzip(paste0(outdir,"\\examples.zip"))
+#'
+#'# specify the path to GEDI lebel2B data
+#'level2bpath = paste0(outdir,"\\GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub.h5"))
+#'
+#'# Reading GEDI level1B file
+#'level2b<-readLevel2b(gedilevel2b)
 #'
 #'# Bounding rectangle coordinates
 #'xmin = -44.15036
@@ -40,6 +50,8 @@
 #'  addPolygons(data=polygon_spdf,weight=1,col = 'white',
 #'              opacity = 1, fillOpacity = 0) %>%
 #'  addProviderTiles(providers$Esri.WorldImagery)
+#'
+#'}
 #'@export
 clipLevel2B = function(level2b, xmin, xmax, ymin, ymax, output=""){
   # Get all spatial data as a list of dataframes with spatial information

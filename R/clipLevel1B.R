@@ -16,11 +16,21 @@
 #'@seealso https://lpdaac.usgs.gov/products/gedi01_bv001/
 #'
 #'@examples
-#'# specify the path to GEDI data
-#'level1bpath <- system.file("extdata", "GEDIexample_level01B.h5", package="rGEDI")
+#'\dontrun{
+#'# specify the path to download GEDI example dataset
+#'outdir<-getwd()
+#'
+#'# downloading GEDI example dataset (zip file)
+#'download.file("https://github.com/carlos-alberto-silva/rGEDI/releases/download/examples/examples.zip",destfile=outdir)
+#'
+#'# unzip the file
+#'unzip(paste0(outdir,"\\examples.zip"))
+#'
+#'# specify the path to GEDI lebel1B data
+#'level1bpath = paste0(outdir,"\\GEDI01_B_2019108080338_O01964_T05337_02_003_01_sub.h5"))
 #'
 #'# Reading GEDI level1B file
-#'level1b<-readLevel1b(level1bpath)
+#'level1b<-readLevel1b(gedilevel1b)
 #'
 #'# Bounding rectangle coordinates
 #'xmin = -44.15036
@@ -31,6 +41,7 @@
 #'# clip by extent boundary box
 #'level1b_clip <- clipLevel1B(level1b,xmin, xmax, ymin, ymax)
 #'
+#'}
 #'@import hdf5r fs
 #'@export
 clipLevel1B = function(level1b, xmin, xmax, ymin, ymax, output=""){

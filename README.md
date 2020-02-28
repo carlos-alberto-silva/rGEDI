@@ -133,6 +133,16 @@ head(level2AM[,c("beam","shot_number","elev_highestreturn","elev_lowestmode","rh
 ##  6: BEAM0000 19640003800109387           778.7181        773.6990  5.01
 ```
 
+## Plot waveform with RH metrics
+```r
+shot_number = "19640521100108408"
+
+png("fig8.png", width = 8, height = 6, units = 'in', res = 300)
+plotWFMetrics(gedilevel1b, gedilevel2a, shot_number, rh=c(25, 50, 75, 90))
+dev.off()
+```
+![](https://github.com/carlos-alberto-silva/rGEDI/blob/master/readme/fig8.png)
+
 ## Get GEDI Plant Area Index (PAI) Profile (GEDI Level2B)
 ```r
 level2BPAIProfile<-getLevel2BPAIProfile(gedilevel2b)

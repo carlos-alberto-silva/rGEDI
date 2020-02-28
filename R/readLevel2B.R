@@ -10,13 +10,24 @@
 #'@return S4 object of class "gedi.level1b".
 #'
 #'
-#'#'@examples
-#'# specify the path and data file to be read
-#'level2bpath <- system.file("extdata", "GEDIexample_level02B.h5", package="rGEDI")
+#'@examples
+#'\dontrun{
+#'# specify the path to download GEDI example dataset
+#'outdir<-getwd()
 #'
-#'# read the file
-#'gedilevel2b<-readLevel2B(level2bpath)
+#'# downloading GEDI example dataset (zip file)
+#'download.file("https://github.com/carlos-alberto-silva/rGEDI/releases/download/examples/examples.zip",destfile=outdir)
 #'
+#'# unzip the file
+#'unzip(paste0(outdir,"\\examples.zip"))
+#'
+#'# specify the path to GEDI lebel2B data
+#'level2bpath = paste0(outdir,"\\GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub.h5"))
+#'
+#'# Reading GEDI level1B file
+#'level2b<-readLevel2b(gedilevel2b)
+#'
+#'}
 #'@import hdf5r
 #'@export
 readLevel2B <-function(level2Bpath) {
