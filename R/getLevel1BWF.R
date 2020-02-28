@@ -46,7 +46,7 @@ getLevel1BWF<-function(level1b,shot_number){
   }
 
   if(is.null(i)) {
-    cat(paste0("Shot number ", shot_number, " was not found within the dataset!. Please try another shot number"))
+    stop(paste0("Shot number ", shot_number, " was not found within the dataset!. Please try another shot number"))
   } else{
 
   shot_number_i<-level1b[[paste0(i,"/shot_number")]][]
