@@ -17,11 +17,20 @@
 #'@seealso https://lpdaac.usgs.gov/products/gedi02_bv001/
 #'
 #'@examples
-#'# specify the path and data file and read it
-#'level2bpath <- system.file("extdata", "GEDIexample_level02B.h5", package="rGEDI")
+#'# specify the path to download GEDI example dataset
+#'outdir<-getwd()
 #'
-#'# Reading GEDI level2B data
-#'level2b <- readLevel2B(level2bpath)
+#'# downloading GEDI example dataset (zip file)
+#'download.file("https://github.com/carlos-alberto-silva/rGEDI/releases/download/examples/examples.zip",destfile=outdir)
+#'
+#'# unzip the file
+#'unzip(paste0(outdir,"\\examples.zip"))
+#'
+#'# specify the path to GEDI lebel2B data
+#'level2bpath = paste0(outdir,"\\GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub.h5"))
+#'
+#'# Reading GEDI level1B file
+#'level2b<-readLevel2b(gedilevel2b)
 #'
 #'# Get Plant Area Volume Density profile
 #'level2BPAVDProfile<-getLevel2BPAVDProfile(level2b)
@@ -70,12 +79,21 @@ clipLevel2BPAVDProfile = function(x,xmin, xmax, ymin, ymax){
 #'@seealso https://lpdaac.usgs.gov/products/gedi02_bv001/
 #'
 #'@examples
+#'\dontrun{
+#'# specify the path to download GEDI example dataset
+#'outdir<-getwd()
 #'
-#'# specify the path and data file and read it
-#'level2bpath <- system.file("extdata", "GEDIexample_level02B.h5", package="rGEDI")
+#'# downloading GEDI example dataset (zip file)
+#'download.file("https://github.com/carlos-alberto-silva/rGEDI/releases/download/examples/examples.zip",destfile=outdir)
 #'
-#'# reading GEDI level2B data
-#'level2b <- readLevel2B(level2bpath)
+#'# unzip the file
+#'unzip(paste0(outdir,"\\examples.zip"))
+#'
+#'# specify the path to GEDI lebel2B data
+#'level2bpath = paste0(outdir,"\\GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub.h5"))
+#'
+#'# Reading GEDI level1B file
+#'level2b<-readLevel2b(gedilevel2b)
 #'
 #'# Get Plant Area Volume Density profile
 #'level2BPAVDProfile<-getLevel2BPAVDProfile(level2b)
@@ -89,7 +107,7 @@ clipLevel2BPAVDProfile = function(x,xmin, xmax, ymin, ymax){
 #'
 #'# clip level2BPAIProfile by geometry
 #'level2BPAVDProfile_clip <- clipLevel2BPAVDGeometry(level2BPAVDProfile,polygon_spdf,split_by="id")
-#'
+#'}
 #'@export
 clipLevel2BPAVDProfileGeometry = function(x, polygon_spdf, split_by=NULL) {
   exshp<-raster::extent(polygon_spdf)

@@ -70,12 +70,21 @@ clipLevel2AM = function(level2AM,xmin, xmax, ymin, ymax){
 #'@return A S4 object of class \code{\link[data.table:data.table]{data.table-class}}.
 #'
 #'@examples
+#'\dontrun{
+#'# specify the path to download GEDI example dataset
+#'outdir<-getwd()
 #'
-#'#' GEDI level2A file path
-#'level2afilepath = system.file("extdata", "lvis_level1_clip.h5", package="rGEDI")
+#'# downloading GEDI example dataset (zip file)
+#'download.file("https://github.com/carlos-alberto-silva/rGEDI/releases/download/examples/examples.zip",destfile=outdir)
 #'
-#'#' Reading GEDI level2A file
-#'level2a = readLevel2A(level2afilepath)
+#'# unzip the file
+#'unzip(paste0(outdir,"\\examples.zip"))
+#'
+#'# specify the path to GEDI lebel2A data
+#'level2apath = paste0(outdir,"\\GEDI02_A_2019108080338_O01964_T05337_02_001_01_sub.h5"))
+#'
+#'# Reading GEDI level2A data
+#'level2a<-readLevel2A(level2apath)
 #'
 #'#' Extracting GEDI Elevation and Height Metrics
 #'level2AM = getLevel2AM(level2a)
@@ -100,6 +109,8 @@ clipLevel2AM = function(level2AM,xmin, xmax, ymin, ymax){
 #'  addPolygons(data=polygon_spdf,weight=1,col = 'white',
 #'              opacity = 1, fillOpacity = 0) %>%
 #'  addProviderTiles(providers$Esri.WorldImagery)
+#'
+#'}
 #'@export
 clipLevel2AMGeometry = function(level2AM, polygon_spdf, split_by="id") {
   exshp<-raster::extent(polygon_spdf)

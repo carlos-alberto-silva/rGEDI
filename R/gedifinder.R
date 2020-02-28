@@ -16,14 +16,14 @@
 #'
 #'@examples
 #'
-#'# Bounding rectangle coordinates
+#'# specify bounding box coordinates
 #'xmin<- -44.17246
 #'ymin<- -44.0654
 #'xmax<- -13.76913
 #'ymax<- -13.67646
 #'
-#'# Getting the path to GEDI data within the provided boundary box coordinates
-#'gedi02_b_list<-gedifinder(level="GEDI02_B",xleft=xleft,xright=xright,ybottom=ybottom,ytop=ytop)
+#'# Getting the path to GEDI data for the specified boundary box coordinates
+#'gedi02b_list<-gedifinder(level="GEDI02_B",xleft=xleft,xright=xright,ybottom=ybottom,ytop=ytop)
 #'
 #'@export
 gedifinder<-function(level, xmin, xmax, ymin, ymax){
