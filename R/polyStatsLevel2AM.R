@@ -58,7 +58,7 @@
 #'RH100metrics<-polyStatsLevel2AM(level2AM_clip,func=mySetOfMetrics(RH100),
 #'                      id=level2AM_clip@data$id)
 #'}
-#'@import data.table
+#'@import data.table lazyeval
 #'@export
 polyStatsLevel2AM = function(level2AM, func=mean(rh100), id = NULL)
 {
@@ -78,7 +78,7 @@ polyStatsLevel2AM = function(level2AM, func=mean(rh100), id = NULL)
   call<- lazyeval::as_call(func)
 
   if ( is.null(id)) {
-    metrics   <- level2AM[, c(eval(call))]
+    metrics   <- with(level2AM, level2AM[, c(eval(call))])
     metrics<-data.table::data.table(metrics)
     if (ncol(metrics) < 2) {
       colnames(metrics)<-paste0(call)[1]

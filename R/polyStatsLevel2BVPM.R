@@ -83,7 +83,7 @@ polyStatsLevel2BVPM = function(level2BVPM, func=mean(pai), id = NULL)
       colnames(metrics)<-paste0(call)[1]
     }
   } else {
-    metrics   <- level2BVPM[, c(eval(call)), by = id]
+    metrics   <- with(level2BVPM, level2BVPM[, c(eval(call)), by = id])
     if (ncol(metrics) < 3) {
       colnames(metrics)[2]<-paste0(call)[1]
     }
