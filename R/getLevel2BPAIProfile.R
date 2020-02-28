@@ -9,20 +9,29 @@
 #'@return An S4 object of class \code{\link[data.table:data.table]{data.table-class}}
 #'containing the elevation and relative heights.
 #'
-#'@examples
-#'
 #'@seealso https://lpdaac.usgs.gov/products/gedi02_bv001/
 #'
-#'#'# specify the path to GEDI Level 2B data
-#'level2bpath <- system.file("extdata", "GEDIexample_level02B.h5", package="rGEDI")
+#'@examples
+#'\dontrun{
+#'# specify the path to download GEDI example dataset
+#'outdir<-getwd()
 #'
-#'# Reading GEDI level2B data
-#'level2b <- readLevel2B(level2bpath)
+#'# downloading GEDI example dataset (zip file)
+#'download.file("https://github.com/carlos-alberto-silva/rGEDI/releases/download/examples/examples.zip",destfile=outdir)
+#'
+#'# unzip the file
+#'unzip(paste0(outdir,"\\examples.zip"))
+#'
+#'# specify the path to GEDI lebel2B data
+#'level2bpath = paste0(outdir,"\\GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub.h5"))
+#'
+#'# Reading GEDI level2B file
+#'level2b<-readLevel2b(gedilevel2b)
 #'
 #'# Get GEDI Plant Area Index (PAI) Profile (GEDI Level2B)
 #'level2BPAIProfile<-getLevel2BPAIProfile(level2b)
 #'head(level2BPAIProfile)
-#'
+#'}
 #'@import hdf5r
 #'@import utils
 #'@import sp

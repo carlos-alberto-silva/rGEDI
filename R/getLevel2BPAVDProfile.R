@@ -12,16 +12,27 @@
 #'@seealso https://lpdaac.usgs.gov/products/gedi02_bv001/
 #'
 #'@examples
-#'# specify the path to GEDI Level 2B data
-#'level2bpath <- system.file("extdata", "GEDIexample_level01B.h5", package="rGEDI")
+#'\dontrun{
+#'# specify the path to download GEDI example dataset
+#'outdir<-getwd()
 #'
-#'# Reading GEDI level2B data
-#'level2b <- readLevel2B(level2bpath)
+#'# downloading GEDI example dataset (zip file)
+#'download.file("https://github.com/carlos-alberto-silva/rGEDI/releases/download/examples/examples.zip",destfile=outdir)
+#'
+#'# unzip the file
+#'unzip(paste0(outdir,"\\examples.zip"))
+#'
+#'# specify the path to GEDI lebel2B data
+#'level2bpath = paste0(outdir,"\\GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub.h5"))
+#'
+#'# Reading GEDI level2B file
+#'level2b<-readLevel2b(gedilevel2b)
 #'
 #'# Getting GEDI Plant Area Volume Density (PAVD) Index
 #'level2BPAVDProfile<-getLevel2BPAVDProfile(level2b)
 #'head(level2BPAVDProfile)
 #'
+#'}
 #'@export
 getLevel2BPAVDProfile<-function(level2b){
   level2b<-level2b@h5

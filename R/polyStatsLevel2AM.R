@@ -16,11 +16,20 @@
 #'
 #'@examples
 #'\dontrun{
-#'# specify the path to GEDI Level 1B data
-#'level2apath <- system.file("extdata", "GEDIexample_level01B.h5", package="rGEDI")
+#'# specify the path to download GEDI example dataset
+#'outdir<-getwd()
+#'
+#'# downloading GEDI example dataset (zip file)
+#'download.file("https://github.com/carlos-alberto-silva/rGEDI/releases/download/examples/examples.zip",destfile=outdir)
+#'
+#'# unzip the file
+#'unzip(paste0(outdir,"\\examples.zip"))
+#'
+#'# specify the path to GEDI lebel2A data
+#'level2apath = paste0(outdir,"\\GEDI02_A_2019108080338_O01964_T05337_02_001_01_sub.h5"))
 #'
 #'# Reading GEDI level2A data
-#'level2a <- readLevel2A(level2apath)
+#'level2a<-readLevel2A(level2apath)
 #'
 #'# specify the path to shapefile
 #'polygon_filepath <- system.file("extdata", "clip_polygon.shp", package="rGEDI")

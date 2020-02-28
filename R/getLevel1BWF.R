@@ -14,11 +14,21 @@
 #'@seealso https://lpdaac.usgs.gov/products/gedi01_bv001/
 #'
 #'@examples
-#'# specify the path to GEDI Level 1B data
-#'level1bpath <- system.file("extdata", "GEDIexample_level01B.h5", package="rGEDI")
+#'\dontrun{
+#'# specify the path to download GEDI example dataset
+#'outdir<-getwd()
 #'
-#'# Reading GEDI level1B data
-#'level1b <- readLevel1B(level1bpath)
+#'# downloading GEDI example dataset (zip file)
+#'download.file("https://github.com/carlos-alberto-silva/rGEDI/releases/download/examples/examples.zip",destfile=outdir)
+#'
+#'# unzip the file
+#' unzip(paste0(outdir,"\\examples.zip"))
+#'
+#'# specify the path to GEDI lebel1B data
+#'level1bpath = paste0(outdir,"\\GEDI01_B_2019108080338_O01964_T05337_02_003_01_sub.h5"))
+#'
+#'# Reading GEDI level1B file
+#'level1b<-readLevel1b(gedilevel1b)
 #'
 #'# extracting GEDI full-waveform for a giving shotnumber
 #'wf <- getLevel1BWF(level1b, shot_number="19850022900500000")
@@ -31,6 +41,7 @@
 #'plot(wf, relative=TRUE, polygon=TRUE, type="l", lwd=2, col="forestgreen",
 #'xlab="Waveform Amplitude (%)", ylab="Elevation (m)")
 #'
+#'}
 #'@export
 #'
 getLevel1BWF<-function(level1b,shot_number){
