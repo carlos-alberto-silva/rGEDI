@@ -46,6 +46,9 @@
 #'@importFrom graphics abline arrows axis mtext par text
 #'@export
 plotWFMetrics = function(level1b, level2a, shot_number, rh=c(25, 50, 75), ...) {
+  # Avoid NOTEs from checking
+  elevation = NULL
+  
   # Extracting GEDI full-waveform for a giving shotnumber
   wf <- getLevel1BWF(level1b, shot_number=shot_number)
 
