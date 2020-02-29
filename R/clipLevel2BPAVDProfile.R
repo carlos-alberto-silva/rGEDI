@@ -22,9 +22,11 @@
 #'outdir<-getwd()
 #'
 #'# downloading GEDI example dataset (zip file)
-#'download.file(sprintf("%s%s"
-#'                      "https://github.com/carlos-alberto-silva/rGEDI/"
-#'                      "releases/download/examples/examples.zip",
+#'download.file(
+#'              paste0(
+#'                     "https://github.com/carlos-alberto-silva/rGEDI/",
+#'                     "releases/download/examples/examples.zip"
+#'              ),
 #'              destfile=paste0(outdir,"/examples.zip"))
 #'
 #'# unzip the file
@@ -88,9 +90,11 @@ clipLevel2BPAVDProfile = function(level2BPAVDProfile,xmin, xmax, ymin, ymax){
 #'outdir<-getwd()
 #'
 #'# downloading GEDI example dataset (zip file)
-#'download.file(sprintf("%s%s"
-#'                      "https://github.com/carlos-alberto-silva/rGEDI/"
-#'                      "releases/download/examples/examples.zip",
+#'download.file(
+#'              paste0(
+#'                     "https://github.com/carlos-alberto-silva/rGEDI/",
+#'                     "releases/download/examples/examples.zip"
+#'              ),
 #'              destfile=paste0(outdir,"/examples.zip"))
 #'
 #'# unzip the file
