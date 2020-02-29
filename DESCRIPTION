@@ -27,8 +27,9 @@ Imports:
   lazyeval,
   hdf5r,
   raster,
-  rgeos,
-    leaflet,
+  rgeos
+Suggests:
+  leaflet,
   lidR,
   plot3D
 RoxygenNote: 7.0.2
