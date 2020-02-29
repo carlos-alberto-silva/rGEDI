@@ -16,7 +16,11 @@
 #'outdir<-getwd()
 #'
 #'# downloading GEDI example dataset (zip file)
-#'download.file("https://github.com/carlos-alberto-silva/rGEDI/releases/download/examples/examples.zip",destfile=outdir)
+#'download.file(paste0(
+#'                     "https://github.com/carlos-alberto-silva/rGEDI",
+#'                     "/releases/download/examples/examples.zip"
+#'                    ),
+#'              destfile=outdir)
 #'
 #'# unzip the file
 #'unzip(paste0(outdir,"\\examples.zip"))
