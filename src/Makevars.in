@@ -29,8 +29,9 @@ src = $(LIBCLIDAR_ROOT)/libLasProcess.c $(LIBCLIDAR_ROOT)/libLasRead.c \
 	$(LIBCLIDAR_ROOT)/libLidarHDF.c $(GEDIRAT_ROOT)/gediIO.c \
 	$(LIBCLIDAR_ROOT)/libOctree.c $(GEDIRAT_ROOT)/gediNoise.c \
 	$(CMPFIT_ROOT)/mpfit.c  $(HANCOCKTOOLS_ROOT)/tools.c \
-	$(GEDIRAT_ROOT)/photonCount.c \
-	gediMetrics.c gediSimulator.c addNoiseHDF.c argParse.c
+	$(GEDIRAT_ROOT)/photonCount.c  \
+	gediMetrics.c gediSimulator.c addNoiseHDF.c \
+	argParse.c registerDynamicSymbol.c
 
 #src_cpp = process.cpp RcppExports.cpp
 OBJECTS = $(src:.c=.o)
