@@ -19,7 +19,10 @@
 #'outdir<-getwd()
 #'
 #'# downloading GEDI example dataset (zip file)
-#'download.file("https://github.com/carlos-alberto-silva/rGEDI/releases/download/examples/examples.zip",destfile=paste0(outdir,"/examples.zip"))
+#'download.file(sprintf("%s%s"
+#'                      "https://github.com/carlos-alberto-silva/rGEDI/"
+#'                      "releases/download/examples/examples.zip",
+#'              destfile=paste0(outdir,"/examples.zip"))
 #'
 #'# unzip the file
 #'unzip(paste0(outdir,"\\examples.zip"))
@@ -59,6 +62,7 @@
 #'plot(ZGmean)
 #'}
 #'
+#'@importFrom stats setNames na.omit
 #'@export
 gridStatsLevel2AM = function(level2AM, func, res = 0.5)
 {

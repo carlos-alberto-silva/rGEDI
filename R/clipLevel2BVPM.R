@@ -24,7 +24,10 @@
 #'outdir<-getwd()
 #'
 #'# downloading GEDI example dataset (zip file)
-#'download.file("https://github.com/carlos-alberto-silva/rGEDI/releases/download/examples/examples.zip",destfile=paste0(outdir,"/examples.zip"))
+#'download.file(sprintf("%s%s"
+#'                      "https://github.com/carlos-alberto-silva/rGEDI/"
+#'                      "releases/download/examples/examples.zip",
+#'              destfile=paste0(outdir,"/examples.zip"))
 #'
 #'# unzip the file
 #'unzip(paste0(outdir,"\\examples.zip"))
@@ -100,7 +103,10 @@ clipLevel2BVPM = function(level2BVPM,xmin, xmax, ymin, ymax){
 #'outdir<-getwd()
 #'
 #'# downloading GEDI example dataset (zip file)
-#'download.file("https://github.com/carlos-alberto-silva/rGEDI/releases/download/examples/examples.zip",destfile=paste0(outdir,"/examples.zip"))
+#'download.file(sprintf("%s%s"
+#'                      "https://github.com/carlos-alberto-silva/rGEDI/"
+#'                      "releases/download/examples/examples.zip",
+#'              destfile=paste0(outdir,"/examples.zip"))
 #'
 #'# unzip the file
 #'unzip(paste0(outdir,"\\examples.zip"))
