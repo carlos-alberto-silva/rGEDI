@@ -154,7 +154,7 @@ clipByMasks = function(h5file, polygon_masks, output, split_by, clipFun) {
   for (pol_idx in 1:length(polygon_masks)) {
     pol_id = names(polygon_masks)[pol_idx]
     i = i + 1
-    message(gettextf("Writing %s='%s': %d of %d", split_by, pol_id, i, len_masks))
+    message(sprintf("Writing %s='%s': %d of %d", split_by, pol_id, i, len_masks))
     output2 = gsub("\\.h5$", paste0("_", pol_id,".h5"), output)
     results[[pol_id]] = clipFun(h5file,
                                 masks = polygon_masks[[pol_idx]],
