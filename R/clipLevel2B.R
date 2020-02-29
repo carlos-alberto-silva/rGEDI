@@ -87,6 +87,7 @@ clipLevel2B = function(level2b, xmin, xmax, ymin, ymax, output=""){
 #'@seealso https://lpdaac.usgs.gov/products/gedi01_bv001/
 #'
 #'@examples
+#'\dontrun{
 #'# specify the path to download GEDI example dataset
 #'outdir<-getwd()
 #'
@@ -111,7 +112,7 @@ clipLevel2B = function(level2b, xmin, xmax, ymin, ymax, output=""){
 #'
 #'# clip level2BVPM by geometry
 #'level2b_clip_geometry <- clipLevel2BGeometry(level2BVPM,polygon_spdf=polygon_spdf)
-#'
+#'}
 #'@export
 clipLevel2BGeometry = function(level2b, polygon_spdf, output="", split_by=NULL) {
   output = checkOutput(output)

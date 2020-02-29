@@ -9,7 +9,7 @@
 #'@param xmin Numeric. West longitude (x) coordinate of bounding rectangle, in decimal degrees.
 #'@param xmax Numeric. East longitude (x) coordinate of bounding rectangle, in decimal degrees.
 #'@param ymin Numeric. South latitude (y) coordinate of bounding rectangle, in decimal degrees.
-#'@param ymaxNumeric. North latitude (y) coordinate of bounding rectangle, in decimal degrees.
+#'@param ymax Numeric. North latitude (y) coordinate of bounding rectangle, in decimal degrees.
 #'
 #'@return An S4 object of class \code{\link[data.table:data.table]{data.table-class}}
 #'containing the Plant Area Volume Density profile data.
@@ -17,6 +17,7 @@
 #'@seealso https://lpdaac.usgs.gov/products/gedi02_bv001/
 #'
 #'@examples
+#'\dontrun{
 #'# specify the path to download GEDI example dataset
 #'outdir<-getwd()
 #'
@@ -43,7 +44,7 @@
 #'
 #'# clip level2BVPM by extent boundary box
 #'level2BPAVDProfile_clip <- clipLevel2BPAVDProfile(level2BPAVDProfile,xmin, xmax, ymin, ymax)
-#'
+#'}
 #'@export
 clipLevel2BPAVDProfile = function(level2BPAVDProfile,xmin, xmax, ymin, ymax){
   # xmin ymin xmax ymax

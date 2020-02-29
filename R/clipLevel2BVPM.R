@@ -20,6 +20,7 @@
 #'@seealso https://lpdaac.usgs.gov/products/gedi02_bv001/
 #'
 #'@examples
+#'\dontrun{
 #'# specify the path to download GEDI example dataset
 #'outdir<-getwd()
 #'
@@ -58,6 +59,7 @@
 #'  addPolygons(data=polygon_spdf,weight=1,col = 'white',
 #'              opacity = 1, fillOpacity = 0) %>%
 #'  addProviderTiles(providers$Esri.WorldImagery)
+#'}
 #'@export
 clipLevel2BVPM = function(level2BVPM,xmin, xmax, ymin, ymax){
   # xmin ymin xmax ymax

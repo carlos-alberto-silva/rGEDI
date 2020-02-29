@@ -19,6 +19,7 @@
 #'@seealso https://lpdaac.usgs.gov/products/gedi02_bv001/
 #'
 #'@examples
+#'\dontrun{
 #'# specify the path to download GEDI example dataset
 #'outdir<-getwd()
 #'
@@ -45,7 +46,7 @@
 #'
 #'# clip level2BVPM by extent boundary box
 #'level2b_clip <- clipLevel2BPAIProfile(level2BPAIProfile,xmin, xmax, ymin, ymax)
-#'
+#'}
 #'@export
 clipLevel2BPAIProfile = function(level2BPAIProfile,xmin, xmax, ymin, ymax){
   # xmin ymin xmax ymax
