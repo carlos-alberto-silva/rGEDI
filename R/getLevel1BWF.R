@@ -9,7 +9,7 @@
 #'
 #'@return Returns An object of class "gedi.fullwaveform".
 #'
-#'@details Shot numbers can be extracted using \code{\link[rGEDI:getLevel1B]{readLevel1B}} function.
+#'@details Shot numbers can be extracted using \code{\link[rGEDI:readLevel1B]{readLevel1B}} function.
 #'
 #'@seealso https://lpdaac.usgs.gov/products/gedi01_bv001/
 #'
