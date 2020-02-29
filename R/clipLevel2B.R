@@ -24,7 +24,7 @@
 #'# unzip the file
 #'unzip(paste0(outdir,"\\examples.zip"))
 #'
-#'# specify the path to GEDI lebel2B data
+#'# specify the path to GEDI level2B data
 #'level2bpath = paste0(outdir,"\\GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub.h5"))
 #'
 #'# Reading GEDI level1B file
@@ -87,12 +87,20 @@ clipLevel2B = function(level2b, xmin, xmax, ymin, ymax, output=""){
 #'@seealso https://lpdaac.usgs.gov/products/gedi01_bv001/
 #'
 #'@examples
+#'# specify the path to download GEDI example dataset
+#'outdir<-getwd()
 #'
-#'# specify the path and data file and read it
-#'level2bpath <- system.file("extdata", "GEDIexample_level02B.h5", package="rGEDI")
+#'# downloading GEDI example dataset (zip file)
+#'download.file("https://github.com/carlos-alberto-silva/rGEDI/releases/download/examples/examples.zip",destfile=outdir)
 #'
-#'# reading GEDI level2B data
-#'level2b <- readLevel2B(level2bpath)
+#'# unzip the file
+#'unzip(paste0(outdir,"\\examples.zip"))
+#'
+#'# specify the path to GEDI level2B data
+#'level2bpath = paste0(outdir,"\\GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub.h5"))
+#'
+#'# Reading GEDI level1B file
+#'level2b<-readLevel2b(gedilevel2b)
 #'
 #'# specify the path to shapefile
 #'polygon_filepath <- system.file("extdata", "stands_cerrado.shp", package="rGEDI")

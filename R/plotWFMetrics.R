@@ -15,22 +15,27 @@
 #'
 #'@examples
 #'\dontrun{
-#'# specify the path to GEDI Level 2A data
-#'level2apath <- system.file("extdata", "GEDIexample_level02A.h5", package="rGEDI")
+#'# specify the path to download GEDI example dataset
+#'outdir<-getwd()
 #'
-#'# Reading GEDI level2A data
-#'level2a <- readLevel2A(level2apath)
+#'# downloading GEDI example dataset (zip file)
+#'download.file("https://github.com/carlos-alberto-silva/rGEDI/releases/download/examples/examples.zip",destfile=outdir)
 #'
-#'# specify the path to GEDI Level 2B data
-#'level1bpath <- system.file("extdata", "GEDIexample_level01B.h5", package="rGEDI")
+#'# unzip the file
+#'unzip(paste0(outdir,"\\examples.zip"))
 #'
-#'# Reading GEDI level2B data
-#'level1b <- readLevel2B(level1bpath)
+#'# specify the path to GEDI level1B and level2A data
+#'level1bpath = paste0(outdir,"\\GEDI01_B_2019108080338_O01964_T05337_02_003_01_sub.h5"))
+#'level2apath = paste0(outdir,"\\GEDI02_A_2019108080338_O01964_T05337_02_001_01_sub.h5"))
+#'
+#'# Reading GEDI level1B and level2A files
+#'level1b<-readLevel1b(gedilevel1b)
+#'level2a<-readLevel2a(gedilevel2a)
 #'
 #'shot_number = "19640521100108408"
 #'
 #'plotWFMetrics(level1b, level2a, shot_number, rh=c(25, 50, 75, 90))
-#'
+#'}
 #'@export
 plotWFMetrics = function(level1b, level2a, shot_number, rh=c(25, 50, 75), ...) {
   # Extracting GEDI full-waveform for a giving shotnumber

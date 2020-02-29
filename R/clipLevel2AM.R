@@ -17,11 +17,20 @@
 #'@seealso https://lpdaac.usgs.gov/products/gedi02_av001/
 #'
 #'@examples
-#'#' GEDI level2A file path
-#'level2afilepath = system.file("extdata", "lvis_level1_clip.h5", package="rGEDI")
+#'# specify the path to download GEDI example dataset
+#'outdir<-getwd()
 #'
-#'#' Reading GEDI level2A file
-#'level2a = readLevel2A(level2afilepath)
+#'# downloading GEDI example dataset (zip file)
+#'download.file("https://github.com/carlos-alberto-silva/rGEDI/releases/download/examples/examples.zip",destfile=outdir)
+#'
+#'# unzip the file
+#'unzip(paste0(outdir,"\\examples.zip"))
+#'
+#'# specify the path to GEDI level2A data
+#'level2apath = paste0(outdir,"\\GEDI02_A_2019108080338_O01964_T05337_02_001_01_sub.h5"))
+#'
+#'# Reading GEDI level2A data
+#'level2a<-readLevel2A(level2apath)
 #'
 #'#' Extracting GEDI Elevation and Height Metrics
 #'level2AM = getLevel2AM(level2a)
@@ -80,7 +89,7 @@ clipLevel2AM = function(level2AM,xmin, xmax, ymin, ymax){
 #'# unzip the file
 #'unzip(paste0(outdir,"\\examples.zip"))
 #'
-#'# specify the path to GEDI lebel2A data
+#'# specify the path to GEDI level2A data
 #'level2apath = paste0(outdir,"\\GEDI02_A_2019108080338_O01964_T05337_02_001_01_sub.h5"))
 #'
 #'# Reading GEDI level2A data

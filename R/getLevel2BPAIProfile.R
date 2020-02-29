@@ -22,7 +22,7 @@
 #'# unzip the file
 #'unzip(paste0(outdir,"\\examples.zip"))
 #'
-#'# specify the path to GEDI lebel2B data
+#'# specify the path to GEDI level2B data
 #'level2bpath = paste0(outdir,"\\GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub.h5"))
 #'
 #'# Reading GEDI level2B file
