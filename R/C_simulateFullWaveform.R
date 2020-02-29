@@ -84,8 +84,6 @@
 #'lasfile_cerrado <- system.file("extdata", "Cerrado.las", package="rGEDI")
 #'
 #'# Reading and plot ALS file
-#'library(lidR)
-#'library(plot3D)
 #'las_amazon<-readLAS(lasfile_amazon)
 #'las_cerrado<-readLAS(lasfile_cerrado)
 #'
@@ -106,6 +104,10 @@
 #'                            coords = c(xcenter_cerrado, ycenter_cerrado))
 #'
 #'# Plot ALS and GEDI simulated full-waveform
+#' 
+#'\dontrun{
+#'library(lidR)
+#'library(plot3D)
 #'par(mfrow=c(2,2), mar=c(4,4,0,0), oma=c(0,0,1,1),cex.axis = 1.2)
 #'scatter3D(
 #'          las_amazon@data$X,las_amazon@data$Y,las_amazon@data$Z,
@@ -127,6 +129,8 @@
 #'plot(wf_cerrado, relative=TRUE, polygon=TRUE, type="l", lwd=2, col="green",
 #'     xlab="Waveform Amplitude (%)", ylab="Elevation (m)", ylim=c(815,835))
 #'grid()
+#'}
+#' 
 #' @import hdf5r
 #' @useDynLib rGEDI
 #' @export
