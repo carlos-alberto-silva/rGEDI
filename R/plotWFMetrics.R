@@ -41,6 +41,9 @@
 #'
 #'plotWFMetrics(level1b, level2a, shot_number, rh=c(25, 50, 75, 90))
 #'}
+#' 
+#'@importFrom stats quantile
+#'@importFrom graphics abline arrows axis mtext par text
 #'@export
 plotWFMetrics = function(level1b, level2a, shot_number, rh=c(25, 50, 75), ...) {
   # Extracting GEDI full-waveform for a giving shotnumber
