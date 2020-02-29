@@ -26,7 +26,7 @@
 #'unzip(paste0(outdir,"\\examples.zip"))
 #'
 #'# specify the path to GEDI level2B data
-#'level2bpath = paste0(outdir,"\\GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub.h5"))
+#'level2bpath = paste0(outdir,"\\GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub.h5")
 #'
 #'# Reading GEDI level1B file
 #'level2b<-readLevel2b(gedilevel2b)
@@ -48,19 +48,19 @@
 #'}
 #'
 #'#' Computing a serie of statistics of GEDI-derived canopy cover
-#'cover_stats<-gridStatsLevel2BVPM(level2AM = level2AM, func=mySetOfMetrics(cover), res=0.5)
+#'cover_stats<-gridStatsLevel2BVPM(level2BVPM = level2BVPM, func=mySetOfMetrics(cover), res=0.5)
 #'plot(cover_stats)
 #'
 #'#' Computing the max of the Total Plant Area Index only
-#'pai_max<-gridStatsLevel2BVPM(level2AM = level2AM, func=max(pai), res=0.5)
+#'pai_max<-gridStatsLevel2BVPM(level2BVPM = level2BVPM, func=max(pai), res=0.5)
 #'plot(pai_max)
 #'
 #'#' Computing the mean of Foliage Clumping Index only
-#'omega_mean<-gridStatsLevel2BVPM(level2AM = level2AM, func=mean(omega), res=0.5)
+#'omega_mean<-gridStatsLevel2BVPM(level2BVPM = level2BVPM, func=mean(omega), res=0.5)
 #'plot(omega_mean)
 #'}
 #'@export
-gridStatsLevel2BVPM = function(level2BVPM, func, res = 0.5)
+gridStatsLevel2BVPM = function(level2BVPM, func, res)
 {
   requireNamespace("data.table")
   # this code has been adapted from the grid_metrics function in lidR package (Roussel et al. 2019)

@@ -11,7 +11,7 @@
 #'@param xmin Numeric. West longitude (x) coordinate of bounding rectangle, in decimal degrees.
 #'@param xmax Numeric. East longitude (x) coordinate of bounding rectangle, in decimal degrees.
 #'@param ymin Numeric. South latitude (y) coordinate of bounding rectangle, in decimal degrees.
-#'@param ymaxNumeric. North latitude (y) coordinate of bounding rectangle, in decimal degrees.
+#'@param ymax Numeric. North latitude (y) coordinate of bounding rectangle, in decimal degrees.
 #'
 #'@return An S4 object of class \code{\link[data.table:data.table]{data.table-class}}
 #'containing the Plant Area Index profile data.
@@ -29,7 +29,7 @@
 #'unzip(paste0(outdir,"\\examples.zip"))
 #'
 #'# specify the path to GEDI level2B data
-#'level2bpath = paste0(outdir,"\\GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub.h5"))
+#'level2bpath = paste0(outdir,"\\GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub.h5")
 #'
 #'# Reading GEDI level1B file
 #'level2b<-readLevel2b(gedilevel2b)
@@ -68,7 +68,7 @@ clipLevel2BPAIProfile = function(level2BPAIProfile,xmin, xmax, ymin, ymax){
 #'@description This function clips GEDI level2B-derived
 #'Plant Area Index profile within given geometry
 #'
-#'@usage clipLevel2BPAIProfileGeometry(level2BPAIProfile, polygon_spdf, output)
+#'@usage clipLevel2BPAIProfileGeometry(level2BPAIProfile, polygon_spdf, split_by)
 #'
 #'@param level2BPAIProfile A GEDI Level2B object (output of \code{\link[rGEDI:getLevel2BPAIProfile]{getLevel2BPAIProfile}} function). A S4 object of class "gedi.level2b".
 #'@param polygon_spdf Polygon. An object of class \code{\link[sp]{SpatialPolygonsDataFrame-class}},
@@ -91,7 +91,7 @@ clipLevel2BPAIProfile = function(level2BPAIProfile,xmin, xmax, ymin, ymax){
 #'unzip(paste0(outdir,"\\examples.zip"))
 #'
 #'# specify the path to GEDI level2B data
-#'level2bpath = paste0(outdir,"\\GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub.h5"))
+#'level2bpath = paste0(outdir,"\\GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub.h5")
 #'
 #'# Reading GEDI level1B file
 #'level2b<-readLevel2b(gedilevel2b)

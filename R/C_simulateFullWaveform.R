@@ -16,11 +16,12 @@
 # @param ascii write output as ASCII (default). Good for quick tests
 #' @param waveID id. supply a waveID to pass to the output (only for single footprints)
 #' Single footprint, list of footprints, or grid of footprints
-#' @param coord lon lat numeric vector. footprint coordinate in same system as lasfile
+#' @param coords lon lat numeric vector. footprint coordinate in same system as lasfile
 #' @param listCoord name. Text file with list of coordinates. Pattern: X Y `[waveID]` `[geoCoordsX]` `[geoCoordsY]`. `[]` are optional, separated by spaces.
 #' @param gridBound minX maxX minY maxY numeric vector. make a grid of waveforms in this box
 #' @param gridStep res. grid step size
-#' Lidar characteristics. Defaults are expected GEDI values. pSigmasig. set Gaussian pulse width as 1 sigma
+#' Lidar characteristics. Defaults are expected GEDI values.
+#' @param pSigma pSigmasig. set Gaussian pulse width as 1 sigma
 #' @param pFWHM fhwm. set Gaussian pulse width as FWHM in ns
 #' @param readPulse file. read pulse shape and width from a file insteda of making Gaussian
 #' @param fSigma sig. set footprint width

@@ -3,7 +3,7 @@
 #'@description Computes a Series of Statistics from GEDI-derived Elevation and Height Metrics (Level2A)
 #'within defined polygon ids or entire area
 #'
-#'@usage polyStatsLevel2AM(level2AM, func, id)
+#'@usage polyStatsLevel2AM(level2AM, func, id=NULL)
 #'
 #'@param level2AM A GEDI Level2AM object (output of \code{\link[rGEDI:getLevel2AM]{getLevel2AM}} function). A S4 object of class "data.table".
 #'@param func the function to be applied for computing the defined statistics
@@ -26,7 +26,7 @@
 #'unzip(paste0(outdir,"\\examples.zip"))
 #'
 #'# specify the path to GEDI level2A data
-#'level2apath = paste0(outdir,"\\GEDI02_A_2019108080338_O01964_T05337_02_001_01_sub.h5"))
+#'level2apath = paste0(outdir,"\\GEDI02_A_2019108080338_O01964_T05337_02_001_01_sub.h5")
 #'
 #'# Reading GEDI level2A data
 #'level2a<-readLevel2A(level2apath)
@@ -69,7 +69,7 @@
 #'}
 #'@import data.table lazyeval
 #'@export
-polyStatsLevel2AM = function(level2AM, func=mean(rh100), id = NULL)
+polyStatsLevel2AM = function(level2AM, func, id = NULL)
 {
 
   # this code has been adapted from the grid_metrics function in lidR package (Roussel et al. 2019)

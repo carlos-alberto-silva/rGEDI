@@ -3,7 +3,7 @@
 #'@description Computes a Series of Statistics of GEDI-derived Canopy Cover and Vertical Profile metrics (Level2BVPM)
 #'for all obsercation or only those defined within a giving polygon
 #'
-#'@usage polyStatsLevel2BVPM(level2AM, func, id)
+#'@usage polyStatsLevel2BVPM(level2BVPM, func, id=NULL)
 #'
 #'@param level2BVPM A GEDI Level2BVPM object (output of \code{\link[rGEDI:getLevel2BVPM]{getLevel2BVPM}} function). A S4 object of class "data.table".
 #'@param func the function to be applied for computing the defined statistics
@@ -26,7 +26,7 @@
 #'unzip(paste0(outdir,"\\examples.zip"))
 #'
 #'# specify the path to GEDI level2B data
-#'level2bpath = paste0(outdir,"\\GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub.h5"))
+#'level2bpath = paste0(outdir,"\\GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub.h5")
 #'
 #'# Reading GEDI level1B file
 #'level2b<-readLevel2b(gedilevel2b)
@@ -71,7 +71,7 @@
 #'head(cover_metrics)
 #'}
 #'@export
-polyStatsLevel2BVPM = function(level2BVPM, func=mean(pai), id = NULL)
+polyStatsLevel2BVPM = function(level2BVPM, func, id = NULL)
 {
   # this code has been adapted from the grid_metrics function in lidR package (Roussel et al. 2019)
   # https://github.com/Jean-Romain/lidR/blob/master/R/grid_metrics.r

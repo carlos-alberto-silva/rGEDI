@@ -3,7 +3,7 @@
 #'@description This function clips GEDI Level2A extracted Elevation and Height Metrics (Level2AM)
 #' within given bounding coordinates
 #'
-#'@usage clipLevel2AM(level2a, xmin, xmax, ymin, ymax, output)
+#'@usage clipLevel2AM(level2AM, xmin, xmax, ymin, ymax, output)
 #'
 #'@param level2AM A GEDI Level2A object (output of \code{\link[rGEDI:readLevel2A]{readLevel2A}} function). A S4 object of class "gedi.level2a".
 #'@param xmin Numeric. West longitude (x) coordinate of bounding rectangle, in decimal degrees.
@@ -27,7 +27,7 @@
 #'unzip(paste0(outdir,"\\examples.zip"))
 #'
 #'# specify the path to GEDI level2A data
-#'level2apath = paste0(outdir,"\\GEDI02_A_2019108080338_O01964_T05337_02_001_01_sub.h5"))
+#'level2apath = paste0(outdir,"\\GEDI02_A_2019108080338_O01964_T05337_02_001_01_sub.h5")
 #'
 #'# Reading GEDI level2A data
 #'level2a<-readLevel2A(level2apath)
@@ -69,7 +69,7 @@ clipLevel2AM = function(level2AM,xmin, xmax, ymin, ymax){
 #'@description This function clips GEDI Level2A extracted Elevation and Height Metrics (Level2AM)
 #' within given bounding coordinates
 #'
-#'@usage clipLevel2AMGeometry(level2a, polygon_spdf, split_by)
+#'@usage clipLevel2AMGeometry(level2AM, polygon_spdf, split_by)
 #'
 #'@param level2AM A GEDI Level2A object (output of \code{\link[rGEDI:readLevel2A]{readLevel2A}} function). A S4 object of class "gedi.level2a".
 #'@param polygon_spdf Polygon. An object of class \code{\link[sp]{SpatialPolygonsDataFrame-class}},
@@ -90,7 +90,7 @@ clipLevel2AM = function(level2AM,xmin, xmax, ymin, ymax){
 #'unzip(paste0(outdir,"\\examples.zip"))
 #'
 #'# specify the path to GEDI level2A data
-#'level2apath = paste0(outdir,"\\GEDI02_A_2019108080338_O01964_T05337_02_001_01_sub.h5"))
+#'level2apath = paste0(outdir,"\\GEDI02_A_2019108080338_O01964_T05337_02_001_01_sub.h5")
 #'
 #'# Reading GEDI level2A data
 #'level2a<-readLevel2A(level2apath)

@@ -27,7 +27,7 @@
 #'unzip(paste0(outdir,"\\examples.zip"))
 #'
 #'# specify the path to GEDI level1B data
-#'level1bpath = paste0(outdir,"\\GEDI01_B_2019108080338_O01964_T05337_02_003_01_sub.h5"))
+#'level1bpath = paste0(outdir,"\\GEDI01_B_2019108080338_O01964_T05337_02_003_01_sub.h5")
 #'
 #'# Reading GEDI level1B file
 #'level1b<-readLevel1b(gedilevel1b)
@@ -78,7 +78,7 @@ clipLevel1BGeo = function(level1BGeo,xmin, xmax, ymin, ymax){
 #'@description This function clips GEDI level1B extracted geolocation (level1BGeo)
 #' data within given geometry
 #'
-#'@usage clipLevel1BGeoGeometry(level1BGeo, polygon_spdf, output)
+#'@usage clipLevel1BGeoGeometry(level1BGeo, polygon_spdf, split_by)
 #'
 #'@param level1BGeo A GEDI Level1b object (output of \code{\link[rGEDI:readLevel1B]{readLevel1B}} function). A S4 object of class "gedi.level1b".
 #'@param polygon_spdf Polygon. An object of class \code{\link[sp]{SpatialPolygonsDataFrame-class}},
@@ -100,7 +100,7 @@ clipLevel1BGeo = function(level1BGeo,xmin, xmax, ymin, ymax){
 #'unzip(paste0(outdir,"\\examples.zip"))
 #'
 #'# specify the path to GEDI level1B data
-#'level1bpath = paste0(outdir,"\\GEDI01_B_2019108080338_O01964_T05337_02_003_01_sub.h5"))
+#'level1bpath = paste0(outdir,"\\GEDI01_B_2019108080338_O01964_T05337_02_003_01_sub.h5")
 #'
 #'# Reading GEDI level1B file
 #'level1b<-readLevel1b(gedilevel1b)

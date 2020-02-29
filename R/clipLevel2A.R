@@ -27,7 +27,7 @@
 # unzip(paste0(outdir,"\\examples.zip"))
 #'
 #'# specify the path to GEDI level2A data
-#'level2apath = paste0(outdir,"\\GEDI02_A_2019108080338_O01964_T05337_02_001_01_sub.h5"))
+#'level2apath = paste0(outdir,"\\GEDI02_A_2019108080338_O01964_T05337_02_001_01_sub.h5")
 #'
 #'# Reading GEDI level2A data
 #'level2a<-readLevel2A(level2apath)
@@ -90,7 +90,7 @@ clipLevel2A = function(level2a, xmin, xmax, ymin, ymax, output=""){
 # unzip(paste0(outdir,"\\examples.zip"))
 #'
 #'# specify the path to GEDI level2A data
-#'level2apath = paste0(outdir,"\\GEDI02_A_2019108080338_O01964_T05337_02_001_01_sub.h5"))
+#'level2apath = paste0(outdir,"\\GEDI02_A_2019108080338_O01964_T05337_02_001_01_sub.h5")
 #'
 #'# Reading GEDI level2A data
 #'level2a<-readLevel2A(level2apath)
