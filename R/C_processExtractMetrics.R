@@ -93,7 +93,7 @@
 #' @param gold deconvolve with Gold's method
 #' @param deconTol deconvolution tolerance
 #'
-#' @return A S4 object of class \code{\link[hdf5r]{hdf5rfile}} in the \emph{hdf5r} package.
+#' @return A S4 object of class \code{\link[hdf5r;H5File-class]{hdf5rfile}} in the \emph{hdf5r} package.
 #'
 #' @seealso
 #' i) Hancock, S., Armston, J., Hofton, M., Sun, X., Tang, H., Duncanson, L.I., Kellner,
