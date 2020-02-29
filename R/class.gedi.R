@@ -64,7 +64,7 @@ gedi.level2b <- setClass(
 #'Plots a single GEDI full-waveform (level1b)
 #'
 #'@param x An object of class "gedi.fullwaveform". (output of \code{\link[rGEDI:getLevel1BWF]{getLevel1BWF}} function)
-#'@param relative if TRUE, the Wavform Amplitude will be showed in percentage (%)
+#'@param relative if TRUE, the Wavform Amplitude will be showed in percentage (\%)
 #'@param polygon if TRUE, polygon will be added to the plot
 #'
 #'@examples
@@ -83,14 +83,14 @@ gedi.level2b <- setClass(
 #'xlab="", ylab="Elevation (m)")
 #'
 #'plot(wf, relative=TRUE, polygon=TRUE, type="l", lwd=2, col="forestgreen",
-#'xlab="Waveform Amplitude (%)", ylab="Elevation (m)")
+#'xlab="Waveform Amplitude (\%)", ylab="Elevation (m)")
 #' @export
 #' @method plot gedi.fullwaveform
+#' @rdname plot
 setGeneric("plot", function(x, y, ...)
   standardGeneric("plot"))
 
 #' @export
-#' @rdname plot
 setMethod("plot", signature("gedi.fullwaveform", y = "missing"), function(x,relative=FALSE,polygon=FALSE,...) {
 
   if (!class(x)=="gedi.fullwaveform"){
@@ -100,17 +100,17 @@ setMethod("plot", signature("gedi.fullwaveform", y = "missing"), function(x,rela
 
 
 
-  x0<-as.data.frame(x@dt)
-  x<-x0[,1]
-  z<-x0[,2]
+    x0<-as.data.frame(x@dt)
+    x<-x0[,1]
+    z<-x0[,2]
 
-  if (relative==TRUE){
-    x=c(x-min(x))/(max(x)-min(x))*100
-  } else{
-    x=x
-  }
+    if (relative==TRUE){
+      x=c(x-min(x))/(max(x)-min(x))*100
+    } else{
+      x=x
+    }
 
-  if (polygon==TRUE){
+    if (polygon==TRUE){
 
       xstart<-x[which(z==min(z, na.rm=T))]
       xend<-x[which(z==max(z, na.rm=T))]
@@ -132,7 +132,7 @@ setMethod("plot", signature("gedi.fullwaveform", y = "missing"), function(x,rela
 #'Plots a single GEDI full-waveform (level1b) simulated from ALS 3D-point cloud
 #'
 #'@param x An object of class "gedi.level1bSim". (output of \code{\link[rGEDI:gediWFSimulator]{gediWFSimulator}} function)
-#'@param relative if TRUE, the Wavform Amplitude will be showed in percentage (%)
+#'@param relative if TRUE, the Wavform Amplitude will be showed in percentage (\%)
 #'@param polygon if TRUE, polygon will be added to the plot
 #'@param method methods used for simulating the GEDI full-waveform ("RXWAVEINT","RXWAVEINT" or "RXWAVEINT"). Default is "RXWAVECOUNT".
 #'
@@ -163,14 +163,14 @@ setMethod("plot", signature("gedi.fullwaveform", y = "missing"), function(x,rela
 #'xlab="", ylab="Elevation (m)")
 #'
 #'plot(wf, relative=TRUE, polygon=TRUE, type="l", lwd=2, col="forestgreen",
-#'xlab="Waveform Amplitude (%)", ylab="Elevation (m)")
+#'xlab="Waveform Amplitude (\%)", ylab="Elevation (m)")
 #' @export
 #' @method plot gedi.level1bSim
+#' @rdname plot2
 setGeneric("plot", function(x, y, ...)
   standardGeneric("plot"))
 
 #' @export
-#' @rdname plot2
 setMethod("plot", signature("gedi.level1bSim", y = "missing"), function(x,relative=FALSE,polygon=FALSE,method="RXWAVEINT",...) {
 
   if (!class(x)=="gedi.level1bSim"){
@@ -208,4 +208,3 @@ setMethod("plot", signature("gedi.level1bSim", y = "missing"), function(x,relati
     }
   }
 })
-
