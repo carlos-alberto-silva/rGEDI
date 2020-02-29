@@ -24,7 +24,7 @@
 #! \bold{Switches}
 
 # Always needed
-# @param ground read true ground from file
+#' @param ground read true ground from file
 #' @param useInt use discrete intensity instead of count
 #' @param useFrac use fractional hits rather than counts
 #' @param rhRes r. percentage energy resolution of RH metrics

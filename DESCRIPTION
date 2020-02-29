@@ -28,4 +28,7 @@ Imports:
   hdf5r,
   raster,
   rgeos,
+    leaflet,
+  lidR,
+  plot3D
 RoxygenNote: 7.0.2

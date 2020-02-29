@@ -63,12 +63,12 @@ clipLevel2BPAVDProfile = function(level2BPAVDProfile,xmin, xmax, ymin, ymax){
 
 }
 
-#'Clip level2BPAIProfile data by geometry
+#'Clip level2BPAVDProfile data by geometry
 #'
 #'@description This function clips GEDI level2B-derived
 #'Plant Area Index profile within given geometry
 #'
-#'@usage clipLevel2BPAIProfileGeometry(level2BPAIProfile, polygon_spdf, split_by)
+#'@usage clipLevel2BPAVDProfileGeometry(level2BPAVDProfile, polygon_spdf, split_by)
 #'
 #'@param level2BPAVDProfile A GEDI Level2B object (output of \code{\link[rGEDI:getLevel2BPAIProfile]{getLevel2BPAIProfile}} function). A S4 object of class "gedi.level2b".
 #'@param polygon_spdf Polygon. An object of class \code{\link[sp]{SpatialPolygonsDataFrame-class}},

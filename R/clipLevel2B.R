@@ -82,6 +82,8 @@ clipLevel2B = function(level2b, xmin, xmax, ymin, ymax, output=""){
 #'@param polygon_spdf Polygon. An object of class \code{\link[sp]{SpatialPolygonsDataFrame-class}},
 #'which can be loaded as an ESRI shapefile using \code{\link[rgdal:readOGR]{readOGR}} function in the \emph{rgdal} package.
 #'@param output optional character path where to save the new h5file. Default "" (temporary file).
+#'@param split_by Polygon id. If defined, GEDI data will be clipped by each polygon using the polygon id from table of attribute defined by the user
+#'
 #'@return An S4 object of class "gedi.level2b".
 #'
 #'@seealso https://lpdaac.usgs.gov/products/gedi01_bv001/
