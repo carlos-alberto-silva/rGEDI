@@ -53,7 +53,7 @@ gedi.level1bSim <- setClass(
 #'
 #' @import methods
 #' @export
-gedi.level2b <- setClass(
+gedi.fullwaveform <- setClass(
   Class="gedi.fullwaveform",
   slots = list(dt = "data.table")
 )
@@ -63,11 +63,14 @@ gedi.level2b <- setClass(
 #'
 #'Plots a single GEDI full-waveform (level1b)
 #'
+#'@usage plot(x,relative=FALSE,polygon=FALSE)
+#'
 #'@param x An object of class "gedi.fullwaveform". (output of \code{\link[rGEDI:getLevel1BWF]{getLevel1BWF}} function)
 #'@param relative if TRUE, the Wavform Amplitude will be showed in percentage (\%)
 #'@param polygon if TRUE, polygon will be added to the plot
 #'
 #'@examples
+#'\dontrun{
 #'#'# specify the path to GEDI Level 1B data
 #'level1bpath <- system.file("extdata", "GEDIexample_level01B.h5", package="rGEDI")
 #'
@@ -84,6 +87,7 @@ gedi.level2b <- setClass(
 #'
 #'plot(wf, relative=TRUE, polygon=TRUE, type="l", lwd=2, col="forestgreen",
 #'xlab="Waveform Amplitude (\%)", ylab="Elevation (m)")
+#'}
 #' @export
 #' @method plot gedi.fullwaveform
 #' @rdname plot
@@ -97,7 +101,6 @@ setMethod("plot", signature("gedi.fullwaveform", y = "missing"), function(x,rela
 
     print("Invalid input file. It should be an object of class 'gedi.fullwaveform' ")
   } else {
-
 
 
     x0<-as.data.frame(x@dt)
@@ -130,6 +133,8 @@ setMethod("plot", signature("gedi.fullwaveform", y = "missing"), function(x,rela
 #'Plot simulated GEDI full-waveform
 #'
 #'Plots a single GEDI full-waveform (level1b) simulated from ALS 3D-point cloud
+#'
+#'@usage plot(x,relative=FALSE,polygon=FALSE,method="RXWAVEINT")
 #'
 #'@param x An object of class "gedi.level1bSim". (output of \code{\link[rGEDI:gediWFSimulator]{gediWFSimulator}} function)
 #'@param relative if TRUE, the Wavform Amplitude will be showed in percentage (\%)

@@ -12,7 +12,6 @@
 #'@param xmax Numeric. East longitude (x) coordinate of bounding rectangle, in decimal degrees.
 #'@param ymin Numeric. South latitude (y) coordinate of bounding rectangle, in decimal degrees.
 #'@param ymax Numeric. North latitude (y) coordinate of bounding rectangle, in decimal degrees.
-#'@param output Optional character path where to save the new hdf5file. The default stores a temporary file only.
 #'
 #'@return An S4 object of class \code{\link[data.table:data.table]{data.table-class}}
 #'containing the Canopy Cover and Vertical Profile metrics.
@@ -83,7 +82,7 @@ clipLevel2BVPM = function(level2BVPM,xmin, xmax, ymin, ymax){
 #'@description This function clips GEDI level2B-derived
 #'Canopy Cover and Vertical Profile metrics within a given geometry
 #'
-#'@usage clipLevel2BVPMGeometry(level2BVPM, polygon_spdf,split_by)
+#'@usage clipLevel2BVPMGeometry(level2BVPM, polygon_spdf, split_by)
 #'
 #'
 #'@param level2BVPM A GEDI Level2B object (output of \code{\link[rGEDI:readLevel1B]{readLevel1B}} function). A S4 object of class "gedi.level2b".
