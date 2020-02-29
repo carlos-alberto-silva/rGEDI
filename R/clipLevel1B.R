@@ -21,7 +21,7 @@
 #'outdir<-getwd()
 #'
 #'# downloading GEDI example dataset (zip file)
-#'download.file("https://github.com/carlos-alberto-silva/rGEDI/releases/download/examples/examples.zip",destfile=outdir)
+#'download.file("https://github.com/carlos-alberto-silva/rGEDI/releases/download/examples/examples.zip",destfile=paste0(outdir,"/examples.zip"))
 #'
 #'# unzip the file
 #'unzip(paste0(outdir,"\\examples.zip"))
@@ -81,7 +81,7 @@ clipLevel1B = function(level1b, xmin, xmax, ymin, ymax, output=""){
 #'outdir<-getwd()
 #'
 #'# downloading GEDI example dataset (zip file)
-#'download.file("https://github.com/carlos-alberto-silva/rGEDI/releases/download/examples/examples.zip",destfile=outdir)
+#'download.file("https://github.com/carlos-alberto-silva/rGEDI/releases/download/examples/examples.zip",destfile=paste0(outdir,"/examples.zip"))
 #'
 #'# unzip the file
 #'unzip(paste0(outdir,"\\examples.zip"))

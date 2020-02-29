@@ -3,3 +3,9 @@
 ^examples\.R$
 ^.*TODO-.*$
 ^notrack.*$
+.travis.yml
+^windows$
+^src/gedisimulator$
+^src/tools$
+^src/libclidar$
+^src/cmpfit-1.2$
