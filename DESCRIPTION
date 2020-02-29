@@ -17,7 +17,7 @@ Description: Set of tools for downloading, reading, visualizing and processing G
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
-Depends: methods,sp
+Depends: methods,sp,fs,lazyeval
 Imports: 
   bit64,
   data.table,
