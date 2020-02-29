@@ -101,7 +101,6 @@ clipLevel1B = function(level1b, xmin, xmax, ymin, ymax, output=""){
 #'
 #'# clip by extent boundary box
 #'level1b_clip <- clipLevel1BGeometry(level1b, polygon_spdf = polygon_spdf)
-#'
 #'}
 #'@import hdf5r
 #'@export
