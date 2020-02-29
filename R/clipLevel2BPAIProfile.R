@@ -118,7 +118,10 @@ clipLevel2BPAIProfile = function(level2BPAIProfile,xmin, xmax, ymin, ymax){
 #'polygon_spdf<-readOGR(polygons_filepath)
 #'
 #'# clip level2BPAIProfile by geometry
-#'level2b_clip_geometry <- clipLevel2BPAIProfileGeometry(level2BPAIProfile,polygon_spdf, split_by="id")
+#'level2b_clip_geometry <- clipLevel2BPAIProfileGeometry(
+#'                                                       level2BPAIProfile,
+#'                                                       polygon_spdf, 
+#'                                                       split_by="id")
 #'
 #'}
 #'@export

@@ -11,8 +11,14 @@
 #'@examples
 #'\dontrun{
 #'#' Set path to GEDI data
-#'filepath=c("https://e4ftl01.cr.usgs.gov/GEDI/GEDI02_B.001/2019.04.18/GEDI02_B_2019108032534_O01961_T03911_02_001_01.h5",
-#'            "https://e4ftl01.cr.usgs.gov/GEDI/GEDI02_B.001/2019.04.18/GEDI02_B_2019108045815_O01962_T01066_02_001_01.h5")
+#'filepath=c(paste0(
+#'                  "https://e4ftl01.cr.usgs.gov/GEDI/GEDI02_B.001",
+#'                  "/2019.04.18/GEDI02_B_2019108032534_O01961_T03911_02_001_01.h5"
+#'                  ),
+#'           paste0("https://e4ftl01.cr.usgs.gov/GEDI/GEDI02_B.001",
+#'                  "/2019.04.18/GEDI02_B_2019108045815_O01962_T01066_02_001_01.h5"
+#'                 )
+#'          )
 #'
 #'# Set dir to download files to
 #'outdir=tempdir()
