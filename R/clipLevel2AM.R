@@ -17,6 +17,7 @@
 #'@seealso https://lpdaac.usgs.gov/products/gedi02_av001/
 #'
 #'@examples
+#'\dontrun{
 #'# specify the path to download GEDI example dataset
 #'outdir<-getwd()
 #'
@@ -43,7 +44,7 @@
 #'
 #'# clip by extent boundary box
 #'level2AM_clip <- clipLevel2AM(level2AM,xmin, xmax, ymin, ymax)
-#'
+#'}
 #'@import hdf5r
 #'@export
 clipLevel2AM = function(level2AM,xmin, xmax, ymin, ymax){
