@@ -136,14 +136,6 @@ setMethod("plot", signature("gedi.fullwaveform", y = "missing"), function(x,rela
 #'@param polygon if TRUE, polygon will be added to the plot
 #'@param method methods used for simulating the GEDI full-waveform ("RXWAVEINT","RXWAVEINT" or "RXWAVEINT"). Default is "RXWAVECOUNT".
 #'
-#'@seealso
-#'i) Hancock, S., Armston, J., Hofton, M., Sun, X., Tang, H., Duncanson, L.I., Kellner,
-#' J.R. and Dubayah, R., 2019. The GEDI simulator: A large‐footprint waveform lidar simulator
-#' for calibration and validation of spaceborne missions. Earth and Space Science.
-#' https://doi.org/10.1029/2018EA000506
-#'
-#'ii) gediSimulator: https://bitbucket.org/StevenHancock/gedisimulator/src/master/
-#'
 #'@examples
 # specify the path to ALS data
 #'lasfile_amazon <- system.file("extdata", "Amazon.las", package="rGEDI")
@@ -178,7 +170,7 @@ setGeneric("plot", function(x, y, ...)
   standardGeneric("plot"))
 
 #' @export
-#' @rdname plot
+#' @rdname plot2
 setMethod("plot", signature("gedi.level1bSim", y = "missing"), function(x,relative=FALSE,polygon=FALSE,method="RXWAVEINT",...) {
 
   if (!class(x)=="gedi.level1bSim"){

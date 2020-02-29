@@ -45,16 +45,16 @@
 #'level2BPAVDProfile_clip <- clipLevel2BPAVDProfile(level2BPAVDProfile,xmin, xmax, ymin, ymax)
 #'
 #'@export
-clipLevel2BPAVDProfile = function(x,xmin, xmax, ymin, ymax){
+clipLevel2BPAVDProfile = function(level2BPAVDProfile,xmin, xmax, ymin, ymax){
   # xmin ymin xmax ymax
   mask =
-    x$lon_lowestmode >= xmin &
-    x$lon_lowestmode <= xmax &
-    x$lat_lowestmode >= ymin &
-    x$lat_lowestmode <=  ymax
+    level2BPAVDProfile$lon_lowestmode >= xmin &
+    level2BPAVDProfile$lon_lowestmode <= xmax &
+    level2BPAVDProfile$lat_lowestmode >= ymin &
+    level2BPAVDProfile$lat_lowestmode <=  ymax
 
-  mask = (1:length(x$lon_lowestmode))[mask]
-  newFile<-x[mask,]
+  mask = (1:length(level2BPAVDProfile$lon_lowestmode))[mask]
+  newFile<-level2BPAVDProfile[mask,]
   #newFile<- new("gedi.level1b.dt", dt = level2bdt[mask,])
   if (nrow(newFile) == 0) {print("The polygon does not overlap the GEDI data")} else {
     return (newFile)
@@ -106,12 +106,12 @@ clipLevel2BPAVDProfile = function(x,xmin, xmax, ymin, ymax){
 #'polygon_spdf<-readOGR(polygons_filepath)
 #'
 #'# clip level2BPAIProfile by geometry
-#'level2BPAVDProfile_clip <- clipLevel2BPAVDGeometry(level2BPAVDProfile,polygon_spdf,split_by="id")
+#'level2BPAVDProfile_clip <- clipLevel2BPAVDProfileGeometry(level2BPAVDProfile,polygon_spdf,split_by="id")
 #'}
 #'@export
-clipLevel2BPAVDProfileGeometry = function(x, polygon_spdf, split_by=NULL) {
+clipLevel2BPAVDProfileGeometry = function(level2BPAVDProfile, polygon_spdf, split_by=NULL) {
   exshp<-raster::extent(polygon_spdf)
-  level2bdt<-clipLevel2BPAIProfile(x, xmin=exshp[1], xmax=exshp[2], ymin=exshp[3], ymax=exshp[4])
+  level2bdt<-clipLevel2BPAIProfile(level2BPAVDProfile, xmin=exshp[1], xmax=exshp[2], ymin=exshp[3], ymax=exshp[4])
 
   if (nrow(level2bdt) == 0) {print("The polygon does not overlap the GEDI data")} else {
     points = sp::SpatialPointsDataFrame(coords=matrix(c(level2bdt$lon_lowestmode, level2bdt$lat_lowestmode), ncol=2),

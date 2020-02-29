@@ -4,7 +4,7 @@
 #'@description This function computes a series of user-defined descriptive statistics within
 #'each grid cell for GEDI-derived Canopy Cover and Vertical Profile Metrics (Level2B)
 #'
-#'@usage gridStatsLevel2BVPM(level2VPM, func, res)
+#'@usage gridStatsLevel2BVPM(level2BVPM, func, res)
 #'
 #'@param level2BVPM A GEDI Level2AM object (output of \code{\link[rGEDI:getLevel2BVPM]{getLevel2BVPM}} function). A S4 object of class "data.table".
 #'@param func the function(s) to be applied to each cell

@@ -4,7 +4,7 @@
 #'Plant Area Index profile within given bounding coordinates
 #'
 #'
-#'@usage clipLevel2BPAIProfile(level2BPAIProfile, xmin, xmax, ymin, ymax, output="")
+#'@usage clipLevel2BPAIProfile(level2BPAIProfile, xmin, xmax, ymin, ymax)
 #'
 #'
 #'@param level2BPAIProfile A GEDI Level2B object (output of \code{\link[rGEDI:getLevel2BPAIProfile]{getLevel2BPAIProfile}} function). A S4 object of class "gedi.level2b".
@@ -47,16 +47,16 @@
 #'level2b_clip <- clipLevel2BPAIProfile(level2BPAIProfile,xmin, xmax, ymin, ymax)
 #'
 #'@export
-clipLevel2BPAIProfile = function(x,xmin, xmax, ymin, ymax){
+clipLevel2BPAIProfile = function(level2BPAIProfile,xmin, xmax, ymin, ymax){
   # xmin ymin xmax ymax
   mask =
-    x$lon_lowestmode >= xmin &
-    x$lon_lowestmode <= xmax &
-    x$lat_lowestmode >= ymin &
-    x$lat_lowestmode <=  ymax
+    level2BPAIProfile$lon_lowestmode >= xmin &
+    level2BPAIProfile$lon_lowestmode <= xmax &
+    level2BPAIProfile$lat_lowestmode >= ymin &
+    level2BPAIProfile$lat_lowestmode <=  ymax
 
-  mask = (1:length(x$lon_lowestmode))[mask]
-  newFile<-x[mask,]
+  mask = (1:length(level2BPAIProfile$lon_lowestmode))[mask]
+  newFile<-level2BPAIProfile[mask,]
   if (nrow(newFile) == 0) {print("The polygon does not overlap the GEDI data")} else {
     return (newFile)
   }
@@ -107,13 +107,13 @@ clipLevel2BPAIProfile = function(x,xmin, xmax, ymin, ymax){
 #'polygon_spdf<-readOGR(polygons_filepath)
 #'
 #'# clip level2BPAIProfile by geometry
-#'level2b_clip_geometry <- clipLevel2BPAIGeometry(level2BPAIProfile,polygon_spdf, split_by="id")
+#'level2b_clip_geometry <- clipLevel2BPAIProfileGeometry(level2BPAIProfile,polygon_spdf, split_by="id")
 #'
 #'}
 #'@export
-clipLevel2BPAIProfileGeometry = function(x, polygon_spdf, split_by=NULL) {
+clipLevel2BPAIProfileGeometry = function(level2BPAIProfile, polygon_spdf, split_by=NULL) {
   exshp<-raster::extent(polygon_spdf)
-  level2bdt<-clipLevel2BPAIProfile(x, xmin=exshp[1], xmax=exshp[2], ymin=exshp[3], ymax=exshp[4])
+  level2bdt<-clipLevel2BPAIProfile(level2BPAIProfile, xmin=exshp[1], xmax=exshp[2], ymin=exshp[3], ymax=exshp[4])
 
   if (nrow(level2bdt) == 0) {print("The polygon does not overlap the GEDI data")} else {
     points = sp::SpatialPointsDataFrame(coords=matrix(c(level2bdt$lon_lowestmode, level2bdt$lat_lowestmode), ncol=2),

@@ -2,7 +2,7 @@
 #'
 #'@description This function clips GEDI Level2A data within given bounding coordinates
 #'
-#'@usage clipLevel2a(level2a, xmin, xmax, ymin, ymax, output)
+#'@usage clipLevel2A(level2a, xmin, xmax, ymin, ymax, output)
 #'
 #'@param level2a A GEDI Level2A object (output of \code{\link[rGEDI:readLevel2A]{readLevel2A}} function). A S4 object of class "gedi.level2a".
 #'@param xmin Numeric. West longitude (x) coordinate of bounding rectangle, in decimal degrees.
@@ -67,7 +67,7 @@ clipLevel2A = function(level2a, xmin, xmax, ymin, ymax, output=""){
 #'
 #'@description This function clips GEDI Level2A data within given geometry
 #'
-#'@usage clipLevel2a(level2a, polygon_spdf, output)
+#'@usage clipLevel2AGeometry(level2a, polygon_spdf, output)
 #'
 #'@param level2a A GEDI Level2A object (output of \code{\link[rGEDI:readLevel2A]{readLevel2A}} function). A S4 object of class "gedi.level2a".
 #'@param polygon_spdf Polygon. An object of class \code{\link[sp]{SpatialPolygonsDataFrame-class}},
@@ -79,6 +79,7 @@ clipLevel2A = function(level2a, xmin, xmax, ymin, ymax, output=""){
 #'@seealso https://lpdaac.usgs.gov/products/gedi02_av001/
 #'
 #'@examples
+#'\dontrun{
 #'# specify the path to download GEDI example dataset
 #'outdir<-getwd()
 #'
@@ -102,6 +103,7 @@ clipLevel2A = function(level2a, xmin, xmax, ymin, ymax, output=""){
 #'polygon_spdf<-readOGR(polygons_filepath)
 #'
 #'level2a_clip <- clipLevel2AGeometry(level2a, polygon_spdf)
+#'}
 #'
 #'@export
 clipLevel2AGeometry = function(level2a, polygon_spdf, output="", split_by = NULL) {

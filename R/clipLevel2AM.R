@@ -69,7 +69,7 @@ clipLevel2AM = function(level2AM,xmin, xmax, ymin, ymax){
 #'@description This function clips GEDI Level2A extracted Elevation and Height Metrics (Level2AM)
 #' within given bounding coordinates
 #'
-#'@usage cliplevel2AM(level2a, polygon_spdf, split_by)
+#'@usage clipLevel2AMGeometry(level2a, polygon_spdf, split_by)
 #'
 #'@param level2AM A GEDI Level2A object (output of \code{\link[rGEDI:readLevel2A]{readLevel2A}} function). A S4 object of class "gedi.level2a".
 #'@param polygon_spdf Polygon. An object of class \code{\link[sp]{SpatialPolygonsDataFrame-class}},
