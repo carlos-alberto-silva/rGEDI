@@ -63,8 +63,6 @@ gedi.fullwaveform <- setClass(
 #'
 #'Plots a single GEDI full-waveform (level1b)
 #'
-#'@usage plot(x,relative=FALSE,polygon=FALSE)
-#'
 #'@param x An object of class "gedi.fullwaveform". (output of \code{\link[rGEDI:getLevel1BWF]{getLevel1BWF}} function)
 #'@param relative if TRUE, the Wavform Amplitude will be showed in percentage (\%)
 #'@param polygon if TRUE, polygon will be added to the plot
@@ -142,8 +140,6 @@ setMethod("plot", signature("gedi.fullwaveform", y = "missing"), function(x,rela
 #'Plot simulated GEDI full-waveform
 #'
 #'Plots a single GEDI full-waveform (level1b) simulated from ALS 3D-point cloud
-#'
-#'@usage plot(x,relative=FALSE,polygon=FALSE,method="RXWAVEINT")
 #'
 #'@param x An object of class "gedi.level1bSim". (output of \code{\link[rGEDI:gediWFSimulator]{gediWFSimulator}} function)
 #'@param relative if TRUE, the Wavform Amplitude will be showed in percentage (\%)
