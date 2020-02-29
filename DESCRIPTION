@@ -21,8 +21,9 @@ Depends: methods,sp
 Imports: 
   bit64,
   data.table,
+  fs,
+  lazyeval,
   hdf5r,
   raster,
   rgeos,
-RoxygenNote: 6.1.1
-
+RoxygenNote: 7.0.2
