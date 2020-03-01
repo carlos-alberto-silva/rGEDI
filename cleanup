@@ -2,7 +2,7 @@
 for f in ./config.*; do
 	rm -f $f
 done
-if [ -e scr/Makevars ]; then
+if [ -e src/Makevars ]; then
 	rm -f src/Makevars
 fi
 
