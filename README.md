@@ -141,6 +141,20 @@ plotWFMetrics(gedilevel1b, gedilevel2a, shot_number, rh=c(25, 50, 75, 90))
 dev.off()
 ```
 ![](https://github.com/carlos-alberto-silva/rGEDI/blob/master/readme/fig8.png)
+## Get GEDI Vegetation Profile Biophysical Variables (GEDI Level2B)
+```r
+level2BVPM<-getLevel2BVPM(gedilevel2b)
+head(level2BVPM[,c("beam","shot_number","pai","fhd_normal","omega","pgap_theta","cover")])
+
+##          beam       shot_number         pai fhd_normal omega pgap_theta       cover
+##   1: BEAM0000 19640002800109382 0.007661204  0.6365142     1  0.9961758 0.003823273
+##   2: BEAM0000 19640003000109383 0.086218357  2.2644432     1  0.9577964 0.042192958
+##   3: BEAM0000 19640003200109384 0.299524575  1.8881851     1  0.8608801 0.139084846
+##   4: BEAM0000 19640003400109385 0.079557180  1.6625489     1  0.9609926 0.038997617
+##   5: BEAM0000 19640003600109386 0.018724868  1.5836401     1  0.9906789 0.009318732
+##   6: BEAM0000 19640003800109387 0.017654873  1.2458609     1  0.9912092 0.008788579
+
+```
 
 ## Get GEDI Plant Area Index (PAI) Profile (GEDI Level2B)
 ```r
@@ -156,7 +170,7 @@ head(level2BPAIProfile[,c("beam","shot_number","pai_z0_5m","pai_z5_10m")])
 ##   6: BEAM0000 19640003800109387 0.017654873 0.0000000000
 ```
 
-## Get GEDI Plant Area Volume Density (PAVD) Index (GEDI Level2B)
+## Get GEDI Plant Area Volume Density (PAVD) Profile (GEDI Level2B)
 ```r
 level2BPAVDProfile<-getLevel2BPAVDProfile(gedilevel2b)
 head(level2BPAVDProfile[,c("beam","shot_number","pavd_z0_5m","pavd_z5_10m")])
@@ -170,7 +184,7 @@ head(level2BPAVDProfile[,c("beam","shot_number","pavd_z0_5m","pavd_z5_10m")])
 ##   6: BEAM0000 19640003800109387 0.003530974 0.0017654872
 ```
 
-## Plot Plant Area Index (PAI) and Plant Area Volume Density (PAVD) 
+## Plot Plant Area Index (PAI) and Plant Area Volume Density (PAVD) Profiles 
 ```r
 #specify GEDI beam
 beam="BEAM0101"
@@ -184,20 +198,6 @@ gPAVDprofile<-plotPAVDProfile(level2BPAVDProfile, beam=beam, elev=TRUE)
 ```
 ![](https://github.com/carlos-alberto-silva/rGEDI/blob/master/readme/fig9.png)
 
-## Get GEDI Vegetation Profile Biophysical Variables (GEDI Level2B)
-```r
-level2BVPM<-getLevel2BVPM(gedilevel2b)
-head(level2BVPM[,c("beam","shot_number","pai","fhd_normal","omega","pgap_theta","cover")])
-
-##          beam       shot_number         pai fhd_normal omega pgap_theta       cover
-##   1: BEAM0000 19640002800109382 0.007661204  0.6365142     1  0.9961758 0.003823273
-##   2: BEAM0000 19640003000109383 0.086218357  2.2644432     1  0.9577964 0.042192958
-##   3: BEAM0000 19640003200109384 0.299524575  1.8881851     1  0.8608801 0.139084846
-##   4: BEAM0000 19640003400109385 0.079557180  1.6625489     1  0.9609926 0.038997617
-##   5: BEAM0000 19640003600109386 0.018724868  1.5836401     1  0.9906789 0.009318732
-##   6: BEAM0000 19640003800109387 0.017654873  1.2458609     1  0.9912092 0.008788579
-
-```
 # Clip GEDI data (h5 files; gedi.level1b, gedi.level2a and gedi.level2b objects)
 ```r
 ## Clip GEDI data by coordinates
@@ -508,4 +508,5 @@ University of Maryland and NASA Goddard Space Flight Center for developing GEDI 
 Brazilian National Council for Scientific and Technological Development (CNPq) for funding the project entitled "Mapping fuel load and simulation of fire behaviour and spread in the Cerrado biome using modeling and remote sensing technologies" and leaded by Prof. Dr. Carine Klauberg (carine_klauberg@hotmail.com) and
 Dr. Carlos Alberto Silva (carlos_engflorestal@outlook.com).
 
-**rGEDI package has been not developted by the GEDI team. The authors assumes no responsibility whatsoever for its use, and makes no guarantees, expressed or implied, about its quality, reliability, or any other characteristic.**
+# Disclaimer
+**rGEDI package has not been developted by the GEDI team. It comes with no guarantee, expressed or implied, and the authors hold no responsibility for its use and reliability of its outputs.**
