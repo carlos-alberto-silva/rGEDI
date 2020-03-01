@@ -85,7 +85,7 @@ clipLevel1BGeo = function(level1BGeo,xmin, xmax, ymin, ymax){
 #'
 #'@usage clipLevel1BGeoGeometry(level1BGeo, polygon_spdf, split_by)
 #'
-#'@param level1BGeo A GEDI Level1b object (output of \code{\link[rGEDI:readLevel1B]{readLevel1B}} function). A S4 object of class "gedi.level1b".
+#'@param level1BGeo A GEDI Level1b object (output of \code{\link[rGEDI:readLevel1B]{readLevel1B}} function). A S4 object of class "data.table".
 #'@param polygon_spdf Polygon. An object of class \code{\link[sp]{SpatialPolygonsDataFrame-class}},
 #'which can be loaded as an ESRI shapefile using \code{\link[raster:shapefile]{raster::shapefile()}} function in the \emph{raster} package.
 #'@param split_by Polygon id. If defined, GEDI data will be clipped by each polygon using the polygon id from table of attribute defined by the user

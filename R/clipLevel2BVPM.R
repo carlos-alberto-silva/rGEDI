@@ -7,7 +7,7 @@
 #'@usage clipLevel2BVPM(level2BVPM, xmin, xmax, ymin, ymax)
 #'
 #'
-#'@param level2BVPM A GEDI Level2B object (output of \code{\link[rGEDI:readLevel1B]{readLevel1B}} function). A S4 object of class "gedi.level2b".
+#'@param level2BVPM A GEDI Level2B object (output of \code{\link[rGEDI:readLevel1B]{readLevel1B}} function). A S4 object of class "data.table".
 #'@param xmin Numeric. West longitude (x) coordinate of bounding rectangle, in decimal degrees.
 #'@param xmax Numeric. East longitude (x) coordinate of bounding rectangle, in decimal degrees.
 #'@param ymin Numeric. South latitude (y) coordinate of bounding rectangle, in decimal degrees.

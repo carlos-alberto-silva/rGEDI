@@ -76,7 +76,7 @@ clipLevel2BPAIProfile = function(level2BPAIProfile,xmin, xmax, ymin, ymax){
 #'
 #'@usage clipLevel2BPAIProfileGeometry(level2BPAIProfile, polygon_spdf, split_by)
 #'
-#'@param level2BPAIProfile A GEDI Level2B object (output of \code{\link[rGEDI:getLevel2BPAIProfile]{getLevel2BPAIProfile}} function). A S4 object of class "gedi.level2b".
+#'@param level2BPAIProfile A GEDI Level2B object (output of \code{\link[rGEDI:getLevel2BPAIProfile]{getLevel2BPAIProfile}} function). A S4 object of class "data.table".
 #'@param polygon_spdf Polygon. An object of class \code{\link[sp]{SpatialPolygonsDataFrame-class}},
 #'which can be loaded as an ESRI shapefile using \code{\link[raster:shapefile]{raster::shapefile()}} function in the \emph{raster} package.
 #'@param split_by Polygon id. If defined, GEDI data will be clipped by each polygon using the polygon id from table of attribute defined by the user
@@ -120,7 +120,7 @@ clipLevel2BPAIProfile = function(level2BPAIProfile,xmin, xmax, ymin, ymax){
 #'# clip level2BPAIProfile by geometry
 #'level2b_clip_geometry <- clipLevel2BPAIProfileGeometry(
 #'                                                       level2BPAIProfile,
-#'                                                       polygon_spdf, 
+#'                                                       polygon_spdf,
 #'                                                       split_by="id")
 #'
 #'}

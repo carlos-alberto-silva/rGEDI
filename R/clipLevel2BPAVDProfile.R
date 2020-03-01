@@ -5,7 +5,7 @@
 #'
 #'@usage clipLevel2BPAVDProfile(level2BPAVDProfile, xmin, xmax, ymin, ymax)
 #'
-#'@param level2BPAVDProfile A GEDI Level2B object (output of \code{\link[rGEDI:getLevel2BPAVDProfile]{getLevel2BPAVDProfile}} function). A S4 object of class "gedi.level2b".
+#'@param level2BPAVDProfile A GEDI Level2B object (output of \code{\link[rGEDI:getLevel2BPAVDProfile]{getLevel2BPAVDProfile}} function). A S4 object of class "data.table".
 #'@param xmin Numeric. West longitude (x) coordinate of bounding rectangle, in decimal degrees.
 #'@param xmax Numeric. East longitude (x) coordinate of bounding rectangle, in decimal degrees.
 #'@param ymin Numeric. South latitude (y) coordinate of bounding rectangle, in decimal degrees.
