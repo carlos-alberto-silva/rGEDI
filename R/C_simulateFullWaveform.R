@@ -79,6 +79,9 @@
 #' ii) gediSimulator: https://bitbucket.org/StevenHancock/gedisimulator/src/master/
 #'
 #'@examples
+#'libsAvailable = require(lidR) && require(plot3D)
+#'if (libsAvailable) {
+#'
 #'# specify the path to ALS data
 #'lasfile_amazon <- system.file("extdata", "Amazon.las", package="rGEDI")
 #'lasfile_cerrado <- system.file("extdata", "Cerrado.las", package="rGEDI")
@@ -105,9 +108,6 @@
 #'
 #'# Plot ALS and GEDI simulated full-waveform
 #' 
-#'\dontrun{
-#'library(lidR)
-#'library(plot3D)
 #'par(mfrow=c(2,2), mar=c(4,4,0,0), oma=c(0,0,1,1),cex.axis = 1.2)
 #'scatter3D(
 #'          las_amazon@data$X,las_amazon@data$Y,las_amazon@data$Z,
@@ -130,7 +130,7 @@
 #'     xlab="Waveform Amplitude (%)", ylab="Elevation (m)", ylim=c(815,835))
 #'grid()
 #'}
-#' 
+#'  
 #' @import hdf5r
 #' @useDynLib rGEDI
 #' @export
