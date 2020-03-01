@@ -107,10 +107,12 @@
 #'# specify the path to ALS data
 #'lasfile_amazon <- system.file("extdata", "Amazon.las", package="rGEDI")
 #'lasfile_cerrado <- system.file("extdata", "Cerrado.las", package="rGEDI")
-#'
 #'# Reading and plot ALS file
-#'library(lidR)
-#'library(plot3D)
+#' #' 
+#'hasLibraries = require(lidR) && require(plot3D)
+#'if (hasLibraries) {
+#' 
+
 #'las_amazon<-readLAS(lasfile_amazon)
 #'las_cerrado<-readLAS(lasfile_cerrado)
 #'
@@ -136,6 +138,7 @@
 #'metrics<-rbind(wf_amazon_metrics,wf_cerrado_metrics)
 #'rownames(metrics)<-c("Amazon","Cerrado")
 #'head(metrics)
+#'}
 #'
 #' @useDynLib rGEDI
 #' @import methods
