@@ -75,33 +75,51 @@ plotPAVDProfile<-function(level2BPAVDProfile, beam="BEAM0101", elev=TRUE){
   df$value[df$value<0]<-0
   df$hids<-hids
   df<-df[df$value>0,]
-  dif<-(df$elev_lowestmode+df$height_bin0) - (df$hids+df$elev_lowestmode)
-  df<-df[dif>0,]
-  xp<-((df$rowids*60)-60)/1000
 
   if( elev==TRUE){
+    dif<-(df$elev_lowestmode+df$height_bin0) - (df$hids+df$elev_lowestmode)
+    df<-df[dif>0,]
+    xp<-((df$rowids*60)-60)/1000
+
     yp<-round(df$elev_lowestmode+df$hids)
     xsl<-((1:nrow(level2BPAVDProfile_sub)*60)-60)/1000
+    yl1<-round(level2BPAVDProfile_sub$height_bin0+level2BPAVDProfile_sub$elev_lowestmode)
+    yl2<-round(level2BPAVDProfile_sub$elev_lowestmode)
+
     gg <- ggplot2::ggplot()+
       geom_tile(aes(x=xp, y=yp,fill= df$value))+
-      geom_line(aes(x=xsl, y=round(level2BPAVDProfile_sub$height_bin0+level2BPAVDProfile_sub$elev_lowestmode)),color = "black") +
-      geom_line(aes(x=xsl, y=round(level2BPAVDProfile_sub$elev_lowestmode)),color = "black") +
       scale_fill_gradientn(colours = brewer.pal(n = 8, name = "Greens"))+
-      xlab("Distance Along Track (km)") + ylab("Elevation (m)") +
+      xlab("Distance Along Track (km)") + ylab("Elevation (m)")+
+      geom_line(mapping = aes(x = xsl,y=yl1, color = "Canopy \nTop Height (m)"))+#,size=1) +
+      geom_line(mapping = aes(x = xsl,y=yl2, color = "Ground \nElevation (m)"))+#,size=1) +
+      scale_color_manual(name="",values = c("forestgreen", "black"))+
+      theme(panel.border = element_rect(colour = "gray70", fill=NA, size=0.2))+
       labs(fill=expression(PAVD~(m^2/m^3)))+
-      theme(panel.border = element_rect(colour = "gray70", fill=NA, size=0.2))
-    print(gg)
+      theme(legend.key.height=unit(1, "cm"))
+
+      print(gg)
+
   } else {
-    yp<-round(df$hids)
-    xsl<-((1:nrow(level2BPAVDProfile_sub)*60)-60)/1000
+
+    dif<-df$height_bin0 - df$hids
+    df<-df[dif>0,]
+    xp<-((df$rowids*60)-60)/1000
+    yp<-df$hids
+
+    yl<-tapply(df$hids,df$rowids,max)+0.5
+    xl<-((unique(df$rowids)*60)-60)/1000
 
     #require(ggplot2)
     gg <- ggplot()+
       geom_tile(aes(x=xp, y=yp,fill= df$value))+
-      geom_line(aes(x=xsl, y=round(level2BPAVDProfile_sub$height_bin0)),color = "black") +
+      geom_line(mapping = aes(x = xl,y=yl, color = "Canopy \nTop Height (m)"))+#,size=1) +
       scale_fill_gradientn(colours = brewer.pal(n = 8, name = "Greens"))+
       xlab("Distance Along Track (km)") + ylab("Height (m)") +
+      theme(panel.border = element_rect(colour = "gray70", fill=NA, size=0.2))+
       labs(fill=expression(PAVD~(m^2/m^3)))+
+      theme(legend.key.height=unit(1, "cm"))+
+      scale_color_manual(name="",values = c("forestgreen", "black"))
+
       print(gg)
   }
   return(gg)

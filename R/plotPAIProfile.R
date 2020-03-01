@@ -4,7 +4,7 @@
 #'
 #'@param level2BPAIProfile A GEDI Level2B object (output of \code{\link[rGEDI:getLevel2BPAIProfile]{getLevel2BPAIProfile}} function). A S4 object of class "data.table".
 #'@param beam select GEDI beam. Default is "BEAM0101". See details section.
-#'@param elev if TRUE, elevation will be used for plotting the PAVD profile. Otherwise,
+#'@param elev if TRUE, elevation will be used for plotting the PAI profile. Otherwise,
 #'height will be used instead.
 #'
 #'@return Returns a ggplot object. See \code{\link[ggplot2:ggplot]{ggplot}}
@@ -48,12 +48,12 @@
 #'# Get Plant Area Volume Density profile
 #'level2BPAIProfile<-getLevel2BPAIProfile(level2b)
 #'
-#'# Plot Level2B PAVD Profile
+#'# Plot Level2B PAI Profile
 #'gprofile<-plotPAIProfile(level2BPAIProfile, beam="BEAM0101", elev=TRUE)
 #'
 #'
 #'}
-#' 
+#'
 #'@import ggplot2
 #'@importFrom ggplot2 aes element_rect geom_tile geom_line geom_line scale_fill_gradientn xlab ylab labs theme
 #'@importFrom RColorBrewer brewer.pal
@@ -67,7 +67,7 @@ plotPAIProfile<-function(level2BPAIProfile, beam="BEAM0101", elev=TRUE){
   level2BPAIProfile_sub$height_bin0[level2BPAIProfile_sub$height_bin0<0]<-0
 
   n0<-nrow(level2BPAIProfile_sub)
-  dft<-data.table::melt(level2BPAIProfile_sub[,c(2,6,8,9:38)], id.vars=c("shot_number","elev_lowestmode", "height_bin0"), variable.name="pavd", value.name="value")
+  dft<-data.table::melt(level2BPAIProfile_sub[,c(2,6,8,9:38)], id.vars=c("shot_number","elev_lowestmode", "height_bin0"), variable.name="pai", value.name="value")
   dft$rowids<-rep(1:n0,30)
   df <- as.data.frame(lapply(dft, rep, rep(5,nrow(dft))))
   n<-nrow(df)
@@ -79,34 +79,52 @@ plotPAIProfile<-function(level2BPAIProfile, beam="BEAM0101", elev=TRUE){
   df$value[df$value<0]<-0
   df$hids<-hids
   df<-df[df$value>0,]
-  dif<-(df$elev_lowestmode+df$height_bin0) - (df$hids+df$elev_lowestmode)
-  df<-df[dif>0,]
-  xp<-((df$rowids*60)-60)/1000
 
   if( elev==TRUE){
+    dif<-(df$elev_lowestmode+df$height_bin0) - (df$hids+df$elev_lowestmode)
+    df<-df[dif>0,]
+    xp<-((df$rowids*60)-60)/1000
+
     yp<-round(df$elev_lowestmode+df$hids)
     xsl<-((1:nrow(level2BPAIProfile_sub)*60)-60)/1000
+    yl1<-round(level2BPAIProfile_sub$height_bin0+level2BPAIProfile_sub$elev_lowestmode)
+    yl2<-round(level2BPAIProfile_sub$elev_lowestmode)
+
     gg <- ggplot2::ggplot()+
       geom_tile(aes(x=xp, y=yp,fill= df$value))+
-      geom_line(aes(x=xsl, y=round(level2BPAIProfile_sub$height_bin0+level2BPAIProfile_sub$elev_lowestmode)),color = "black") +
-      geom_line(aes(x=xsl, y=round(level2BPAIProfile_sub$elev_lowestmode)),color = "black") +
       scale_fill_gradientn(colours = brewer.pal(n = 8, name = "Greens"))+
-      xlab("Distance Along Track (km)") + ylab("Elevation (m)") +
+      xlab("Distance Along Track (km)") + ylab("Elevation (m)")+
+      geom_line(mapping = aes(x = xsl,y=yl1, color = "Canopy \nTop Height (m)"))+#,size=1) +
+      geom_line(mapping = aes(x = xsl,y=yl2, color = "Ground \nElevation (m)"))+#,size=1) +
+      scale_color_manual(name="",values = c("forestgreen", "black"))+
+      theme(panel.border = element_rect(colour = "gray70", fill=NA, size=0.2))+
       labs(fill=expression(PAI~(m^2/m^2)))+
-      theme(panel.border = element_rect(colour = "gray70", fill=NA, size=0.2))
+      theme(legend.key.height=unit(1, "cm"))
+
     print(gg)
+
   } else {
-    yp<-round(df$hids)
-    xsl<-((1:nrow(level2BPAIProfile_sub)*60)-60)/1000
+
+    dif<-df$height_bin0 - df$hids
+    df<-df[dif>0,]
+    xp<-((df$rowids*60)-60)/1000
+    yp<-df$hids
+
+    yl<-tapply(df$hids,df$rowids,max)+0.5
+    xl<-((unique(df$rowids)*60)-60)/1000
 
     #require(ggplot2)
     gg <- ggplot()+
       geom_tile(aes(x=xp, y=yp,fill= df$value))+
-      geom_line(aes(x=xsl, y=round(level2BPAIProfile_sub$height_bin0)),color = "black") +
+      geom_line(mapping = aes(x = xl,y=yl, color = "Canopy \nTop Height (m)"))+#,size=1) +
       scale_fill_gradientn(colours = brewer.pal(n = 8, name = "Greens"))+
       xlab("Distance Along Track (km)") + ylab("Height (m)") +
+      theme(panel.border = element_rect(colour = "gray70", fill=NA, size=0.2))+
       labs(fill=expression(PAI~(m^2/m^2)))+
-      print(gg)
+      theme(legend.key.height=unit(1, "cm"))+
+      scale_color_manual(name="",values = c("forestgreen", "black"))
+
+    print(gg)
   }
   return(gg)
 }
