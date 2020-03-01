@@ -19,6 +19,7 @@ addons:
       - libhdf5-serial-dev
       - libgeotiff-dev
       - libgsl-dev
+      - libudunits2-dev
 
 
   homebrew:
@@ -28,6 +29,7 @@ addons:
       - libgeotiff
       - gsl
       - hdf5
+      - ldunits
 
 # Code coverage
 r_packages:
