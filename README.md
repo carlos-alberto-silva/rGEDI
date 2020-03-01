@@ -171,6 +171,20 @@ head(level2BPAVDProfile[,c("beam","shot_number","pavd_z0_5m","pavd_z5_10m")])
 ##   6: BEAM0000 19640003800109387 0.003530974 0.0017654872
 ```
 
+## Plot Plant Area Index (PAI) and Plant Area Volume Density (PAVD) 
+```r
+#specify GEDI beam
+beam="BEAM0101"
+
+# Plot Level2B PAI Profile
+gprofile<-plotPAVDProfile(level2BPAVDProfile, beam="BEAM0101", elev=TRUE)
+
+# Plot Level2B PAVD Profile
+gprofile<-plotPAVDProfile(level2BPAVDProfile, beam="BEAM0101", elev=TRUE)
+
+```
+![](https://github.com/carlos-alberto-silva/rGEDI/blob/master/readme/fig9.png)
+
 ## Get GEDI Vegetation Profile Biophysical Variables (GEDI Level2B)
 ```r
 level2BVPM<-getLevel2BVPM(gedilevel2b)
