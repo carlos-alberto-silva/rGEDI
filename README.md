@@ -1,5 +1,7 @@
 ![](https://github.com/carlos-alberto-silva/rGEDI/blob/master/readme/fig1.png)<br/>
 
+[![Build Status](https://travis-ci.com/carlos-alberto-silva/rGEDI.svg)](https://travis-ci.com/carlos-alberto-silva/rGEDI)
+
 ![Github](https://img.shields.io/badge/CRAN-0.0.1-green.svg)
 ![Github](https://img.shields.io/badge/Github-0.0.1-green.svg)
 [![Rdoc](http://www.rdocumentation.org/badges/version/rGEDI)](http://www.rdocumentation.org/packages/ForestGapR)
@@ -7,12 +9,11 @@
 
 ![Downloads](https://cranlogs.r-pkg.org/badges/grand-total/rGEDI)
 
-**rGEDI: An R Package for NASA's Global Ecosystem Dynamics Investigation (GEDI) data 
-downloading, visualizing and processing.**
+**rGEDI: An R Package for NASA's Global Ecosystem Dynamics Investigation (GEDI) data downloading, visualizing and processing.**
 
 Authors: Carlos A. Silva, Caio Hamamura, Ruben Valbuena, Steve Hancock, Adrian Cardil, Eben Broadbent, Danilo R. A. de Almeida, Celso H. L. Silva Junior and Carine Klauberg  
 
-The rGEDI package provides functions for i) downloading, ii) visualizing, iii) clipping, iv) exporting, iv) Gridding and v) Simulating GEDI data.
+The rGEDI package provides functions for i) downloading, ii) visualizing, iii) clipping, iv) gridding, iv) simulating and v) exporting GEDI data.
 
 # Getting Started
 
@@ -177,10 +178,10 @@ head(level2BPAVDProfile[,c("beam","shot_number","pavd_z0_5m","pavd_z5_10m")])
 beam="BEAM0101"
 
 # Plot Level2B PAI Profile
-gprofile<-plotPAVDProfile(level2BPAVDProfile, beam="BEAM0101", elev=TRUE)
+gPAIprofile<-plotPAIProfile(level2BPAVDProfile, beam="BEAM0101", elev=TRUE)
 
 # Plot Level2B PAVD Profile
-gprofile<-plotPAVDProfile(level2BPAVDProfile, beam="BEAM0101", elev=TRUE)
+gPAVDprofile<-plotPAVDProfile(level2BPAVDProfile, beam="BEAM0101", elev=TRUE)
 
 ```
 ![](https://github.com/carlos-alberto-silva/rGEDI/blob/master/readme/fig9.png)
