@@ -156,7 +156,7 @@ head(level2BVPM[,c("beam","shot_number","pai","fhd_normal","omega","pgap_theta",
 
 ```
 
-## Get GEDI Plant Area Index (PAI) Profile (GEDI Level2B)
+## Get Plant Area Index (PAI) and Plant Area Volume Density (PAVD) Profiles (GEDI Level2B)
 ```r
 level2BPAIProfile<-getLevel2BPAIProfile(gedilevel2b)
 head(level2BPAIProfile[,c("beam","shot_number","pai_z0_5m","pai_z5_10m")])
@@ -168,10 +168,7 @@ head(level2BPAIProfile[,c("beam","shot_number","pai_z0_5m","pai_z5_10m")])
 ##   4: BEAM0000 19640003400109385 0.079557180 0.0004457365
 ##   5: BEAM0000 19640003600109386 0.018724868 0.0000000000
 ##   6: BEAM0000 19640003800109387 0.017654873 0.0000000000
-```
 
-## Get GEDI Plant Area Volume Density (PAVD) Profile (GEDI Level2B)
-```r
 level2BPAVDProfile<-getLevel2BPAVDProfile(gedilevel2b)
 head(level2BPAVDProfile[,c("beam","shot_number","pavd_z0_5m","pavd_z5_10m")])
 
