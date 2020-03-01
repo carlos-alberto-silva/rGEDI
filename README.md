@@ -506,4 +506,4 @@ Brazilian National Council for Scientific and Technological Development (CNPq) f
 Dr. Carlos Alberto Silva (carlos_engflorestal@outlook.com).
 
 # Disclaimer
-**rGEDI package has not been developted by the GEDI team. It comes with no guarantee, expressed or implied, and the authors hold no responsibility for its use and reliability of its outputs.**
+**rGEDI package has not been developted by the GEDI team. It comes with no guarantee, expressed or implied, and the authors hold no responsibility for its use or reliability of its outputs.**
