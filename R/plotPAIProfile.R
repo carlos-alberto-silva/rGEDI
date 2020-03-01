@@ -55,6 +55,10 @@
 #'
 #'
 #'}
+#' 
+#'@import ggplot2
+#'@importFrom ggplot2 aes element_rect geom_tile geom_line geom_line scale_fill_gradientn xlab ylab labs theme
+#'@importFrom RColorBrewer brewer.pal
 #'@export
 plotPAIProfile<-function(level2BPAIProfile, beam="BEAM0101", elev=TRUE){
   #require(ggplot2)
@@ -65,7 +69,7 @@ plotPAIProfile<-function(level2BPAIProfile, beam="BEAM0101", elev=TRUE){
   level2BPAIProfile_sub$height_bin0[level2BPAIProfile_sub$height_bin0<0]<-0
 
   n0<-nrow(level2BPAIProfile_sub)
-  dft<-reshape2::melt(level2BPAIProfile_sub[,c(2,6,8,9:38)], id.vars=c("shot_number","elev_lowestmode", "height_bin0"), variable.name="pavd", value.name="value")
+  dft<-data.table::melt(level2BPAIProfile_sub[,c(2,6,8,9:38)], id.vars=c("shot_number","elev_lowestmode", "height_bin0"), variable.name="pavd", value.name="value")
   dft$rowids<-rep(1:n0,30)
   df <- as.data.frame(lapply(dft, rep, rep(5,nrow(dft))))
   n<-nrow(df)

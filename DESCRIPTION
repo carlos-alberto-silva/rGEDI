@@ -23,10 +23,12 @@ Imports:
   data.table,
   fs,
   getPass,
+  ggplot2,
+  hdf5r,
   httr,
   lazyeval,
-  hdf5r,
   raster,
+  RColorBrewer,
   rgeos
 Suggests:
   leaflet,
