@@ -155,8 +155,8 @@ setMethod("plot", signature("gedi.fullwaveform", y = "missing"), function(x,rela
 #'lasfile_cerrado <- system.file("extdata", "Cerrado.las", package="rGEDI")
 #'
 #'# Reading and plot ALS file
-#'library(lidR)
-#'require(plot3D)
+#'libsAvailable = require(lidR) && require(plot3D)
+#'if (libsAvailable) {
 #'las_amazon<-readLAS(lasfile_amazon)
 #'las_cerrado<-readLAS(lasfile_cerrado)
 #'
@@ -207,7 +207,7 @@ setMethod("plot", signature("gedi.fullwaveform", y = "missing"), function(x,rela
 #'plot(wf_cerrado, relative=TRUE, polygon=TRUE, type="l", lwd=2, col="green",
 #'     xlab="Waveform Amplitude (%)", ylab="Elevation (m)", ylim=c(815,835))
 #'grid()
-#'
+#'}
 #' @export
 #' @method plot gedi.level1bSim
 #' @rdname plot2
