@@ -1,0 +1,9 @@
+#!/bin/sh
+for f in ./config.*; do
+	rm -f $f
+done
+if [ -e scr/Makevars ]; then
+	rm -f src/Makevars
+fi
+
+exit 0
