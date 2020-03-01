@@ -8,7 +8,7 @@
 #'
 #'@return S4 object of class "gedi.level1b".
 #'
-#'@seealso \code{\link[hdf5r;H5File-class]{hdf5rfile}} in the \emph{hdf5r} package and
+#'@seealso \code{\link[hdf5r:H5File-class]{hdf5r::H5File}} in the \emph{hdf5r} package and
 #'https://lpdaac.usgs.gov/products/gedi01_bv001/
 #'
 #'@examples

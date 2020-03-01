@@ -76,7 +76,7 @@ clipLevel2A = function(level2a, xmin, xmax, ymin, ymax, output=""){
 #'
 #'@param level2a A GEDI Level2A object (output of \code{\link[rGEDI:readLevel2A]{readLevel2A}} function). A S4 object of class "gedi.level2a".
 #'@param polygon_spdf Polygon. An object of class \code{\link[sp]{SpatialPolygonsDataFrame-class}},
-#'which can be loaded as an ESRI shapefile using \code{\link[rgdal:readOGR]{readOGR}} function in the \emph{rgdal} package.
+#'which can be loaded as an ESRI shapefile using \code{\link[raster:shapefile]{raster::shapefile()}} function in the \emph{raster} package.
 #'@param output optional character path where to save the new h5file. Default "" (temporary file).
 #'@param split_by Polygon id. If defined, GEDI data will be clipped by each polygon using the polygon id from table of attribute defined by the user
 #'
@@ -110,8 +110,8 @@ clipLevel2A = function(level2a, xmin, xmax, ymin, ymax, output=""){
 #'polygon_filepath <- system.file("extdata", "stands_cerrado.shp", package="rGEDI")
 #'
 #'# Reading shapefile as SpatialPolygonsDataFrame object
-#'library(rgdal)
-#'polygon_spdf<-readOGR(polygons_filepath)
+#'library(raster)
+#'polygon_spdf<-shapefile(polygons_filepath)
 #'
 #'level2a_clip <- clipLevel2AGeometry(level2a, polygon_spdf)
 #'}
