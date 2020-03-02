@@ -28,8 +28,7 @@ Imports:
   httr,
   lazyeval,
   raster,
-  RColorBrewer,
-  rgeos
+  RColorBrewer
 Suggests:
   leaflet,
   lidR,
