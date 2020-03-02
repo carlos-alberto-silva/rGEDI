@@ -185,15 +185,18 @@ ycenter_cerrado = mean(las_cerrado@bbox[2,])
 # Simulating GEDI full-waveform
 wf_amazon<-gediWFSimulator(
                           input=lasfile_amazon,
-                          output=paste0(getwd(),"//gediWF_amazon_simulation.h5"),
+                          output=paste0(getwd(),"/gediWF_amazon_simulation.h5"),
                           coords = c(xcenter_amazon, ycenter_amazon))
 wf_cerrado<-gediWFSimulator(input=lasfile_cerrado,
-                           output=paste0(getwd(),"//gediWF_cerrado_simulation.h5"),
+                           output=paste0(getwd(),"/gediWF_cerrado_simulation.h5"),
                            coords = c(xcenter_cerrado, ycenter_cerrado))
 
 # Extracting GEDI feull-waveform derived metrics
 wf_amazon_metrics<-gediWFMetrics(input=wf_amazon,outRoot=getwd())
 wf_cerrado_metrics<-gediWFMetrics(input=wf_cerrado,outRoot=getwd())
+
+wf_amazon@h5$close()
+wf_cerrado@h5$close()
 
 metrics<-rbind(wf_amazon_metrics,wf_cerrado_metrics)
 rownames(metrics)<-c("Amazon","Cerrado")

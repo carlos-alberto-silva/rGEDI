@@ -147,6 +147,9 @@ scatter3D(
 plot(wf_cerrado, relative=TRUE, polygon=TRUE, type="l", lwd=2, col="green",
     xlab="Waveform Amplitude (\%)", ylab="Elevation (m)", ylim=c(815,835))
 grid()
+
+wf_amazon@h5$close_all()
+wf_cerrado@h5$close_all()
 }
  
 }
