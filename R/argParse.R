@@ -67,7 +67,6 @@ inputOrInList = function(input) {
     fileHandle = file(inList, "w")
     writeLines(input, fileHandle)
     close(fileHandle)
-    inFile = fileHandle
     return (list(NULL, inList))
   }
   return (list(input, NULL))
