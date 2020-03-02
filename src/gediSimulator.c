@@ -128,7 +128,7 @@ SEXP C_gediSimulator(
 
     gediRat(argc, argv);
 
-    for (int i = 0; i++; i < argc) {
+    for (int i = 0; i < argc; i++) {
         free(argv[i]);
     }
 
