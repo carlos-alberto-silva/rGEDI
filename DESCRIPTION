@@ -33,4 +33,10 @@ Suggests:
   leaflet,
   lidR,
   plot3D
+SystemRequirements: 
+  GDAL >= 1.11.4,
+  GNU Scientific Library >= 2.1,
+  HDF5 (>= 1.8.13),
+  libgeotiff (>= 1.4.0)
+NeedsCompilation: yes
 RoxygenNote: 7.0.2
