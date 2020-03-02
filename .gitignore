@@ -16,3 +16,5 @@ src/build
 man
 NAMESPACE
 rGEDI.Rcheck
+*.log
+rGEDI*.tar.gz
