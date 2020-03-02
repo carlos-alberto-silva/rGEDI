@@ -67,9 +67,9 @@ PKG_LIBS += \
 all: winlibs deps
 
 winlibs:
-	Rscript.exe "../tools/winlibs.R" $(VERSION)
+	"$(R_HOME)/bin/Rscript" "../tools/winlibs.R" $(VERSION)
 
 deps:
-	Rscript.exe ../tools/deps.R
+	"$(R_HOME)/bin/Rscript" "../tools/deps.R"
 
 .PHONY: winlibs deps
