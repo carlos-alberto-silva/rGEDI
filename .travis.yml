@@ -48,3 +48,7 @@ before_install:
 script:
 - R CMD build .
 - R CMD check *tar.gz --as-cran
+
+after_script:
+- cat /home/travis/build/carlos-alberto-silva/rGEDI/rGEDI.Rcheck/00check.log
+- cat /home/travis/build/carlos-alberto-silva/rGEDI/rGEDI.Rcheck/00install.out

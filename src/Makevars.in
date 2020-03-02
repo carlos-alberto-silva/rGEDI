@@ -41,6 +41,6 @@ OBJECTS = $(src:.c=.o)
 all: deps
 
 deps:
-	"$(R_HOME)/bin/Rscript"Rscript ../tools/deps.R
+	"$(R_HOME)/bin/Rscript" ../tools/deps.R
 
 .PHONY: deps clean
