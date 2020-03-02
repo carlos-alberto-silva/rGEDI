@@ -15,3 +15,4 @@ src/cmpfit-1.2
 src/build
 man
 NAMESPACE
+rGEDI.Rcheck
