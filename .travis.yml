@@ -14,7 +14,6 @@ addons:
     packages:
       - ccache
       - libgdal1-dev
-      - libproj-dev
       - libhdf5-serial-dev
       - libgeotiff-dev
       - libgsl-dev
@@ -25,7 +24,6 @@ addons:
   homebrew:
     packages:
       - ccache
-      - geos
       - gdal
       - libgeotiff
       - gsl
