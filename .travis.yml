@@ -50,3 +50,8 @@ script:
 after_script:
 - cat /home/travis/build/carlos-alberto-silva/rGEDI/rGEDI.Rcheck/00check.log
 - cat /home/travis/build/carlos-alberto-silva/rGEDI/rGEDI.Rcheck/00install.out
+
+# safelist
+branches:
+  only:
+  - master
