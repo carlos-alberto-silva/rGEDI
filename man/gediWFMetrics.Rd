@@ -24,7 +24,7 @@ gediWFMetrics(input, outRoot, writeFit = FALSE, writeGauss = FALSE,
   rhoC = 0.57, pSigma = NULL, gold = FALSE, deconTol = NULL)
 }
 \arguments{
-\item{input}{name. waveform  input filename}
+\item{input}{\code{\link[rGEDI:gedi.level1bSim-class]{gedi.level1bSim}} (may be a list of objects). Simulated waveform input object(s).}
 
 \item{outRoot}{name. output filename root}
 
@@ -192,8 +192,8 @@ wf_cerrado<-gediWFSimulator(input=lasfile_cerrado,
                            coords = c(xcenter_cerrado, ycenter_cerrado))
 
 # Extracting GEDI feull-waveform derived metrics
-wf_amazon_metrics<-gediWFMetrics(input=wf_amazon@h5$filename,outRoot=getwd())
-wf_cerrado_metrics<-gediWFMetrics(input=wf_cerrado@h5$filename,outRoot=getwd())
+wf_amazon_metrics<-gediWFMetrics(input=wf_amazon,outRoot=getwd())
+wf_cerrado_metrics<-gediWFMetrics(input=wf_cerrado,outRoot=getwd())
 
 metrics<-rbind(wf_amazon_metrics,wf_cerrado_metrics)
 rownames(metrics)<-c("Amazon","Cerrado")
