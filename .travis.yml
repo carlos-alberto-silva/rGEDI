@@ -13,17 +13,18 @@ addons:
   apt:
     packages:
       - ccache
-      - gdal-bin
       - libgdal1-dev
       - libproj-dev
       - libhdf5-serial-dev
       - libgeotiff-dev
       - libgsl-dev
       - libudunits2-dev
-
+      - libglu1-mesa-dev
+      - freeglut3-dev
 
   homebrew:
     packages:
+      - ccache
       - geos
       - gdal
       - libgeotiff
