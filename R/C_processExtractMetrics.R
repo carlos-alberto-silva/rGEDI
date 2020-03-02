@@ -3,7 +3,7 @@
 #' @description GEDI full waveform data processing and metrics extraction
 #'
 #! \bold{Input output}
-#' @param input name. waveform  input filename
+#' @param input \code{\link[rGEDI:gedi.level1bSim-class]{gedi.level1bSim}} (may be a list of objects). Simulated waveform input object(s).
 #' @param outRoot name. output filename root
 # @param inList list. input file list for multiple files
 #' @param writeFit write fitted waveform
@@ -132,8 +132,8 @@
 #'                            coords = c(xcenter_cerrado, ycenter_cerrado))
 #'
 #'# Extracting GEDI feull-waveform derived metrics
-#'wf_amazon_metrics<-gediWFMetrics(input=wf_amazon@h5$filename,outRoot=getwd())
-#'wf_cerrado_metrics<-gediWFMetrics(input=wf_cerrado@h5$filename,outRoot=getwd())
+#'wf_amazon_metrics<-gediWFMetrics(input=wf_amazon,outRoot=getwd())
+#'wf_cerrado_metrics<-gediWFMetrics(input=wf_cerrado,outRoot=getwd())
 #'
 #'metrics<-rbind(wf_amazon_metrics,wf_cerrado_metrics)
 #'rownames(metrics)<-c("Amazon","Cerrado")
@@ -224,8 +224,8 @@ gediWFMetrics = function(
   ground = FALSE
 
   stopifnotMessage(
-    "Input file don't exist"=all(file.exists(input)),
-    "Input file does not have .h5 extension"=all(fs::path_ext(input) == "h5"),
+    "Input file is not gedi.level1bSim or list"=class(input) == "gedi.level1bSim" || 
+                                                      all(sapply(input, class) == "gedi.level1bSim"),
     "outRoot is not a valida path!"=checkParentDir(outRoot, optional=FALSE),
     "writeFit is invalid!"=checkLogical(writeFit),
     "writeGauss is invalid!"=checkLogical(writeGauss),
@@ -292,7 +292,22 @@ gediWFMetrics = function(
     "deconTol is invalid!"=checkNumeric(deconTol)
   )
 
-  inputInList = inputOrInList(input)
+  inputInList = list(NULL, NULL)
+  if (class(input)=="list") {
+    files = sapply(input, function(x) {
+      x@h5$close_all()
+      return (x@h5$filename)
+    })
+    inList = tempfile(fileext=".txt")
+    fileHandle = file(inList, "w")
+    writeLines(files, fileHandle)
+    close(fileHandle)
+    inputInList[[2]] = inList
+  } else {
+    input@h5$close_all()
+    inputInList[[1]] = input@h5$filename
+  }
+  
 
   res = .Call("C_gediMetrics",
               # Input output

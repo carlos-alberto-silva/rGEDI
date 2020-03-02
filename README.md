@@ -470,8 +470,8 @@ dev.off()
 
 # Extracting GEDI full-waveform derived metrics
 ```
-wf_amazon_metrics<-gediWFMetrics(input=wf_amazon@h5$filename,outRoot=getwd())
-wf_cerrado_metrics<-gediWFMetrics(input=wf_cerrado@h5$filename,outRoot=getwd())
+wf_amazon_metrics<-gediWFMetrics(input=wf_amazon,outRoot=getwd())
+wf_cerrado_metrics<-gediWFMetrics(input=wf_cerrado,outRoot=getwd())
 
 metrics<-rbind(wf_amazon_metrics,wf_cerrado_metrics)
 rownames(metrics)<-c("Amazon","Cerrado")
