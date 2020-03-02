@@ -1,5 +1,7 @@
 ## Process this file with autoconf to produce a configure script.
 m4_include([m4/gsl.m4])
+m4_include([m4/m4_ax_lib_gdal.m4])
+
 
 # The version set here will propagate to other files from here
 AC_INIT([gedisimulator], 0.0.1)
@@ -11,13 +13,17 @@ AC_PROG_CC
 ##################
 ## GSL
 ##################
-AX_PATH_GSL()
+AX_PATH_GSL(0.1,,
+	    AC_MSG_ERROR(could not find GSL:
+			 Debian: sudo apt install libgsl-dev
+			 RPM-based: sudo yum install gsl-devel
+			 MacOS: brew install gsl))
 
 
 ##################
 ## GDAL
 ##################
-AX_LIB_GDAL()
+AX_LIB_GDAL2()
 
 
 ##################

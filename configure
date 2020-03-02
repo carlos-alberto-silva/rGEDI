@@ -2935,7 +2935,7 @@ $as_echo "no" >&6; }
 fi
 
 
-  min_gsl_version=0.2.5
+  min_gsl_version=0.1
   { $as_echo "$as_me:${as_lineno-$LINENO}: checking for GSL - version >= $min_gsl_version" >&5
 $as_echo_n "checking for GSL - version >= $min_gsl_version... " >&6; }
   no_gsl=""
@@ -3099,7 +3099,10 @@ rm -f core conftest.err conftest.$ac_objext \
      fi
 #     GSL_CFLAGS=""
 #     GSL_LIBS=""
-     :
+     as_fn_error $? "could not find GSL:
+			 Debian: sudo apt install libgsl-dev
+			 RPM-based: sudo yum install gsl-devel
+			 MacOS: brew install gsl" "$LINENO" 5
   fi
 
 
@@ -3207,7 +3210,8 @@ fi
 fi
 
     if test ! -x "$GDAL_CONFIG"; then
-        as_fn_error $? "gdal-config does not exist or it is not an executable file" "$LINENO" 5
+        { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: gdal-config does not exist or it is not an executable file" >&5
+$as_echo "$as_me: WARNING: gdal-config does not exist or it is not an executable file" >&2;}
             GDAL_CONFIG="no"
             found_gdal="no"
     fi
@@ -3290,8 +3294,16 @@ $as_echo "yes" >&6; }
         else
             { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
-	    as_fn_error $? "GDAL $GDAL_VERSION found, but required version is $gdal_version_req" "$LINENO" 5
+            { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: GDAL $GDAL_VERSION found, but required version is $gdal_version_req" >&5
+$as_echo "$as_me: WARNING: GDAL $GDAL_VERSION found, but required version is $gdal_version_req" >&2;}
         fi
+    fi
+
+    if test "$found_gdal" = "no"; then
+        as_fn_error $? "GDAL was not found:
+	Debian: sudo apt install libgdal-dev
+	Fedora: sudo yum install gdal-devel
+	MacOS: sudo brew install gdal" "$LINENO" 5
     fi
 
 
