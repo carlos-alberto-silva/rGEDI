@@ -30,9 +30,11 @@ Imports:
   raster,
   RColorBrewer
 Suggests:
+  knitr,
   leaflet,
   lidR,
-  plot3D
+  plot3D,
+  rmarkdown
 SystemRequirements: 
   GDAL >= 1.11.4,
   GNU Scientific Library >= 2.1,
@@ -40,3 +42,4 @@ SystemRequirements:
   libgeotiff (>= 1.4.0)
 NeedsCompilation: yes
 RoxygenNote: 7.0.2
+VignetteBuilder: knitr
