@@ -91,7 +91,7 @@ polyStatsLevel2BVPM = function(level2BVPM, func, id = NULL)
   call<- lazyeval::as_call(func)
 
   if ( is.null(id)) {
-    metrics   <- with(level2BVPM[, c(eval(call))])
+    metrics   <- with(level2BVPM, level2BVPM[, c(eval(call))])
     metrics<-data.table::data.table(metrics)
     if (ncol(metrics) < 2) {
       colnames(metrics)<-paste0(call)[1]

@@ -98,7 +98,7 @@ polyStatsLevel2AM = function(level2AM, func, id = NULL)
       colnames(metrics)<-paste0(call)[1]
     }
   } else {
-    metrics   <- with(level2AM[, c(eval(call)), by = id])
+    metrics   <- with(level2AM, level2AM[, c(eval(call)), by = id])
     if (ncol(metrics) < 3) {
       colnames(metrics)[2]<-paste0(call)[1]
     }
