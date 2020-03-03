@@ -28,7 +28,7 @@ addons:
       - libgeotiff
       - gsl
       - hdf5
-      - ldunits
+      - udunits
       - llvm
 
 # Code coverage
