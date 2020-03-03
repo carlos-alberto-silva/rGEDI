@@ -108,10 +108,10 @@
 #'lasfile_amazon <- system.file("extdata", "Amazon.las", package="rGEDI")
 #'lasfile_cerrado <- system.file("extdata", "Cerrado.las", package="rGEDI")
 #'# Reading and plot ALS file
-#' #' 
+#' #'
 #'hasLibraries = require(lidR) && require(plot3D)
 #'if (hasLibraries) {
-#' 
+#'
 
 #'las_amazon<-readLAS(lasfile_amazon)
 #'las_cerrado<-readLAS(lasfile_cerrado)
@@ -130,14 +130,14 @@
 #'wf_cerrado<-gediWFSimulator(input=lasfile_cerrado,
 #'                            output=paste0(getwd(),"/gediWF_cerrado_simulation.h5"),
 #'                            coords = c(xcenter_cerrado, ycenter_cerrado))
-#' 
+#'
 #'# Extracting GEDI feull-waveform derived metrics
 #'wf_amazon_metrics<-gediWFMetrics(input=wf_amazon,outRoot=getwd())
 #'wf_cerrado_metrics<-gediWFMetrics(input=wf_cerrado,outRoot=getwd())
 #'
 #'wf_amazon@h5$close()
 #'wf_cerrado@h5$close()
-#' 
+#'
 #'metrics<-rbind(wf_amazon_metrics,wf_cerrado_metrics)
 #'rownames(metrics)<-c("Amazon","Cerrado")
 #'head(metrics)
@@ -227,7 +227,7 @@ gediWFMetrics = function(
   ground = FALSE
 
   stopifnotMessage(
-    "Input file is not gedi.level1bSim or list"=class(input) == "gedi.level1bSim" || 
+    "Input file is not gedi.level1bSim or list"=class(input) == "gedi.level1bSim" ||
                                                       all(sapply(input, class) == "gedi.level1bSim"),
     "outRoot is not a valida path!"=checkParentDir(outRoot, optional=FALSE),
     "writeFit is invalid!"=checkLogical(writeFit),
@@ -310,7 +310,7 @@ gediWFMetrics = function(
     input@h5$close_all()
     inputInList[[1]] = input@h5$filename
   }
-  
+
 
   res = .Call("C_gediMetrics",
               # Input output
@@ -409,6 +409,14 @@ gediWFMetrics = function(
     if (ncol(metricData) == length(header)) {
       names(metricData) = header
     }
+  }
+
+  if (class(input)=="list") {
+    files = sapply(input, function(x) {
+      x$h5 = hdf5r::H5File$new(x$h5$filename, mode="r+")
+    })
+  } else {
+    input$h5 = hdf5r::H5File$new(input$h5$filename, mode="r+")
   }
 
   return (metricData)
