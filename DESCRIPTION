@@ -32,9 +32,12 @@ Imports:
 Suggests:
   knitr,
   leaflet,
+  leafsync,
   lidR,
   plot3D,
-  rmarkdown
+  rasterVis,
+  rmarkdown,
+  viridis
 SystemRequirements: 
   GDAL >= 1.11.4,
   GNU Scientific Library >= 2.1,
