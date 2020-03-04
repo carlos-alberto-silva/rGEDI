@@ -73,7 +73,7 @@ gedilevel2b<-readLevel2B(level2Bpath = paste0(outdir,"/GEDI02_B_2019108080338_O0
  head(level1bGeo)
 ```
 
-```{r, fig.width = 400px, fig.align = "right"}
+```{r, fig.width = "400px", fig.align = "right"}
  library(leaflet)
  library(leafsync)
 
@@ -273,7 +273,7 @@ head(cover_metrics_st)
 ```
 
 ## Compute Grids with descriptive statistics of GEDI-derived Elevation and Height Metrics (Level2A)
-```{r, fig.width = 300px, fig.align = "right"}
+```{r, fig.width = "300px", fig.align = "right"}
 # Computing the serie of statistics of GEDI RH100 metric
 rh100metrics<-gridStatsLevel2AM(level2AM = level2AM, func=mySetOfMetrics(rh100), res=0.005)
 
@@ -302,7 +302,7 @@ levelplot(rh100metrics,
 ```
 
 ## Compute Grids with descriptive statistics of GEDI-derived Canopy Cover and Vertical Profile Metrics (Level2B)
-```{r, fig.width = 300px, fig.align = "right"}
+```{r, fig.width = "300px", fig.align = "right"}
 # Computing the max of the Total Plant Area Index only
 level2BVPM$pai[level2BVPM$pai==-9999]<-NA # assing NA to -9999
 pai_metrics<-gridStatsLevel2BVPM(level2BVPM = level2BVPM, func=mySetOfMetrics(pai), res=0.0005)
