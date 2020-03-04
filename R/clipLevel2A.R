@@ -80,7 +80,7 @@ clipLevel2A = function(level2a, xmin, xmax, ymin, ymax, output=""){
 #'@param output optional character path where to save the new h5file. Default "" (temporary file).
 #'@param split_by Polygon id. If defined, GEDI data will be clipped by each polygon using the polygon id from table of attribute defined by the user
 #'
-#'@return Returns a S4 object of class "gedi.level2a".
+#'@return Returns a list of S4 object of class "gedi.level2a".
 #'
 #'@seealso https://lpdaac.usgs.gov/products/gedi02_av001/
 #'
@@ -199,7 +199,7 @@ clipByMask2A = function(level2a, masks, output = "") {
   for (group in all_groups) {
     beam_id = strsplit(group, "/")[[1]][1]
 
-    if (group %in% names(groups_have_value) && ! groups_have_value[group])  {
+    if (!group %in% names(groups_have_value) || ! groups_have_value[group])  {
       n_datasets = length(hdf5r::list.datasets(level2a@h5[[group]]))
       progress = progress + n_datasets
       utils::setTxtProgressBar(pb, progress)
