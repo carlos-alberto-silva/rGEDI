@@ -5,7 +5,7 @@
 [![Rdoc](http://www.rdocumentation.org/badges/version/rGEDI)](http://www.rdocumentation.org/packages/rGEDI)
 ![licence](https://img.shields.io/badge/Licence-GPL--3-blue.svg) 
 ![Downloads](https://cranlogs.r-pkg.org/badges/grand-total/rGEDI)
-[![Build Status](https://travis-ci.com/carlos-alberto-silva/rGEDI.svg)](https://travis-ci.com/carlos-alberto-silva/rGEDI)
+[![Build Status](https://travis-ci.com/carlos-alberto-silva/rGEDI.svg?token=Jqizwyc6gBxNafNccTdU&branch=master)](https://travis-ci.com/carlos-alberto-silva/rGEDI)
 
 **rGEDI: An R Package for NASA's Global Ecosystem Dynamics Investigation (GEDI) data downloading, visualizing and processing.**
 
