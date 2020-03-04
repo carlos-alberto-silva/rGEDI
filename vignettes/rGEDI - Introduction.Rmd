@@ -6,6 +6,10 @@ vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   \usepackage[utf8]{inputenc}
 ---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(message = FALSE)
+```
+
 The rGEDI package provides functions for i) downloading, ii) visualizing, iii) clipping, iv) gridding, iv) simulating and v) exporting GEDI data.
 
 # Getting Started
@@ -73,7 +77,7 @@ gedilevel2b<-readLevel2B(level2Bpath = paste0(outdir,"/GEDI02_B_2019108080338_O0
  head(level1bGeo)
 ```
 
-```{r, fig.width = "400px", fig.align = "right"}
+```{r, fig.width = 400/90, fig.align = "right"}
  library(leaflet)
  library(leafsync)
 
@@ -148,19 +152,23 @@ gPAVDprofile<-plotPAVDProfile(level2BPAVDProfile, beam=beam, elev=TRUE)
 ```
 
 # Clip GEDI data (h5 files; gedi.level1b, gedi.level2a and gedi.level2b objects)
-```{r, cache = TRUE, eval = FALSE}
+```{r}
 ## Clip GEDI data by coordinates
 # Study area boundary box
 xmin = -44.15036
 xmax = -44.10066
 ymin = -13.75831
 ymax = -13.71244
+```
 
+```{r, eval = FALSE}
 ## clipping GEDI data within boundary box
 level1b_clip_bb <- clipLevel1B(gedilevel1b, xmin, xmax, ymin, ymax,output=paste0(outdir,"//level1b_clip_bb.h5"))
 level2a_clip_bb <- clipLevel2A(gedilevel2a, xmin, xmax, ymin, ymax, output=paste0(outdir,"//level2a_clip_bb.h5"))
 level2b_clip_bb <- clipLevel2B(gedilevel2b, xmin, xmax, ymin, ymax,output=paste0(outdir,"//level2b_clip_bb.h5"))
+```
 
+```{r}
 ## Clipping GEDI data by geometry
 # specify the path to shapefile for the study area
 polygon_filepath <- system.file("extdata", "stands_cerrado.shp", package="rGEDI")
@@ -170,7 +178,9 @@ library(raster)
 polygon_spdf<-raster::shapefile(polygon_filepath)
 head(polygon_spdf@data) # column id name "id"
 split_by="id"
+```
 
+```{r, eval = FALSE}
 # Clipping h5 files
 level1b_clip_gb <- clipLevel1BGeometry(gedilevel1b,polygon_spdf,output=paste0(outdir,"//level1b_clip_gb.h5"), split_by=split_by)
 level2a_clip_gb <- clipLevel2AGeometry(gedilevel2a,polygon_spdf,output=paste0(outdir,"//level2a_clip_gb.h5"), split_by=split_by)
@@ -273,7 +283,7 @@ head(cover_metrics_st)
 ```
 
 ## Compute Grids with descriptive statistics of GEDI-derived Elevation and Height Metrics (Level2A)
-```{r, fig.width = "300px", fig.align = "right"}
+```{r, fig.width = 300/90, fig.align = "right"}
 # Computing the serie of statistics of GEDI RH100 metric
 rh100metrics<-gridStatsLevel2AM(level2AM = level2AM, func=mySetOfMetrics(rh100), res=0.005)
 
@@ -302,7 +312,7 @@ levelplot(rh100metrics,
 ```
 
 ## Compute Grids with descriptive statistics of GEDI-derived Canopy Cover and Vertical Profile Metrics (Level2B)
-```{r, fig.width = "300px", fig.align = "right"}
+```{r, fig.width = 300/90, fig.align = "right"}
 # Computing the max of the Total Plant Area Index only
 level2BVPM$pai[level2BVPM$pai==-9999]<-NA # assing NA to -9999
 pai_metrics<-gridStatsLevel2BVPM(level2BVPM = level2BVPM, func=mySetOfMetrics(pai), res=0.0005)
