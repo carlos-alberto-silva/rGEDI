@@ -166,8 +166,8 @@ level2b_clip_bb <- clipLevel2B(gedilevel2b, xmin, xmax, ymin, ymax,output=paste0
 polygon_filepath <- system.file("extdata", "stands_cerrado.shp", package="rGEDI")
 
 # Reading shapefile as SpatialPolygonsDataFrame object
-library(rgdal)
-polygon_spdf<-readOGR(polygon_filepath)
+library(raster)
+polygon_spdf<-raster::shapefile(polygon_filepath)
 head(polygon_spdf@data) # column id name "id"
 split_by="id"
 
