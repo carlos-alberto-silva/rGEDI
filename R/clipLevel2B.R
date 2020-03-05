@@ -9,37 +9,31 @@
 #'@param ymin Numeric. South latitude (y) coordinate of bounding rectangle, in decimal degrees.
 #'@param ymax Numeric. North latitude (y) coordinate of bounding rectangle, in decimal degrees.
 #'@param output Optional character path where to save the new hdf5 file. The default stores a temporary file only.
-#'@return An S4 object of class "gedi.level2b".
+#'
+#'@return Returns a list of S4 object of class "gedi.level2b".
 #'
 #'@seealso https://lpdaac.usgs.gov/products/gedi01_bv001/
 #'
 #'@examples
-#'\dontrun{
-#'# specify the path to download GEDI example dataset
-#'outdir<-getwd()
+#'# specify the path to GEDI level2B data (zip file)
+#'level2B_fp_zip <- system.file("extdata",
+#'                   "GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub.zip",
+#'                   package="rGEDI")
 #'
-#'# downloading GEDI example dataset (zip file)
-#'download.file(
-#'              paste0(
-#'                     "https://github.com/carlos-alberto-silva/rGEDI/",
-#'                     "releases/download/examples/examples.zip"
-#'              ),
-#'              destfile=paste0(outdir,"/examples.zip"))
+#'# Unzipping GEDI level2A data
+#'level2Bpath <- unzip(level2B_fp_zip,exdir = dirname(level2B_fp_zip))
 #'
-#'# unzip the file
-#'unzip(paste0(outdir,"\\examples.zip"))
-#'
-#'# specify the path to GEDI level2B data
-#'level2bpath = paste0(outdir,"\\GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub.h5")
-#'
-#'# Reading GEDI level1B file
-#'level2b<-readLevel2b(gedilevel2b)
+#'# Reading GEDI level2B data (h5 file)
+#'level2b<-readLevel2B(level2Bpath=level2Bpath)
 #'
 #'# Bounding rectangle coordinates
 #'xmin = -44.15036
 #'xmax = -44.10066
 #'ymin = -13.75831
 #'ymax = -13.71244
+#'
+#'# Spepecifing output file and path
+#'output<-paste0(getwd(),"//GEDI02_B_2019108080338_O01964_T05337_02_001_01_clip")
 #'
 #'# clip level2BVPM by extent boundary box
 #'level2b_clip <- level2BVPM(level2BVPM,xmin, xmax, ymin, ymax)
@@ -56,7 +50,7 @@
 #'              opacity = 1, fillOpacity = 0) %>%
 #'  addProviderTiles(providers$Esri.WorldImagery)
 #'
-#'}
+#'
 #'@export
 clipLevel2B = function(level2b, xmin, xmax, ymin, ymax, output=""){
   # Get all spatial data as a list of dataframes with spatial information
@@ -87,33 +81,23 @@ clipLevel2B = function(level2b, xmin, xmax, ymin, ymax, output=""){
 #'@param polygon_spdf Polygon. An object of class \code{\link[sp]{SpatialPolygonsDataFrame-class}},
 #'which can be loaded as an ESRI shapefile using \code{\link[raster:shapefile]{raster::shapefile()}} function in the \emph{raster} package.
 #'@param output optional character path where to save the new h5file. Default "" (temporary file).
-#'@param split_by Polygon id. If defined, GEDI data will be clipped by each polygon using the polygon id from table of attribute defined by the user
+#'@param split_by Polygon id. If defined, GEDI data will be clipped by each polygon using attribute specified by \code{split_by} from attribute table.
 #'
-#'@return An S4 object of class "gedi.level2b".
+#'@return Returns a list of S4 object of class "gedi.level2b".
 #'
 #'@seealso https://lpdaac.usgs.gov/products/gedi01_bv001/
 #'
 #'@examples
-#'\dontrun{
-#'# specify the path to download GEDI example dataset
-#'outdir<-getwd()
+#'# specify the path to GEDI level2B data (zip file)
+#'level2B_fp_zip <- system.file("extdata",
+#'                   "GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub.zip",
+#'                   package="rGEDI")
 #'
-#'# downloading GEDI example dataset (zip file)
-#'download.file(
-#'              paste0(
-#'                     "https://github.com/carlos-alberto-silva/rGEDI/",
-#'                     "releases/download/examples/examples.zip"
-#'              ),
-#'              destfile=paste0(outdir,"/examples.zip"))
+#'# Unzipping GEDI level2A data
+#'level2Bpath <- unzip(level2B_fp_zip,exdir = dirname(level2B_fp_zip))
 #'
-#'# unzip the file
-#'unzip(paste0(outdir,"\\examples.zip"))
-#'
-#'# specify the path to GEDI level2B data
-#'level2bpath = paste0(outdir,"\\GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub.h5")
-#'
-#'# Reading GEDI level1B file
-#'level2b<-readLevel2b(gedilevel2b)
+#'# Reading GEDI level2B data (h5 file)
+#'level2b<-readLevel2B(level2Bpath=level2Bpath)
 #'
 #'# specify the path to shapefile
 #'polygon_filepath <- system.file("extdata", "stands_cerrado.shp", package="rGEDI")
@@ -122,9 +106,14 @@ clipLevel2B = function(level2b, xmin, xmax, ymin, ymax, output=""){
 #'library(raster)
 #'polygon_spdf<-shapefile(polygons_filepath)
 #'
-#'# clip level2BVPM by geometry
-#'level2b_clip_geometry <- clipLevel2BGeometry(level2BVPM,polygon_spdf=polygon_spdf)
-#'}
+#'# Spepecifing output file and path
+#'output<-paste0(getwd(),"//GEDI02_B_2019108080338_O01964_T05337_02_001_01_clip")
+#'
+#'# clip by extent boundary box
+#'level2b_clip <- clipLevel2BGeometry(level2B, polygon_spdf = polygon_spdf,
+#'                                    output=output,
+#'                                    split_by="id")
+#'
 #'@export
 clipLevel2BGeometry = function(level2b, polygon_spdf, output="", split_by=NULL) {
   output = checkOutput(output)

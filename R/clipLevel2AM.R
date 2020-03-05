@@ -17,26 +17,16 @@
 #'@seealso https://lpdaac.usgs.gov/products/gedi02_av001/
 #'
 #'@examples
-#'\dontrun{
-#'# specify the path to download GEDI example dataset
-#'outdir<-getwd()
+#'# specify the path to GEDI level2A data (zip file)
+#'level2A_fp_zip <- system.file("extdata",
+#'                   "GEDI02_A_2019108080338_O01964_T05337_02_001_01_sub.zip",
+#'                   package="rGEDI")
 #'
-#'# downloading GEDI example dataset (zip file)
-#'download.file(
-#'              paste0(
-#'                     "https://github.com/carlos-alberto-silva/rGEDI/",
-#'                     "releases/download/examples/examples.zip"
-#'              ),
-#'              destfile=paste0(outdir,"/examples.zip"))
+#'# Unzipping GEDI level2A data
+#'level2Apath <- unzip(level2A_fp_zip,exdir = dirname(level2A_fp_zip))
 #'
-#'# unzip the file
-#'unzip(paste0(outdir,"\\examples.zip"))
-#'
-#'# specify the path to GEDI level2A data
-#'level2apath = paste0(outdir,"\\GEDI02_A_2019108080338_O01964_T05337_02_001_01_sub.h5")
-#'
-#'# Reading GEDI level2A data
-#'level2a<-readLevel2A(level2apath)
+#'# Reading GEDI level2A data (h5 file)
+#'level2a<-readLevel2A(level2Apath=level2Apath)
 #'
 #'#' Extracting GEDI Elevation and Height Metrics
 #'level2AM = getLevel2AM(level2a)
@@ -49,7 +39,7 @@
 #'
 #'# clip by extent boundary box
 #'level2AM_clip <- clipLevel2AM(level2AM,xmin, xmax, ymin, ymax)
-#'}
+#'
 #'@import hdf5r
 #'@export
 clipLevel2AM = function(level2AM,xmin, xmax, ymin, ymax){
@@ -85,26 +75,16 @@ clipLevel2AM = function(level2AM,xmin, xmax, ymin, ymax){
 #'@return A S4 object of class \code{\link[data.table:data.table]{data.table-class}}.
 #'
 #'@examples
-#'\dontrun{
-#'# specify the path to download GEDI example dataset
-#'outdir<-getwd()
+#'# specify the path to GEDI level2A data (zip file)
+#'level2A_fp_zip <- system.file("extdata",
+#'                   "GEDI02_A_2019108080338_O01964_T05337_02_001_01_sub.zip",
+#'                   package="rGEDI")
 #'
-#'# downloading GEDI example dataset (zip file)
-#'download.file(
-#'              paste0(
-#'                     "https://github.com/carlos-alberto-silva/rGEDI/",
-#'                     "releases/download/examples/examples.zip"
-#'              ),
-#'              destfile=paste0(outdir,"/examples.zip"))
+#'# Unzipping GEDI level2A data
+#'level2Apath <- unzip(level2A_fp_zip,exdir = dirname(level2A_fp_zip))
 #'
-#'# unzip the file
-#'unzip(paste0(outdir,"\\examples.zip"))
-#'
-#'# specify the path to GEDI level2A data
-#'level2apath = paste0(outdir,"\\GEDI02_A_2019108080338_O01964_T05337_02_001_01_sub.h5")
-#'
-#'# Reading GEDI level2A data
-#'level2a<-readLevel2A(level2apath)
+#'# Reading GEDI level2A data (h5 file)
+#'level2a<-readLevel2A(level2Apath=level2Apath)
 #'
 #'#' Extracting GEDI Elevation and Height Metrics
 #'level2AM = getLevel2AM(level2a)
@@ -130,7 +110,7 @@ clipLevel2AM = function(level2AM,xmin, xmax, ymin, ymax){
 #'              opacity = 1, fillOpacity = 0) %>%
 #'  addProviderTiles(providers$Esri.WorldImagery)
 #'
-#'}
+#'
 #'@export
 clipLevel2AMGeometry = function(level2AM, polygon_spdf, split_by="id") {
   exshp<-raster::extent(polygon_spdf)

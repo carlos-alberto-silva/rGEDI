@@ -22,26 +22,16 @@ This function clips GEDI level1B extracted geolocation (level1BGeo)
 data within given geometry
 }
 \examples{
-\dontrun{
-# specify the path to download GEDI example dataset
-outdir<-getwd()
+# specify the path to GEDI level1B data (zip file)
+level1B_fp_zip <- system.file("extdata",
+                  "GEDI01_B_2019108080338_O01964_T05337_02_003_01_sub.zip",
+                  package="rGEDI")
 
-# downloading GEDI example dataset (zip file)
-download.file(
-             paste0(
-                    "https://github.com/carlos-alberto-silva/rGEDI/",
-                    "releases/download/examples/examples.zip"
-             ),
-             destfile=paste0(outdir,"/examples.zip"))
+# Unzipping GEDI level1B data
+level1Bpath <- unzip(level1B_fp_zip,exdir = dirname(level1B_fp_zip))
 
-# unzip the file
-unzip(paste0(outdir,"\\\\examples.zip"))
-
-# specify the path to GEDI level1B data
-level1bpath = paste0(outdir,"\\\\GEDI01_B_2019108080338_O01964_T05337_02_003_01_sub.h5")
-
-# Reading GEDI level1B file
-level1b<-readLevel1b(gedilevel1b)
+# Reading GEDI level1B data (h5 file)
+level1b<-readLevel1B(level1Bpath=level1Bpath)
 
 # Get GEDI level1B geolocations
 level1BGeo<-getLevel1BGeo(level1b)
@@ -66,7 +56,7 @@ leaflet() \%>\%
  addPolygons(data=polygon_spdf,weight=1,col = 'white',
              opacity = 1, fillOpacity = 0) \%>\%
  addProviderTiles(providers$Esri.WorldImagery)
-}
+
 }
 \seealso{
 https://lpdaac.usgs.gov/products/gedi01_bv001/

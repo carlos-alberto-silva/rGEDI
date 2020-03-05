@@ -7,7 +7,7 @@
 #'@param elev if TRUE, elevation will be used for plotting the PAVD profile. Otherwise,
 #'height will be used instead.
 #'
-#'@return Returns a ggplot object. See \code{\link[ggplot2:ggplot]{ggplot}}
+#'@return Returns a ggplot object. See \code{\link[ggplot2:ggplot]{ggplot}} package.
 #'
 #'@seealso https://lpdaac.usgs.gov/products/gedi02_bv001/
 #'
@@ -24,26 +24,16 @@
 #'}
 #'
 #'@examples
-#'\dontrun{
-#'# specify the path to download GEDI example dataset
-#'outdir<-getwd()
+#'# specify the path to GEDI level2B data (zip file)
+#'level2B_fp_zip <- system.file("extdata",
+#'                   "GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub.zip",
+#'                   package="rGEDI")
 #'
-#'# downloading GEDI example dataset (zip file)
-#'download.file(
-#'              paste0(
-#'                     "https://github.com/carlos-alberto-silva/rGEDI/",
-#'                     "releases/download/examples/examples.zip"
-#'              ),
-#'              destfile=paste0(outdir,"/examples.zip"))
+#'# Unzipping GEDI level2A data
+#'level2Bpath <- unzip(level2B_fp_zip,exdir = dirname(level2B_fp_zip))
 #'
-#'# unzip the file
-#'unzip(paste0(outdir,"\\examples.zip"))
-#'
-#'# specify the path to GEDI level2B data
-#'level2bpath = paste0(outdir,"\\GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub.h5")
-#'
-#'# Reading GEDI level1B file
-#'level2b<-readLevel2b(gedilevel2b)
+#'# Reading GEDI level2B data (h5 file)
+#'level2b<-readLevel2B(level2Bpath=level2Bpath)
 #'
 #'# Get Plant Area Volume Density profile
 #'level2BPAVDProfile<-getLevel2BPAVDProfile(level2b)
@@ -52,10 +42,11 @@
 #'gprofile<-plotPAVDProfile(level2BPAVDProfile, beam="BEAM0101", elev=TRUE)
 #'
 #'
-#'}
+#'
 #'@export
 plotPAVDProfile<-function(level2BPAVDProfile, beam="BEAM0101", elev=TRUE){
   #require(ggplot2)
+  #require(RColorBrewer)
 
   rids<-1:nrow(level2BPAVDProfile)
   rids<-rids[level2BPAVDProfile$beam==beam]
@@ -74,7 +65,7 @@ plotPAVDProfile<-function(level2BPAVDProfile, beam="BEAM0101", elev=TRUE){
   }
   df$value[df$value<0]<-0
   df$hids<-hids
-  df<-df[df$value>0,]
+  #df<-df[df$value>0,]
 
   if( elev==TRUE){
     dif<-(df$elev_lowestmode+df$height_bin0) - (df$hids+df$elev_lowestmode)
@@ -104,12 +95,14 @@ plotPAVDProfile<-function(level2BPAVDProfile, beam="BEAM0101", elev=TRUE){
     dif<-df$height_bin0 - df$hids
     df<-df[dif>0,]
     xp<-((df$rowids*60)-60)/1000
-    yp<-df$hids
+    yp<-df$hids-0.5
 
-    yl<-tapply(df$hids,df$rowids,max)+0.5
+    yl<-tapply(df$hids,df$rowids,max)#+0.5
     xl<-((unique(df$rowids)*60)-60)/1000
 
-    #require(ggplot2)
+    #xl<-((1:nrow(level2BPAVDProfile_sub)*60)-60)/1000
+    #yl<-round(level2BPAVDProfile_sub$height_bin0)
+
     gg <- ggplot()+
       geom_tile(aes(x=xp, y=yp,fill= df$value))+
       geom_line(mapping = aes(x = xl,y=yl, color = "Canopy \nTop Height (m)"))+#,size=1) +

@@ -20,38 +20,31 @@ clipLevel2B(level2b, xmin, xmax, ymin, ymax, output = "")
 \item{output}{Optional character path where to save the new hdf5 file. The default stores a temporary file only.}
 }
 \value{
-An S4 object of class "gedi.level2b".
+Returns a list of S4 object of class "gedi.level2b".
 }
 \description{
 This function extracts GEDI Level1B data within given bounding coordinates
 }
 \examples{
-\dontrun{
-# specify the path to download GEDI example dataset
-outdir<-getwd()
+# specify the path to GEDI level2B data (zip file)
+level2B_fp_zip <- system.file("extdata",
+                  "GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub.zip",
+                  package="rGEDI")
 
-# downloading GEDI example dataset (zip file)
-download.file(
-             paste0(
-                    "https://github.com/carlos-alberto-silva/rGEDI/",
-                    "releases/download/examples/examples.zip"
-             ),
-             destfile=paste0(outdir,"/examples.zip"))
+# Unzipping GEDI level2A data
+level2Bpath <- unzip(level2B_fp_zip,exdir = dirname(level2B_fp_zip))
 
-# unzip the file
-unzip(paste0(outdir,"\\\\examples.zip"))
-
-# specify the path to GEDI level2B data
-level2bpath = paste0(outdir,"\\\\GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub.h5")
-
-# Reading GEDI level1B file
-level2b<-readLevel2b(gedilevel2b)
+# Reading GEDI level2B data (h5 file)
+level2b<-readLevel2B(level2Bpath=level2Bpath)
 
 # Bounding rectangle coordinates
 xmin = -44.15036
 xmax = -44.10066
 ymin = -13.75831
 ymax = -13.71244
+
+# Spepecifing output file and path
+output<-paste0(getwd(),"//GEDI02_B_2019108080338_O01964_T05337_02_001_01_clip")
 
 # clip level2BVPM by extent boundary box
 level2b_clip <- level2BVPM(level2BVPM,xmin, xmax, ymin, ymax)
@@ -68,7 +61,7 @@ leaflet() \%>\%
              opacity = 1, fillOpacity = 0) \%>\%
  addProviderTiles(providers$Esri.WorldImagery)
 
-}
+
 }
 \seealso{
 https://lpdaac.usgs.gov/products/gedi01_bv001/

@@ -22,26 +22,16 @@ Computes a Series of Statistics of GEDI-derived Canopy Cover and Vertical Profil
 for all obsercation or only those defined within a giving polygon
 }
 \examples{
-\dontrun{
-# specify the path to download GEDI example dataset
-outdir<-getwd()
+# specify the path to GEDI level2B data (zip file)
+level2B_fp_zip <- system.file("extdata",
+                  "GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub.zip",
+                  package="rGEDI")
 
-# downloading GEDI example dataset (zip file)
-download.file(
-             paste0(
-                    "https://github.com/carlos-alberto-silva/rGEDI/",
-                    "releases/download/examples/examples.zip"
-             ),
-             destfile=paste0(outdir,"/examples.zip"))
+# Unzipping GEDI level2A data
+level2Bpath <- unzip(level2B_fp_zip,exdir = dirname(level2B_fp_zip))
 
-# unzip the file
-unzip(paste0(outdir,"\\\\examples.zip"))
-
-# specify the path to GEDI level2B data
-level2bpath = paste0(outdir,"\\\\GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub.h5")
-
-# Reading GEDI level1B file
-level2b<-readLevel2b(gedilevel2b)
+# Reading GEDI level2B data (h5 file)
+level2b<-readLevel2B(level2Bpath=level2Bpath)
 
 # specify the path to shapefile
 polygon_filepath <- system.file("extdata", "clip_polygon.shp", package="rGEDI")
@@ -81,7 +71,7 @@ head(pai_max_poly)
 cover_metrics<-polyStatsLevel2BVPM(level2BVPM_clip,func=mySetOfMetrics(cover),
                      id=level2BM_clip@data$id)
 head(cover_metrics)
-}
+
 }
 \seealso{
 https://lpdaac.usgs.gov/products/gedi02_bv001/

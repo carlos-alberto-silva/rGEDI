@@ -22,26 +22,16 @@ This function clips GEDI level2B-derived
 Plant Area Index profile within given geometry
 }
 \examples{
-\dontrun{
-# specify the path to download GEDI example dataset
-outdir<-getwd()
+# specify the path to GEDI level2B data (zip file)
+level2B_fp_zip <- system.file("extdata",
+                  "GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub.zip",
+                  package="rGEDI")
 
-# downloading GEDI example dataset (zip file)
-download.file(
-             paste0(
-                    "https://github.com/carlos-alberto-silva/rGEDI/",
-                    "releases/download/examples/examples.zip"
-             ),
-             destfile=paste0(outdir,"/examples.zip"))
+# Unzipping GEDI level2A data
+level2Bpath <- unzip(level2B_fp_zip,exdir = dirname(level2B_fp_zip))
 
-# unzip the file
-unzip(paste0(outdir,"\\\\examples.zip"))
-
-# specify the path to GEDI level2B data
-level2bpath = paste0(outdir,"\\\\GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub.h5")
-
-# Reading GEDI level1B file
-level2b<-readLevel2b(gedilevel2b)
+# Reading GEDI level2B data (h5 file)
+level2b<-readLevel2B(level2Bpath=level2Bpath)
 
 # Get Plant Area Volume Density profile
 level2BPAVDProfile<-getLevel2BPAVDProfile(level2b)
@@ -58,7 +48,7 @@ level2BPAVDProfile_clip <- clipLevel2BPAVDProfileGeometry(
                                                          level2BPAVDProfile,
                                                          polygon_spdf,
                                                          split_by="id")
-}
+
 }
 \seealso{
 https://lpdaac.usgs.gov/products/gedi02_bv001/

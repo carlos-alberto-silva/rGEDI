@@ -15,35 +15,25 @@ which can be loaded as an ESRI shapefile using \code{\link[raster:shapefile]{ras
 
 \item{output}{Optional character path where to save the new hdf5file. The default stores a temporary file only.}
 
-\item{split_by}{Polygon id. If defined, GEDI data will be clipped by each polygon using the polygon id from table of attribute defined by the user}
+\item{split_by}{Polygon id. If defined, GEDI data will be clipped by each polygon using attribute specified by \code{split_by} from attribute table.}
 }
 \value{
-An S4 object of class "gedi.level1b".
+Returns a list of S4 object of class "gedi.level1b".
 }
 \description{
 This function clips GEDI Level1B data within a bounding geometry
 }
 \examples{
-\dontrun{
-# specify the path to download GEDI example dataset
-outdir<-getwd()
+# specify the path to GEDI level1B data (zip file)
+level1B_fp_zip <- system.file("extdata",
+                  "GEDI01_B_2019108080338_O01964_T05337_02_003_01_sub.zip",
+                  package="rGEDI")
 
-# downloading GEDI example dataset (zip file)
-download.file(
-             paste0(
-                    "https://github.com/carlos-alberto-silva/rGEDI/",
-                    "releases/download/examples/examples.zip"
-             ),
-             destfile=paste0(outdir,"/examples.zip"))
+# Unzipping GEDI level1B data
+level1Bpath <- unzip(level1B_fp_zip,exdir = dirname(level1B_fp_zip))
 
-# unzip the file
-unzip(paste0(outdir,"\\\\examples.zip"))
-
-# specify the path to GEDI level1B data
-level1bpath = paste0(outdir,"\\\\GEDI01_B_2019108080338_O01964_T05337_02_003_01_sub.h5")
-
-# Reading GEDI level1B file
-level1b<-readLevel1b(gedilevel1b)
+# Reading GEDI level1B data (h5 file)
+level1b<-readLevel1B(level1Bpath=level1Bpath)
 
 # specify the path to shapefile
 polygon_filepath <- system.file("extdata", "stands_cerrado.shp", package="rGEDI")
@@ -52,7 +42,12 @@ polygon_filepath <- system.file("extdata", "stands_cerrado.shp", package="rGEDI"
 library(raster)
 polygon_spdf<-shapefile(polygons_filepath)
 
+# Spepecifing output file and path
+output<-paste0(getwd(),"//GEDI01_B_2019108080338_O01964_T05337_02_003_01_clip")
+
 # clip by extent boundary box
-level1b_clip <- clipLevel1BGeometry(level1b, polygon_spdf = polygon_spdf)
-}
+level1b_clip <- clipLevel1BGeometry(level1b, polygon_spdf = polygon_spdf,
+                                   output=output,
+                                   split_by="id")
+
 }

@@ -104,32 +104,35 @@
 #' ii) gediSimulator: https://bitbucket.org/StevenHancock/gedisimulator/src/master/
 #'
 #' @examples
-#'# specify the path to ALS data
-#'lasfile_amazon <- system.file("extdata", "Amazon.las", package="rGEDI")
-#'lasfile_cerrado <- system.file("extdata", "Cerrado.las", package="rGEDI")
-#'# Reading and plot ALS file
-#' #'
-#'hasLibraries = require(lidR) && require(plot3D)
-#'if (hasLibraries) {
+#'libsAvailable = require(lidR) && require(plot3D)
+#'if (libsAvailable) {
 #'
-
-#'las_amazon<-readLAS(lasfile_amazon)
-#'las_cerrado<-readLAS(lasfile_cerrado)
+#'# specify the path to ALS data (zip)
+#'alsfile_Amazon_zip <- system.file("extdata", "Amazon.zip", package="rGEDI")
+#'alsfile_Savanna_zip <- system.file("extdata", "Savanna.zip", package="rGEDI")
+#'
+#'# Unzipping ALS data
+#'alsfile_Amazon_filepath <- unzip(alsfile_Amazon_zip,exdir = dirname(alsfile_Amazon_zip))
+#'alsfile_Savanna_filepath <- unzip(alsfile_Smazon_zip,exdir = dirname(alsfile_Savanna_zip))
+#'
+#'# Reading and plot ALS file (las file)
+#'als_Amazon<-readLAS(alsfile_Amazon_filepath)
+#'als_Savanna<-readLAS(alsfile_Savanna_filepath)
 #'
 #'# Extracting plot center geolocations
-#'xcenter_amazon = mean(las_amazon@bbox[1,])
-#'ycenter_amazon = mean(las_amazon@bbox[2,])
-#'xcenter_cerrado = mean(las_cerrado@bbox[1,])
-#'ycenter_cerrado = mean(las_cerrado@bbox[2,])
+#'xcenter_Amazon = mean(als_Amazon@bbox[1,])
+#'ycenter_Amazon = mean(als_Amazon@bbox[2,])
+#'xcenter_Savanna = mean(als_Savanna@bbox[1,])
+#'ycenter_Savanna = mean(als_Savanna@bbox[2,])
 #'
 #'# Simulating GEDI full-waveform
-#'wf_amazon<-gediWFSimulator(
-#'                           input=lasfile_amazon,
+#'wf_Amazon<-gediWFSimulator(input=lasfile_amazon,
 #'                           output=paste0(getwd(),"/gediWF_amazon_simulation.h5"),
-#'                           coords = c(xcenter_amazon, ycenter_amazon))
-#'wf_cerrado<-gediWFSimulator(input=lasfile_cerrado,
+#'                           coords = c(xcenter_Amazon, ycenter_Amazon))
+#'
+#'wf_Savanna<-gediWFSimulator(input=als_Savanna,
 #'                            output=paste0(getwd(),"/gediWF_cerrado_simulation.h5"),
-#'                            coords = c(xcenter_cerrado, ycenter_cerrado))
+#'                            coords = c(xcenter_Savanna, ycenter_Savanna))
 #'
 #'# Extracting GEDI feull-waveform derived metrics
 #'wf_amazon_metrics<-gediWFMetrics(input=wf_amazon,outRoot=getwd())

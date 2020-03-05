@@ -13,25 +13,16 @@
 #'
 #'@examples
 #'\dontrun{
-#'# specify the path to download GEDI example dataset
-#'outdir<-getwd()
+#'# specify the path to GEDI level2A data (zip file)
+#'level2A_fp_zip <- system.file("extdata",
+#'                   "GEDI02_A_2019108080338_O01964_T05337_02_001_01_sub.zip",
+#'                   package="rGEDI")
 #'
-#'# downloading GEDI example dataset (zip file)
-#'download.file(
-#'              paste0(
-#'                     "https://github.com/carlos-alberto-silva/rGEDI/",
-#'                     "releases/download/examples/examples.zip"
-#'              ),
-#'              destfile=paste0(outdir,"/examples.zip"))
+#'# Unzipping GEDI level2A data
+#'level2Apath <- unzip(level2A_fp_zip,exdir = dirname(level2A_fp_zip))
 #'
-#'# unzip the file
-#'unzip(paste0(outdir,"\\examples.zip"))
-#'
-#'# specify the path to GEDI level2A data
-#'level2apath = paste0(outdir,"\\GEDI02_A_2019108080338_O01964_T05337_02_001_01_sub.h5")
-#'
-#'# Reading GEDI level2A data
-#'level2a<-readLevel2A(level2apath)
+#'# Reading GEDI level2A data (h5 file)
+#'level2a<-readLevel2A(level2Apath=level2Apath)
 #'
 #'# Get GEDI Elevation and Height Metrics
 #'level2AM<-getLevel2AM(level2a)
@@ -45,10 +36,14 @@ getLevel2AM<-function(level2a){
   rh.dt<-data.table::data.table()
   pb <- utils::txtProgressBar(min = 0, max = length(groups_id), style = 3)
   i.s=0
+
   for ( i in groups_id){
     i.s<-i.s+1
     utils::setTxtProgressBar(pb, i.s)
     level2a_i<-level2a[[i]]
+
+    if (any(hdf5r::list.datasets(level2a_i)=="shot_number")){
+
     rhs<-data.table::data.table(
       beam<-rep(i,length(level2a_i[["shot_number"]][])),
       shot_number=level2a_i[["shot_number"]][],
@@ -58,8 +53,8 @@ getLevel2AM<-function(level2a){
       elev_lowestmode=level2a_i[["elev_lowestmode"]][],
       t(level2a_i[["rh"]][,1:level2a_i[["rh"]]$dims[2]]))
     rh.dt<-rbind(rh.dt,rhs)
+    }
   }
-
 
   colnames(rh.dt)<-c("beam","shot_number","lat_lowestmode","lon_lowestmode",
                      "elev_highestreturn","elev_lowestmode",paste0("rh",seq(0,100)))

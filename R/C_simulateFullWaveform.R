@@ -82,58 +82,61 @@
 #'libsAvailable = require(lidR) && require(plot3D)
 #'if (libsAvailable) {
 #'
-#'# specify the path to ALS data
-#'lasfile_amazon <- system.file("extdata", "Amazon.las", package="rGEDI")
-#'lasfile_cerrado <- system.file("extdata", "Cerrado.las", package="rGEDI")
+#'# specify the path to ALS data (zip)
+#'alsfile_Amazon_zip <- system.file("extdata", "Amazon.zip", package="rGEDI")
+#'alsfile_Savanna_zip <- system.file("extdata", "Savanna.zip", package="rGEDI")
 #'
-#'# Reading and plot ALS file
-#'las_amazon<-readLAS(lasfile_amazon)
-#'las_cerrado<-readLAS(lasfile_cerrado)
+#'# Unzipping ALS data
+#'alsfile_Amazon_filepath <- unzip(alsfile_Amazon_zip,exdir = dirname(alsfile_Amazon_zip))
+#'alsfile_Savanna_filepath <- unzip(alsfile_Smazon_zip,exdir = dirname(alsfile_Savanna_zip))
+#'
+#'# Reading and plot ALS file (las file)
+#'als_Amazon<-readLAS(alsfile_Amazon_filepath)
+#'als_Savanna<-readLAS(alsfile_Savanna_filepath)
 #'
 #'# Extracting plot center geolocations
-#'xcenter_amazon = mean(las_amazon@bbox[1,])
-#'ycenter_amazon = mean(las_amazon@bbox[2,])
-#'xcenter_cerrado = mean(las_cerrado@bbox[1,])
-#'ycenter_cerrado = mean(las_cerrado@bbox[2,])
+#'xcenter_Amazon = mean(als_Amazon@bbox[1,])
+#'ycenter_Amazon = mean(als_Amazon@bbox[2,])
+#'xcenter_Savanna = mean(als_Savanna@bbox[1,])
+#'ycenter_Savanna = mean(als_Savanna@bbox[2,])
 #'
 #'# Simulating GEDI full-waveform
-#'wf_amazon<-gediWFSimulator(
-#'                           input=lasfile_amazon,
+#'wf_Amazon<-gediWFSimulator(input=lasfile_amazon,
 #'                           output=paste0(getwd(),"/gediWF_amazon_simulation.h5"),
-#'                           coords = c(xcenter_amazon, ycenter_amazon))
-#'wf_cerrado<-gediWFSimulator(
-#'                            input=lasfile_cerrado,
+#'                           coords = c(xcenter_Amazon, ycenter_Amazon))
+#'
+#'wf_Savanna<-gediWFSimulator(input=als_Savanna,
 #'                            output=paste0(getwd(),"/gediWF_cerrado_simulation.h5"),
-#'                            coords = c(xcenter_cerrado, ycenter_cerrado))
+#'                            coords = c(xcenter_Savanna, ycenter_Savanna))
 #'
 #'# Plot ALS and GEDI simulated full-waveform
-#' 
+#'
 #'par(mfrow=c(2,2), mar=c(4,4,0,0), oma=c(0,0,1,1),cex.axis = 1.2)
 #'scatter3D(
-#'          las_amazon@data$X,las_amazon@data$Y,las_amazon@data$Z,
+#'          als_Amazon@data$X,als_Amazon@data$Y,als_Amazon@data$Z,
 #'          pch = 16,colkey = FALSE, main="",
 #'          cex = 0.5,bty = "u",col.panel ="gray90",
-#'          phi = 30,alpha=1,theta=45,col.grid = "gray50", 
+#'          phi = 30,alpha=1,theta=45,col.grid = "gray50",
 #'          xlab="UTM Easting (m)", ylab="UTM Northing (m)", zlab="Elevation (m)")
 #'
-#'plot(wf_amazon, relative=TRUE, polygon=TRUE, type="l", lwd=2, col="forestgreen",
+#'plot(wf_Amazon, relative=TRUE, polygon=TRUE, type="l", lwd=2, col="forestgreen",
 #'     xlab="", ylab="Elevation (m)", ylim=c(90,140))
 #'grid()
 #'scatter3D(
-#'          las_cerrado@data$X,las_cerrado@data$Y,las_cerrado@data$Z,
+#'          als_Savanna@data$X,als_Savanna@data$Y,als_Savanna@data$Z,
 #'          pch = 16,colkey = FALSE, main="",
 #'          cex = 0.5,bty = "u",col.panel ="gray90",
-#'          phi = 30,alpha=1,theta=45,col.grid = "gray50", 
+#'          phi = 30,alpha=1,theta=45,col.grid = "gray50",
 #'          xlab="UTM Easting (m)", ylab="UTM Northing (m)", zlab="Elevation (m)")
 #'
-#'plot(wf_cerrado, relative=TRUE, polygon=TRUE, type="l", lwd=2, col="green",
+#'plot(wf_Savanna, relative=TRUE, polygon=TRUE, type="l", lwd=2, col="green",
 #'     xlab="Waveform Amplitude (%)", ylab="Elevation (m)", ylim=c(815,835))
 #'grid()
-#' 
-#'wf_amazon@h5$close_all()
-#'wf_cerrado@h5$close_all()
+#'
+#'wf_Amazon@h5$close_all()
+#'wf_Savanna@h5$close_all()
 #'}
-#'  
+#'
 #' @import hdf5r
 #' @useDynLib rGEDI
 #' @export

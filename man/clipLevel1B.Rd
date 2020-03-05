@@ -20,32 +20,22 @@ clipLevel1B(level1b, xmin, xmax, ymin, ymax, output)
 \item{output}{Optional character path where to save the new hdf5file. The default stores a temporary file only.}
 }
 \value{
-An S4 object of class "gedi.level1b".
+Returns a list of S4 object of class "gedi.level1b".
 }
 \description{
 This function clips GEDI Level1B data within given bounding coordinates
 }
 \examples{
-\dontrun{
-# specify the path to download GEDI example dataset
-outdir<-getwd()
+# specify the path to GEDI level1B data (zip file)
+level1B_fp_zip <- system.file("extdata",
+                  "GEDI01_B_2019108080338_O01964_T05337_02_003_01_sub.zip",
+                  package="rGEDI")
 
-# downloading GEDI example dataset (zip file)
-download.file(
-             paste0(
-                    "https://github.com/carlos-alberto-silva/rGEDI/",
-                    "releases/download/examples/examples.zip"
-             ),
-             destfile=paste0(outdir,"/examples.zip"))
+# Unzipping GEDI level1B data
+level1Bpath <- unzip(level1B_fp_zip,exdir = dirname(level1B_fp_zip))
 
-# unzip the file
-unzip(paste0(outdir,"\\\\examples.zip"))
-
-# specify the path to GEDI level1B data
-level1bpath = paste0(outdir,"\\\\GEDI01_B_2019108080338_O01964_T05337_02_003_01_sub.h5"))
-
-# Reading GEDI level1B file
-level1b<-readLevel1b(gedilevel1b)
+# Reading GEDI level1B data (h5 file)
+level1b<-readLevel1B(level1Bpath=level1Bpath)
 
 # Bounding rectangle coordinates
 xmin = -44.15036
@@ -53,10 +43,12 @@ xmax = -44.10066
 ymin = -13.75831
 ymax = -13.71244
 
-# clip by extent boundary box
-level1b_clip <- clipLevel1B(level1b,xmin, xmax, ymin, ymax)
+# Spepecifing output file and path
+output<-paste0(getwd(),"//GEDI01_B_2019108080338_O01964_T05337_02_003_01_clip")
 
-}
+# clip by extent boundary box
+level1b_clip <- clipLevel1B(level1b,xmin, xmax, ymin, ymax,output)
+
 }
 \seealso{
 https://lpdaac.usgs.gov/products/gedi01_bv001/

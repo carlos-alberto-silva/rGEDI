@@ -15,41 +15,35 @@
 #'@seealso https://lpdaac.usgs.gov/products/gedi02_bv001/
 #'
 #'@examples
-#'\dontrun{
-#'# specify the path to download GEDI example dataset
-#'outdir<-getwd()
+#'# specify the path to GEDI level1B and Level2A data (zip file)
+#'level1B_fp_zip <- system.file("extdata",
+#'                   "GEDI01_B_2019108080338_O01964_T05337_02_003_01_sub.zip",
+#'                   package="rGEDI")
 #'
-#'# downloading GEDI example dataset (zip file)
-#'download.file(
-#'              paste0(
-#'                     "https://github.com/carlos-alberto-silva/rGEDI/",
-#'                     "releases/download/examples/examples.zip"
-#'              ),
-#'              destfile=paste0(outdir,"/examples.zip"))
+#'level2A_fp_zip <- system.file("extdata",
+#'                   "GEDI02_A_2019108080338_O01964_T05337_02_001_01_sub.zip",
+#'                   package="rGEDI")
 #'
-#'# unzip the file
-#'unzip(paste0(outdir,"\\examples.zip"))
+#'# Unzipping GEDI level1B data
+#'level1Bpath <- unzip(level1B_fp_zip,exdir = dirname(level1B_fp_zip))
+#'level2Apath <- unzip(level2A_fp_zip,exdir = dirname(level2A_fp_zip))
 #'
-#'# specify the path to GEDI level1B and level2A data
-#'level1bpath = paste0(outdir,"\\GEDI01_B_2019108080338_O01964_T05337_02_003_01_sub.h5"))
-#'level2apath = paste0(outdir,"\\GEDI02_A_2019108080338_O01964_T05337_02_001_01_sub.h5"))
-#'
-#'# Reading GEDI level1B and level2A files
-#'level1b<-readLevel1b(gedilevel1b)
-#'level2a<-readLevel2a(gedilevel2a)
+#'# Reading GEDI level1B and Level2A data (h5 file)
+#'level1b<-readLevel1B(level1Bpath=level1Bpath)
+#'level2A<-readLevel1B(level2Apath=level2Apath)
 #'
 #'shot_number = "19640521100108408"
 #'
 #'plotWFMetrics(level1b, level2a, shot_number, rh=c(25, 50, 75, 90))
-#'}
-#' 
+#'
+#'
 #'@importFrom stats quantile
 #'@importFrom graphics abline arrows axis mtext par text
 #'@export
 plotWFMetrics = function(level1b, level2a, shot_number, rh=c(25, 50, 75), ...) {
   # Avoid NOTEs from checking
   elevation = NULL
-  
+
   # Extracting GEDI full-waveform for a giving shotnumber
   wf <- getLevel1BWF(level1b, shot_number=shot_number)
 
