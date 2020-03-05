@@ -9,7 +9,7 @@
 #'@param outdir Vector object, output directory for downloading GEDI data
 #'@references Credits to Cole Krehbiel. Code adpted from <https://git.earthdata.nasa.gov/projects/LPDUR/repos/daac_data_download_r/browse/DAACDataDownload.R>
 #'@examples
-#'\dontrun{
+#'\donttest{
 #'#' Set path to GEDI data
 #'filepath=c(paste0(
 #'                  "https://e4ftl01.cr.usgs.gov/GEDI/GEDI02_B.001",

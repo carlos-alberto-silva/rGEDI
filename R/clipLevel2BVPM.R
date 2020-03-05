@@ -90,7 +90,7 @@ clipLevel2BVPM = function(level2BVPM,xmin, xmax, ymin, ymax){
 #'@seealso https://lpdaac.usgs.gov/products/gedi02_bv001/
 #'
 #'@examples
-#'\dontrun{
+#'\donttest{
 #'# specify the path to download GEDI example dataset
 #'outdir<-getwd()
 #'

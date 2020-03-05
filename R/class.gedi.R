@@ -69,7 +69,7 @@ gedi.fullwaveform <- setClass(
 #'@param ... will be passed to the main plot
 #'
 #'@examples
-#'\dontrun{
+#'\donttest{
 #'# specify the path to download GEDI example dataset
 #'outdir<-getwd()
 #'
@@ -102,7 +102,7 @@ gedi.fullwaveform <- setClass(
 #'xlab="Waveform Amplitude (\%)", ylab="Elevation (m)")
 #'}
 #' @method plot gedi.fullwaveform
-#' @rdname plot
+#' @rdname plot.gedi.fullwaveform
 #' @export
 setMethod("plot", signature("gedi.fullwaveform", y = "missing"), function(x,relative=FALSE,polygon=FALSE,...) {
 
@@ -189,7 +189,7 @@ setMethod("plot", signature("gedi.fullwaveform", y = "missing"), function(x,rela
 #'          las_amazon@data$Z,
 #'          pch = 16, colkey = FALSE, main="",
 #'          cex = 0.5, bty = "u", col.panel ="gray90",
-#'          phi = 30, alpha=1, theta=45, col.grid = "gray50", 
+#'          phi = 30, alpha=1, theta=45, col.grid = "gray50",
 #'          xlab="UTM Easting (m)", ylab="UTM Northing (m)", zlab="Elevation (m)"
 #'          )
 #'
@@ -200,7 +200,7 @@ setMethod("plot", signature("gedi.fullwaveform", y = "missing"), function(x,rela
 #'          las_cerrado@data$X,las_cerrado@data$Y,las_cerrado@data$Z,
 #'          pch = 16,colkey = FALSE, main="",
 #'          cex = 0.5,bty = "u",col.panel ="gray90",
-#'          phi = 30,alpha=1,theta=45,col.grid = "gray50", 
+#'          phi = 30,alpha=1,theta=45,col.grid = "gray50",
 #'          xlab="UTM Easting (m)", ylab="UTM Northing (m)", zlab="Elevation (m)"
 #'          )
 #'
@@ -210,7 +210,7 @@ setMethod("plot", signature("gedi.fullwaveform", y = "missing"), function(x,rela
 #'}
 #' @export
 #' @method plot gedi.level1bSim
-#' @rdname plot2
+#' @rdname plot.gedi.level1bSim
 setMethod("plot", signature("gedi.level1bSim", y = "missing"), function(x,relative=FALSE,polygon=FALSE,method="RXWAVEINT",...) {
 
   if (!class(x)=="gedi.level1bSim"){

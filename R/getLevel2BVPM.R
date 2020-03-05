@@ -24,7 +24,7 @@
 #'}
 #'
 #'@examples
-#'\dontrun{
+#'\donttest{
 #'# specify the path to download GEDI example dataset
 #'outdir<-getwd()
 #'
