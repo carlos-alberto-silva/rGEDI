@@ -48,7 +48,7 @@ before_install:
     fi
 
 script:
-- pushd vignettes
+- pushd inst/extdata
 - "curl -vLJ -o 'examples.zip' 'https://api.github.com/repos/carlos-alberto-silva/rGEDI/releases/assets/18344086' -H \"Authorization: token $TRAVIS_TOKEN\" -H 'Accept: application/octet-stream'"
 - ls
 - popd
