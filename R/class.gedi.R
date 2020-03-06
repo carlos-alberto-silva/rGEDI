@@ -59,15 +59,22 @@ gedi.fullwaveform <- setClass(
 )
 
 
-#'Plot GEDI full-waveform
-#'
-#'Plots a single GEDI full-waveform (level1b)
+#'Plot GEDI* object
 #'
 #'@param x An object of class "gedi.fullwaveform". (output of \code{\link[rGEDI:getLevel1BWF]{getLevel1BWF}} function)
+#'@param y: not used (inherited from R base)
+#'
 #'@param relative if TRUE, the Wavform Amplitude will be showed in percentage (\%)
 #'@param polygon if TRUE, polygon will be added to the plot
-#'@param ... will be passed to the main plot
 #'
+#'@param method methods used for simulating the GEDI full-waveform ("RXWAVEINT","RXWAVEINT" or "RXWAVEINT"). Default is "RXWAVECOUNT".
+#'
+#' @export
+#' @method plot gedi.fullwaveform
+setGeneric("plot", function(x, y, ...)
+  standardGeneric("plot"))
+
+#'@description for gedi.fullwaveform: will plot the full waveform\cr\cr
 #'@examples
 #'\donttest{
 #'# specify the path to download GEDI example dataset
@@ -101,8 +108,9 @@ gedi.fullwaveform <- setClass(
 #'plot(wf, relative=TRUE, polygon=TRUE, type="l", lwd=2, col="forestgreen",
 #'xlab="Waveform Amplitude (\%)", ylab="Elevation (m)")
 #'}
-#' @method plot gedi.fullwaveform
-#' @rdname plot.gedi.fullwaveform
+#'
+#'
+#' @rdname plot
 #' @export
 setMethod("plot", signature("gedi.fullwaveform", y = "missing"), function(x,relative=FALSE,polygon=FALSE,...) {
 
@@ -139,15 +147,7 @@ setMethod("plot", signature("gedi.fullwaveform", y = "missing"), function(x,rela
 })
 
 
-#'Plot simulated GEDI full-waveform
-#'
-#'Plots a single GEDI full-waveform (level1b) simulated from ALS 3D-point cloud
-#'
-#'@param x An object of class "gedi.level1bSim". (output of \code{\link[rGEDI:gediWFSimulator]{gediWFSimulator}} function)
-#'@param relative if TRUE, the Wavform Amplitude will be showed in percentage (\%)
-#'@param polygon if TRUE, polygon will be added to the plot
-#'@param method methods used for simulating the GEDI full-waveform ("RXWAVEINT","RXWAVEINT" or "RXWAVEINT"). Default is "RXWAVECOUNT".
-#'@param ... will be passed to the main plot
+#'@description for gedi.level1bSim: will plot the simulated waveform
 #'
 #'@examples
 # specify the path to ALS data
@@ -209,8 +209,7 @@ setMethod("plot", signature("gedi.fullwaveform", y = "missing"), function(x,rela
 #'grid()
 #'}
 #' @export
-#' @method plot gedi.level1bSim
-#' @rdname plot.gedi.level1bSim
+#' @rdname plot
 setMethod("plot", signature("gedi.level1bSim", y = "missing"), function(x,relative=FALSE,polygon=FALSE,method="RXWAVEINT",...) {
 
   if (!class(x)=="gedi.level1bSim"){
@@ -248,3 +247,4 @@ setMethod("plot", signature("gedi.level1bSim", y = "missing"), function(x,relati
     }
   }
 })
+
