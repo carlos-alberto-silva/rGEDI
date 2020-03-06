@@ -67,7 +67,24 @@ download.file("https://github.com/carlos-alberto-silva/rGEDI/releases/download/e
 unzip(paste0(outdir,"/examples.zip"), exdir=outdir)
 ```
 ```{r, echo = FALSE}
-zipfile="../inst/extdata/examples.zip"
+config = httr::add_headers(
+  Authorization=paste0("token ", Sys.getenv("TRAVIS_TOKEN")),
+  Accept="application/octet-stream")
+res=httr::GET(
+  "https://api.github.com/repos/carlos-alberto-silva/rGEDI/releases/assets/18344086", 
+  config = config
+)
+h=curl::new_handle()
+curl::handle_setheaders(h, 
+                        Autorization=sprintf(
+                          "token %s", 
+                          Sys.getenv("TRAVIS_TOKEN")))
+
+zipfile = fs::path_join(c(outdir, "examples.zip"))
+curl::curl_download(res$url,
+              destfile=zipfile,
+              handle=h,
+              quiet=FALSE)
 unzip(zipfile, exdir=outdir)
 ```
 
