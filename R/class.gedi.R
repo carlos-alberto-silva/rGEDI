@@ -248,3 +248,24 @@ setMethod("plot", signature("gedi.level1bSim", y = "missing"), function(x,relati
   }
 })
 
+h5closeall = function(con, ...) {
+  con@h5$close_all()
+}
+
+
+#'Close hdf5 connections from gedi* objects
+#'
+#'@param x An object of class gedi*
+#'
+#'@rdname close
+#'@export
+setMethod("close", signature = c("gedi.level1b"), h5closeall)
+#'@rdname close
+#'@export
+setMethod("close", signature = c("gedi.level2a"), h5closeall)
+#'@rdname close
+#'@export
+setMethod("close", signature = c("gedi.level2b"), h5closeall)
+#'@rdname close
+#'@export
+setMethod("close", signature = c("gedi.level1bSim"), h5closeall)
