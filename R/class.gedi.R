@@ -255,8 +255,15 @@ h5closeall = function(con, ...) {
 
 #'Close hdf5 connections from gedi* objects
 #'
-#'@param x An object of class gedi*
+#'@param con An object of class gedi*
+#'@param ... Inherited from base
 #'
+#' @export
+#' @rdname close
+#' @method close gedi.level1b
+setGeneric("close", function(con, ...)
+  standardGeneric("close"))
+
 #'@rdname close
 #'@export
 setMethod("close", signature = c("gedi.level1b"), h5closeall)
