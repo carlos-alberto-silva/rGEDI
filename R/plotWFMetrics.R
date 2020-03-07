@@ -30,7 +30,7 @@
 #'
 #'# Reading GEDI level1B and Level2A data (h5 file)
 #'level1b<-readLevel1B(level1Bpath=level1Bpath)
-#'level2A<-readLevel1B(level2Apath=level2Apath)
+#'level2a<-readLevel2A(level2Apath=level2Apath)
 #'
 #'shot_number = "19640521100108408"
 #'
