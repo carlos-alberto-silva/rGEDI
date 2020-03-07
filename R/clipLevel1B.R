@@ -170,6 +170,7 @@ clipByMask1B = function(level1b, masks, output = "") {
     createAttributesWithinGroup(level1b@h5, newFile, group)
 
     for (dt in hdf5r::list.datasets(level1b@h5[[group]], recursive = FALSE, full.names = T)) {
+      if (grepl("[rt]x_sample_start_index$", dt)) next
       beam_shot_n = level1b@h5[[beam_id]][["shot_number"]]$dims
       h5_dt = level1b@h5[[dt]]
       dt_dim = h5_dt$dims
@@ -187,11 +188,26 @@ clipByMask1B = function(level1b, masks, output = "") {
         } else if (dt_dim == beam_shot_n) {
           hdf5r::createDataSet(newFile,dt,h5_dt[mask], dtype=dtype, chunk_dim=chunkdims)
         } else if ((dt_dim %% beam_shot_n) == 0) {
-          n_waveforms = level1b@h5[[dt]]$dims / beam_shot_n
-          v.seq = Vectorize(seq.default,vectorize.args = c("from"), SIMPLIFY=T)
-          mask_init = mask*n_waveforms - (n_waveforms - 1)
-          mask_waveform = matrix(v.seq(mask_init, len=n_waveforms), nrow=1)[1,]
-          total_size = n_waveforms*mask_size
+          prefix = ifelse(substr(basename(dt),1,2)=="rx", "rx", "tx")
+          sampleCount = sprintf("%s_sample_count", prefix)
+          sampleStartIndex = sprintf("%s_sample_start_index", prefix)
+          countPath=file.path(beam_id, sampleCount, fsep = "/")
+          startIdxPath=file.path(beam_id, sampleStartIndex, fsep = "/")
+
+          counts = level1b@h5[[countPath]][mask]
+          startIdx = level1b@h5[[startIdxPath]][mask]
+          v.seq = Vectorize(seq.default,vectorize.args = c("from", "length.out"), SIMPLIFY=T)
+          mask_list_waveform=v.seq(startIdx, length.out=counts)
+          mask_waveform=Reduce(c, mask_list_waveform)
+          newStartIdx = c(1,cumsum(counts)+1)[-mask_size-1]
+          newFile$create_dataset(
+            name       = startIdxPath,
+            robj       = newStartIdx,
+            dims       = length(newStartIdx),
+            chunk_dims = level1b@h5[[startIdxPath]]$chunk_dims,
+            dtype      = level1b@h5[[startIdxPath]]$get_type())
+
+          total_size = length(mask_waveform)
           chunk_part = 1
           dt_res=hdf5r::createDataSet(newFile, dt, dtype=dtype, chunk_dim=chunkdims, dims=total_size)
           while (chunk_part < total_size) {
@@ -200,7 +216,7 @@ clipByMask1B = function(level1b, masks, output = "") {
               end = total_size
             }
             get_part = mask_waveform[(chunk_part):(end)]
-            dt_res[get_part] =  h5_dt[get_part]
+            dt_res[chunk_part:end] =  h5_dt[get_part]
             chunk_part = end+1
           }
         }
