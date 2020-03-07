@@ -17,7 +17,7 @@ Description: Set of tools for downloading, reading, visualizing and processing G
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
-Depends: methods,sp
+Depends: methods
 Imports: 
   bit64,
   data.table,
@@ -28,7 +28,8 @@ Imports:
   httr,
   lazyeval,
   raster,
-  RColorBrewer
+  RColorBrewer,
+  sp
 Suggests:
   curl,
   knitr,
