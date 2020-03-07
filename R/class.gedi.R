@@ -248,7 +248,7 @@ setMethod("plot", signature("gedi.level1bSim", y = "missing"), function(x,relati
 })
 
 h5closeall = function(con, ...) {
-  try(con@h5$close_all(), quiet=TRUE)
+  try(con@h5$close_all(), silent=TRUE)
 }
 
 
