@@ -106,8 +106,7 @@ unzip(file.path(outdir, "examples.zip"), exdir=outdir)
 ```
 ```{r, echo = FALSE, results="hide"}
 zipfile = file.path(outdir, "examples.zip")
-lasfile = file.path(outdir, "Amazon.las")
-if (!file.exists(lasfile)) {
+if (!file.exists(zipfile)) {
   config = httr::add_headers(
     Authorization=paste0("token ", Sys.getenv("TRAVIS_TOKEN")),
     Accept="application/octet-stream")
@@ -125,8 +124,8 @@ if (!file.exists(lasfile)) {
                 destfile=zipfile,
                 handle=h,
                 quiet=FALSE)
-  unzip(zipfile, exdir=outdir)
 }
+unzip(zipfile, exdir=outdir)
 ```
 
 
