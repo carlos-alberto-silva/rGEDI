@@ -139,7 +139,7 @@
 #'wf_cerrado_metrics<-gediWFMetrics(input=wf_cerrado,outRoot=file.path(getwd(), "cerrado"))
 #'
 #'close(wf_amazon)
-#'close(wf_cerrtado)
+#'close(wf_cerrado)
 #'
 #'metrics<-rbind(wf_amazon_metrics,wf_cerrado_metrics)
 #'rownames(metrics)<-c("Amazon","Cerrado")
