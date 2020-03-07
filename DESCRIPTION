@@ -30,6 +30,7 @@ Imports:
   raster,
   RColorBrewer
 Suggests:
+  curl,
   knitr,
   leaflet,
   leafsync,
@@ -37,7 +38,8 @@ Suggests:
   plot3D,
   rasterVis,
   rmarkdown,
-  viridis
+  viridis,
+  xtable
 SystemRequirements: 
   GDAL >= 1.11.4,
   GNU Scientific Library >= 2.1,
