@@ -111,7 +111,6 @@ setGeneric("plot", function(x, y, ...)
 #'
 #'
 #' @rdname plot
-#' @export
 setMethod("plot", signature("gedi.fullwaveform", y = "missing"), function(x,relative=FALSE,polygon=FALSE,...) {
 
   if (!class(x)=="gedi.fullwaveform"){
@@ -208,7 +207,6 @@ setMethod("plot", signature("gedi.fullwaveform", y = "missing"), function(x,rela
 #'     xlab="Waveform Amplitude (%)", ylab="Elevation (m)", ylim=c(815,835))
 #'grid()
 #'}
-#' @export
 #' @rdname plot
 setMethod("plot", signature("gedi.level1bSim", y = "missing"), function(x,relative=FALSE,polygon=FALSE,method="RXWAVEINT",...) {
 
@@ -265,14 +263,10 @@ setGeneric("close", function(con, ...)
   standardGeneric("close"))
 
 #'@rdname close
-#'@export
 setMethod("close", signature = c("gedi.level1b"), h5closeall)
 #'@rdname close
-#'@export
 setMethod("close", signature = c("gedi.level2a"), h5closeall)
 #'@rdname close
-#'@export
 setMethod("close", signature = c("gedi.level2b"), h5closeall)
 #'@rdname close
-#'@export
 setMethod("close", signature = c("gedi.level1bSim"), h5closeall)
