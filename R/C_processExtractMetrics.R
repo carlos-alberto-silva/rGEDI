@@ -135,11 +135,11 @@
 #'                            coords = c(xcenter_Savanna, ycenter_Savanna))
 #'
 #'# Extracting GEDI feull-waveform derived metrics
-#'wf_amazon_metrics<-gediWFMetrics(input=wf_amazon,outRoot=getwd())
-#'wf_cerrado_metrics<-gediWFMetrics(input=wf_cerrado,outRoot=getwd())
+#'wf_amazon_metrics<-gediWFMetrics(input=wf_amazon,outRoot=file.path(getwd(), "amazon"))
+#'wf_cerrado_metrics<-gediWFMetrics(input=wf_cerrado,outRoot=file.path(getwd(), "cerrado"))
 #'
-#'wf_amazon@h5$close()
-#'wf_cerrado@h5$close()
+#'close(wf_amazon)
+#'close(wf_cerrtado)
 #'
 #'metrics<-rbind(wf_amazon_metrics,wf_cerrado_metrics)
 #'rownames(metrics)<-c("Amazon","Cerrado")
@@ -404,7 +404,7 @@ gediWFMetrics = function(
   cleanInList(inputInList)
 
   if (res==0) {
-    output = paste0(outRoot, ".metric.txt")
+    output = fs::path_ext_set(outRoot, ".metric.txt")
     header = read.csv(output, sep=",", nrow=1, header = FALSE, as.is=TRUE)
     header[ncol(header)] = NULL
     header=gsub(" *\\d+ *([^,]*)", "\\1", header)

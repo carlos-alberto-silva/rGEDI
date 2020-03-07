@@ -30,24 +30,24 @@ head = function(...) {
   print(xtable(utils::head(...)), type="html")
 }
 
-library(htmltools)
-save_tags <- function (tags, file, selfcontained = F, libdir = "./lib") 
-{
-  if (is.null(libdir)) {
-    libdir <- paste(tools::file_path_sans_ext(basename(file)), 
-                    "_files", sep = "")
-  }
-  htmltools::save_html(tags, file = file, libdir = libdir)
-  if (selfcontained) {
-    if (!htmlwidgets:::pandoc_available()) {
-      stop("Saving a widget with selfcontained = TRUE requires pandoc. For details see:\n", 
-           "https://github.com/rstudio/rmarkdown/blob/master/PANDOC.md")
-    }
-    htmlwidgets:::pandoc_self_contained_html(file, file)
-    unlink(libdir, recursive = TRUE)
-  }
-  return(file)
-}
+#library(htmltools)
+#save_tags <- function (tags, file, selfcontained = F, libdir = "./lib") 
+#{
+#  if (is.null(libdir)) {
+#    libdir <- paste(tools::file_path_sans_ext(basename(file)), 
+#                    "_files", sep = "")
+#  }
+#  htmltools::save_html(tags, file = file, libdir = libdir)
+#  if (selfcontained) {
+#    if (!htmlwidgets:::pandoc_available()) {
+#      stop("Saving a widget with selfcontained = TRUE requires pandoc. For details see:\n", 
+#           "https://github.com/rstudio/rmarkdown/blob/master/PANDOC.md")
+#    }
+#    htmlwidgets:::pandoc_self_contained_html(file, file)
+#    unlink(libdir, recursive = TRUE)
+#  }
+#  return(file)
+#}
 ```
 
 The rGEDI package provides functions for i) downloading, ii) visualizing, iii) clipping, iv) gridding, iv) simulating and v) exporting GEDI data.
@@ -99,14 +99,14 @@ LPDAACDataPool(filepath=gLevel2B,outdir=outdir)
 
 #** Herein, we are using only a GEDI sample dataset for this tutorial.
 # downloading zip file
-download.file("https://github.com/carlos-alberto-silva/rGEDI/releases/download/examples/examples.zip",destfile=paste0(outdir, "/examples.zip"))
+download.file("https://github.com/carlos-alberto-silva/rGEDI/releases/download/examples/examples.zip",destfile=file.path(outdir, "examples.zip"))
 
 # unzip file
-unzip(paste0(outdir,"/examples.zip"), exdir=outdir)
+unzip(file.path(outdir, "examples.zip"), exdir=outdir)
 ```
 ```{r, echo = FALSE, results="hide"}
-zipfile = fs::path_join(c(outdir, "examples.zip"))
-lasfile = fs::path_join(c(outdir, "Amazon.las"))
+zipfile = file.path(outdir, "examples.zip")
+lasfile = file.path(outdir, "Amazon.las")
 if (!file.exists(lasfile)) {
   config = httr::add_headers(
     Authorization=paste0("token ", Sys.getenv("TRAVIS_TOKEN")),
@@ -133,9 +133,9 @@ if (!file.exists(lasfile)) {
 ## Reading GEDI data
 ```{r, eval=FALSE}
 # Reading GEDI data
-gedilevel1b<-readLevel1B(level1Bpath = paste0(outdir,"/GEDI01_B_2019108080338_O01964_T05337_02_003_01_sub.h5"))
-gedilevel2a<-readLevel2A(level2Apath = paste0(outdir,"/GEDI02_A_2019108080338_O01964_T05337_02_001_01_sub.h5"))
-gedilevel2b<-readLevel2B(level2Bpath = paste0(outdir,"/GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub.h5"))
+gedilevel1b<-readLevel1B(level1Bpath =     file.path(outdir, "GEDI01_B_2019108080338_O01964_T05337_02_003_01_sub.h5"))
+gedilevel2a<-readLevel2A(level2Apath = file.path(outdir, "GEDI02_A_2019108080338_O01964_T05337_02_001_01_sub.h5"))
+gedilevel2b<-readLevel2B(level2Bpath = file.path(outdir, "GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub.h5"))
 ```
 ```{r, echo=FALSE}
 # Reading GEDI data
@@ -283,9 +283,9 @@ ymin = -13.75831
 ymax = -13.71244
 
 ## clipping GEDI data within boundary box
-level1b_clip_bb <- clipLevel1B(gedilevel1b, xmin, xmax, ymin, ymax,output=paste0(outdir,"//level1b_clip_bb.h5"))
-level2a_clip_bb <- clipLevel2A(gedilevel2a, xmin, xmax, ymin, ymax, output=paste0(outdir,"//level2a_clip_bb.h5"))
-level2b_clip_bb <- clipLevel2B(gedilevel2b, xmin, xmax, ymin, ymax,output=paste0(outdir,"//level2b_clip_bb.h5"))
+level1b_clip_bb <- clipLevel1B(gedilevel1b, xmin, xmax, ymin, ymax,output=file.path(outdir, "level1b_clip_bb.h5"))
+level2a_clip_bb <- clipLevel2A(gedilevel2a, xmin, xmax, ymin, ymax, output=file.path(outdir, "level2a_clip_bb.h5"))
+level2b_clip_bb <- clipLevel2B(gedilevel2b, xmin, xmax, ymin, ymax,output=file.path(outdir, "level2b_clip_bb.h5"))
 
 ## Clipping GEDI data by geometry
 # specify the path to shapefile for the study area
@@ -315,9 +315,9 @@ split_by="id"
 split_by="id"
 
 # Clipping h5 files
-level1b_clip_gb <- clipLevel1BGeometry(gedilevel1b,polygon_spdf,output=paste0(outdir,"//level1b_clip_gb.h5"), split_by=split_by)
-level2a_clip_gb <- clipLevel2AGeometry(gedilevel2a,polygon_spdf,output=paste0(outdir,"//level2a_clip_gb.h5"), split_by=split_by)
-level2b_clip_gb <- clipLevel2BGeometry(gedilevel2b,polygon_spdf,output=paste0(outdir,"//level2b_clip_gb.h5"), split_by=split_by)
+level1b_clip_gb <- clipLevel1BGeometry(gedilevel1b,polygon_spdf,output=file.path(outdir, "level1b_clip_gb.h5"), split_by=split_by)
+level2a_clip_gb <- clipLevel2AGeometry(gedilevel2a,polygon_spdf,output=file.path(outdir, "level2a_clip_gb.h5"), split_by=split_by)
+level2b_clip_gb <- clipLevel2BGeometry(gedilevel2b,polygon_spdf,output=file.path(outdir, "level2b_clip_gb.h5"), split_by=split_by)
 ```
 
 
@@ -561,8 +561,8 @@ xcenter_cerrado = mean(las_cerrado@bbox[1,])
 ycenter_cerrado = mean(las_cerrado@bbox[2,])
 
 # Simulating GEDI full-waveform
-wf_amazon<-gediWFSimulator(input=lasfile_amazon,output=paste0(getwd(),"//gediWF_amazon_simulation.h5"),coords = c(xcenter_amazon, ycenter_amazon))
-wf_cerrado<-gediWFSimulator(input=lasfile_cerrado,output=paste0(getwd(),"//gediWF_cerrado_simulation.h5"),coords = c(xcenter_cerrado, ycenter_cerrado))
+wf_amazon<-gediWFSimulator(input=lasfile_amazon,output=file.path(getwd(),"/gediWF_amazon_simulation.h5")),coords = c(xcenter_amazon, ycenter_amazon)
+wf_cerrado<-gediWFSimulator(input=lasfile_cerrado,output=file.path(getwd(),"/gediWF_cerrado_simulation.h5")),coords = c(xcenter_cerrado, ycenter_cerrado)
 
 # Plot ALS and GEDI simulated full-waveform
 par(mfrow=c(2,2), mar=c(4,4,0,0), oma=c(0,0,1,1),cex.axis = 1.2)
@@ -585,8 +585,8 @@ grid()
 
 # Extracting GEDI full-waveform derived metrics
 ```{r, results=FALSE}
-wf_amazon_metrics<-gediWFMetrics(input=wf_amazon,outRoot=getwd())
-wf_cerrado_metrics<-gediWFMetrics(input=wf_cerrado,outRoot=getwd())
+wf_amazon_metrics<-gediWFMetrics(input=wf_amazon,outRoot=file.path(getwd(), "amazon"))
+wf_cerrado_metrics<-gediWFMetrics(input=wf_cerrado,outRoot=file.path(getwd(), "cerrado"))
 
 metrics<-rbind(wf_amazon_metrics,wf_cerrado_metrics)
 rownames(metrics)<-c("Amazon","Cerrado")

@@ -56,7 +56,7 @@ LPDAACDataPool<-function(filepath,outdir){
 
       cat(paste0("Downloading file ",filename," \n"))
       # Write file to disk (authenticating with netrc) using the current directory/filename
-      response <- httr::GET(files[i], httr::write_disk(paste0(outdir,"\\",filename), overwrite = TRUE), httr::progress(),
+      response <- httr::GET(files[i], httr::write_disk(file.path(outdir, "",filename), overwrite = TRUE), httr::progress(),
                             httr::config(netrc = TRUE, netrc_file = netrc), httr::set_cookies("LC" = "cookies"))
 
       # Check to see if file downloaded correctly

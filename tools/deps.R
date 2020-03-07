@@ -1,5 +1,5 @@
 downloadDep = function(name, file, url, origName = "") {
-  if(!file.exists(paste0("./",name,"/",file))) {
+  if(!file.exists(file.path(".",name,file))) {
     print(paste0("Downloading ",name,"..."))
     download.file(url, "lib.tar.gz", quiet=FALSE)
     untar("lib.tar.gz", exdir=".")
@@ -13,7 +13,7 @@ downloadDep = function(name, file, url, origName = "") {
 
 
 downloadDepBitBucket = function(name, file, origName) {
-  fileCheck = paste0("./",name,"/",file)
+  fileCheck = file.path(".",name,file)
   if(!file.exists(fileCheck)) {
     print(paste0("Downloading ",name,"..."))
     url = paste0("https://bitbucket.org/caiohamamura/",name,"/get/v0.3.0.zip")

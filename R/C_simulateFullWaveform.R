@@ -132,9 +132,9 @@
 #'plot(wf_Savanna, relative=TRUE, polygon=TRUE, type="l", lwd=2, col="green",
 #'     xlab="Waveform Amplitude (%)", ylab="Elevation (m)", ylim=c(815,835))
 #'grid()
-#'
-#'wf_Amazon@h5$close_all()
-#'wf_Savanna@h5$close_all()
+#' 
+#'close(wf_Amazon)
+#'close(wf_Amazon)
 #'}
 #'
 #' @import hdf5r
@@ -234,7 +234,7 @@ gediWFSimulator = function(
 
   inputInList = inputOrInList(input)
   if (fs::path_ext(output) != "h5") {
-    output = paste0(output, ".h5")
+    output = fs::path_ext_set(output, ".h5")
   }
 
   .Call("C_gediSimulator",

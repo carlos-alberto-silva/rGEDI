@@ -63,6 +63,7 @@ gedi.fullwaveform <- setClass(
 #'
 #'@param x An object of class "gedi.fullwaveform". (output of \code{\link[rGEDI:getLevel1BWF]{getLevel1BWF}} function)
 #'@param y: not used (inherited from R base)
+#'@param ...: will be passed to the main plot
 #'
 #'@param relative if TRUE, the Wavform Amplitude will be showed in percentage (\%)
 #'@param polygon if TRUE, polygon will be added to the plot
@@ -86,13 +87,13 @@ setGeneric("plot", function(x, y, ...)
 #'                     "https://github.com/carlos-alberto-silva/rGEDI/",
 #'                     "releases/download/examples/examples.zip"
 #'              ),
-#'              destfile=paste0(outdir,"/examples.zip"))
+#'              destfile=file.path(outdir, "examples.zip"))
 #'
 #'# unzip the file
-#'unzip(paste0(outdir,"\\examples.zip"))
+#'unzip(file.path(outdir, "examples.zip"))
 #'
 #'# specify the path to GEDI level1B data
-#'level1bpath = paste0(outdir,"\\GEDI01_B_2019108080338_O01964_T05337_02_003_01_sub.h5")
+#'level1bpath = file.path(outdir, "GEDI01'_B_2019108080338_O01964_T05337_02_003_01_sub.h5")
 #'
 #'# Reading GEDI level1B file
 #'level1b<-readLevel1b(gedilevel1b)
