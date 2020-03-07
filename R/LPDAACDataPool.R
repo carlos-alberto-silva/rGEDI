@@ -45,7 +45,7 @@ LPDAACDataPool<-function(filepath,outdir){
                    sprintf("login %s", getPass::getPass(msg = "Enter NASA Earthdata Login Username \n (or create an account at urs.earthdata.nasa.gov) :")),
                    sprintf("password %s", getPass::getPass(msg = "Enter NASA Earthdata Login Password:"))), netrc_conn)
       close(netrc_conn)
-      cat("A .netrc file with your Earthdata Login credentials was stored in the output directory \n")
+      message("A .netrc file with your Earthdata Login credentials was stored in the output directory ")
     }
 
     # ---------------------------CONNECT TO DATA POOL AND DOWNLOAD FILES------------------------------ #
@@ -54,16 +54,16 @@ LPDAACDataPool<-function(filepath,outdir){
     for (i in 1:length(files)) {
       filename <-  tail(strsplit(files[i], '/')[[1]], n = 1) # Keep original filename
 
-      cat(paste0("Downloading file ",filename," \n"))
+      message(paste0("Downloading file ",filename))
       # Write file to disk (authenticating with netrc) using the current directory/filename
       response <- httr::GET(files[i], httr::write_disk(file.path(outdir, "",filename), overwrite = TRUE), httr::progress(),
                             httr::config(netrc = TRUE, netrc_file = netrc), httr::set_cookies("LC" = "cookies"))
 
       # Check to see if file downloaded correctly
       if (response$status_code == 200) {
-        cat(sprintf("Done!","%s downloaded at %s", filename, dl_dir))
+        message(sprintf("Done!","%s downloaded at %s", filename, dl_dir))
       } else {
-        cat(sprintf("%s not downloaded. Verify that your username and password are correct in %s", filename, netrc))
+        message(sprintf("%s not downloaded. Verify that your username and password are correct in %s", filename, netrc))
       }
      }
 }
