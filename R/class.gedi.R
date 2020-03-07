@@ -106,7 +106,7 @@ setGeneric("plot", function(x, y, ...)
 #'xlab="", ylab="Elevation (m)")
 #'
 #'plot(wf, relative=TRUE, polygon=TRUE, type="l", lwd=2, col="forestgreen",
-#'xlab="Waveform Amplitude (\%)", ylab="Elevation (m)")
+#'xlab="Waveform Amplitude (%)", ylab="Elevation (m)")
 #'}
 #'
 #'
