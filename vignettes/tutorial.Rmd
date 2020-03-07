@@ -607,7 +607,7 @@ head(metrics[,1:8])
 
 
 # Always close gedi objects, so HDF5 files won't be blocked!
-```{r cleanup, echo=TRUE, results="hide", error=TRUE}
+```{r cleanup, echo=TRUE, results="hide", error=TRUE, eval=FALSE}
 close(wf_amazon)
 close(wf_cerrado)
 close(gedilevel1b)
