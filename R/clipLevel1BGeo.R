@@ -41,8 +41,8 @@
 #'
 #'library(leaflet)
 #'leaflet() %>%
-#'  addCircleMarkers(level1bGeo_clip@dt$longitude_bin0,
-#'                   level1bGeo_clip@dt$latitude_bin0,
+#'  addCircleMarkers(level1bGeo_clip$longitude_bin0,
+#'                   level1bGeo_clip$latitude_bin0,
 #'                   radius = 1,
 #'                   opacity = 1,
 #'                   color = "red")  %>%
