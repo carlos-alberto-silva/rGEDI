@@ -15,7 +15,6 @@
   classes = sapply(ls(.GlobalEnv), function(x) class(get(x)))
   classes = classes[classes %in% objs]
   objNames = names(classes)
-  message("Package loading")
   for (i in 1:length(objNames)) {
     if (length(classes) > 0) {
       assign(
