@@ -561,8 +561,14 @@ xcenter_cerrado = mean(las_cerrado@bbox[1,])
 ycenter_cerrado = mean(las_cerrado@bbox[2,])
 
 # Simulating GEDI full-waveform
-wf_amazon<-gediWFSimulator(input=lasfile_amazon,output=file.path(getwd(),"/gediWF_amazon_simulation.h5")),coords = c(xcenter_amazon, ycenter_amazon)
-wf_cerrado<-gediWFSimulator(input=lasfile_cerrado,output=file.path(getwd(),"/gediWF_cerrado_simulation.h5")),coords = c(xcenter_cerrado, ycenter_cerrado)
+wf_amazon<-gediWFSimulator(
+  input  = lasfile_amazon,
+  output = file.path(getwd(),"gediWF_amazon_simulation.h5"),
+  coords = c(xcenter_amazon, ycenter_amazon))
+wf_cerrado<-gediWFSimulator(
+  input  = lasfile_cerrado,
+  output = file.path(getwd(),"/gediWF_cerrado_simulation.h5"),
+  coords = c(xcenter_cerrado, ycenter_cerrado))
 
 # Plot ALS and GEDI simulated full-waveform
 par(mfrow=c(2,2), mar=c(4,4,0,0), oma=c(0,0,1,1),cex.axis = 1.2)
