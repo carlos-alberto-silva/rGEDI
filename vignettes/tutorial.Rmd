@@ -545,8 +545,8 @@ levelplot(pai_metrics,
 ## Simulating GEDI full-waveform data from Airborne Laser Scanning (ALS) 3-D point cloud and extracting canopy derived metrics
 ```{r, fig.width=400/90, fig.height=400/90, results = FALSE}
 # specify the path to ALS data
-lasfile_amazon <- system.file("extdata", "Amazon.las", package="rGEDI")
-lasfile_cerrado <- system.file("extdata", "Cerrado.las", package="rGEDI")
+lasfile_amazon <- file.path(outdir, "Amazon.las")
+lasfile_cerrado <- file.path(outdir, "Cerrado.las")
 
 # Reading and plot ALS file
 library(lidR)
