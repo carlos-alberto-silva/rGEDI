@@ -62,8 +62,8 @@ gedi.fullwaveform <- setClass(
 #'Plot GEDI* object
 #'
 #'@param x An object of class "gedi.fullwaveform". (output of \code{\link[rGEDI:getLevel1BWF]{getLevel1BWF}} function)
-#'@param y: not used (inherited from R base)
-#'@param ...: will be passed to the main plot
+#'@param y not used (inherited from R base)
+#'@param ... will be passed to the main plot
 #'
 #'@param relative if TRUE, the Wavform Amplitude will be showed in percentage (\%)
 #'@param polygon if TRUE, polygon will be added to the plot
