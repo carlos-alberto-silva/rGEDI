@@ -1,10 +1,11 @@
 ---
-title: "Tutorial"
+title: "rGEDI: An R Package for NASA's Global Ecosystem Dynamics Investigation (GEDI) data downloading, visualizing and processing"
+author: "Carlos A. Silva, Caio Hamamura, Ruben Valbuena, Steve Hancock, Adrian Cardil, Eben Broadbent, Danilo R. A. de Almeida, Celso H. L. Silva Junior and Carine Klauberg"
 output: 
   rmarkdown::html_vignette: 
     keep_md: TRUE
 vignette: >
-  %\VignetteIndexEntry{Tutorial}
+  %\VignetteIndexEntry{Introcution to the rGEDI package}
   %\VignetteEngine{knitr::rmarkdown}
   \usepackage[utf8]{inputenc}
 ---
