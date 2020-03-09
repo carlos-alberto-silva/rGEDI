@@ -42,6 +42,7 @@
 #'# clip level2BVPM by extent boundary box
 #'level2b_clip <- clipLevel2BVPM(level2BVPM,xmin, xmax, ymin, ymax)
 #'
+#'\donttest{
 #'library(leaflet)
 #'leaflet() %>%
 #'  addCircleMarkers(level2b_clip$longitude_bin0,
@@ -50,10 +51,9 @@
 #'                   opacity = 1,
 #'                   color = "red")  %>%
 #'  addScaleBar(options = list(imperial = FALSE)) %>%
-#'  addPolygons(data=polygon_spdf,weight=1,col = 'white',
-#'              opacity = 1, fillOpacity = 0) %>%
 #'  addProviderTiles(providers$Esri.WorldImagery)
-#'
+#'}
+#' 
 #'close(level2b)
 #'@export
 clipLevel2BVPM = function(level2BVPM,xmin, xmax, ymin, ymax){
@@ -92,25 +92,16 @@ clipLevel2BVPM = function(level2BVPM,xmin, xmax, ymin, ymax){
 #'
 #'@examples
 #'\donttest{
-#'# specify the path to download GEDI example dataset
-#'outdir<-getwd()
+#'# specify the path to GEDI level2B data (zip file)
+#'level2B_fp_zip <- system.file("extdata",
+#'                   "GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub.zip",
+#'                   package="rGEDI")
 #'
-#'# downloading GEDI example dataset (zip file)
-#'download.file(
-#'              paste0(
-#'                     "https://github.com/carlos-alberto-silva/rGEDI/",
-#'                     "releases/download/examples/examples.zip"
-#'              ),
-#'              destfile=file.path(outdir, "examples.zip"))
+#'# Unzipping GEDI level2A data
+#'level2Bpath <- unzip(level2B_fp_zip,exdir = dirname(level2B_fp_zip))
 #'
-#'# unzip the file
-#'unzip(file.path(outdir, "examples.zip"))
-#'
-#'# specify the path to GEDI level2B data
-#'level2bpath = file.path(outdir, "GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub.h5")
-#'
-#'# Reading GEDI level1B file
-#'level2b<-readLevel2b(gedilevel2b)
+#'# Reading GEDI level2B data (h5 file)
+#'level2b<-readLevel2B(level2Bpath=level2Bpath)
 #'
 #'# Get canopy cover and vertical profile metrics
 #'level2BVPM<-getLevel2BVPM(level2b)
@@ -125,6 +116,7 @@ clipLevel2BVPM = function(level2BVPM,xmin, xmax, ymin, ymax){
 #'# clip level2BVPM by geometry
 #'level2b_clip_geometry <- clipLevel2BVPMGeometry(level2BVPM,polygon_spdf,split_by="id")
 #'
+#'\donttest{
 #'library(leaflet)
 #'leaflet() %>%
 #'  addCircleMarkers(level2b_clip_geometry$longitude_bin0,
@@ -137,7 +129,8 @@ clipLevel2BVPM = function(level2BVPM,xmin, xmax, ymin, ymax){
 #'              opacity = 1, fillOpacity = 0) %>%
 #'  addProviderTiles(providers$Esri.WorldImagery)
 #'}
-#'
+#'}
+#' 
 #'close(level2b)
 #'@export
 clipLevel2BVPMGeometry = function(level2BVPM, polygon_spdf, split_by=NULL) {
