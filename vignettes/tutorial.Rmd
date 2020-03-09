@@ -100,7 +100,7 @@ LPDAACDataPool(filepath=gLevel2B,outdir=outdir)
 
 #** Herein, we are using only a GEDI sample dataset for this tutorial.
 # downloading zip file
-download.file("https://github.com/carlos-alberto-silva/rGEDI/releases/download/examples/examples.zip",destfile=file.path(outdir, "examples.zip"))
+download.file("https://github.com/carlos-alberto-silva/rGEDI/releases/download/datasets/examples.zip",destfile=file.path(outdir, "examples.zip"))
 
 # unzip file
 unzip(file.path(outdir, "examples.zip"), exdir=outdir)
@@ -112,7 +112,7 @@ if (!file.exists(zipfile)) {
     Authorization=paste0("token ", Sys.getenv("TRAVIS_TOKEN")),
     Accept="application/octet-stream")
   res=httr::GET(
-      "https://api.github.com/repos/carlos-alberto-silva/rGEDI/releases/assets/18585248", 
+      "https://github.com/carlos-alberto-silva/rGEDI/releases/download/datasets/examples.zip", 
     config = config
   )
   h=curl::new_handle()

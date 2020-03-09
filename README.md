@@ -53,7 +53,7 @@ LPDAACDataPool(filepath=gLevel2B,outdir=outdir)
 
 #** Herein, we are using only a GEDI sample dataset for this tutorial.
 # downloading zip file
-download.file("https://github.com/carlos-alberto-silva/rGEDI/releases/download/examples/examples.zip",destfile=paste0(outdir, "/examples.zip"))
+download.file("https://github.com/carlos-alberto-silva/rGEDI/releases/download/datasets/examples.zip",destfile=paste0(outdir, "/examples.zip"))
 
 # unzip file 
 unzip(paste0(outdir,"\\examples.zip"))
