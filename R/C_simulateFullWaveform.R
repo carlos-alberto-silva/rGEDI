@@ -105,11 +105,11 @@
 #'
 #'# Simulating GEDI full-waveform
 #'wf_Amazon<-gediWFSimulator(input=alsfile_Amazon_filepath,
-#'                           output=paste0(getwd(),"/gediWF_amazon_simulation.h5"),
+#'                           output=file.path(getwd(),"gediWF_amazon_simulation.h5"),
 #'                           coords = c(xcenter_Amazon, ycenter_Amazon))
 #'
 #'wf_Savanna<-gediWFSimulator(input=alsfile_Savanna_filepath,
-#'                            output=paste0(getwd(),"/gediWF_Savanna_simulation.h5"),
+#'                            output=file.path(getwd(),"gediWF_Savanna_simulation.h5"),
 #'                            coords = c(xcenter_Savanna, ycenter_Savanna))
 #'
 #'# Plot ALS and GEDI simulated full-waveform
