@@ -109,7 +109,7 @@ clipLevel1BGeo = function(level1BGeo,xmin, xmax, ymin, ymax){
 #'library(raster)
 #'polygon_spdf<-shapefile(polygon_filepath)
 #'
-#'level1BGeo_clip = clipLevel1BGeometry(level1BGeo, polygon_spdf, split_by="id")
+#'level1BGeo_clip = clipLevel1BGeoGeometry(level1BGeo, polygon_spdf, split_by="id")
 #'
 #'library(leaflet)
 #'leaflet() %>%

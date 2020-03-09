@@ -42,7 +42,7 @@
 #'gprofile<-plotPAVDProfile(level2BPAVDProfile, beam="BEAM0101", elev=TRUE)
 #'
 #'
-#'
+#'close(level2b)
 #'@export
 plotPAVDProfile<-function(level2BPAVDProfile, beam="BEAM0101", elev=TRUE){
   #require(ggplot2)

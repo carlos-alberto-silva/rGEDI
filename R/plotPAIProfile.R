@@ -43,7 +43,7 @@
 #'
 #'
 #'
-#'
+#'close(level2b)
 #'@import ggplot2
 #'@importFrom ggplot2 aes element_rect geom_tile geom_line geom_line scale_fill_gradientn xlab ylab labs theme
 #'@importFrom RColorBrewer brewer.pal
