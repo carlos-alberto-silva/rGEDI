@@ -34,7 +34,7 @@ level2Apath <- unzip(level2A_fp_zip,exdir = dirname(level2A_fp_zip))
 level2a<-readLevel2A(level2Apath=level2Apath)
 
 # specify the path to shapefile
-polygon_filepath <- system.file("extdata", "clip_polygon.shp", package="rGEDI")
+polygon_filepath <- system.file("extdata", "stands_cerrado.shp", package="rGEDI")
 
 # Reading shapefile as SpatialPolygonsDataFrame object
 library(raster)
@@ -60,14 +60,14 @@ metrics = list(
 }
 
 # Computing the maximum of RH100
-RH100max<-polyStatsLevel2AM(level2AM_clip,func=max(RH100), id=NULL)
+RH100max<-polyStatsLevel2AM(level2AM_clip,func=max(rh100), id=NULL)
 
 # Computing the maximum of RH100 stratified by polygon
-RH100max_poly<-polyStatsLevel2AM(level2AM_clip,func=max(RH100), id=NULL)
+RH100max_poly<-polyStatsLevel2AM(level2AM_clip,func=max(rh100), id=NULL)
 
 # Computing a serie statistics for GEDI metrics stratified by polygon
-RH100metrics<-polyStatsLevel2AM(level2AM_clip,func=mySetOfMetrics(RH100),
-                     id=level2AM_clip@data$id)
+RH100metrics<-polyStatsLevel2AM(level2AM_clip,func=mySetOfMetrics(rh100),
+                     id=level2AM_clip$id)
 
 close(level2a)
 }

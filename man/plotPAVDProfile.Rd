@@ -52,7 +52,7 @@ level2BPAVDProfile<-getLevel2BPAVDProfile(level2b)
 gprofile<-plotPAVDProfile(level2BPAVDProfile, beam="BEAM0101", elev=TRUE)
 
 
-
+close(level2b)
 }
 \seealso{
 https://lpdaac.usgs.gov/products/gedi02_bv001/

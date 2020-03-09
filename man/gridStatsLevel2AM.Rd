@@ -21,7 +21,6 @@ This function computes a series of user-defined descriptive statistics within
 each grid cell for GEDI-derived Elevation and Height Metrics (Level2A)
 }
 \examples{
-\donttest{
 # specify the path to GEDI level2A data (zip file)
 level2A_fp_zip <- system.file("extdata",
                   "GEDI02_A_2019108080338_O01964_T05337_02_001_01_sub.zip",
@@ -50,7 +49,7 @@ metrics = list(
 }
 
 #' Computing a serie of GEDI metrics
-ZTstats<-gridStatsLevel2AM(level2AM = level2AM, func=mySetOfMetrics(ZT), res=0.0005)
+ZTstats<-gridStatsLevel2AM(level2AM = level2AM, func=mySetOfMetrics(elev_highestreturn), res=0.0005)
 plot(ZTstats)
 
 #' Computing the maximum of RH100 only
@@ -58,9 +57,8 @@ maxRH100<-gridStatsLevel2AM(level2AM = level2AM, func=max(rh100), res=0.0005)
 plot(maxRH100)
 
 #' Computing the mean of ZG only
-ZGmean<-gridStatsLevel2AM(level2AM = level2AM, func=mean(ZG), res=0.0005)
+ZGmean<-gridStatsLevel2AM(level2AM = level2AM, func=mean(elev_lowestmode), res=0.0005)
 plot(ZGmean)
-}
 
 close(level2a)
 }

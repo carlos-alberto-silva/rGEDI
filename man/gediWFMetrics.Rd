@@ -4,24 +4,75 @@
 \alias{gediWFMetrics}
 \title{GEDI full waveform data processing}
 \usage{
-gediWFMetrics(input, outRoot, writeFit = FALSE, writeGauss = FALSE,
-  bounds = NULL, ground = FALSE, useInt = FALSE, useFrac = FALSE,
-  rhRes = 5, laiRes = 10, laiH = 30, noRHgauss = FALSE, gTol = 0,
-  fhdHistRes = 0.001, forcePsigma = FALSE, bayesGround = FALSE,
-  dontTrustGround = FALSE, noRoundCoord = FALSE, noCanopy = FALSE,
-  dcBias = 0, nSig = 0, seed = NULL, hNoise = 0,
-  linkNoise = NULL, linkFsig = NULL, linkPsig = NULL,
-  trueSig = NULL, bitRate = NULL, maxDN = NULL, renoise = FALSE,
-  newPsig = -1, oldPsig = 0.764331, addDrift = NULL,
-  missGround = FALSE, minGap = NULL, photonCount = FALSE,
-  pcl = FALSE, nPhotons = 2.1, photonWind = 200, noiseMult = 0.1,
-  rhoVrhoG = 1, nPhotC = 2.1, nPhotG = -1, photHDF = FALSE,
-  meanN = 0, thresh = 1e-14, varNoise = FALSE, varScale = NULL,
-  statsLen = NULL, noiseTrack = FALSE, sWidth = NULL, psWidth = 0,
-  msWidth = NULL, preMatchF = FALSE, postMatchF = FALSE,
-  pFile = NULL, gWidth = 1.2, minGsig = 0.764331, minWidth = 0,
-  medNoise = FALSE, varDrift = NULL, driftFac = NULL, rhoG = 0.4,
-  rhoC = 0.57, pSigma = NULL, gold = FALSE, deconTol = NULL)
+gediWFMetrics(
+  input,
+  outRoot,
+  writeFit = FALSE,
+  writeGauss = FALSE,
+  bounds = NULL,
+  ground = FALSE,
+  useInt = FALSE,
+  useFrac = FALSE,
+  rhRes = 5,
+  laiRes = 10,
+  laiH = 30,
+  noRHgauss = FALSE,
+  gTol = 0,
+  fhdHistRes = 0.001,
+  forcePsigma = FALSE,
+  bayesGround = FALSE,
+  dontTrustGround = FALSE,
+  noRoundCoord = FALSE,
+  noCanopy = FALSE,
+  dcBias = 0,
+  nSig = 0,
+  seed = NULL,
+  hNoise = 0,
+  linkNoise = NULL,
+  linkFsig = NULL,
+  linkPsig = NULL,
+  trueSig = NULL,
+  bitRate = NULL,
+  maxDN = NULL,
+  renoise = FALSE,
+  newPsig = -1,
+  oldPsig = 0.764331,
+  addDrift = NULL,
+  missGround = FALSE,
+  minGap = NULL,
+  photonCount = FALSE,
+  pcl = FALSE,
+  nPhotons = 2.1,
+  photonWind = 200,
+  noiseMult = 0.1,
+  rhoVrhoG = 1,
+  nPhotC = 2.1,
+  nPhotG = -1,
+  photHDF = FALSE,
+  meanN = 0,
+  thresh = 1e-14,
+  varNoise = FALSE,
+  varScale = NULL,
+  statsLen = NULL,
+  noiseTrack = FALSE,
+  sWidth = NULL,
+  psWidth = 0,
+  msWidth = NULL,
+  preMatchF = FALSE,
+  postMatchF = FALSE,
+  pFile = NULL,
+  gWidth = 1.2,
+  minGsig = 0.764331,
+  minWidth = 0,
+  medNoise = FALSE,
+  varDrift = NULL,
+  driftFac = NULL,
+  rhoG = 0.4,
+  rhoC = 0.57,
+  pSigma = NULL,
+  gold = FALSE,
+  deconTol = NULL
+)
 }
 \arguments{
 \item{input}{\code{\link[rGEDI:gedi.level1bSim-class]{gedi.level1bSim}} (may be a list of objects). Simulated waveform input object(s).}
@@ -165,6 +216,10 @@ A S4 object of class \code{\link[hdf5r:H5File-class]{hdf5r::H5File}} in the \emp
 GEDI full waveform data processing and metrics extraction
 }
 \examples{
+\dontshow{
+rm(list=ls())
+}
+
 libsAvailable = require(lidR) && require(plot3D)
 if (libsAvailable) {
 
@@ -187,17 +242,17 @@ xcenter_Savanna = mean(als_Savanna@bbox[1,])
 ycenter_Savanna = mean(als_Savanna@bbox[2,])
 
 # Simulating GEDI full-waveform
-wf_Amazon<-gediWFSimulator(input=lasfile_amazon,
-                          output=paste0(getwd(),"/gediWF_amazon_simulation.h5"),
+wf_Amazon<-gediWFSimulator(input=alsfile_Amazon_filepath,
+                          output=file.path(getwd(),"gediWF_amazon_simulation.h5"),
                           coords = c(xcenter_Amazon, ycenter_Amazon))
 
-wf_Savanna<-gediWFSimulator(input=als_Savanna,
-                           output=paste0(getwd(),"/gediWF_cerrado_simulation.h5"),
+wf_Savanna<-gediWFSimulator(input=alsfile_Savanna_filepath,
+                           output=file.path(getwd(),"gediWF_Savanna_simulation.h5"),
                            coords = c(xcenter_Savanna, ycenter_Savanna))
 
-# Extracting GEDI feull-waveform derived metrics
+# Extracting GEDI full-waveform derived metrics
 wf_amazon_metrics<-gediWFMetrics(input=wf_Amazon,outRoot=file.path(getwd(), "amazon"))
-wf_savanna_metrics<-gediWFMetrics(input=wf_Savanna,outRoot=file.path(getwd(), "cerrado"))
+wf_savanna_metrics<-gediWFMetrics(input=wf_Savanna,outRoot=file.path(getwd(), "Savanna"))
 
 close(wf_Amazon)
 close(wf_Savanna)

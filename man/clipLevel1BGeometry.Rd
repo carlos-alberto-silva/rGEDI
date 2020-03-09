@@ -4,8 +4,7 @@
 \alias{clipLevel1BGeometry}
 \title{Clip GEDI Level1B data by geometry}
 \usage{
-clipLevel1BGeometry(level1b, polygon_spdf, output = "",
-  split_by = NULL)
+clipLevel1BGeometry(level1b, polygon_spdf, output = "", split_by = NULL)
 }
 \arguments{
 \item{level1b}{A GEDI Level1B object (output of \code{\link[rGEDI:readLevel1B]{readLevel1B}} function). A S4 object of class "gedi.level1b".}
@@ -24,6 +23,7 @@ Returns a list of S4 object of class "gedi.level1b".
 This function clips GEDI Level1B data within a bounding geometry
 }
 \examples{
+\donttest{
 # specify the path to GEDI level1B data (zip file)
 level1B_fp_zip <- system.file("extdata",
                   "GEDI01_B_2019108080338_O01964_T05337_02_003_01_sub.zip",
@@ -43,7 +43,7 @@ library(raster)
 polygon_spdf<-shapefile(polygon_filepath)
 
 # Spepecifing output file and path
-output<-paste0(getwd(),"//GEDI01_B_2019108080338_O01964_T05337_02_003_01_clip")
+output<-file.path(getwd(),"GEDI01_B_2019108080338_O01964_T05337_02_003_01_clip")
 
 # clip by extent boundary box
 level1b_clip <- clipLevel1BGeometry(level1b, polygon_spdf = polygon_spdf,
@@ -52,4 +52,5 @@ level1b_clip <- clipLevel1BGeometry(level1b, polygon_spdf = polygon_spdf,
 
 close(level1b)
 lapply(level1b_clip, close)
+}
 }

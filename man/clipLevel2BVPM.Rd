@@ -49,17 +49,17 @@ ymax = -13.71244
 # clip level2BVPM by extent boundary box
 level2b_clip <- clipLevel2BVPM(level2BVPM,xmin, xmax, ymin, ymax)
 
+\donttest{
 library(leaflet)
 leaflet() \%>\%
  addCircleMarkers(level2b_clip$longitude_bin0,
-                  level2b_clipt$latitude_bin0,
+                  level2b_clip$latitude_bin0,
                   radius = 1,
                   opacity = 1,
                   color = "red")  \%>\%
  addScaleBar(options = list(imperial = FALSE)) \%>\%
- addPolygons(data=polygon_spdf,weight=1,col = 'white',
-             opacity = 1, fillOpacity = 0) \%>\%
  addProviderTiles(providers$Esri.WorldImagery)
+}
 
 close(level2b)
 }

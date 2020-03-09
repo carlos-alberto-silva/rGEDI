@@ -38,20 +38,19 @@ level1Bpath <- unzip(level1B_fp_zip,exdir = dirname(level1B_fp_zip))
 level1b<-readLevel1B(level1Bpath=level1Bpath)
 
 # Bounding rectangle coordinates
-xmin = -44.15036
+xmin = -44.10136
 xmax = -44.10066
-ymin = -13.75831
-ymax = -13.71244
+ymin = -13.73031
+ymax = -13.72044
 
 # Spepecifing output file and path
-output<-paste0(getwd(),"//GEDI01_B_2019108080338_O01964_T05337_02_003_01_clip")
+output<-file.path(getwd(),"GEDI01_B_2019108080338_O01964_T05337_02_003_01_clip")
 
 # clip by extent boundary box
 level1b_clip <- clipLevel1B(level1b,xmin, xmax, ymin, ymax,output)
 
 close(level1b)
 close(level1b_clip)
-
 }
 \seealso{
 https://lpdaac.usgs.gov/products/gedi01_bv001/

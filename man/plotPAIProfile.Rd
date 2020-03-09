@@ -53,7 +53,7 @@ gprofile<-plotPAIProfile(level2BPAIProfile, beam="BEAM0101", elev=TRUE)
 
 
 
-
+close(level2b)
 }
 \seealso{
 https://lpdaac.usgs.gov/products/gedi02_bv001/

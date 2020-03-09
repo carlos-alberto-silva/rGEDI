@@ -23,6 +23,7 @@ Returns a list of S4 object of class "gedi.level2a".
 This function clips GEDI Level2A data within given geometry
 }
 \examples{
+\donttest{
 # specify the path to GEDI level2A data (zip file)
 level2A_fp_zip <- system.file("extdata",
                   "GEDI02_A_2019108080338_O01964_T05337_02_001_01_sub.zip",
@@ -50,6 +51,7 @@ level2a_clip <- clipLevel2AGeometry(level2a, polygon_spdf = polygon_spdf,
                                    split_by="id")
 close(level2a)
 lapply(level2a_clip, close)
+}
 }
 \seealso{
 https://lpdaac.usgs.gov/products/gedi02_av001/

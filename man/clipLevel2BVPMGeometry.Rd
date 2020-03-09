@@ -22,26 +22,16 @@ This function clips GEDI level2B-derived
 Canopy Cover and Vertical Profile metrics within a given geometry
 }
 \examples{
-\donttest{
-# specify the path to download GEDI example dataset
-outdir<-getwd()
+# specify the path to GEDI level2B data (zip file)
+level2B_fp_zip <- system.file("extdata",
+                  "GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub.zip",
+                  package="rGEDI")
 
-# downloading GEDI example dataset (zip file)
-download.file(
-             paste0(
-                    "https://github.com/carlos-alberto-silva/rGEDI/",
-                    "releases/download/examples/examples.zip"
-             ),
-             destfile=file.path(outdir, "examples.zip"))
+# Unzipping GEDI level2A data
+level2Bpath <- unzip(level2B_fp_zip,exdir = dirname(level2B_fp_zip))
 
-# unzip the file
-unzip(file.path(outdir, "examples.zip"))
-
-# specify the path to GEDI level2B data
-level2bpath = file.path(outdir, "GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub.h5")
-
-# Reading GEDI level1B file
-level2b<-readLevel2b(gedilevel2b)
+# Reading GEDI level2B data (h5 file)
+level2b<-readLevel2B(level2Bpath=level2Bpath)
 
 # Get canopy cover and vertical profile metrics
 level2BVPM<-getLevel2BVPM(level2b)
@@ -56,6 +46,7 @@ polygon_spdf<-shapefile(polygon_filepath)
 # clip level2BVPM by geometry
 level2b_clip_geometry <- clipLevel2BVPMGeometry(level2BVPM,polygon_spdf,split_by="id")
 
+\donttest{
 library(leaflet)
 leaflet() \%>\%
  addCircleMarkers(level2b_clip_geometry$longitude_bin0,

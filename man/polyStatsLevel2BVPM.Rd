@@ -34,7 +34,7 @@ level2Bpath <- unzip(level2B_fp_zip,exdir = dirname(level2B_fp_zip))
 level2b<-readLevel2B(level2Bpath=level2Bpath)
 
 # specify the path to shapefile
-polygon_filepath <- system.file("extdata", "clip_polygon.shp", package="rGEDI")
+polygon_filepath <- system.file("extdata", "stands_cerrado.shp", package="rGEDI")
 
 # Reading shapefile as SpatialPolygonsDataFrame object
 library(raster)
@@ -64,12 +64,12 @@ pai_max<-polyStatsLevel2BVPM(level2BVPM_clip,func=max(pai), id=NULL)
 pai_max
 
 # Computing the max of the Total Plant Area Index stratified by polygon
-pai_max_poly<-polyStatsLevel2BVPM(level2BVPM_clip,func=max(pai), id="id")
+pai_max_poly<-polyStatsLevel2BVPM(level2BVPM_clip,func=max(pai), id="poly_id")
 head(pai_max_poly)
 
 # Computing the serie of statistics of canopy cover stratified by polygon
 cover_metrics<-polyStatsLevel2BVPM(level2BVPM_clip,func=mySetOfMetrics(cover),
-                     id=level2BM_clip@data$id)
+                     id=level2BVPM_clip$id)
 head(cover_metrics)
 close(level2b)
 }

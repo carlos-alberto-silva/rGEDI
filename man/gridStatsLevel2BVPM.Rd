@@ -50,15 +50,15 @@ metrics = list(
 }
 
 #' Computing a serie of statistics of GEDI-derived canopy cover
-cover_stats<-gridStatsLevel2BVPM(level2BVPM = level2BVPM, func=mySetOfMetrics(cover), res=0.5)
+cover_stats<-gridStatsLevel2BVPM(level2BVPM = level2BVPM, func=mySetOfMetrics(cover), res=0.005)
 plot(cover_stats)
 
 #' Computing the max of the Total Plant Area Index only
-pai_max<-gridStatsLevel2BVPM(level2BVPM = level2BVPM, func=max(pai), res=0.5)
+pai_max<-gridStatsLevel2BVPM(level2BVPM = level2BVPM, func=max(pai), res=0.005)
 plot(pai_max)
 
 #' Computing the mean of Foliage Clumping Index only
-omega_mean<-gridStatsLevel2BVPM(level2BVPM = level2BVPM, func=mean(omega), res=0.5)
+omega_mean<-gridStatsLevel2BVPM(level2BVPM = level2BVPM, func=mean(omega), res=0.005)
 plot(omega_mean)
 
 close(level2b)

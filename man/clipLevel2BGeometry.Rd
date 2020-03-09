@@ -4,8 +4,7 @@
 \alias{clipLevel2BGeometry}
 \title{Clip GEDI Level2B data by geometry}
 \usage{
-clipLevel2BGeometry(level2b, polygon_spdf, output = "",
-  split_by = NULL)
+clipLevel2BGeometry(level2b, polygon_spdf, output = "", split_by = NULL)
 }
 \arguments{
 \item{level2b}{h5file; S4 object of class H5File}
@@ -24,6 +23,7 @@ Returns a list of S4 object of class "gedi.level2b".
 This function extracts GEDI Level1B data within given geometry
 }
 \examples{
+\donttest{
 # specify the path to GEDI level2B data (zip file)
 level2B_fp_zip <- system.file("extdata",
                   "GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub.zip",
@@ -43,7 +43,7 @@ library(raster)
 polygon_spdf<-shapefile(polygon_filepath)
 
 # Spepecifing output file and path
-output<-paste0(getwd(),"//GEDI02_B_2019108080338_O01964_T05337_02_001_01_clip")
+output<-file.path(getwd(),"GEDI02_B_2019108080338_O01964_T05337_02_001_01_clip")
 
 # clip by extent boundary box
 level2b_clip <- clipLevel2BGeometry(level2b, polygon_spdf = polygon_spdf,
@@ -52,6 +52,7 @@ level2b_clip <- clipLevel2BGeometry(level2b, polygon_spdf = polygon_spdf,
 
 close(level2b)
 lapply(level2b_clip, close)
+}
 }
 \seealso{
 https://lpdaac.usgs.gov/products/gedi01_bv001/

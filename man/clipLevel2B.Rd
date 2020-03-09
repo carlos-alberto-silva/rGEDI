@@ -38,13 +38,13 @@ level2Bpath <- unzip(level2B_fp_zip,exdir = dirname(level2B_fp_zip))
 level2b<-readLevel2B(level2Bpath=level2Bpath)
 
 # Bounding rectangle coordinates
-xmin = -44.15036
+xmin = -44.10136
 xmax = -44.10066
-ymin = -13.75831
-ymax = -13.71244
+ymin = -13.73031
+ymax = -13.72044
 
 # Spepecifing output file and path
-output<-paste0(getwd(),"//GEDI02_B_2019108080338_O01964_T05337_02_001_01_clip")
+output<-file.path(getwd(),"GEDI02_B_2019108080338_O01964_T05337_02_001_01_clip")
 
 # clip level2 by extent boundary box
 level2b_clip <- clipLevel2B(level2b, xmin, xmax, ymin, ymax)
