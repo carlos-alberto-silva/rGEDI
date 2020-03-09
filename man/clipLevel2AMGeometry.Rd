@@ -47,8 +47,8 @@ level2AM_clip = clipLevel2AMGeometry(level2AM, polygon_spdf, split_by="id")
 
 library(leaflet)
 leaflet() \%>\%
- addCircleMarkers(clipped_level1Bdt@dt$longitude_bin0,
-                  clipped_level1Bdt@dt$latitude_bin0,
+ addCircleMarkers(clipped_level1Bdt$longitude_bin0,
+                  clipped_level1Bdt$latitude_bin0,
                   radius = 1,
                   opacity = 1,
                   color = "red")  \%>\%

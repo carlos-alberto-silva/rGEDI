@@ -47,7 +47,7 @@ ymin = -13.75831
 ymax = -13.71244
 
 # clip level2BVPM by extent boundary box
-level2b_clip <- level2BVPM(level2BVPM,xmin, xmax, ymin, ymax)
+level2b_clip <- clipLevel2BVPM(level2BVPM,xmin, xmax, ymin, ymax)
 
 library(leaflet)
 leaflet() \%>\%
