@@ -67,7 +67,7 @@ clipLevel2B = function(level2b, xmin, xmax, ymin, ymax, output=""){
                          masks,
                          output)
   output = newFile@h5$filename
-  newFile@h5$close_all()
+  close(newFile)
   result = readLevel2B(output)
 
   return (result)
@@ -104,7 +104,7 @@ clipLevel2B = function(level2b, xmin, xmax, ymin, ymax, output=""){
 #'
 #'# Reading shapefile as SpatialPolygonsDataFrame object
 #'library(raster)
-#'polygon_spdf<-shapefile(polygons_filepath)
+#'polygon_spdf<-shapefile(polygon_filepath)
 #'
 #'# Spepecifing output file and path
 #'output<-paste0(getwd(),"//GEDI02_B_2019108080338_O01964_T05337_02_001_01_clip")

@@ -21,7 +21,7 @@ This function computes a series of user-defined descriptive statistics within
 each grid cell for GEDI-derived Elevation and Height Metrics (Level2A)
 }
 \examples{
-\dontrun{
+\donttest{
 # specify the path to GEDI level2A data (zip file)
 level2A_fp_zip <- system.file("extdata",
                   "GEDI02_A_2019108080338_O01964_T05337_02_001_01_sub.zip",

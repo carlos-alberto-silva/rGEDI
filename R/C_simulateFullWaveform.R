@@ -88,7 +88,7 @@
 #'
 #'# Unzipping ALS data
 #'alsfile_Amazon_filepath <- unzip(alsfile_Amazon_zip,exdir = dirname(alsfile_Amazon_zip))
-#'alsfile_Savanna_filepath <- unzip(alsfile_Smazon_zip,exdir = dirname(alsfile_Savanna_zip))
+#'alsfile_Savanna_filepath <- unzip(alsfile_Savanna_zip,exdir = dirname(alsfile_Savanna_zip))
 #'
 #'# Reading and plot ALS file (las file)
 #'als_Amazon<-readLAS(alsfile_Amazon_filepath)
@@ -132,9 +132,9 @@
 #'plot(wf_Savanna, relative=TRUE, polygon=TRUE, type="l", lwd=2, col="green",
 #'     xlab="Waveform Amplitude (%)", ylab="Elevation (m)", ylim=c(815,835))
 #'grid()
-#' 
+#'
 #'close(wf_Amazon)
-#'close(wf_Amazon)
+#'close(wf_Savanna)
 #'}
 #'
 #' @import hdf5r

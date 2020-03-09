@@ -38,7 +38,7 @@ polygon_filepath <- system.file("extdata", "clip_polygon.shp", package="rGEDI")
 
 # Reading shapefile as SpatialPolygonsDataFrame object
 library(raster)
-polygon_spdf<-shapefile(polygons_filepath)
+polygon_spdf<-shapefile(polygon_filepath)
 
 # Get GEDI Eleveation and Relative Metrics (level2A)
 level2AM<-getLevel2AM(level2a)

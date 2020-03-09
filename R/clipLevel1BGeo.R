@@ -37,12 +37,12 @@
 #'ymax = -13.71244
 #'
 #'# clip by boundary box coordinates
-#'level1bGeo_clip <- clipLevel1BGeo(level1BGeo,xmin, xmax, ymin, ymax)
+#'level1BGeo_clip <- clipLevel1BGeo(level1BGeo,xmin, xmax, ymin, ymax)
 #'
 #'library(leaflet)
 #'leaflet() %>%
-#'  addCircleMarkers(level1bGeo_clip$longitude_bin0,
-#'                   level1bGeo_clip$latitude_bin0,
+#'  addCircleMarkers(level1BGeo_clip$longitude_bin0,
+#'                   level1BGeo_clip$latitude_bin0,
 #'                   radius = 1,
 #'                   opacity = 1,
 #'                   color = "red")  %>%
@@ -106,9 +106,9 @@ clipLevel1BGeo = function(level1BGeo,xmin, xmax, ymin, ymax){
 #'
 #'# Reading shapefile as SpatialPolygonsDataFrame object
 #'library(raster)
-#'polygon_spdf<-shapefile(polygons_filepath)
+#'polygon_spdf<-shapefile(polygon_filepath)
 #'
-#'level1bGeo_clip = clipLevel1BGeometry(level1bGeo, polygon_spdf, split_by="id")
+#'level1BGeo_clip = clipLevel1BGeometry(level1BGeo, polygon_spdf, split_by="id")
 #'
 #'library(leaflet)
 #'leaflet() %>%

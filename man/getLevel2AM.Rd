@@ -17,7 +17,7 @@ containing the elevation and relative heights.
 This function extracts Elevation and Relative Height (RH) metrics from GEDI Level2A data .
 }
 \examples{
-\dontrun{
+
 # specify the path to GEDI level2A data (zip file)
 level2A_fp_zip <- system.file("extdata",
                   "GEDI02_A_2019108080338_O01964_T05337_02_001_01_sub.zip",
@@ -32,7 +32,7 @@ level2a<-readLevel2A(level2Apath=level2Apath)
 # Get GEDI Elevation and Height Metrics
 level2AM<-getLevel2AM(level2a)
 head(level2AM)
-}
+
 }
 \seealso{
 https://lpdaac.usgs.gov/products/gedi02_av001/

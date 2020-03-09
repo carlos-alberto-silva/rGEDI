@@ -41,9 +41,9 @@ polygon_filepath <- system.file("extdata", "stands_cerrado.shp", package="rGEDI"
 
 # Reading shapefile as SpatialPolygonsDataFrame object
 library(raster)
-polygon_spdf<-shapefile(polygons_filepath)
+polygon_spdf<-shapefile(polygon_filepath)
 
-level1bGeo_clip = clipLevel1BGeometry(level1bGeo, polygon_spdf, split_by="id")
+level1BGeo_clip = clipLevel1BGeometry(level1BGeo, polygon_spdf, split_by="id")
 
 library(leaflet)
 leaflet() \%>\%

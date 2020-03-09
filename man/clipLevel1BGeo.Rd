@@ -46,12 +46,12 @@ ymin = -13.75831
 ymax = -13.71244
 
 # clip by boundary box coordinates
-level1bGeo_clip <- clipLevel1BGeo(level1BGeo,xmin, xmax, ymin, ymax)
+level1BGeo_clip <- clipLevel1BGeo(level1BGeo,xmin, xmax, ymin, ymax)
 
 library(leaflet)
 leaflet() \%>\%
- addCircleMarkers(level1bGeo_clip@dt$longitude_bin0,
-                  level1bGeo_clip@dt$latitude_bin0,
+ addCircleMarkers(level1BGeo_clip$longitude_bin0,
+                  level1BGeo_clip$latitude_bin0,
                   radius = 1,
                   opacity = 1,
                   color = "red")  \%>\%

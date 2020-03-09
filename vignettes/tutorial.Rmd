@@ -5,7 +5,7 @@ output:
   rmarkdown::html_vignette: 
     keep_md: TRUE
 vignette: >
-  %\VignetteIndexEntry{Introcution to the rGEDI package}
+  %\VignetteIndexEntry{Introduction to the rGEDI package}
   %\VignetteEngine{knitr::rmarkdown}
   \usepackage[utf8]{inputenc}
 ---
@@ -147,11 +147,11 @@ gedilevel2b<-readLevel2B(level2Bpath = paste0("GEDI02_B_2019108080338_O01964_T05
 
 ## Get GEDI Pulse Full-Waveform Geolocation (GEDI Level1B)
 ```{r, echo=TRUE, results="hide"}
-level1bGeo<-getLevel1BGeo(level1b=gedilevel1b,select=c("elevation_bin0"))
-head(level1bGeo)
+level1BGeo<-getLevel1BGeo(level1b=gedilevel1b,select=c("elevation_bin0"))
+head(level1BGeo)
 ```
 ```{r, echo=FALSE}
-head(level1bGeo)
+head(level1BGeo)
 ```
 
 
@@ -160,8 +160,8 @@ library(leaflet)
 library(leafsync)
 
 m = leaflet() %>%
-  addCircleMarkers(level1bGeo$longitude_bin0,
-                  level1bGeo$latitude_bin0,
+  addCircleMarkers(level1BGeo$longitude_bin0,
+                  level1BGeo$latitude_bin0,
                   radius = 1,
                   opacity = 1,
                   color = "red")  %>%
@@ -177,8 +177,8 @@ library(leaflet)
 library(leafsync)
 
 m = leaflet() %>%
-  addCircleMarkers(level1bGeo$longitude_bin0,
-                  level1bGeo$latitude_bin0,
+  addCircleMarkers(level1BGeo$longitude_bin0,
+                  level1BGeo$latitude_bin0,
                   radius = 1,
                   opacity = 1,
                   color = "red")  %>%
@@ -324,14 +324,14 @@ level2b_clip_gb <- clipLevel2BGeometry(gedilevel2b,polygon_spdf,output=file.path
 # Clip GEDI data (data.table objects)
 ```{r, eval=FALSE}
 ## Clipping GEDI data within boundary box
-level1BGeo_clip_bb <-clipLevel1BGeo(level1bGeo, xmin, xmax, ymin, ymax)
+level1BGeo_clip_bb <-clipLevel1BGeo(level1BGeo, xmin, xmax, ymin, ymax)
 level2AM_clip_bb <- clipLevel2AM(level2AM, xmin, xmax, ymin, ymax)
 level2BVPM_clip_bb <- clipLevel2BVPM(level2BVPM, xmin, xmax, ymin, ymax)
 level1BPAIProfile_clip_bb <- clipLevel2BPAIProfile(level2BPAIProfile, xmin, xmax, ymin, ymax)
 level2BPAVDProfile_clip_bb <- clipLevel2BPAVDProfile(level2BPAVDProfile, xmin, xmax, ymin, ymax)
 
 ## Clipping GEDI data by geometry
-level1BGeo_clip_gb <- clipLevel1BGeoGeometry(level1bGeo,polygon_spdf, split_by=split_by)
+level1BGeo_clip_gb <- clipLevel1BGeoGeometry(level1BGeo,polygon_spdf, split_by=split_by)
 level2AM_clip_gb <- clipLevel2AMGeometry(level2AM,polygon_spdf, split_by=split_by)
 level2BVPM_clip_gb <- clipLevel2BVPMGeometry(level2BVPM,polygon_spdf, split_by=split_by)
 level1BPAIProfile_clip_gb <- clipLevel2BPAIProfileGeometry(level2BPAIProfile,polygon_spdf, split_by=split_by)
@@ -384,14 +384,14 @@ m3
 ```
 ```{r, echo=FALSE, results=TRUE}
 ## Clipping GEDI data within boundary box
-level1BGeo_clip_bb <-clipLevel1BGeo(level1bGeo, xmin, xmax, ymin, ymax)
+level1BGeo_clip_bb <-clipLevel1BGeo(level1BGeo, xmin, xmax, ymin, ymax)
 level2AM_clip_bb <- clipLevel2AM(level2AM, xmin, xmax, ymin, ymax)
 level2BVPM_clip_bb <- clipLevel2BVPM(level2BVPM, xmin, xmax, ymin, ymax)
 level1BPAIProfile_clip_bb <- clipLevel2BPAIProfile(level2BPAIProfile, xmin, xmax, ymin, ymax)
 level2BPAVDProfile_clip_bb <- clipLevel2BPAVDProfile(level2BPAVDProfile, xmin, xmax, ymin, ymax)
 
 ## Clipping GEDI data by geometry
-level1BGeo_clip_gb <- clipLevel1BGeoGeometry(level1bGeo,polygon_spdf, split_by=split_by)
+level1BGeo_clip_gb <- clipLevel1BGeoGeometry(level1BGeo,polygon_spdf, split_by=split_by)
 level2AM_clip_gb <- clipLevel2AMGeometry(level2AM,polygon_spdf, split_by=split_by)
 level2BVPM_clip_gb <- clipLevel2BVPMGeometry(level2BVPM,polygon_spdf, split_by=split_by)
 level1BPAIProfile_clip_gb <- clipLevel2BPAIProfileGeometry(level2BPAIProfile,polygon_spdf, split_by=split_by)
@@ -608,7 +608,7 @@ head(metrics[,1:8])
 
 
 # Always close gedi objects, so HDF5 files won't be blocked!
-```{r cleanup, echo=TRUE, results="hide", error=TRUE, eval=FALSE}
+```{r cleanup, echo=TRUE, results="hide", error=TRUE}
 close(wf_amazon)
 close(wf_cerrado)
 close(gedilevel1b)

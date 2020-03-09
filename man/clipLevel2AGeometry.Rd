@@ -39,7 +39,7 @@ polygon_filepath <- system.file("extdata", "stands_cerrado.shp", package="rGEDI"
 
 # Reading shapefile as SpatialPolygonsDataFrame object
 library(raster)
-polygon_spdf<-shapefile(polygons_filepath)
+polygon_spdf<-shapefile(polygon_filepath)
 
 # Spepecifing output file and path
 output<-paste0(getwd(),"//GEDI02_A_2019108080338_O01964_T05337_02_001_01_clip")

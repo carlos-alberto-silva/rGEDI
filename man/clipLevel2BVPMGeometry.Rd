@@ -22,7 +22,7 @@ This function clips GEDI level2B-derived
 Canopy Cover and Vertical Profile metrics within a given geometry
 }
 \examples{
-\dontrun{
+\donttest{
 # specify the path to download GEDI example dataset
 outdir<-getwd()
 
@@ -32,13 +32,13 @@ download.file(
                     "https://github.com/carlos-alberto-silva/rGEDI/",
                     "releases/download/examples/examples.zip"
              ),
-             destfile=paste0(outdir,"/examples.zip"))
+             destfile=file.path(outdir, "examples.zip"))
 
 # unzip the file
-unzip(paste0(outdir,"\\\\examples.zip"))
+unzip(file.path(outdir, "examples.zip"))
 
 # specify the path to GEDI level2B data
-level2bpath = paste0(outdir,"\\\\GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub.h5")
+level2bpath = file.path(outdir, "GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub.h5")
 
 # Reading GEDI level1B file
 level2b<-readLevel2b(gedilevel2b)
@@ -51,7 +51,7 @@ polygon_filepath <- system.file("extdata", "stands_cerrado.shp", package="rGEDI"
 
 # Reading shapefile as SpatialPolygonsDataFrame object
 library(raster)
-polygon_spdf<-shapefile(polygons_filepath)
+polygon_spdf<-shapefile(polygon_filepath)
 
 # clip level2BVPM by geometry
 level2b_clip_geometry <- clipLevel2BVPMGeometry(level2BVPM,polygon_spdf,split_by="id")

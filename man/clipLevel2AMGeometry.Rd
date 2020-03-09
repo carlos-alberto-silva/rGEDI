@@ -41,7 +41,7 @@ polygon_filepath <- system.file("extdata", "stands_cerrado.shp", package="rGEDI"
 
 # Reading shapefile as SpatialPolygonsDataFrame object
 library(raster)
-polygon_spdf<-shapefile(polygons_filepath)
+polygon_spdf<-shapefile(polygon_filepath)
 
 level2AM_clip = clipLevel2AMGeometry(level2AM, polygon_spdf, split_by="id")
 

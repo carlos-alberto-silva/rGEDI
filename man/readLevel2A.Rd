@@ -16,7 +16,7 @@ S4 object of class "gedi.level1a".
 This function reads GEDI level2A products: ground elevation, canopy top height, and relative heights (RH).
 }
 \examples{
-\dontrun{
+\donttest{
 # specify the path to GEDI level2A data (zip file)
 level2A_fp_zip <- system.file("extdata",
                   "GEDI02_A_2019108080338_O01964_T05337_02_001_01_sub.zip",

@@ -94,7 +94,7 @@ clipLevel2BPAVDProfile = function(level2BPAVDProfile,xmin, xmax, ymin, ymax){
 #'
 #'# Reading shapefile as SpatialPolygonsDataFrame object
 #'library(raster)
-#'polygon_spdf<-shapefile(polygons_filepath)
+#'polygon_spdf<-shapefile(polygon_filepath)
 #'
 #'# clip level2BPAIProfile by geometry
 #'level2BPAVDProfile_clip <- clipLevel2BPAVDProfileGeometry(

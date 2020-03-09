@@ -29,7 +29,7 @@ These are the biophysical variables extracted:
 }
 }
 \examples{
-\dontrun{
+\donttest{
 # specify the path to download GEDI example dataset
 outdir<-getwd()
 
@@ -39,13 +39,13 @@ download.file(
                     "https://github.com/carlos-alberto-silva/rGEDI/",
                     "releases/download/examples/examples.zip"
              ),
-             destfile=paste0(outdir,"/examples.zip"))
+             destfile=file.path(outdir, "examples.zip"))
 
 # unzip the file
-unzip(paste0(outdir,"\\\\examples.zip"))
+unzip(file.path(outdir, "examples.zip"))
 
 # specify the path to GEDI level2B data
-level2bpath = paste0(outdir,"\\\\GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub.h5")
+level2bpath = file.path(outdir, "GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub.h5")
 
 # Reading GEDI level1B file
 level2b<-readLevel2b(gedilevel2b)

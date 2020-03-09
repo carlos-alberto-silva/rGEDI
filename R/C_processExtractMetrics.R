@@ -113,7 +113,7 @@
 #'
 #'# Unzipping ALS data
 #'alsfile_Amazon_filepath <- unzip(alsfile_Amazon_zip,exdir = dirname(alsfile_Amazon_zip))
-#'alsfile_Savanna_filepath <- unzip(alsfile_Smazon_zip,exdir = dirname(alsfile_Savanna_zip))
+#'alsfile_Savanna_filepath <- unzip(alsfile_Savanna_zip,exdir = dirname(alsfile_Savanna_zip))
 #'
 #'# Reading and plot ALS file (las file)
 #'als_Amazon<-readLAS(alsfile_Amazon_filepath)
@@ -135,14 +135,14 @@
 #'                            coords = c(xcenter_Savanna, ycenter_Savanna))
 #'
 #'# Extracting GEDI feull-waveform derived metrics
-#'wf_amazon_metrics<-gediWFMetrics(input=wf_amazon,outRoot=file.path(getwd(), "amazon"))
-#'wf_cerrado_metrics<-gediWFMetrics(input=wf_cerrado,outRoot=file.path(getwd(), "cerrado"))
+#'wf_amazon_metrics<-gediWFMetrics(input=wf_Amazon,outRoot=file.path(getwd(), "amazon"))
+#'wf_savanna_metrics<-gediWFMetrics(input=wf_Savanna,outRoot=file.path(getwd(), "cerrado"))
 #'
-#'close(wf_amazon)
-#'close(wf_cerrado)
+#'close(wf_Amazon)
+#'close(wf_Savanna)
 #'
-#'metrics<-rbind(wf_amazon_metrics,wf_cerrado_metrics)
-#'rownames(metrics)<-c("Amazon","Cerrado")
+#'metrics<-rbind(wf_amazon_metrics,wf_savanna_metrics)
+#'rownames(metrics)<-c("Amazon","Savanna")
 #'head(metrics)
 #'}
 #'
@@ -301,7 +301,7 @@ gediWFMetrics = function(
   inputInList = list(NULL, NULL)
   if (class(input)=="list") {
     files = sapply(input, function(x) {
-      x@h5$close_all()
+      close(x)
       return (x@h5$filename)
     })
     inList = tempfile(fileext=".txt")
@@ -310,7 +310,7 @@ gediWFMetrics = function(
     close(fileHandle)
     inputInList[[2]] = inList
   } else {
-    input@h5$close_all()
+    close(input)
     inputInList[[1]] = input@h5$filename
   }
 

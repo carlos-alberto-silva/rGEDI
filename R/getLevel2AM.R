@@ -12,7 +12,7 @@
 #'@seealso https://lpdaac.usgs.gov/products/gedi02_av001/
 #'
 #'@examples
-#'\dontrun{
+#'
 #'# specify the path to GEDI level2A data (zip file)
 #'level2A_fp_zip <- system.file("extdata",
 #'                   "GEDI02_A_2019108080338_O01964_T05337_02_001_01_sub.zip",
@@ -27,7 +27,7 @@
 #'# Get GEDI Elevation and Height Metrics
 #'level2AM<-getLevel2AM(level2a)
 #'head(level2AM)
-#'}
+#'
 #'@export
 getLevel2AM<-function(level2a){
   level2a<-level2a@h5

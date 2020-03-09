@@ -174,7 +174,7 @@ alsfile_Savanna_zip <- system.file("extdata", "Savanna.zip", package="rGEDI")
 
 # Unzipping ALS data
 alsfile_Amazon_filepath <- unzip(alsfile_Amazon_zip,exdir = dirname(alsfile_Amazon_zip))
-alsfile_Savanna_filepath <- unzip(alsfile_Smazon_zip,exdir = dirname(alsfile_Savanna_zip))
+alsfile_Savanna_filepath <- unzip(alsfile_Savanna_zip,exdir = dirname(alsfile_Savanna_zip))
 
 # Reading and plot ALS file (las file)
 als_Amazon<-readLAS(alsfile_Amazon_filepath)
@@ -196,14 +196,14 @@ wf_Savanna<-gediWFSimulator(input=als_Savanna,
                            coords = c(xcenter_Savanna, ycenter_Savanna))
 
 # Extracting GEDI feull-waveform derived metrics
-wf_amazon_metrics<-gediWFMetrics(input=wf_amazon,outRoot=getwd())
-wf_cerrado_metrics<-gediWFMetrics(input=wf_cerrado,outRoot=getwd())
+wf_amazon_metrics<-gediWFMetrics(input=wf_Amazon,outRoot=file.path(getwd(), "amazon"))
+wf_savanna_metrics<-gediWFMetrics(input=wf_Savanna,outRoot=file.path(getwd(), "cerrado"))
 
-wf_amazon@h5$close()
-wf_cerrado@h5$close()
+close(wf_Amazon)
+close(wf_Savanna)
 
-metrics<-rbind(wf_amazon_metrics,wf_cerrado_metrics)
-rownames(metrics)<-c("Amazon","Cerrado")
+metrics<-rbind(wf_amazon_metrics,wf_savanna_metrics)
+rownames(metrics)<-c("Amazon","Savanna")
 head(metrics)
 }
 

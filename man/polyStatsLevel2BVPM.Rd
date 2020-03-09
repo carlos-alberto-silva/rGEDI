@@ -38,7 +38,7 @@ polygon_filepath <- system.file("extdata", "clip_polygon.shp", package="rGEDI")
 
 # Reading shapefile as SpatialPolygonsDataFrame object
 library(raster)
-polygon_spdf<-shapefile(polygons_filepath)
+polygon_spdf<-shapefile(polygon_filepath)
 
 # Get GEDI Canopy Cover and Vertical Profile Metrics
 level2BVPM<-getLevel2BVPM(level2b)
