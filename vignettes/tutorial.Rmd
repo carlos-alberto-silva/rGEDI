@@ -112,7 +112,7 @@ if (!file.exists(zipfile)) {
     Authorization=paste0("token ", Sys.getenv("TRAVIS_TOKEN")),
     Accept="application/octet-stream")
   res=httr::GET(
-    "https://api.github.com/repos/carlos-alberto-silva/rGEDI/releases/assets/18344086", 
+      "https://api.github.com/repos/carlos-alberto-silva/rGEDI/releases/assets/18585248", 
     config = config
   )
   h=curl::new_handle()
