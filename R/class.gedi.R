@@ -77,29 +77,19 @@ setGeneric("plot", function(x, y, ...)
 
 #'@description for gedi.fullwaveform: will plot the full waveform\cr\cr
 #'@examples
-#'\donttest{
-#'# specify the path to download GEDI example dataset
-#'outdir<-getwd()
+#'# specify the path to GEDI level1B data (zip file)
+#'level1B_fp_zip <- system.file("extdata",
+#'                   "GEDI01_B_2019108080338_O01964_T05337_02_003_01_sub.zip",
+#'                   package="rGEDI")
 #'
-#'# downloading GEDI example dataset (zip file)
-#'download.file(
-#'              paste0(
-#'                     "https://github.com/carlos-alberto-silva/rGEDI/",
-#'                     "releases/download/examples/examples.zip"
-#'              ),
-#'              destfile=file.path(outdir, "examples.zip"))
+#'# Unzipping GEDI level1B data
+#'level1Bpath <- unzip(level1B_fp_zip,exdir = dirname(level1B_fp_zip))
 #'
-#'# unzip the file
-#'unzip(file.path(outdir, "examples.zip"))
-#'
-#'# specify the path to GEDI level1B data
-#'level1bpath = file.path(outdir, "GEDI01'_B_2019108080338_O01964_T05337_02_003_01_sub.h5")
-#'
-#'# Reading GEDI level1B file
-#'level1b<-readLevel1b(gedilevel1b)
+#'# Reading GEDI level1B data (h5 file)
+#'level1b<-readLevel1B(level1Bpath=level1Bpath)
 #'
 #'# extract the desired information into a dataframe
-#'wf <- getLevel1BWF(level1b, shot_number="19850022900500000")
+#'wf <- getLevel1BWF(level1b, shot_number="19640521100108408")
 #'
 #'# Plot Full-waveform
 #'par(mfrow = c(1,2), cex.axis = 1.5)
@@ -110,9 +100,6 @@ setGeneric("plot", function(x, y, ...)
 #'xlab="Waveform Amplitude (%)", ylab="Elevation (m)")
 #' 
 #'close(level1b)
-#'}
-#'
-#'
 #' @rdname plot
 setMethod("plot", signature("gedi.fullwaveform", y = "missing"), function(x,relative=FALSE,polygon=FALSE,...) {
 
@@ -178,16 +165,16 @@ setMethod("plot", signature("gedi.fullwaveform", y = "missing"), function(x,rela
 #'# Simulating GEDI full-waveform
 #'wf_amazon<-gediWFSimulator(
 #'                           input=lasfile_amazon,
-#'                           output=paste0(
+#'                           output=file.path(
 #'                                         getwd(),
-#'                                         "//gediWF_amazon_simulation.h5"
+#'                                         "gediWF_amazon_simulation.h5"
 #'                                         ),
 #'                           coords = c(xcenter_amazon, ycenter_amazon))
 #' wf_Savanna<-gediWFSimulator(
 #'                             input=lasfile_Savanna,
-#'                             output=paste0(
+#'                             output=file.path(
 #'                                           getwd(),
-#'                                           "//gediWF_Savanna_simulation.h5"
+#'                                           "gediWF_Savanna_simulation.h5"
 #'                                           ),
 #'                             coords = c(xcenter_Savanna, ycenter_Savanna))
 #'# Plot Full-waveform
@@ -216,6 +203,9 @@ setMethod("plot", signature("gedi.fullwaveform", y = "missing"), function(x,rela
 #'plot(wf_Savanna, relative=TRUE, polygon=TRUE, type="l", lwd=2, col="green",
 #'     xlab="Waveform Amplitude (%)", ylab="Elevation (m)", ylim=c(815,835))
 #'grid()
+#' 
+#' close(wf_amazon)
+#' close(wf_Savanna)
 #'}
 #' @rdname plot
 setMethod("plot", signature("gedi.level1bSim", y = "missing"), function(x,relative=FALSE,polygon=FALSE,method="RXWAVEINT",...) {
