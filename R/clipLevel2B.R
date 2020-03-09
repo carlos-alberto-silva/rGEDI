@@ -77,6 +77,7 @@ clipLevel2B = function(level2b, xmin, xmax, ymin, ymax, output=""){
 #'@seealso https://lpdaac.usgs.gov/products/gedi01_bv001/
 #'
 #'@examples
+#'\donttest{
 #'# specify the path to GEDI level2B data (zip file)
 #'level2B_fp_zip <- system.file("extdata",
 #'                   "GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub.zip",
@@ -105,6 +106,7 @@ clipLevel2B = function(level2b, xmin, xmax, ymin, ymax, output=""){
 #'
 #'close(level2b)
 #'lapply(level2b_clip, close)
+#'}
 #'@export
 clipLevel2BGeometry = function(level2b, polygon_spdf, output="", split_by=NULL) {
   output = checkOutput(output)

@@ -75,6 +75,7 @@ clipLevel1B = function(level1b, xmin, xmax, ymin, ymax, output=""){
 #'@return Returns a list of S4 object of class "gedi.level1b".
 #'
 #'@examples
+#'\donttest{
 #'# specify the path to GEDI level1B data (zip file)
 #'level1B_fp_zip <- system.file("extdata",
 #'                   "GEDI01_B_2019108080338_O01964_T05337_02_003_01_sub.zip",
@@ -103,6 +104,7 @@ clipLevel1B = function(level1b, xmin, xmax, ymin, ymax, output=""){
 #'
 #'close(level1b)
 #'lapply(level1b_clip, close)
+#'}
 #'@import hdf5r
 #'@export
 clipLevel1BGeometry = function(level1b, polygon_spdf, output="", split_by=NULL) {

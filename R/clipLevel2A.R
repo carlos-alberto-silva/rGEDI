@@ -80,6 +80,7 @@ clipLevel2A = function(level2a, xmin, xmax, ymin, ymax, output=""){
 #'@seealso https://lpdaac.usgs.gov/products/gedi02_av001/
 #'
 #'@examples
+#'\donttest{
 #'# specify the path to GEDI level2A data (zip file)
 #'level2A_fp_zip <- system.file("extdata",
 #'                   "GEDI02_A_2019108080338_O01964_T05337_02_001_01_sub.zip",
@@ -107,6 +108,7 @@ clipLevel2A = function(level2a, xmin, xmax, ymin, ymax, output=""){
 #'                                    split_by="id")
 #'close(level2a)
 #'lapply(level2a_clip, close)
+#'}
 #'@export
 clipLevel2AGeometry = function(level2a, polygon_spdf, output="", split_by = NULL) {
   output = checkOutput(output)
