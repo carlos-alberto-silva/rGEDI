@@ -125,7 +125,7 @@ clipLevel2AGeometry = function(level2a, polygon_spdf, output="", split_by = NULL
 
   polygon_masks = getPolygonMaskLevel2A(spData, masks, polygon_spdf, split_by)
 
-  results = clipByMasks(level2a, polygon_masks, output, split_by, clipByMask2A)
+  results = clipByMasks(level2a, polygon_masks, output, split_by, clipByMask2A, readLevel2A)
 
   return (results)
 }

@@ -117,7 +117,7 @@ clipLevel2BGeometry = function(level2b, polygon_spdf, output="", split_by=NULL) 
 
   masks = clipSpDataByExtentLevelB(spData, xmin, xmax, ymin, ymax)
   polygon_masks = getPolygonMaskLevelB(spData, masks, polygon_spdf, split_by)
-  results = clipByMasks(level2b, polygon_masks, output, split_by, clipByMask2B)
+  results = clipByMasks(level2b, polygon_masks, output, split_by, clipByMask2B, readLevel2B)
 
   return (results)
 }

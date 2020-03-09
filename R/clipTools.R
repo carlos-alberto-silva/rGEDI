@@ -149,7 +149,7 @@ getPolygonMaskLevelB = function(spData, masks, polygon_spdf, split_by) {
   return (polygon_masks)
 }
 
-clipByMasks = function(h5file, polygon_masks, output, split_by, clipFun) {
+clipByMasks = function(h5file, polygon_masks, output, split_by, clipFun, readFun) {
   message("Writing new HDF5 files...")
   results = list()
   i = 0
