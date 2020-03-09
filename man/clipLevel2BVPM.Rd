@@ -51,8 +51,8 @@ level2b_clip <- clipLevel2BVPM(level2BVPM,xmin, xmax, ymin, ymax)
 
 library(leaflet)
 leaflet() \%>\%
- addCircleMarkers(level2b_clip@dt$longitude_bin0,
-                  level2b_clip@dt$latitude_bin0,
+ addCircleMarkers(level2b_clip$longitude_bin0,
+                  level2b_clipt$latitude_bin0,
                   radius = 1,
                   opacity = 1,
                   color = "red")  \%>\%

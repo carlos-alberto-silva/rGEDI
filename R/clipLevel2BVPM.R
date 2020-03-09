@@ -44,8 +44,8 @@
 #'
 #'library(leaflet)
 #'leaflet() %>%
-#'  addCircleMarkers(level2b_clip@dt$longitude_bin0,
-#'                   level2b_clip@dt$latitude_bin0,
+#'  addCircleMarkers(level2b_clip$longitude_bin0,
+#'                   level2b_clip$latitude_bin0,
 #'                   radius = 1,
 #'                   opacity = 1,
 #'                   color = "red")  %>%
@@ -127,8 +127,8 @@ clipLevel2BVPM = function(level2BVPM,xmin, xmax, ymin, ymax){
 #'
 #'library(leaflet)
 #'leaflet() %>%
-#'  addCircleMarkers(level2b_clip_geometry@dt$longitude_bin0,
-#'                   level2b_clip_geometry@dt$latitude_bin0,
+#'  addCircleMarkers(level2b_clip_geometry$longitude_bin0,
+#'                   level2b_clip_geometry$latitude_bin0,
 #'                   radius = 1,
 #'                   opacity = 1,
 #'                   color = "red")  %>%
@@ -137,7 +137,7 @@ clipLevel2BVPM = function(level2BVPM,xmin, xmax, ymin, ymax){
 #'              opacity = 1, fillOpacity = 0) %>%
 #'  addProviderTiles(providers$Esri.WorldImagery)
 #'}
-#' 
+#'
 #'close(level2b)
 #'@export
 clipLevel2BVPMGeometry = function(level2BVPM, polygon_spdf, split_by=NULL) {

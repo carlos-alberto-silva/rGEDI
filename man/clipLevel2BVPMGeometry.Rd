@@ -58,8 +58,8 @@ level2b_clip_geometry <- clipLevel2BVPMGeometry(level2BVPM,polygon_spdf,split_by
 
 library(leaflet)
 leaflet() \%>\%
- addCircleMarkers(level2b_clip_geometry@dt$longitude_bin0,
-                  level2b_clip_geometry@dt$latitude_bin0,
+ addCircleMarkers(level2b_clip_geometry$longitude_bin0,
+                  level2b_clip_geometry$latitude_bin0,
                   radius = 1,
                   opacity = 1,
                   color = "red")  \%>\%
