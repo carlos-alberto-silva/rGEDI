@@ -133,7 +133,7 @@ unzip(zipfile, exdir=outdir)
 ## Reading GEDI data
 ```{r, eval=FALSE}
 # Reading GEDI data
-gedilevel1b<-readLevel1B(level1Bpath =     file.path(outdir, "GEDI01_B_2019108080338_O01964_T05337_02_003_01_sub.h5"))
+gedilevel1b<-readLevel1B(level1Bpath = file.path(outdir, "GEDI01_B_2019108080338_O01964_T05337_02_003_01_sub.h5"))
 gedilevel2a<-readLevel2A(level2Apath = file.path(outdir, "GEDI02_A_2019108080338_O01964_T05337_02_001_01_sub.h5"))
 gedilevel2b<-readLevel2B(level2Bpath = file.path(outdir, "GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub.h5"))
 ```
@@ -202,7 +202,7 @@ m
 # Extracting GEDI full-waveform for a giving shotnumber
 wf <- getLevel1BWF(gedilevel1b, shot_number="19640521100108408")
 
-par(mfrow = c(2,1), mar=c(4,4,1,1), cex.axis = 1.5)
+par(mfrow = c(1,2), mar=c(4,4,1,1), cex.axis = 1.5)
 
 plot(wf, relative=FALSE, polygon=TRUE, type="l", lwd=2, col="forestgreen",
     xlab="Waveform Amplitude", ylab="Elevation (m)")
@@ -493,7 +493,7 @@ library(rasterVis)
 library(viridis)
 
 levelplot(rh100metrics,
-                    layout=c(1, 4),
+                    layout=c(4, 1),
                     margin=FALSE,
                     xlab = "Longitude (degree)", ylab = "Latitude (degree)",
                     colorkey=list(
@@ -517,11 +517,11 @@ levelplot(rh100metrics,
 ```{r, fig.height = 500/90}
 # Computing the max of the Total Plant Area Index only
 level2BVPM$pai[level2BVPM$pai==-9999]<-NA # assing NA to -9999
-pai_metrics<-gridStatsLevel2BVPM(level2BVPM = level2BVPM, func=mySetOfMetrics(pai), res=0.0005)
+pai_metrics<-gridStatsLevel2BVPM(level2BVPM = level2BVPM, func=mySetOfMetrics(pai), res=0.005)
 
 # View maps
 levelplot(pai_metrics,
-                   layout=c(1, 4),
+                   layout=c(4, 1),
                    margin=FALSE,
                    xlab = "Longitude (degree)", ylab = "Latitude (degree)",
                    colorkey=list(

@@ -392,7 +392,7 @@ dev.off()
 ```r
 # Computing the max of the Total Plant Area Index only
 level2BVPM$pai[level2BVPM$pai==-9999]<-NA # assing NA to -9999
-pai_metrics<-gridStatsLevel2BVPM(level2BVPM = level2BVPM, func=mySetOfMetrics(pai), res=0.0005)
+pai_metrics<-gridStatsLevel2BVPM(level2BVPM = level2BVPM, func=mySetOfMetrics(pai), res=0.005)
 
 # View maps
 pai_maps<-levelplot(pai_metrics,
