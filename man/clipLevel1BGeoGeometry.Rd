@@ -43,12 +43,12 @@ polygon_filepath <- system.file("extdata", "stands_cerrado.shp", package="rGEDI"
 library(raster)
 polygon_spdf<-shapefile(polygon_filepath)
 
-level1BGeo_clip = clipLevel1BGeometry(level1BGeo, polygon_spdf, split_by="id")
+level1BGeo_clip = clipLevel1BGeoGeometry(level1BGeo, polygon_spdf, split_by="id")
 
 library(leaflet)
 leaflet() \%>\%
- addCircleMarkers(level1b_clip@dt$longitude_bin0,
-                  level1b_clip@dt$latitude_bin0,
+ addCircleMarkers(level1BGeo_clip@dt$longitude_bin0,
+                  level1BGeo_clip@dt$latitude_bin0,
                   radius = 1,
                   opacity = 1,
                   color = "red")  \%>\%

@@ -112,8 +112,8 @@ clipLevel1BGeo = function(level1BGeo,xmin, xmax, ymin, ymax){
 #'
 #'library(leaflet)
 #'leaflet() %>%
-#'  addCircleMarkers(level1b_clip@dt$longitude_bin0,
-#'                   level1b_clip@dt$latitude_bin0,
+#'  addCircleMarkers(level1BGeo_clip@dt$longitude_bin0,
+#'                   level1BGeo_clip@dt$latitude_bin0,
 #'                   radius = 1,
 #'                   opacity = 1,
 #'                   color = "red")  %>%
