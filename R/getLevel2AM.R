@@ -45,6 +45,12 @@ getLevel2AM<-function(level2a){
 
     if (any(hdf5r::list.datasets(level2a_i)=="shot_number")){
 
+    if(length(level2a_i[["rh"]]$dims)==2) {
+      rh=t(level2a_i[["rh"]][,])
+    } else {
+      rh=t(level2a_i[["rh"]][])
+    }
+
     rhs<-data.table::data.table(
       beam<-rep(i,length(level2a_i[["shot_number"]][])),
       shot_number=level2a_i[["shot_number"]][],
@@ -52,7 +58,7 @@ getLevel2AM<-function(level2a){
       lon_lowestmode=level2a_i[["lon_lowestmode"]][],
       elev_highestreturn=level2a_i[["elev_highestreturn"]][],
       elev_lowestmode=level2a_i[["elev_lowestmode"]][],
-      t(level2a_i[["rh"]][,1:level2a_i[["rh"]]$dims[2]]))
+      rh)
     rh.dt<-rbind(rh.dt,rhs)
     }
   }
