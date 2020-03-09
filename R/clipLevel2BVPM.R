@@ -91,7 +91,6 @@ clipLevel2BVPM = function(level2BVPM,xmin, xmax, ymin, ymax){
 #'@seealso https://lpdaac.usgs.gov/products/gedi02_bv001/
 #'
 #'@examples
-#'\donttest{
 #'# specify the path to GEDI level2B data (zip file)
 #'level2B_fp_zip <- system.file("extdata",
 #'                   "GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub.zip",
@@ -128,7 +127,6 @@ clipLevel2BVPM = function(level2BVPM,xmin, xmax, ymin, ymax){
 #'  addPolygons(data=polygon_spdf,weight=1,col = 'white',
 #'              opacity = 1, fillOpacity = 0) %>%
 #'  addProviderTiles(providers$Esri.WorldImagery)
-#'}
 #'}
 #' 
 #'close(level2b)
