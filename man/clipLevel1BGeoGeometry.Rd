@@ -47,8 +47,8 @@ level1BGeo_clip = clipLevel1BGeoGeometry(level1BGeo, polygon_spdf, split_by="id"
 
 library(leaflet)
 leaflet() \%>\%
- addCircleMarkers(level1BGeo_clip@dt$longitude_bin0,
-                  level1BGeo_clip@dt$latitude_bin0,
+ addCircleMarkers(level1BGeo_clip$longitude_bin0,
+                  level1BGeo_clip$latitude_bin0,
                   radius = 1,
                   opacity = 1,
                   color = "red")  \%>\%

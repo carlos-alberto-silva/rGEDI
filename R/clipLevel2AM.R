@@ -100,8 +100,8 @@ clipLevel2AM = function(level2AM,xmin, xmax, ymin, ymax){
 #'
 #'library(leaflet)
 #'leaflet() %>%
-#'  addCircleMarkers(clipped_level1Bdt@dt$longitude_bin0,
-#'                   clipped_level1Bdt@dt$latitude_bin0,
+#'  addCircleMarkers(clipped_level1Bdt$longitude_bin0,
+#'                   clipped_level1Bdt$latitude_bin0,
 #'                   radius = 1,
 #'                   opacity = 1,
 #'                   color = "red")  %>%
