@@ -104,6 +104,10 @@
 #' ii) gediSimulator: https://bitbucket.org/StevenHancock/gedisimulator/src/master/
 #'
 #' @examples
+#'\dontshow{
+#' rm(list=ls())
+#'}
+#' 
 #'libsAvailable = require(lidR) && require(plot3D)
 #'if (libsAvailable) {
 #'
@@ -126,17 +130,17 @@
 #'ycenter_Savanna = mean(als_Savanna@bbox[2,])
 #'
 #'# Simulating GEDI full-waveform
-#'wf_Amazon<-gediWFSimulator(input=lasfile_amazon,
+#'wf_Amazon<-gediWFSimulator(input=alsfile_Amazon_filepath,
 #'                           output=paste0(getwd(),"/gediWF_amazon_simulation.h5"),
 #'                           coords = c(xcenter_Amazon, ycenter_Amazon))
 #'
-#'wf_Savanna<-gediWFSimulator(input=als_Savanna,
-#'                            output=paste0(getwd(),"/gediWF_cerrado_simulation.h5"),
+#'wf_Savanna<-gediWFSimulator(input=alsfile_Savanna_filepath,
+#'                            output=paste0(getwd(),"/gediWF_Savanna_simulation.h5"),
 #'                            coords = c(xcenter_Savanna, ycenter_Savanna))
 #'
-#'# Extracting GEDI feull-waveform derived metrics
+#'# Extracting GEDI full-waveform derived metrics
 #'wf_amazon_metrics<-gediWFMetrics(input=wf_Amazon,outRoot=file.path(getwd(), "amazon"))
-#'wf_savanna_metrics<-gediWFMetrics(input=wf_Savanna,outRoot=file.path(getwd(), "cerrado"))
+#'wf_savanna_metrics<-gediWFMetrics(input=wf_Savanna,outRoot=file.path(getwd(), "Savanna"))
 #'
 #'close(wf_Amazon)
 #'close(wf_Savanna)
