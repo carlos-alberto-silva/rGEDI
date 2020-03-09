@@ -428,23 +428,23 @@ dev.off()
 ```r
 # specify the path to ALS data
 lasfile_amazon <- system.file("extdata", "Amazon.las", package="rGEDI")
-lasfile_cerrado <- system.file("extdata", "Cerrado.las", package="rGEDI")
+lasfile_savanna <- system.file("extdata", "Savanna.las", package="rGEDI")
 
 # Reading and plot ALS file
 library(lidR)
 library(plot3D)
 las_amazon<-readLAS(lasfile_amazon)
-las_cerrado<-readLAS(lasfile_cerrado)
+las_savanna<-readLAS(lasfile_savanna)
 
 # Extracting plot center geolocations
 xcenter_amazon = mean(las_amazon@bbox[1,])
 ycenter_amazon = mean(las_amazon@bbox[2,])
-xcenter_cerrado = mean(las_cerrado@bbox[1,])
-ycenter_cerrado = mean(las_cerrado@bbox[2,])
+xcenter_savanna = mean(las_savanna@bbox[1,])
+ycenter_savanna = mean(las_savanna@bbox[2,])
 
 # Simulating GEDI full-waveform
 wf_amazon<-gediWFSimulator(input=lasfile_amazon,output=paste0(getwd(),"//gediWF_amazon_simulation.h5"),coords = c(xcenter_amazon, ycenter_amazon))
-wf_cerrado<-gediWFSimulator(input=lasfile_cerrado,output=paste0(getwd(),"//gediWF_cerrado_simulation.h5"),coords = c(xcenter_cerrado, ycenter_cerrado))
+wf_savanna<-gediWFSimulator(input=lasfile_savanna,output=paste0(getwd(),"//gediWF_savanna_simulation.h5"),coords = c(xcenter_savanna, ycenter_savanna))
 
 # Plot ALS and GEDI simulated full-waveform
 png("gediWf.png", width = 8, height = 6, units = 'in', res = 300)
@@ -457,11 +457,11 @@ scatter3D(las_amazon@data$X,las_amazon@data$Y,las_amazon@data$Z,pch = 16,colkey 
 plot(wf_amazon, relative=TRUE, polygon=TRUE, type="l", lwd=2, col="forestgreen",
      xlab="", ylab="Elevation (m)", ylim=c(90,140))
 grid()
-scatter3D(las_cerrado@data$X,las_cerrado@data$Y,las_cerrado@data$Z,pch = 16,colkey = FALSE, main="",
+scatter3D(las_savanna@data$X,las_savanna@data$Y,las_savanna@data$Z,pch = 16,colkey = FALSE, main="",
           cex = 0.5,bty = "u",col.panel ="gray90",phi = 30,alpha=1,theta=45,
           col.grid = "gray50", xlab="UTM Easting (m)", ylab="UTM Northing (m)", zlab="Elevation (m)")
 
-plot(wf_cerrado, relative=TRUE, polygon=TRUE, type="l", lwd=2, col="green",
+plot(wf_savanna, relative=TRUE, polygon=TRUE, type="l", lwd=2, col="green",
 xlab="Waveform Amplitude (%)", ylab="Elevation (m)", ylim=c(815,835))
 grid()
 dev.off()
@@ -471,15 +471,15 @@ dev.off()
 # Extracting GEDI full-waveform derived metrics
 ```
 wf_amazon_metrics<-gediWFMetrics(input=wf_amazon,outRoot=getwd())
-wf_cerrado_metrics<-gediWFMetrics(input=wf_cerrado,outRoot=getwd())
+wf_savanna_metrics<-gediWFMetrics(input=wf_savanna,outRoot=getwd())
 
-metrics<-rbind(wf_amazon_metrics,wf_cerrado_metrics)
-rownames(metrics)<-c("Amazon","Cerrado")
+metrics<-rbind(wf_amazon_metrics,wf_savanna_metrics)
+rownames(metrics)<-c("Amazon","Savanna")
 head(metrics[,1:8])
 
 #         #wave ID true ground true top ground slope ALS cover gHeight maxGround inflGround
 # Amazon         0      -1e+06   133.29       -1e+06        -1   94.97     99.84      95.19
-# Cerrado        0      -1e+06   831.51       -1e+06        -1  822.18    822.21     822.25
+# Savanna        0      -1e+06   831.51       -1e+06        -1  822.18    822.21     822.25
 ```
 
 # References
