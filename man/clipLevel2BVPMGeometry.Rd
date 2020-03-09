@@ -44,7 +44,7 @@ level2bpath = file.path(outdir, "GEDI02_B_2019108080338_O01964_T05337_02_001_01_
 level2b<-readLevel2b(gedilevel2b)
 
 # Get canopy cover and vertical profile metrics
-level2BVPM<-getlevel2BVPM(level2b)
+level2BVPM<-getLevel2BVPM(level2b)
 
 # specify the path to shapefile
 polygon_filepath <- system.file("extdata", "stands_cerrado.shp", package="rGEDI")
@@ -68,6 +68,8 @@ leaflet() \%>\%
              opacity = 1, fillOpacity = 0) \%>\%
  addProviderTiles(providers$Esri.WorldImagery)
 }
+
+close(level2b)
 }
 \seealso{
 https://lpdaac.usgs.gov/products/gedi02_bv001/

@@ -119,7 +119,7 @@ level1b<-readLevel1B(level1Bpath=level1Bpath)
 level1BGeo<-getLevel1BGeo(level1b,select=c("elevation_bin0", "elevation_lastbin"))
 head(level1BGeo)
 
-
+close(level1b)
 }
 \seealso{
 https://lpdaac.usgs.gov/products/gedi01_bv001/

@@ -44,11 +44,13 @@ ymin = -13.75831
 ymax = -13.71244
 
 # Spepecifing output file and path
-output<-paste0(getwd(),"//GEDI02_A_2019108080338_O01964_T05337_02_001_01_clip")
+output<-file.path(getwd(),"GEDI02_A_2019108080338_O01964_T05337_02_001_01_clip")
 
 # clip by extent boundary box
-level2a_clip <- clipLevel2A(level1a,xmin,xmax,ymin,ymax,output)
+level2a_clip <- clipLevel2A(level2a,xmin,xmax,ymin,ymax,output)
 
+close(level2a)
+close(level2a_clip)
 }
 \seealso{
 https://lpdaac.usgs.gov/products/gedi02_av001/

@@ -74,11 +74,16 @@ plotPAIProfile<-function(level2BPAIProfile, beam="BEAM0101", elev=TRUE){
     dif<-(df$elev_lowestmode+df$height_bin0) - (df$hids+df$elev_lowestmode)
     df<-df[dif>0,]
     xp<-((df$rowids*60)-60)/1000
-
     yp<-round(df$elev_lowestmode+df$hids)
-    xsl<-((1:nrow(level2BPAIProfile_sub)*60)-60)/1000
-    yl1<-round(level2BPAIProfile_sub$height_bin0+level2BPAIProfile_sub$elev_lowestmode)
-    yl2<-round(level2BPAIProfile_sub$elev_lowestmode)
+
+    xsl<-unique(xp)
+    yl1<-tapply(yp,df$rowids,max) +0.5
+    yl2<-tapply(yp,df$rowids,min) -0.5
+
+
+    #xsl<-((1:nrow(level2BPAIProfile_sub)*60)-60)/1000
+    #yl1<-round(level2BPAIProfile_sub$height_bin0+level2BPAIProfile_sub$elev_lowestmode)
+    #yl2<-round(level2BPAIProfile_sub$elev_lowestmode)
 
     gg <- ggplot2::ggplot()+
       geom_tile(aes(x=xp, y=yp,fill= df$value))+

@@ -71,7 +71,7 @@ head(pai_max_poly)
 cover_metrics<-polyStatsLevel2BVPM(level2BVPM_clip,func=mySetOfMetrics(cover),
                      id=level2BM_clip@data$id)
 head(cover_metrics)
-
+close(level2b)
 }
 \seealso{
 https://lpdaac.usgs.gov/products/gedi02_bv001/

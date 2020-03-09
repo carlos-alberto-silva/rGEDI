@@ -49,6 +49,7 @@
 #'  addScaleBar(options = list(imperial = FALSE)) %>%
 #'  addProviderTiles(providers$Esri.WorldImagery)
 #'
+#' close(level1b)
 #'@export
 clipLevel1BGeo = function(level1BGeo,xmin, xmax, ymin, ymax){
   # xmin ymin xmax ymax
@@ -122,6 +123,7 @@ clipLevel1BGeo = function(level1BGeo,xmin, xmax, ymin, ymax){
 #'              opacity = 1, fillOpacity = 0) %>%
 #'  addProviderTiles(providers$Esri.WorldImagery)
 #'
+#' close(level1b)
 #'@export
 clipLevel1BGeoGeometry = function(level1BGeo, polygon_spdf, split_by="id") {
   exshp<-raster::extent(polygon_spdf)

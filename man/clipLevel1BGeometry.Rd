@@ -50,4 +50,6 @@ level1b_clip <- clipLevel1BGeometry(level1b, polygon_spdf = polygon_spdf,
                                    output=output,
                                    split_by="id")
 
+close(level1b)
+lapply(level1b_clip, close)
 }

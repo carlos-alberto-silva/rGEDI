@@ -54,6 +54,7 @@
 #'omega_mean<-gridStatsLevel2BVPM(level2BVPM = level2BVPM, func=mean(omega), res=0.5)
 #'plot(omega_mean)
 #'
+#'close(level2b)
 #'@export
 gridStatsLevel2BVPM = function(level2BVPM, func, res)
 {

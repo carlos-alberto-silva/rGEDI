@@ -58,6 +58,7 @@ leaflet() \%>\%
  addScaleBar(options = list(imperial = FALSE)) \%>\%
  addProviderTiles(providers$Esri.WorldImagery)
 
+close(level1b)
 }
 \seealso{
 https://lpdaac.usgs.gov/products/gedi01_bv001/

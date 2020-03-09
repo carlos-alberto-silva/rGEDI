@@ -36,7 +36,8 @@
 #'
 #'plotWFMetrics(level1b, level2a, shot_number, rh=c(25, 50, 75, 90))
 #'
-#'
+#'close(level1b)
+#'close(level2a)
 #'@importFrom stats quantile
 #'@importFrom graphics abline arrows axis mtext par text
 #'@export

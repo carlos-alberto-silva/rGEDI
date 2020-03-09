@@ -45,7 +45,8 @@ shot_number = "19640521100108408"
 
 plotWFMetrics(level1b, level2a, shot_number, rh=c(25, 50, 75, 90))
 
-
+close(level1b)
+close(level2a)
 }
 \seealso{
 https://lpdaac.usgs.gov/products/gedi02_bv001/

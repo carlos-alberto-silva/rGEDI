@@ -1,5 +1,5 @@
 .onUnload <- function (libpath) {
-  objs = c("gedi.level1a", "gedi.level1b", "gedi.level2a", "gedi.level1bSim")
+  objs = c("gedi.level2a", "gedi.level1b", "gedi.level2b", "gedi.level1bSim")
   classes = sapply(ls(.GlobalEnv), function(x) class(get(x)))
   classes = classes[classes %in% objs]
   objNames = names(classes)
@@ -11,7 +11,7 @@
 }
 
 .onLoad <- function(libname, pkgname){
-  objs = c("gedi.level1a", "gedi.level1b", "gedi.level2a", "gedi.level1bSim")
+  objs = c("gedi.level2a", "gedi.level1b", "gedi.level2b", "gedi.level1bSim")
   classes = sapply(ls(.GlobalEnv), function(x) class(get(x)))
   classes = classes[classes %in% objs]
   objNames = names(classes)

@@ -27,6 +27,7 @@
 #'level2BPAIProfile<-getLevel2BPAIProfile(level2b)
 #'head(level2BPAIProfile)
 #'
+#'close(level2b)
 #'@import hdf5r
 #'@import utils
 #'@importFrom hdf5r H5File

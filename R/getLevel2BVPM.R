@@ -49,6 +49,7 @@
 #'level2BVPM<-getLevel2BVPM(level2b)
 #'head(level2BVPM)
 #'
+#'close(level2b)
 #'}
 #'@export
 getLevel2BVPM<-function(level2b){

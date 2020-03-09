@@ -31,7 +31,7 @@
 #'level2b<-readLevel2B(level2Bpath=level2Bpath)
 #'
 #'# Get canopy cover and vertical profile metrics
-#'level2BVPM<-getlevel2BVPM(level2b)
+#'level2BVPM<-getLevel2BVPM(level2b)
 #'
 #'# Bounding rectangle coordinates
 #'xmin = -44.15036
@@ -54,6 +54,7 @@
 #'              opacity = 1, fillOpacity = 0) %>%
 #'  addProviderTiles(providers$Esri.WorldImagery)
 #'
+#'close(level2b)
 #'@export
 clipLevel2BVPM = function(level2BVPM,xmin, xmax, ymin, ymax){
   # xmin ymin xmax ymax
@@ -112,7 +113,7 @@ clipLevel2BVPM = function(level2BVPM,xmin, xmax, ymin, ymax){
 #'level2b<-readLevel2b(gedilevel2b)
 #'
 #'# Get canopy cover and vertical profile metrics
-#'level2BVPM<-getlevel2BVPM(level2b)
+#'level2BVPM<-getLevel2BVPM(level2b)
 #'
 #'# specify the path to shapefile
 #'polygon_filepath <- system.file("extdata", "stands_cerrado.shp", package="rGEDI")
@@ -136,6 +137,8 @@ clipLevel2BVPM = function(level2BVPM,xmin, xmax, ymin, ymax){
 #'              opacity = 1, fillOpacity = 0) %>%
 #'  addProviderTiles(providers$Esri.WorldImagery)
 #'}
+#' 
+#'close(level2b)
 #'@export
 clipLevel2BVPMGeometry = function(level2BVPM, polygon_spdf, split_by=NULL) {
   exshp<-raster::extent(polygon_spdf)

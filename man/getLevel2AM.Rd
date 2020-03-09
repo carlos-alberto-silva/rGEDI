@@ -33,6 +33,7 @@ level2a<-readLevel2A(level2Apath=level2Apath)
 level2AM<-getLevel2AM(level2a)
 head(level2AM)
 
+close(level2a)
 }
 \seealso{
 https://lpdaac.usgs.gov/products/gedi02_av001/

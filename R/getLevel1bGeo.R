@@ -113,7 +113,7 @@
 #'level1BGeo<-getLevel1BGeo(level1b,select=c("elevation_bin0", "elevation_lastbin"))
 #'head(level1BGeo)
 #'
-#'
+#'close(level1b)
 #'@export
 getLevel1BGeo<-function(level1b,select=c("elevation_bin0", "elevation_lastbin")) {
 

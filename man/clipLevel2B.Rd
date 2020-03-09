@@ -46,22 +46,11 @@ ymax = -13.71244
 # Spepecifing output file and path
 output<-paste0(getwd(),"//GEDI02_B_2019108080338_O01964_T05337_02_001_01_clip")
 
-# clip level2BVPM by extent boundary box
-level2b_clip <- level2BVPM(level2BVPM,xmin, xmax, ymin, ymax)
+# clip level2 by extent boundary box
+level2b_clip <- clipLevel2B(level2b, xmin, xmax, ymin, ymax)
 
-library(leaflet)
-leaflet() \%>\%
- addCircleMarkers(level2b_clip@dt$longitude_bin0,
-                  level2b_clip@dt$latitude_bin0,
-                  radius = 1,
-                  opacity = 1,
-                  color = "red")  \%>\%
- addScaleBar(options = list(imperial = FALSE)) \%>\%
- addPolygons(data=polygon_spdf,weight=1,col = 'white',
-             opacity = 1, fillOpacity = 0) \%>\%
- addProviderTiles(providers$Esri.WorldImagery)
-
-
+close(level2b)
+close(level2b_clip)
 }
 \seealso{
 https://lpdaac.usgs.gov/products/gedi01_bv001/

@@ -28,6 +28,7 @@
 #'level2AM<-getLevel2AM(level2a)
 #'head(level2AM)
 #'
+#'close(level2a)
 #'@export
 getLevel2AM<-function(level2a){
   level2a<-level2a@h5

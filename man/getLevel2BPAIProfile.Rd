@@ -32,6 +32,7 @@ level2b<-readLevel2B(level2Bpath=level2Bpath)
 level2BPAIProfile<-getLevel2BPAIProfile(level2b)
 head(level2BPAIProfile)
 
+close(level2b)
 }
 \seealso{
 https://lpdaac.usgs.gov/products/gedi02_bv001/

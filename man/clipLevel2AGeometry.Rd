@@ -42,13 +42,14 @@ library(raster)
 polygon_spdf<-shapefile(polygon_filepath)
 
 # Spepecifing output file and path
-output<-paste0(getwd(),"//GEDI02_A_2019108080338_O01964_T05337_02_001_01_clip")
+output<-file.path(getwd(),"GEDI02_A_2019108080338_O01964_T05337_02_001_01_clip")
 
 # clip by extent boundary box
 level2a_clip <- clipLevel2AGeometry(level2a, polygon_spdf = polygon_spdf,
                                    output=output,
                                    split_by="id")
-
+close(level2a)
+lapply(level2a_clip, close)
 }
 \seealso{
 https://lpdaac.usgs.gov/products/gedi02_av001/

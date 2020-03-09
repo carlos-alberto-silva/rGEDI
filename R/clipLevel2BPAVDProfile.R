@@ -40,6 +40,7 @@
 #'# clip level2BVPM by extent boundary box
 #'level2BPAVDProfile_clip <- clipLevel2BPAVDProfile(level2BPAVDProfile,xmin, xmax, ymin, ymax)
 #'
+#'close(level2b)
 #'@export
 clipLevel2BPAVDProfile = function(level2BPAVDProfile,xmin, xmax, ymin, ymax){
   # xmin ymin xmax ymax
@@ -102,6 +103,7 @@ clipLevel2BPAVDProfile = function(level2BPAVDProfile,xmin, xmax, ymin, ymax){
 #'                                                          polygon_spdf,
 #'                                                          split_by="id")
 #'
+#'close(level2b)
 #'@export
 clipLevel2BPAVDProfileGeometry = function(level2BPAVDProfile, polygon_spdf, split_by=NULL) {
   exshp<-raster::extent(polygon_spdf)

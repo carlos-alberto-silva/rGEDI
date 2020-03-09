@@ -38,7 +38,7 @@ level2Bpath <- unzip(level2B_fp_zip,exdir = dirname(level2B_fp_zip))
 level2b<-readLevel2B(level2Bpath=level2Bpath)
 
 # Get canopy cover and vertical profile metrics
-level2BVPM<-getlevel2BVPM(level2b)
+level2BVPM<-getLevel2BVPM(level2b)
 
 # Bounding rectangle coordinates
 xmin = -44.15036
@@ -61,6 +61,7 @@ leaflet() \%>\%
              opacity = 1, fillOpacity = 0) \%>\%
  addProviderTiles(providers$Esri.WorldImagery)
 
+close(level2b)
 }
 \seealso{
 https://lpdaac.usgs.gov/products/gedi02_bv001/

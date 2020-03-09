@@ -46,10 +46,12 @@ polygon_spdf<-shapefile(polygon_filepath)
 output<-paste0(getwd(),"//GEDI02_B_2019108080338_O01964_T05337_02_001_01_clip")
 
 # clip by extent boundary box
-level2b_clip <- clipLevel2BGeometry(level2B, polygon_spdf = polygon_spdf,
+level2b_clip <- clipLevel2BGeometry(level2b, polygon_spdf = polygon_spdf,
                                    output=output,
                                    split_by="id")
 
+close(level2b)
+lapply(level2b_clip, close)
 }
 \seealso{
 https://lpdaac.usgs.gov/products/gedi01_bv001/

@@ -62,6 +62,7 @@
 #'RH100metrics<-polyStatsLevel2AM(level2AM_clip,func=mySetOfMetrics(RH100),
 #'                      id=level2AM_clip@data$id)
 #'
+#'close(level2a)
 #'@import data.table lazyeval
 #'@export
 polyStatsLevel2AM = function(level2AM, func, id = NULL)

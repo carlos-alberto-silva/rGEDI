@@ -49,6 +49,7 @@ ymax = -13.71244
 # clip level2BVPM by extent boundary box
 level2BPAVDProfile_clip <- clipLevel2BPAVDProfile(level2BPAVDProfile,xmin, xmax, ymin, ymax)
 
+close(level2b)
 }
 \seealso{
 https://lpdaac.usgs.gov/products/gedi02_bv001/

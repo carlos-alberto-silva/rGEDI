@@ -39,7 +39,8 @@
 #'
 #'# clip by extent boundary box
 #'level2AM_clip <- clipLevel2AM(level2AM,xmin, xmax, ymin, ymax)
-#'
+#' 
+#'close(level2a)
 #'@import hdf5r
 #'@export
 clipLevel2AM = function(level2AM,xmin, xmax, ymin, ymax){
@@ -100,8 +101,8 @@ clipLevel2AM = function(level2AM,xmin, xmax, ymin, ymax){
 #'
 #'library(leaflet)
 #'leaflet() %>%
-#'  addCircleMarkers(clipped_level1Bdt$longitude_bin0,
-#'                   clipped_level1Bdt$latitude_bin0,
+#'  addCircleMarkers(level2AM_clip$lat_lowestmode,
+#'                   level2AM_clip$lon_lowestmode,
 #'                   radius = 1,
 #'                   opacity = 1,
 #'                   color = "red")  %>%
@@ -110,7 +111,7 @@ clipLevel2AM = function(level2AM,xmin, xmax, ymin, ymax){
 #'              opacity = 1, fillOpacity = 0) %>%
 #'  addProviderTiles(providers$Esri.WorldImagery)
 #'
-#'
+#'close(level2a)
 #'@export
 clipLevel2AMGeometry = function(level2AM, polygon_spdf, split_by="id") {
   exshp<-raster::extent(polygon_spdf)

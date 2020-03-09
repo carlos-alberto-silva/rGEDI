@@ -62,6 +62,7 @@ ZGmean<-gridStatsLevel2AM(level2AM = level2AM, func=mean(ZG), res=0.0005)
 plot(ZGmean)
 }
 
+close(level2a)
 }
 \seealso{
 https://lpdaac.usgs.gov/products/gedi02_av001/

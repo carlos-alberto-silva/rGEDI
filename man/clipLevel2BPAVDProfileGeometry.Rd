@@ -49,6 +49,7 @@ level2BPAVDProfile_clip <- clipLevel2BPAVDProfileGeometry(
                                                          polygon_spdf,
                                                          split_by="id")
 
+close(level2b)
 }
 \seealso{
 https://lpdaac.usgs.gov/products/gedi02_bv001/

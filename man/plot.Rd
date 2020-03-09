@@ -65,6 +65,8 @@ xlab="", ylab="Elevation (m)")
 
 plot(wf, relative=TRUE, polygon=TRUE, type="l", lwd=2, col="forestgreen",
 xlab="Waveform Amplitude (\%)", ylab="Elevation (m)")
+
+close(level1b)
 }
 
 

@@ -55,6 +55,7 @@
 #'plot(ZGmean)
 #'}
 #'
+#'close(level2a)
 #'@importFrom stats setNames na.omit
 #'@export
 gridStatsLevel2AM = function(level2AM, func, res = 0.5)

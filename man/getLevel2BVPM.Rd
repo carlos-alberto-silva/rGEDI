@@ -54,6 +54,7 @@ level2b<-readLevel2b(gedilevel2b)
 level2BVPM<-getLevel2BVPM(level2b)
 head(level2BVPM)
 
+close(level2b)
 }
 }
 \seealso{

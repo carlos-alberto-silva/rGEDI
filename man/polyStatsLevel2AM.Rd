@@ -69,6 +69,7 @@ RH100max_poly<-polyStatsLevel2AM(level2AM_clip,func=max(RH100), id=NULL)
 RH100metrics<-polyStatsLevel2AM(level2AM_clip,func=mySetOfMetrics(RH100),
                      id=level2AM_clip@data$id)
 
+close(level2a)
 }
 \seealso{
 https://lpdaac.usgs.gov/products/gedi02_av001/

@@ -34,11 +34,13 @@
 #'ymax = -13.71244
 #'
 #'# Spepecifing output file and path
-#'output<-paste0(getwd(),"//GEDI02_A_2019108080338_O01964_T05337_02_001_01_clip")
+#'output<-file.path(getwd(),"GEDI02_A_2019108080338_O01964_T05337_02_001_01_clip")
 #'
 #'# clip by extent boundary box
 #'level2a_clip <- clipLevel2A(level2a,xmin,xmax,ymin,ymax,output)
 #'
+#'close(level2a)
+#'close(level2a_clip)
 #'@export
 clipLevel2A = function(level2a, xmin, xmax, ymin, ymax, output=""){
   if (output == "") {
@@ -97,13 +99,14 @@ clipLevel2A = function(level2a, xmin, xmax, ymin, ymax, output=""){
 #'polygon_spdf<-shapefile(polygon_filepath)
 #'
 #'# Spepecifing output file and path
-#'output<-paste0(getwd(),"//GEDI02_A_2019108080338_O01964_T05337_02_001_01_clip")
+#'output<-file.path(getwd(),"GEDI02_A_2019108080338_O01964_T05337_02_001_01_clip")
 #'
 #'# clip by extent boundary box
 #'level2a_clip <- clipLevel2AGeometry(level2a, polygon_spdf = polygon_spdf,
 #'                                    output=output,
 #'                                    split_by="id")
-#'
+#'close(level2a)
+#'lapply(level2a_clip, close)
 #'@export
 clipLevel2AGeometry = function(level2a, polygon_spdf, output="", split_by = NULL) {
   output = checkOutput(output)
@@ -167,6 +170,13 @@ getSpatialData2A = function(level2a) {
 
 clipByMask2A = function(level2a, masks, output = "") {
   newFile =  hdf5r::H5File$new(output, mode="w")
+  if(length(masks) == 0) {
+    message("No intersection found!")
+    newFile$close_all()
+    newFile = hdf5r::H5File$new(output, mode="r")
+    result = new("gedi.level2a", h5 = newFile)
+    return(result)
+  }
 
   for (attr in hdf5r::list.attributes(level2a@h5)) {
     hdf5r::h5attr(newFile, attr) = hdf5r::h5attr(level2a@h5, attr)
@@ -175,24 +185,25 @@ clipByMask2A = function(level2a, masks, output = "") {
 
   all_groups = hdf5r::list.groups(level2a@h5)
 
+
+  # Check if the beam has any intersecting area
+  beams_with_value = lapply(lapply(masks, function(x) sapply(x, length)), sum)>0
+  beams_with_value = names(which(beams_with_value))
+  beams_with_value = c(beams_with_value, "METADATA")
+  which_groups = gsub("([^/]*).*","\\1",all_groups) %in% beams_with_value
+  groups_with_value = all_groups[which_groups]
+
   # Setup progress bar
   all_datasets = hdf5r::list.datasets(level2a@h5)
-  total = length(all_datasets)
+  which_datasets = gsub("([^/]*).*","\\1",all_datasets) %in% beams_with_value
+  datasets_with_value = all_datasets[which_datasets]
+
+  total = length(datasets_with_value)
   pb = utils::txtProgressBar(min = 0, max = total, style = 3)
   progress = 0
 
-  # Check if the beam has any intersecting area
-  groups_have_value = lapply(lapply(masks, function(x) sapply(x, length)), sum)>0
-
-  for (group in all_groups) {
+  for (group in groups_with_value) {
     beam_id = strsplit(group, "/")[[1]][1]
-
-    if (!group %in% names(groups_have_value) || ! groups_have_value[group])  {
-      n_datasets = length(hdf5r::list.datasets(level2a@h5[[group]]))
-      progress = progress + n_datasets
-      utils::setTxtProgressBar(pb, progress)
-      next
-    }
 
     hdf5r::createGroup(newFile, group)
     createAttributesWithinGroup(level2a@h5, newFile, group)
@@ -210,8 +221,10 @@ clipByMask2A = function(level2a, masks, output = "") {
 
       if (is.na(alg_id)) {
         mask = masks[[beam_id]][["main"]]
+        beam_shot_n = level2a@h5[[beam_id]][["shot_number"]]$dims
       } else {
         mask = masks[[beam_id]][[alg_id]]
+        beam_shot_n = level2a@h5[[sprintf("%s/geolocation/elev_highestreturn_a%d", beam_id, alg_id)]]$dims
       }
       mask_size = length(mask)
 
@@ -222,7 +235,7 @@ clipByMask2A = function(level2a, masks, output = "") {
         next
       }
 
-      beam_shot_n = level2a@h5[[beam_id]][["shot_number"]]$dims
+
       h5_dt = level2a@h5[[dt]]
       dt_dim = h5_dt$dims
       dtype = h5_dt$get_type()
@@ -274,6 +287,9 @@ clipByMask2A = function(level2a, masks, output = "") {
   }
 
   hdf5r::h5flush(newFile)
+  newFile$close_all()
+  newFile =  hdf5r::H5File$new(output, mode="r")
   result = new("gedi.level2a", h5 = newFile)
+  close(pb)
   return (result)
 }

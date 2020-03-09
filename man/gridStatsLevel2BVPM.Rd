@@ -61,6 +61,7 @@ plot(pai_max)
 omega_mean<-gridStatsLevel2BVPM(level2BVPM = level2BVPM, func=mean(omega), res=0.5)
 plot(omega_mean)
 
+close(level2b)
 }
 \seealso{
 https://lpdaac.usgs.gov/products/gedi02_bv001/

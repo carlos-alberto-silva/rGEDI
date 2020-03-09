@@ -47,8 +47,8 @@ level2AM_clip = clipLevel2AMGeometry(level2AM, polygon_spdf, split_by="id")
 
 library(leaflet)
 leaflet() \%>\%
- addCircleMarkers(clipped_level1Bdt$longitude_bin0,
-                  clipped_level1Bdt$latitude_bin0,
+ addCircleMarkers(level2AM_clip$lat_lowestmode,
+                  level2AM_clip$lon_lowestmode,
                   radius = 1,
                   opacity = 1,
                   color = "red")  \%>\%
@@ -57,5 +57,5 @@ leaflet() \%>\%
              opacity = 1, fillOpacity = 0) \%>\%
  addProviderTiles(providers$Esri.WorldImagery)
 
-
+close(level2a)
 }

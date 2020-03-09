@@ -12,7 +12,6 @@
 #'@seealso https://lpdaac.usgs.gov/products/gedi02_av001/
 #'
 #'@examples
-#'\donttest{
 #'# specify the path to GEDI level2A data (zip file)
 #'level2A_fp_zip <- system.file("extdata",
 #'                   "GEDI02_A_2019108080338_O01964_T05337_02_001_01_sub.zip",
@@ -24,8 +23,7 @@
 #'# Reading GEDI level2A data (h5 file)
 #'level2a<-readLevel2A(level2Apath=level2Apath)
 #'
-#'
-#'}
+#'close(level2a)
 #'@import hdf5r
 #'@export
 readLevel2A <-function(level2Apath) {

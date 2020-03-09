@@ -43,7 +43,7 @@ xlab="Waveform Amplitude", ylab="Elevation (m)")
 plot(wf, relative=TRUE, polygon=TRUE, type="l", lwd=2, col="forestgreen",
 xlab="Waveform Amplitude (\%)", ylab="Elevation (m)")
 
-
+close(level1b)
 }
 \seealso{
 https://lpdaac.usgs.gov/products/gedi01_bv001/

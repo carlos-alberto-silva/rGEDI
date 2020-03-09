@@ -32,6 +32,7 @@ level2b<-readLevel2B(level2Bpath=level2Bpath)
 level2BPAVDProfile<-getLevel2BPAVDProfile(level2b)
 head(level2BPAVDProfile)
 
+close(level2b)
 }
 \seealso{
 https://lpdaac.usgs.gov/products/gedi02_bv001/

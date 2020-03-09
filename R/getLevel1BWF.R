@@ -36,7 +36,7 @@
 #'plot(wf, relative=TRUE, polygon=TRUE, type="l", lwd=2, col="forestgreen",
 #'xlab="Waveform Amplitude (%)", ylab="Elevation (m)")
 #'
-#'
+#'close(level1b)
 #'@export
 #'
 getLevel1BWF<-function(level1b,shot_number){

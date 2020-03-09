@@ -16,7 +16,6 @@ S4 object of class "gedi.level1a".
 This function reads GEDI level2A products: ground elevation, canopy top height, and relative heights (RH).
 }
 \examples{
-\donttest{
 # specify the path to GEDI level2A data (zip file)
 level2A_fp_zip <- system.file("extdata",
                   "GEDI02_A_2019108080338_O01964_T05337_02_001_01_sub.zip",
@@ -28,8 +27,7 @@ level2Apath <- unzip(level2A_fp_zip,exdir = dirname(level2A_fp_zip))
 # Reading GEDI level2A data (h5 file)
 level2a<-readLevel2A(level2Apath=level2Apath)
 
-
-}
+close(level2a)
 }
 \seealso{
 https://lpdaac.usgs.gov/products/gedi02_av001/

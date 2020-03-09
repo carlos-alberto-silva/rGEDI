@@ -27,6 +27,7 @@
 #'level2BPAVDProfile<-getLevel2BPAVDProfile(level2b)
 #'head(level2BPAVDProfile)
 #'
+#'close(level2b)
 #'@import hdf5r
 #'@import utils
 #'@importFrom hdf5r H5File

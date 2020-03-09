@@ -49,6 +49,9 @@ output<-paste0(getwd(),"//GEDI01_B_2019108080338_O01964_T05337_02_003_01_clip")
 # clip by extent boundary box
 level1b_clip <- clipLevel1B(level1b,xmin, xmax, ymin, ymax,output)
 
+close(level1b)
+close(level1b_clip)
+
 }
 \seealso{
 https://lpdaac.usgs.gov/products/gedi01_bv001/

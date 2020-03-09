@@ -22,6 +22,7 @@
 #'# Reading GEDI level2B data (h5 file)
 #'level2b<-readLevel2B(level2Bpath=level2Bpath)
 #'
+#'close(level2b)
 #'@import hdf5r
 #'@export
 readLevel2B <-function(level2Bpath) {

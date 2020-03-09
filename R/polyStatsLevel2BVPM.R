@@ -64,7 +64,7 @@
 #'cover_metrics<-polyStatsLevel2BVPM(level2BVPM_clip,func=mySetOfMetrics(cover),
 #'                      id=level2BM_clip@data$id)
 #'head(cover_metrics)
-#'
+#'close(level2b)
 #'@export
 polyStatsLevel2BVPM = function(level2BVPM, func, id = NULL)
 {

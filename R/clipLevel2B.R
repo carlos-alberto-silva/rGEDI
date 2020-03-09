@@ -35,22 +35,11 @@
 #'# Spepecifing output file and path
 #'output<-paste0(getwd(),"//GEDI02_B_2019108080338_O01964_T05337_02_001_01_clip")
 #'
-#'# clip level2BVPM by extent boundary box
-#'level2b_clip <- level2BVPM(level2BVPM,xmin, xmax, ymin, ymax)
+#'# clip level2 by extent boundary box
+#'level2b_clip <- clipLevel2B(level2b, xmin, xmax, ymin, ymax)
 #'
-#'library(leaflet)
-#'leaflet() %>%
-#'  addCircleMarkers(level2b_clip@dt$longitude_bin0,
-#'                   level2b_clip@dt$latitude_bin0,
-#'                   radius = 1,
-#'                   opacity = 1,
-#'                   color = "red")  %>%
-#'  addScaleBar(options = list(imperial = FALSE)) %>%
-#'  addPolygons(data=polygon_spdf,weight=1,col = 'white',
-#'              opacity = 1, fillOpacity = 0) %>%
-#'  addProviderTiles(providers$Esri.WorldImagery)
-#'
-#'
+#'close(level2b)
+#'close(level2b_clip)
 #'@export
 clipLevel2B = function(level2b, xmin, xmax, ymin, ymax, output=""){
   # Get all spatial data as a list of dataframes with spatial information
@@ -110,10 +99,12 @@ clipLevel2B = function(level2b, xmin, xmax, ymin, ymax, output=""){
 #'output<-paste0(getwd(),"//GEDI02_B_2019108080338_O01964_T05337_02_001_01_clip")
 #'
 #'# clip by extent boundary box
-#'level2b_clip <- clipLevel2BGeometry(level2B, polygon_spdf = polygon_spdf,
+#'level2b_clip <- clipLevel2BGeometry(level2b, polygon_spdf = polygon_spdf,
 #'                                    output=output,
 #'                                    split_by="id")
 #'
+#'close(level2b)
+#'lapply(level2b_clip, close)
 #'@export
 clipLevel2BGeometry = function(level2b, polygon_spdf, output="", split_by=NULL) {
   output = checkOutput(output)
@@ -154,30 +145,38 @@ getSpatialData2B = function(level2b) {
 
 clipByMask2B = function(level2b, masks, output = "") {
   newFile =  hdf5r::H5File$new(output, mode="w")
+  if(length(masks) == 0) {
+    message("No intersection found!")
+    newFile$close_all()
+    newFile = hdf5r::H5File$new(output, mode="r")
+    result = new("gedi.level2b", h5 = newFile)
+    return(result)
+  }
 
   for (attr in hdf5r::list.attributes(level2b@h5)) {
     hdf5r::h5attr(newFile, attr) = hdf5r::h5attr(level2b@h5, attr)
   }
 
   all_groups = hdf5r::list.groups(level2b@h5)
+  beams_with_value = sapply(masks, length)>0
+  beams_with_value = names(which(beams_with_value))
+  beams_with_value = c(beams_with_value, "METADATA")
+  which_groups = gsub("([^/]*).*","\\1",all_groups) %in% beams_with_value
+  groups_with_value = all_groups[which_groups]
 
   # Setup progress bar
   all_datasets = hdf5r::list.datasets(level2b@h5)
-  total = length(all_datasets)
+  which_datasets = gsub("([^/]*).*","\\1",all_datasets) %in% beams_with_value
+  datasets_with_value = all_datasets[which_datasets]
+
+  total = length(datasets_with_value)
   pb = utils::txtProgressBar(min = 0, max = total, style = 3)
   progress = 0
 
-  for (group in all_groups) {
+  for (group in groups_with_value) {
     beam_id = strsplit(group, "/")[[1]][1]
     mask = masks[[beam_id]]
     mask_size = length(mask)
-
-    if (mask_size == 0)  {
-      n_datasets = length(hdf5r::list.datasets(level2b@h5[[group]]))
-      progress = progress + n_datasets
-      utils::setTxtProgressBar(pb, progress)
-      next
-    }
 
     hdf5r::createGroup(newFile,group)
     createAttributesWithinGroup(level2b@h5, newFile, group)
@@ -236,8 +235,11 @@ clipByMask2B = function(level2b, masks, output = "") {
     }
   }
 
-  level2b@h5 = newFile
+  newFile$close_all()
+  
+  newFile =  hdf5r::H5File$new(output, mode="r")
+  result = new("gedi.level2b", h5 = newFile)
   close(pb)
   #spatial = level2b2dt(level2b)
-  return (level2b)
+  return (result)
 }

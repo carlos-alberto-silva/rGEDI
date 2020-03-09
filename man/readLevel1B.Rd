@@ -27,6 +27,7 @@ level1Bpath <- unzip(level1B_fp_zip,exdir = dirname(level1B_fp_zip))
 # Reading GEDI level1B data (h5 file)
 level1b<-readLevel1B(level1Bpath=level1Bpath)
 
+close(level1b)
 }
 \seealso{
 \code{\link[hdf5r:H5File-class]{hdf5r::H5File}} in the \emph{hdf5r} package and
