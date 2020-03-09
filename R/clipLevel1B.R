@@ -41,7 +41,6 @@
 #'
 #' close(level1b)
 #' close(level1b_clip)
-#' 
 #'@import hdf5r fs
 #'@export
 clipLevel1B = function(level1b, xmin, xmax, ymin, ymax, output=""){
