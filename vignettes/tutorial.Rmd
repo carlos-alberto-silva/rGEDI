@@ -172,7 +172,7 @@ m = leaflet() %>%
 m
 ```
 
-```{r, echo=FALSE, fig.width=500/90, fig.height=400/90}
+```{r, echo=FALSE, fig.width=6, fig.height=5}
 library(leaflet)
 library(leafsync)
 
@@ -198,7 +198,7 @@ m
 
 
 ## Get GEDI Pulse Full-waveform (GEDI Level1B)
-```{r, fig.height=500/90}
+```{r, fig.width=7, fig.height=5}
 # Extracting GEDI full-waveform for a giving shotnumber
 wf <- getLevel1BWF(gedilevel1b, shot_number="19640521100108408")
 
@@ -225,7 +225,7 @@ head(level2AM[,c("beam","shot_number","elev_highestreturn","elev_lowestmode","rh
 
 
 ## Plot waveform with RH metrics
-```{r, results="hide", fig.width=500/90, fig.height=360/90}
+```{r, results="hide", fig.width=6, fig.height=5}
 shot_number = "19640521100108408"
 
 plotWFMetrics(gedilevel1b, gedilevel2a, shot_number, rh=c(25, 50, 75, 90))
@@ -484,7 +484,7 @@ head(cover_metrics_st)
 
 
 ## Compute Grids with descriptive statistics of GEDI-derived Elevation and Height Metrics (Level2A)
-```{r, fig.height = 500/90}
+```{r, fig.width=7, fig.height=3}
 # Computing the serie of statistics of GEDI RH100 metric
 rh100metrics<-gridStatsLevel2AM(level2AM = level2AM, func=mySetOfMetrics(rh100), res=0.005)
 
@@ -514,7 +514,7 @@ levelplot(rh100metrics,
 
 
 ## Compute Grids with descriptive statistics of GEDI-derived Canopy Cover and Vertical Profile Metrics (Level2B)
-```{r, fig.height = 500/90}
+```{r, fig.width=7, fig.height=3}
 # Computing the max of the Total Plant Area Index only
 level2BVPM$pai[level2BVPM$pai==-9999]<-NA # assing NA to -9999
 pai_metrics<-gridStatsLevel2BVPM(level2BVPM = level2BVPM, func=mySetOfMetrics(pai), res=0.005)
@@ -543,7 +543,7 @@ levelplot(pai_metrics,
 
 
 ## Simulating GEDI full-waveform data from Airborne Laser Scanning (ALS) 3-D point cloud and extracting canopy derived metrics
-```{r, fig.width=400/90, fig.height=400/90, results = FALSE}
+```{r, fig.width=6, fig.height=5, results = FALSE}
 # specify the path to ALS data
 lasfile_amazon <- file.path(outdir, "Amazon.las")
 lasfile_savanna <- file.path(outdir, "Savanna.las")
