@@ -22,7 +22,7 @@ install.packages("rGEDI")
 
 #The development version:
 library(devtools)
-devtools::install_github("carlos-alberto-silva/rGEDI")
+devtools::install_github("carlos-alberto-silva/rGEDI", dependencies = TRUE)
 
 # loading rGEDI package
 library(rGEDI)
