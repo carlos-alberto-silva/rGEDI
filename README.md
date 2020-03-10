@@ -486,7 +486,7 @@ head(metrics[,1:8])
 ```
 ## Extracting GEDI full-waveform derived metrics after adding noise to the full-waveform
 ```
-wf_amazon_metrics_noise<-gediWFMetrics(input=wf_Amazon,
+wf_amazon_metrics_noise<-gediWFMetrics(input=wf_amazon,
                          outRoot=file.path(getwd(), "amazon"),
                          linkNoise= c(3.0103,0.95),
                          maxDN= 4096,
@@ -494,7 +494,7 @@ wf_amazon_metrics_noise<-gediWFMetrics(input=wf_Amazon,
                          varScale= 3)
 
 wf_savanna_metrics_noise<-gediWFMetrics(
-                        input=wf_Savanna,
+                        input=wf_savanna,
                         outRoot=file.path(getwd(), "savanna"),
                         linkNoise= c(3.0103,0.95),
                         maxDN= 4096,
