@@ -195,7 +195,8 @@ gPAVDprofile<-plotPAVDProfile(level2BPAVDProfile, beam=beam, elev=TRUE)
 ```
 ![](https://github.com/carlos-alberto-silva/rGEDI/blob/master/readme/fig9.png)
 
-# Clip GEDI data (h5 files; gedi.level1b, gedi.level2a and gedi.level2b objects)
+
+## Clip GEDI data (h5 files; gedi.level1b, gedi.level2a and gedi.level2b objects)
 ```r
 ## Clip GEDI data by coordinates
 # Study area boundary box
@@ -224,7 +225,7 @@ level1b_clip_gb <- clipLevel1BGeometry(gedilevel1b,polygon_spdf,output=paste0(ou
 level2a_clip_gb <- clipLevel2AGeometry(gedilevel2a,polygon_spdf,output=paste0(outdir,"//level2a_clip_gb.h5"), split_by=split_by)
 level2b_clip_gb <- clipLevel2BGeometry(gedilevel2b,polygon_spdf,output=paste0(outdir,"//level2b_clip_gb.h5"), split_by=split_by)
 ```
-# Clip GEDI data (data.table objects)
+## Clip GEDI data (data.table objects)
 ```r
 ## Clipping GEDI data within boundary box
 level1BGeo_clip_bb <-clipLevel1BGeo(level1bGeo, xmin, xmax, ymin, ymax)
@@ -468,7 +469,7 @@ dev.off()
 ```
 ![](https://github.com/carlos-alberto-silva/rGEDI/blob/master/readme/fig7.png)
 
-# Extracting GEDI full-waveform derived metrics
+## Extracting GEDI full-waveform derived metrics
 ```
 wf_amazon_metrics<-gediWFMetrics(input=wf_amazon,outRoot=getwd())
 wf_savanna_metrics<-gediWFMetrics(input=wf_savanna,outRoot=getwd())
@@ -481,6 +482,15 @@ head(metrics[,1:8])
 # Amazon         0      -1e+06   133.29       -1e+06        -1   94.97     99.84      95.19
 # Savanna        0      -1e+06   831.51       -1e+06        -1  822.18    822.21     822.25
 ```
+## Always close gedi objects, so HDF5 files won't be blocked!
+```{r cleanup, echo=TRUE, results="hide", error=TRUE}
+close(wf_amazon)
+close(wf_savanna)
+close(gedilevel1b)
+close(gedilevel2a)
+close(gedilevel2b)
+```
+
 
 # References
 Dubayah, R., Blair, J.B., Goetz, S., Fatoyinbo, L., Hansen, M., Healey, S., Hofton, M., Hurtt, G.,         Kellner, J., Luthcke, S., & Armston, J. (2020) The Global Ecosystem Dynamics Investigation:         High-resolution laser ranging of the Earth’s forests and topography. Science of Remote             Sensing, p.100002. https://doi.org/10.1016/j.srs.2020.100002

@@ -225,7 +225,7 @@ head(level2AM[,c("beam","shot_number","elev_highestreturn","elev_lowestmode","rh
 
 
 ## Plot waveform with RH metrics
-```{r, results="hide", fig.width=6, fig.height=5}
+```{r, results="hide", fig.width=7, fig.height=7}
 shot_number = "19640521100108408"
 
 plotWFMetrics(gedilevel1b, gedilevel2a, shot_number, rh=c(25, 50, 75, 90))
@@ -273,7 +273,7 @@ gPAVDprofile<-plotPAVDProfile(level2BPAVDProfile, beam=beam, elev=TRUE)
 ```
 
 
-# Clip GEDI data (h5 files; gedi.level1b, gedi.level2a and gedi.level2b objects)
+## Clip GEDI data (h5 files; gedi.level1b, gedi.level2a and gedi.level2b objects)
 ```{r, eval=FALSE}
 ## Clip GEDI data by coordinates
 # Study area boundary box
@@ -321,7 +321,7 @@ level2b_clip_gb <- clipLevel2BGeometry(gedilevel2b,polygon_spdf,output=file.path
 ```
 
 
-# Clip GEDI data (data.table objects)
+## Clip GEDI data (data.table objects)
 ```{r, eval=FALSE}
 ## Clipping GEDI data within boundary box
 level1BGeo_clip_bb <-clipLevel1BGeo(level1BGeo, xmin, xmax, ymin, ymax)
@@ -447,6 +447,8 @@ sync(m1, m2)
 # 
 # p <- knitr::include_graphics("leaflet_map2.png")
 ```
+
+
 
 ## Compute descriptive statistics of GEDI Level2A and Level2B data
 ```{r}
@@ -589,7 +591,7 @@ grid()
 ```
 
 
-# Extracting GEDI full-waveform derived metrics
+## Extracting GEDI full-waveform derived metrics
 ```{r, results=FALSE}
 wf_amazon_metrics<-gediWFMetrics(
   input   = wf_amazon,
@@ -607,7 +609,7 @@ head(metrics[,1:8])
 ```
 
 
-# Always close gedi objects, so HDF5 files won't be blocked!
+## Always close gedi objects, so HDF5 files won't be blocked!
 ```{r cleanup, echo=TRUE, results="hide", error=TRUE}
 close(wf_amazon)
 close(wf_savanna)
