@@ -481,8 +481,9 @@ head(metrics[,1:8])
 #         #wave ID true ground true top ground slope ALS cover gHeight maxGround inflGround
 # Amazon         0      -1e+06   133.29       -1e+06        -1   94.97     99.84      95.19
 # Savanna        0      -1e+06   831.51       -1e+06        -1  822.18    822.21     822.25
-
-# Extracting GEDI full-waveform derived metrics after adding noise to the waveform
+```
+## Extracting GEDI full-waveform derived metrics after adding noise to the full-waveform
+```
 wf_amazon_metrics_noise<-gediWFMetrics(input=wf_Amazon,
                          outRoot=file.path(getwd(), "amazon"),
                          linkNoise= c(3.0103,0.95),
