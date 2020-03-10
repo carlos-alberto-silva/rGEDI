@@ -469,10 +469,12 @@ dev.off()
 ```
 ![](https://github.com/carlos-alberto-silva/rGEDI/blob/master/readme/fig7.png)
 
-## Extracting GEDI full-waveform derived metrics
+## Extracting GEDI full-waveform derived metrics without adding noise to the full-waveform
 ```
-wf_amazon_metrics<-gediWFMetrics(input=wf_amazon,outRoot=getwd())
-wf_savanna_metrics<-gediWFMetrics(input=wf_savanna,outRoot=getwd())
+wf_amazon_metrics<-gediWFMetrics(input=wf_amazon,
+                                outRoot=file.path(getwd(), "amazon"))
+wf_savanna_metrics<-gediWFMetrics(input=wf_savanna,
+                                outRoot=file.path(getwd(), "savanna"))
 
 metrics<-rbind(wf_amazon_metrics,wf_savanna_metrics)
 rownames(metrics)<-c("Amazon","Savanna")

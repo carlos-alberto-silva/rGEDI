@@ -590,7 +590,7 @@ grid()
 ```
 
 
-## Extracting GEDI full-waveform derived metrics
+## Extracting GEDI full-waveform derived metrics without adding noise to the full-waveform
 ```{r, results=FALSE}
 wf_amazon_metrics<-gediWFMetrics(
   input   = wf_amazon,

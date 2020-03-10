@@ -138,9 +138,9 @@
 #'                            output=file.path(getwd(),"gediWF_Savanna_simulation.h5"),
 #'                            coords = c(xcenter_Savanna, ycenter_Savanna))
 #'
-#'# Extracting GEDI full-waveform derived metrics
+#'# Extracting GEDI full-waveform derived metrics without adding noise to the full-waveform
 #'wf_amazon_metrics<-gediWFMetrics(input=wf_Amazon,outRoot=file.path(getwd(), "amazon"))
-#'wf_savanna_metrics<-gediWFMetrics(input=wf_Savanna,outRoot=file.path(getwd(), "Savanna"))
+#'wf_savanna_metrics<-gediWFMetrics(input=wf_Savanna,outRoot=file.path(getwd(), "savanna"))
 #'
 #'metrics<-rbind(wf_amazon_metrics,wf_savanna_metrics)
 #'rownames(metrics)<-c("Amazon","Savanna")
