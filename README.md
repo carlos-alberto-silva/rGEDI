@@ -502,12 +502,10 @@ metrics_noise<-rbind(wf_amazon_metrics_noise,wf_savanna_metrics_noise)
 rownames(metrics_noise)<-c("Amazon","Savanna")
 head(metrics_noise[,1:8])
 
-#         #wave ID true ground true top ground slope ALS cover gHeight maxGround
-# Amazon         0      -1e+06   133.29       -1e+06        -1   99.17     99.99
-# Savanna        0      -1e+06   831.36       -1e+06        -1  822.15    822.21
-        inflGround
-Amazon       95.39
-Savanna     822.18
+#         #wave ID true ground true top ground slope ALS cover gHeight maxGround inflGround
+# Amazon         0      -1e+06   133.29       -1e+06        -1   99.17     99.99      95.39
+# Savanna        0      -1e+06   831.36       -1e+06        -1  822.15    822.21     822.18
+
 ```
 
 ## Always close gedi objects, so HDF5 files won't be blocked!
