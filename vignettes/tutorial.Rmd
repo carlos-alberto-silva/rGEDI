@@ -479,8 +479,7 @@ head(pai_max)
 
 
 # Computing the serie of statistics of Canopy Cover stratified by polygon
-cover_metrics_st<-polyStatsLevel2BVPM(level2BVPM_clip_gb,func=mySetOfMetrics(cover),
-                                     id="poly_id")
+cover_metrics_st<-polyStatsLevel2BVPM(level2BVPM_clip_gb,func=mySetOfMetrics(cover),id="poly_id")
 head(cover_metrics_st)
 ```
 
@@ -608,6 +607,31 @@ head(metrics[,1:8])
 head(metrics[,1:8])
 ```
 
+## Extracting GEDI full-waveform derived metrics after adding noise to the waveform
+```{r, results=FALSE}
+wf_amazon_metrics_noise<-gediWFMetrics(input=wf_Amazon,
+                         outRoot=file.path(getwd(), "amazon"),
+                         linkNoise= c(3.0103,0.95),
+                         maxDN= 4096,
+                         sWidth= 0.5,
+                         varScale= 3)
+
+wf_savanna_metrics_noise<-gediWFMetrics(
+                        input=wf_Savanna,
+                        outRoot=file.path(getwd(), "savanna"),
+                        linkNoise= c(3.0103,0.95),
+                        maxDN= 4096,
+                        sWidth= 0.5,
+                        varScale= 3)
+
+metrics_noise<-rbind(wf_amazon_metrics_noise,wf_savanna_metrics_noise)
+rownames(metrics_noise)<-c("Amazon","Savanna")
+head(metrics_noise)
+```
+
+```{r, echo=FALSE}
+head(metrics_noise[,1:8])
+```
 
 ## Always close gedi objects, so HDF5 files won't be blocked!
 ```{r cleanup, echo=TRUE, results="hide", error=TRUE}

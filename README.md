@@ -481,7 +481,35 @@ head(metrics[,1:8])
 #         #wave ID true ground true top ground slope ALS cover gHeight maxGround inflGround
 # Amazon         0      -1e+06   133.29       -1e+06        -1   94.97     99.84      95.19
 # Savanna        0      -1e+06   831.51       -1e+06        -1  822.18    822.21     822.25
+
+# Extracting GEDI full-waveform derived metrics after adding noise to the waveform
+wf_amazon_metrics_noise<-gediWFMetrics(input=wf_Amazon,
+                         outRoot=file.path(getwd(), "amazon"),
+                         linkNoise= c(3.0103,0.95),
+                         maxDN= 4096,
+                         sWidth= 0.5,
+                         varScale= 3)
+
+wf_savanna_metrics_noise<-gediWFMetrics(
+                        input=wf_Savanna,
+                        outRoot=file.path(getwd(), "savanna"),
+                        linkNoise= c(3.0103,0.95),
+                        maxDN= 4096,
+                        sWidth= 0.5,
+                        varScale= 3)
+
+metrics_noise<-rbind(wf_amazon_metrics_noise,wf_savanna_metrics_noise)
+rownames(metrics_noise)<-c("Amazon","Savanna")
+head(metrics_noise[,1:8])
+
+#         #wave ID true ground true top ground slope ALS cover gHeight maxGround
+# Amazon         0      -1e+06   133.29       -1e+06        -1   99.17     99.99
+# Savanna        0      -1e+06   831.36       -1e+06        -1  822.15    822.21
+        inflGround
+Amazon       95.39
+Savanna     822.18
 ```
+
 ## Always close gedi objects, so HDF5 files won't be blocked!
 ```{r cleanup, echo=TRUE, results="hide", error=TRUE}
 close(wf_amazon)
