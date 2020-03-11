@@ -68,7 +68,7 @@ gedilevel2a<-readLevel2A(level2Apath = paste0(outdir,"\\GEDI02_A_2019108080338_O
 gedilevel2b<-readLevel2B(level2Bpath = paste0(outdir,"\\GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub.h5"))
 ```
 
-## Get GEDI Pulse Full-Waveform Geolocation (GEDI Level1B)
+## Get GEDI Pulse Geolocation (GEDI Level1B)
 ```r
 level1bGeo<-getLevel1BGeo(level1b=gedilevel1b,select=c("elevation_bin0"))
 head(level1bGeo)
