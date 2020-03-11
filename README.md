@@ -187,7 +187,7 @@ head(level2BPAVDProfile[,c("beam","shot_number","pavd_z0_5m","pavd_z5_10m")])
 beam="BEAM0101"
 
 # Plot Level2B PAI Profile
-gPAIprofile<-plotPAIProfile(level2BPAIDProfile, beam=beam, elev=TRUE)
+gPAIprofile<-plotPAIProfile(level2BPAIProfile, beam=beam, elev=TRUE)
 
 # Plot Level2B PAVD Profile
 gPAVDprofile<-plotPAVDProfile(level2BPAVDProfile, beam=beam, elev=TRUE)
