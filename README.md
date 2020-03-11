@@ -318,13 +318,13 @@ rh100metrics_st<-polyStatsLevel2AM(level2AM_clip_gb,func=mySetOfMetrics(rh100),
 id="poly_id")
 head(rh100metrics_st)
 
-##     poly_id   max
-##  1:       2 12.81
-##  2:       1 12.62
-##  3:       5  9.96
-##  4:       6  8.98
-##  5:       4 10.33
-##  6:       8  8.72
+   poly_id  min   max     mean       sd
+1:       2 4.08 12.81 5.508639 1.452143
+2:       1 3.78 12.62 5.514930 1.745507
+3:       5 4.12  9.96 5.100122 1.195272
+4:       6 4.64  8.98 5.595294 1.024171
+5:       4 4.38 10.33 7.909500 1.757200
+6:       8 4.45  8.72 6.136471 1.097468
 
 # Computing the max of the Total Plant Area Index
 pai_max<-polyStatsLevel2BVPM(level2BVPM_clip_gb,func=max(pai), id=NULL)
