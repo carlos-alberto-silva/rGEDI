@@ -282,6 +282,7 @@ m2<-leaflet() %>%
   addProviderTiles(providers$Esri.WorldImagery) %>%
   addLegend(pal = pal, values = level2AM_clip_gb$poly_id,title ="Poly IDs" ) 
 
+library(leafsync)
 sync(m1, m2)
 ```
 ![](https://github.com/carlos-alberto-silva/rGEDI/blob/master/readme/fig4.png)
