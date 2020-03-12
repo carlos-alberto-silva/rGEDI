@@ -111,7 +111,7 @@
 #'libsAvailable = require(lidR) && require(plot3D)
 #'if (libsAvailable) {
 #'
-#'# specify the path to ALS data (zip)
+#'# Specifying the path to ALS data (zip)
 #'alsfile_Amazon_zip <- system.file("extdata", "Amazon.zip", package="rGEDI")
 #'alsfile_Savanna_zip <- system.file("extdata", "Savanna.zip", package="rGEDI")
 #'
