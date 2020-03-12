@@ -74,7 +74,7 @@ library(rGEDI)
 
 
 ## Find GEDI data within your study area (GEDI finder tool)
-```{r}
+```{r, eval = FALSE}
 # Study area boundary box coordinates
 xmin<- -44.17246
 xmax<- -44.0654
