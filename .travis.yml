@@ -83,19 +83,9 @@ script:
   - popd
   - R CMD build .
   - R CMD check *tar.gz --as-cran
+  - cat ${PKGNAME}.Rcheck/00check.log
+  - cat ${PKGNAME}/00install.out
   - R CMD INSTALL . --build
-
-after_script:
-  - cat /home/travis/build/carlos-alberto-silva/rGEDI/rGEDI.Rcheck/00check.log
-  - cat /home/travis/build/carlos-alberto-silva/rGEDI/rGEDI.Rcheck/00install.out
-  - ./travis-tool.sh dump_logs_by_extension "timings"
-  - ./travis-tool.sh dump_sysinfo
-
-on_failure:
-  - ./travis-tool.sh dump_logs
-
-after_failure:
- - ./travis-tool.sh dump_logs
 
 # safelist
 branches:
