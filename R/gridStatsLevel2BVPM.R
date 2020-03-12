@@ -51,9 +51,9 @@
 #'pai_max<-gridStatsLevel2BVPM(level2BVPM = level2BVPM, func=max(pai), res=0.005)
 #'plot(pai_max)
 #'
-#'#' Computing the mean of Foliage Clumping Index only
-#'omega_mean<-gridStatsLevel2BVPM(level2BVPM = level2BVPM, func=mean(omega), res=0.005)
-#'plot(omega_mean)
+#'#' Computing the Foliage Height Diversity Index only
+#'fhd_mean<-gridStatsLevel2BVPM(level2BVPM = level2BVPM, func=mean(fhd_normal), res=0.005)
+#'plot(fhd_mean)
 #'
 #'close(level2b)
 #'@export

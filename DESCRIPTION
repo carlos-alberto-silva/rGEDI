@@ -1,6 +1,6 @@
 Package: rGEDI
 Type: Package
-Title: rGEDI: NASA's Global Ecosystem Dynamics Investigation (GEDI) Data Visualization and Processing for Forestry Applications
+Title: rGEDI: NASA's Global Ecosystem Dynamics Investigation (GEDI) Data Visualization and Processing
 Version: 0.0.1
 Authors@R: c(
     person("Carlos Alberto", "Silva", email = "carlos_engflorestal@outlook.com", role = c("aut", "cre", "cph")),

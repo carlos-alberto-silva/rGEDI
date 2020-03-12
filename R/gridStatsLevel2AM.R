@@ -43,15 +43,15 @@
 #'}
 #'
 #'#' Computing a serie of GEDI metrics
-#'ZTstats<-gridStatsLevel2AM(level2AM = level2AM, func=mySetOfMetrics(elev_highestreturn), res=0.0005)
+#'ZTstats<-gridStatsLevel2AM(level2AM = level2AM, func=mySetOfMetrics(elev_highestreturn), res=0.005)
 #'plot(ZTstats)
 #'
 #'#' Computing the maximum of RH100 only
-#'maxRH100<-gridStatsLevel2AM(level2AM = level2AM, func=max(rh100), res=0.0005)
+#'maxRH100<-gridStatsLevel2AM(level2AM = level2AM, func=max(rh100), res=0.005)
 #'plot(maxRH100)
 #'
 #'#' Computing the mean of ZG only
-#'ZGmean<-gridStatsLevel2AM(level2AM = level2AM, func=mean(elev_lowestmode), res=0.0005)
+#'ZGmean<-gridStatsLevel2AM(level2AM = level2AM, func=mean(elev_lowestmode), res=0.005)
 #'plot(ZGmean)
 #'
 #'close(level2a)
