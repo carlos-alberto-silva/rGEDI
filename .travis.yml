@@ -6,7 +6,7 @@ matrix:
   include:
   - os: linux
     env: BADGE=linux
-    cache: 
+    cache:
       - ccache
       - packages
     before_install:
@@ -14,11 +14,11 @@ matrix:
         gcc$(VER) -std=gnu99\nCXX=$(CCACHE) g++$(VER)\nC11=$(CCACHE) g++$(VER)\nC14=$(CCACHE)
         g++$(VER)\nFC=$(CCACHE) gfortran$(VER)\nF77=$(CCACHE) gfortran$(VER)' > $HOME/.R/Makevars
   - os: osx
-    env: 
+    env:
       - BADGE=osx
       - LD_LIBRARY_PATH=" /opt/local/lib:$LD_LIBRARY_PATH"
       - CPATH="/opt/local/include:$CPATH"
-    cache: 
+    cache:
       - ccache
       - packages
     before_install:
@@ -37,7 +37,7 @@ matrix:
         curl -Lo $HOME/AppData/Local/Temp/chocolatey/miktex.exe $url;
         curl -Lo oledlg.dll https://github.com/caiohamamura/flightplanning-R/releases/download/v0.0.0/oledlg.dll;
         fi
-      - $HOME/AppData/Local/Temp/chocolatey/miktex.exe --unattended --auto-install=yes 
+      - $HOME/AppData/Local/Temp/chocolatey/miktex.exe --unattended --auto-install=yes
       - "export PATH=/c/Program\\ Files/MiKTeX\\ 2.9/miktex/bin/x64:$PATH"
       - choco install -y pandoc
       - "export PATH=/c/Program\\ Files/R/R-3.6.2/bin/x64:/c/Rtools/bin:/c/Rtools/mingw_64/bin:$PATH"
@@ -72,7 +72,7 @@ addons:
 
 r_packages:
   - raster
-  
+
 language: r
 
 script:
@@ -88,6 +88,14 @@ script:
 after_script:
   - cat /home/travis/build/carlos-alberto-silva/rGEDI/rGEDI.Rcheck/00check.log
   - cat /home/travis/build/carlos-alberto-silva/rGEDI/rGEDI.Rcheck/00install.out
+  - ./travis-tool.sh dump_logs_by_extension "timings"
+  - ./travis-tool.sh dump_sysinfo
+
+on_failure:
+  - ./travis-tool.sh dump_logs
+
+after_failure:
+ - ./travis-tool.sh dump_logs
 
 # safelist
 branches:
