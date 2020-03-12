@@ -2,7 +2,7 @@
 % Please edit documentation in R/plotWFMetrics.R
 \name{plotWFMetrics}
 \alias{plotWFMetrics}
-\title{GEDI-waveform plot with metrics}
+\title{GEDI full waveform plot with metrics}
 \usage{
 plotWFMetrics(level1b, level2a, shot_number, rh=c(25, 50, 75),...)
 }

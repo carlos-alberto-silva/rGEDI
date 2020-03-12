@@ -16,10 +16,11 @@ which can be loaded as an ESRI shapefile using \code{\link[raster:shapefile]{ras
 \item{split_by}{Polygon id. If defined, GEDI data will be clipped by each polygon using the attribute specified by \code{split_by} from the attribute table.}
 }
 \value{
-An S4 object of class \code{\link[data.table:data.table]{data.table-class}}.
+An S4 object of class \code{\link[data.table:data.table]{data.table-class}}
+containing the Canopy Cover and Vertical Profile metrics.
 }
 \description{
-This function clips GEDI level2B-derived
+This function clips GEDI level2B derived
 Canopy Cover and Vertical Profile metrics within a given geometry
 }
 \examples{

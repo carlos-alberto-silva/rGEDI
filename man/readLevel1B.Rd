@@ -7,7 +7,7 @@
 readLevel1B(level1Bpath)
 }
 \arguments{
-\item{level1Bpath}{file path pointing to GEDI level1B data. Data in HDF5 Hierarchical Data Format (.h5).}
+\item{level1Bpath}{File path pointing to GEDI level1B data. Data in HDF5 Hierarchical Data Format (.h5).}
 }
 \value{
 An S4 object of class "gedi.level1b".

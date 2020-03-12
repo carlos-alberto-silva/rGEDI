@@ -19,7 +19,7 @@ An S4 object of class \code{\link[data.table:data.table]{data.table-class}}
 containting Statistics of GEDI level2BVPM defined metrics
 }
 \description{
-Computes a Series of Statistics of GEDI-derived Canopy Cover and Vertical Profile metrics
+Computes a Series of Statistics of GEDI derived Canopy Cover and Vertical Profile metrics
 within a given area defined or not by a polygon
 }
 \examples{

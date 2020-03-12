@@ -2,8 +2,8 @@
 % Please edit documentation in R/gridStatsLevel2BVPM.R
 \name{gridStatsLevel2BVPM}
 \alias{gridStatsLevel2BVPM}
-\title{Compute Grids with descriptive statistics of
-GEDI-derived Canopy Cover and Vertical Profile Metrics (Level2B)}
+\title{Compute Grids with Descriptive Statistics of
+GEDI derived Canopy Cover and Vertical Profile Metrics (Level2B)}
 \usage{
 gridStatsLevel2BVPM(level2BVPM, func, res)
 }
@@ -19,8 +19,8 @@ An S4 object of class "data.table".}
 Returns raster layer(s) of selected GEDI Canopy Cover and Vertical Profile Metric(s)
 }
 \description{
-This function computes a series of user-defined descriptive statistics within
-each grid cell for GEDI-derived Canopy Cover and Vertical Profile Metrics (Level2B)
+This function computes a series of user defined descriptive statistics within
+each grid cell for GEDI derived Canopy Cover and Vertical Profile Metrics (Level2B)
 }
 \examples{
 # specify the path to GEDI level2B data (zip file)
@@ -34,7 +34,7 @@ level2Bpath <- unzip(level2B_fp_zip,exdir = dirname(level2B_fp_zip))
 # Reading GEDI level2B data (h5 file)
 level2b<-readLevel2B(level2Bpath=level2Bpath)
 
-# Get GEDI-derived Canopy Cover and Vertical Profile Metrics
+# Get GEDI derived Canopy Cover and Vertical Profile Metrics
 level2BVPM<-getLevel2BVPM(level2b)
 head(level2BVPM)
 
@@ -50,7 +50,7 @@ metrics = list(
    return(metrics)
 }
 
-#' Computing a serie of statistics of GEDI-derived canopy cover
+#' Computing a serie of statistics of GEDI derived canopy cover
 cover_stats<-gridStatsLevel2BVPM(level2BVPM = level2BVPM, func=mySetOfMetrics(cover), res=0.005)
 plot(cover_stats)
 
@@ -58,9 +58,9 @@ plot(cover_stats)
 pai_max<-gridStatsLevel2BVPM(level2BVPM = level2BVPM, func=max(pai), res=0.005)
 plot(pai_max)
 
-#' Computing the mean of Foliage Clumping Index only
-omega_mean<-gridStatsLevel2BVPM(level2BVPM = level2BVPM, func=mean(omega), res=0.005)
-plot(omega_mean)
+#' Computing the Foliage Height Diversity Index only
+fhd_mean<-gridStatsLevel2BVPM(level2BVPM = level2BVPM, func=mean(fhd_normal), res=0.005)
+plot(fhd_mean)
 
 close(level2b)
 }

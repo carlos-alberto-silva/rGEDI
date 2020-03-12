@@ -16,7 +16,8 @@ which can be loaded as an ESRI shapefile using \code{\link[raster:shapefile]{ras
 \item{split_by}{Polygon id. If defined, GEDI data will be clipped by each polygon using the polygon id from table of attribute defined by the user}
 }
 \value{
-A S4 object of class \code{\link[data.table:data.table]{data.table-class}}.
+An S4 object of class \code{\link[data.table:data.table]{data.table-class}}
+containing the clipped elevation and relative heights metrics.
 }
 \description{
 This function clips GEDI Level2A extracted Elevation and Height Metrics (Level2AM)

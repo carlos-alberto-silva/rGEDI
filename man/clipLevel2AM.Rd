@@ -20,7 +20,7 @@ An S4 object of class "gedi.level2a".}
 }
 \value{
 An S4 object of class \code{\link[data.table:data.table]{data.table-class}}
-containing the elevation and relative heights.
+containing the clipped elevation and relative heights metrics.
 }
 \description{
 This function clips GEDI Level2A extracted Elevation and Height Metrics (Level2AM)

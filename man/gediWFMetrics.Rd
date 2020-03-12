@@ -190,7 +190,7 @@ ycenter_Amazon = mean(als_Amazon@bbox[2,])
 xcenter_Savanna = mean(als_Savanna@bbox[1,])
 ycenter_Savanna = mean(als_Savanna@bbox[2,])
 
-# Simulating GEDI full-waveform
+# Simulating GEDI full waveform
 wf_Amazon<-gediWFSimulator(input=alsfile_Amazon_filepath,
                           output=file.path(getwd(),"gediWF_amazon_simulation.h5"),
                           coords = c(xcenter_Amazon, ycenter_Amazon))
@@ -199,7 +199,7 @@ wf_Savanna<-gediWFSimulator(input=alsfile_Savanna_filepath,
                            output=file.path(getwd(),"gediWF_Savanna_simulation.h5"),
                            coords = c(xcenter_Savanna, ycenter_Savanna))
 
-# Extracting GEDI full-waveform derived metrics without adding noise to the full-waveform
+# Extracting GEDI full waveform derived metrics without adding noise to the full waveform
 wf_amazon_metrics<-gediWFMetrics(input=wf_Amazon,outRoot=file.path(getwd(), "amazon"))
 wf_savanna_metrics<-gediWFMetrics(input=wf_Savanna,outRoot=file.path(getwd(), "savanna"))
 
@@ -207,7 +207,7 @@ metrics<-rbind(wf_amazon_metrics,wf_savanna_metrics)
 rownames(metrics)<-c("Amazon","Savanna")
 head(metrics)
 
-# Extracting GEDI full-waveform derived metrics after adding noise to the waveform
+# Extracting GEDI full waveform derived metrics after adding noise to the waveform
 wf_amazon_metrics_noise<-gediWFMetrics(input=wf_Amazon,
                         outRoot=file.path(getwd(), "amazon"),
                         linkNoise= c(3.0103,0.95),

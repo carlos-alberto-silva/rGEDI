@@ -2,7 +2,7 @@
 % Please edit documentation in R/getLevel2BPAVDProfile.R
 \name{getLevel2BPAVDProfile}
 \alias{getLevel2BPAVDProfile}
-\title{Get GEDI Plant Area Volume Density (PAVD) Index (GEDI Level2B)}
+\title{Get GEDI Plant Area Volume Density (PAVD) Index Profile (GEDI Level2B)}
 \usage{
 getLevel2BPAVDProfile(level2b)
 }
@@ -12,10 +12,10 @@ An S4 object of class "gedi.level2b".}
 }
 \value{
 An S4 object of class \code{\link[data.table:data.table]{data.table-class}}
-containing the PAVD Index.
+containing the Plant Area Volume Density Index.
 }
 \description{
-This function extracts the Plant Area Volume Density (PAVD) Index from GEDI Level2B data.
+This function extracts the Plant Area Volume Density (PAVD) Profile from GEDI Level2B data.
 }
 \examples{
 # Specifying the path to GEDI level2B data (zip file)

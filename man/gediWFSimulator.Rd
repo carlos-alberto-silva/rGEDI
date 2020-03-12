@@ -2,7 +2,7 @@
 % Please edit documentation in R/C_simulateFullWaveform.R
 \name{gediWFSimulator}
 \alias{gediWFSimulator}
-\title{GEDI full-waveform data simulation}
+\title{GEDI full waveform data simulation}
 \usage{
 gediWFSimulator(input, output, waveID = NULL, coords = NULL,
   listCoord = NULL, gridBound = NULL, gridStep = 30, pSigma = -1,
@@ -75,8 +75,8 @@ Octree}
 
 \item{octLevels}{n. number of octree levels to use}
 
-\item{nOctPix}{n. number of octree pixels along a side for the top-level
-Using full-waveform input data (not tested)}
+\item{nOctPix}{n. number of octree pixels along a side for the top level
+Using full waveform input data (not tested)}
 
 \item{keepOld}{do not overwrite old files, if they exist}
 
@@ -92,7 +92,7 @@ Using full-waveform input data (not tested)}
 An S4 object of class \code{\link[hdf5r:H5File-class]{hdf5r::H5File}} in the \emph{hdf5r} package.
 }
 \description{
-Simulate GEDI full-waveform data from Airborne Laser Scanning (ALS) 3-D point cloud
+Simulate GEDI full waveform data from Airborne Laser Scanning (ALS) 3D point cloud
 
 Input and output filenames, and formats
 }
@@ -121,7 +121,7 @@ ycenter_Amazon = mean(als_Amazon@bbox[2,])
 xcenter_Savanna = mean(als_Savanna@bbox[1,])
 ycenter_Savanna = mean(als_Savanna@bbox[2,])
 
-# Simulating GEDI full-waveform
+# Simulating GEDI full waveform
 wf_Amazon<-gediWFSimulator(input=alsfile_Amazon_filepath,
                           output=file.path(getwd(),"gediWF_amazon_simulation.h5"),
                           coords = c(xcenter_Amazon, ycenter_Amazon))
@@ -130,7 +130,7 @@ wf_Savanna<-gediWFSimulator(input=alsfile_Savanna_filepath,
                            output=file.path(getwd(),"gediWF_Savanna_simulation.h5"),
                            coords = c(xcenter_Savanna, ycenter_Savanna))
 
-# Plot ALS and GEDI simulated full-waveform
+# Plot ALS and GEDI simulated full waveform
 
 par(mfrow=c(2,2), mar=c(4,4,0,0), oma=c(0,0,1,1),cex.axis = 1.2)
 scatter3D(

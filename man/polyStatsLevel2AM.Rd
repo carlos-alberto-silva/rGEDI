@@ -19,7 +19,7 @@ An S4 object of class \code{\link[data.table:data.table]{data.table-class}}
 containting Statistics of GEDI level2A defined metrics
 }
 \description{
-Computes a Series of Statistics from GEDI-derived Elevation and Height Metrics (Level2A)
+Computes a Series of Statistics from GEDI derived Elevation and Height Metrics (Level2A)
 within a given area defined or not by a polygon
 }
 \examples{

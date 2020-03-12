@@ -2,7 +2,7 @@
 % Please edit documentation in R/clipLevel1BGeo.R
 \name{clipLevel1BGeoGeometry}
 \alias{clipLevel1BGeoGeometry}
-\title{Clip GEDI Full-Waveform Geolocations by geometry}
+\title{Clip GEDI Full Waveform Geolocations by geometry}
 \usage{
 clipLevel1BGeoGeometry(level1BGeo, polygon_spdf, split_by)
 }
@@ -13,10 +13,11 @@ An S4 object of class "data.table".}
 \item{polygon_spdf}{Polygon. An object of class \code{\link[sp]{SpatialPolygonsDataFrame-class}},
 which can be loaded as an ESRI shapefile using \code{\link[raster:shapefile]{raster::shapefile()}} function in the \emph{raster} package.}
 
-\item{split_by}{Polygon id. If defined, GEDI data will be clipped by each polygon using the polygon id from table of attribute defined by the user}
+\item{split_by}{Polygon id. If defined, GEDI data will be clipped by each polygon using the polygon id from table of attribute defined by the user.}
 }
 \value{
-A S4 object of class \code{\link[data.table:data.table]{data.table-class}}.
+An S4 object of class \code{\link[data.table:data.table]{data.table-class}} containing the
+clipped GEDI level1B extracted geolocations.
 }
 \description{
 This function clips GEDI level1B extracted geolocation (level1BGeo)
@@ -34,7 +35,7 @@ level1Bpath <- unzip(level1B_fp_zip,exdir = dirname(level1B_fp_zip))
 # Reading GEDI level1B data (h5 file)
 level1b<-readLevel1B(level1Bpath=level1Bpath)
 
-# Extracting GEDI Full-Waveform Geolocations
+# Extracting GEDI Full Waveform Geolocations
 level1BGeo<-getLevel1BGeo(level1b)
 
 # Specifying the path to shapefile
@@ -44,7 +45,7 @@ polygon_filepath <- system.file("extdata", "stands_cerrado.shp", package="rGEDI"
 library(raster)
 polygon_spdf<-shapefile(polygon_filepath)
 
-# Clipping GEDI Full-Waveform Geolocations by Geometry
+# Clipping GEDI Full Waveform Geolocations by Geometry
 level1BGeo_clip = clipLevel1BGeoGeometry(level1BGeo, polygon_spdf, split_by="id")
 
 library(leaflet)

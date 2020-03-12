@@ -23,7 +23,7 @@ An S4 object of class \code{\link[data.table:data.table]{data.table-class}}
 containing the Plant Area Index profile data.
 }
 \description{
-This function clips GEDI level2B-derived
+This function clips GEDI level2B derived
 Plant Area Index profile a within given bounding coordinates
 }
 \examples{

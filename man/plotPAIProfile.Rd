@@ -2,12 +2,13 @@
 % Please edit documentation in R/plotPAIProfile.R
 \name{plotPAIProfile}
 \alias{plotPAIProfile}
-\title{Plot Plant Area Index (PAI) Profile}
+\title{Plot GEDI Plant Area Index (PAI) Profile}
 \usage{
 plotPAIProfile(level2BPAIProfile, beam = "BEAM0101", elev = TRUE)
 }
 \arguments{
-\item{level2BPAIProfile}{A GEDI Level2B object (output of \code{\link[rGEDI:getLevel2BPAIProfile]{getLevel2BPAIProfile}} function). A S4 object of class "data.table".}
+\item{level2BPAIProfile}{A GEDI Level2B object (output of \code{\link[rGEDI:getLevel2BPAIProfile]{getLevel2BPAIProfile}} function).
+An S4 object of class "data.table".}
 
 \item{beam}{Select GEDI beam. Default is "BEAM0101". See details section.}
 

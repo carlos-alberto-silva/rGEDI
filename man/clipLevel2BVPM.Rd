@@ -23,7 +23,7 @@ An S4 object of class \code{\link[data.table:data.table]{data.table-class}}
 containing the Canopy Cover and Vertical Profile metrics.
 }
 \description{
-This function clips GEDI level2B-derived
+This function clips GEDI level2B derived
 Canopy Cover and Vertical Profile metrics a within given bounding coordinates
 }
 \examples{

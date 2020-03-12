@@ -2,7 +2,7 @@
 % Please edit documentation in R/getLevel1BGeo.R
 \name{getLevel1BGeo}
 \alias{getLevel1BGeo}
-\title{Get GEDI Full-Waveform Geolocations (GEDI Level1B)}
+\title{Get GEDI Full Waveform Geolocations (GEDI Level1B)}
 \usage{
 getLevel1BGeo(level1b, select)
 }
@@ -14,94 +14,94 @@ An S4 object of class "gedi.level1b".}
 by default it will extract \emph{latitude_bin0}, \emph{latitude_lastbin}, \emph{longitude_bin0}, \emph{longitude_lastbin}, and \emph{shot_number}. See details for more options.}
 }
 \value{
-An S4 object of class \code{\link[data.table:data.table]{data.table-class}} containing the GEDI Full-Waveform Geolocations
+An S4 object of class \code{\link[data.table:data.table]{data.table-class}} containing the GEDI Full Waveform Geolocations
 }
 \description{
-This function extracts Pulse Full-Waveform Geolocations from GEDI Level1B data
+This function extracts Pulse Full Waveform Geolocations from GEDI Level1B data
 }
 \details{
 Besides of the fields specified as defaul, GEDI mission level 1B description (https://lpdaac.usgs.gov/products/gedi01_bv001/) details all the information that can be extracted:
 \itemize{
-\item \emph{all_samples_sum	Sum} - of all values within the 10 km range window.
-\item \emph{beam} -	Beam number	Number.
-\item \emph{channel} -	Channel number.
-\item \emph{master_frac} -	Master time, fractional part.
-\item \emph{master_int} -	Master time, integer part.
-\item \emph{noise_mean_corrected} -	Noise mean.
-\item \emph{noise_stddev_corrected} -	Corrected noise standard deviation.
-\item \emph{nsemean_even} -	Noise mean of the beam's detector channel from even sub-converter.
-\item \emph{nsemean_odd} -	Noise mean of the beam's odd sub-converter.
-\item \emph{rx_energy} -	Integrated energy in receive (RX) waveform after subtracting the noise mean.
-\item \emph{rx_offset} -	Time interval from first stored sample to first downloaded RX sample.
-\item \emph{rx_open} -	Time interval from time 0 to first stored RX sample.
-\item \emph{rx_sample_count} -	The number of sample intervals (elements) in each RX waveform.
-\item \emph{rx_sample_start_index} -	The index in the rxwaveform dataset of the first element of each RX waveform starting at 1.
-\item \emph{selection_stretchers_x} -	Commanded number of samples added to the algorithm section on the left.
-\item \emph{selection_stretchers_y} -	Commanded number of samples added to the algorithm section on the right.
-\item \emph{shot_number} -	Unique shot identifier.
-\item \emph{stale_return_flag} -	Indicates that a "stale" cue point from the coarse search algorithm is being used.
-\item \emph{th_left_used} -	Count values for the left threshold used in fine search where two consecutive points at or above this value indicate pulse detection.
-\item \emph{tx_egamplitude} -	Amplitude of the extended Gaussian fit to the transmit (TX) waveform.
-\item \emph{tx_egamplitude_error} -	Error on tx_egamplitude.
-\item \emph{tx_egbias} -	Bias of the extended Gaussian fit to the TX waveform.
-\item \emph{tx_egbias_error} -	Error on tx_egbias.
-\item \emph{tx_egflag} -	Extended Gaussian fit status flag.
-\item \emph{tx_eggamma} -	Gamma value of the extended Gaussian fit to the TX waveform.
-\item \emph{tx_eggamma_error} -	Error on tx_eggamma.
-\item \emph{tx_egsigma} -	Sigma of the extended Gaussian fit to the TX waveform.
-\item \emph{tx_egsigma_error} -	Error on tx_egsigma.
-\item \emph{tx_gloc} -	Location (mean) of the Gaussian fit to the TX waveform.
-\item \emph{tx_gloc_error} -	Error on tx_gloc.
-\item \emph{tx_pulseflag} -	Set to 1 if a pulse is detected in the TX waveform.
-\item \emph{tx_sample_count} -	The number of sample intervals (elements) in each transmit waveform.
-\item \emph{tx_sample_start_index} -	The index in the rxwaveform dataset of the first element of each RX waveform starting at 1.
-\item \emph{altitude_instrument} -	Height of the instrument diffractive optical element (DOE) above the WGS84 ellipsoid.
-\item \emph{altitude_instrument_error} -	Error on altitude_instrument.
-\item \emph{bounce_time_offset_bin0} -	The difference between the TX time and the time at the start of the RX window.
-\item \emph{bounce_time_offset_bin0_error} -	Error on bounce_time_offset_bin0.
-\item \emph{bounce_time_offset_lastbin} -	The difference between the TX time and the time at the end of the RX window.
-\item \emph{bounce_time_offset_lastbin_error} -	Error on bounce_time_offset_lastbin.
-\item \emph{degrade} -	Greater than zero if the shot occurs during a degrade period, zero otherwise.
-\item \emph{delta_time} -	Transmit time of the shot, measured in seconds since 2018-01-01.
-\item \emph{digital_elevation_model} -	Digital elevation model height above the WGS84 ellipsoid.
-\item \emph{elevation_bin0} -	Height of the start of the RX window, relative to the WGS-84 ellipsoid.
-\item \emph{elevation_bin0_error} -	Error on elevation_bin0.
-\item \emph{elevation_lastbin} -	Height of the end of the RX window, relative to the WGS-84 ellipsoid.
-\item \emph{elevation_lastbin_error} -	Error on elevation_lastbin.
-\item \emph{latitude_bin0} -	Latitude of the start of the RX window.
-\item \emph{latitude_bin0_error} -	Error on latitude_bin0.
-\item \emph{latitude_lastbin} -	Latitude of the end of the RX window.
-\item \emph{latitude_lastbin_error} -	Error on latitude_lastbin.
-\item \emph{latitude_instrument} -	Latitude of the instrument diffractive optical element (DOE) at laser transmit time.
-\item \emph{latitude_instrument_error} -	Error on latitude_instrument.
-\item \emph{local_beam_azimuth} -	Azimuth of the unit pointing vector for the laser in the local East, North, Up (ENU) frame.
-\item \emph{local_beam_azimuth_error} -	Error on local_beam_azimuth.
-\item \emph{local_beam_elevation} -	Elevation of the unit pointing vector for the laser in the local ENU frame.
-\item \emph{local_beam_elevation_error} -	Error on local_beam_elevation.
-\item \emph{longitude_bin0} -	Longitude of the start of the RX window.
-\item \emph{longitude_bin0_error} -	Error on longitude_bin0.
-\item \emph{longitude_lastbin} -	Longitude of the end of the RX window.
-\item \emph{longitude_lastbin_error} -	Error on longitude_lastbin.
-\item \emph{longitude_instrument} -	Longitude of the instrument diffractive optical element (DOE) at laser transmit time.
-\item \emph{longitude_instrument_error} -	Error on longitude_instrument.
-\item \emph{mean_sea_surface} -	Mean sea surface height above the WGS84 ellipsoid, includes the geoid	.
-\item \emph{neutat_delay_derivative_bin0} -	Change in neutral atmospheric delay per height change for the start of the RX window.
-\item \emph{neutat_delay_derivative_lastbin} -	Change in neutral atmospheric delay per height change for the end of the RX window.
-\item \emph{neutat_delay_total_bin0} -	Total neutral atmosphere delay correction (wet+dry) from the TX pulse to the start of the RX window.
-\item \emph{neutat_delay_total_lastbin} -	Total neutral atmosphere delay correction (wet+dry) from the TX pulse to the end of the RX window.
-\item \emph{range_bias_correction} -	The range bias applied to the range measurement.
-\item \emph{shot_number} -	Unique shot identifier	Number.
-\item \emph{solar_azimuth} -	The azimuth of the sun position vector.
-\item \emph{solar_elevation} -	The elevation of the sun position vector.
-\item \emph{surface_type} -	Flags describing which surface types.
-\item \emph{delta_time} -	Transmit time of the shot.
-\item \emph{dynamic_atmosphere_correction} -	Dynamic Atmospheric Correction (DAC) includes inverted barometer (IB) effect.
-\item \emph{geoid} -	Geoid height above WGS-84 reference ellipsoid.
-\item \emph{tide_earth} -	Solid Earth tides.
-\item \emph{tide_load} -	Load Tide - Local displacement due to Ocean Loading.
-\item \emph{tide_ocean} -	Ocean Tides including diurnal and semi-diurnal, and longerperiod tides.
-\item \emph{tide_ocean_pole} -	Oceanic surface rotational deformation due to polar motion.
-\item \emph{tide_pole} -	Solid Earth Pole Tide -- Rotational deformation due to polar motion.
+\item \emph{all_samples_sum} Sum of all values within the 10 km range window.
+\item \emph{beam} Beam number	Number.
+\item \emph{channel} Channel number.
+\item \emph{master_frac} Master time, fractional part.
+\item \emph{master_int} Master time, integer part.
+\item \emph{noise_mean_corrected} Noise mean.
+\item \emph{noise_stddev_corrected} Corrected noise standard deviation.
+\item \emph{nsemean_even} Noise mean of the beam's detector channel from even sub-converter.
+\item \emph{nsemean_odd} Noise mean of the beam's odd sub-converter.
+\item \emph{rx_energy} Integrated energy in receive (RX) waveform after subtracting the noise mean.
+\item \emph{rx_offset} Time interval from first stored sample to first downloaded RX sample.
+\item \emph{rx_open} Time interval from time 0 to first stored RX sample.
+\item \emph{rx_sample_count} The number of sample intervals (elements) in each RX waveform.
+\item \emph{rx_sample_start_index} The index in the rxwaveform dataset of the first element of each RX waveform starting at 1.
+\item \emph{selection_stretchers_x} Commanded number of samples added to the algorithm section on the left.
+\item \emph{selection_stretchers_y} Commanded number of samples added to the algorithm section on the right.
+\item \emph{shot_number} Unique shot identifier.
+\item \emph{stale_return_flag} Indicates that a "stale" cue point from the coarse search algorithm is being used.
+\item \emph{th_left_used} Count values for the left threshold used in fine search where two consecutive points at or above this value indicate pulse detection.
+\item \emph{tx_egamplitude} Amplitude of the extended Gaussian fit to the transmit (TX) waveform.
+\item \emph{tx_egamplitude_error} Error on tx_egamplitude.
+\item \emph{tx_egbias} Bias of the extended Gaussian fit to the TX waveform.
+\item \emph{tx_egbias_error} Error on tx_egbias.
+\item \emph{tx_egflag} Extended Gaussian fit status flag.
+\item \emph{tx_eggamma} Gamma value of the extended Gaussian fit to the TX waveform.
+\item \emph{tx_eggamma_error} Error on tx_eggamma.
+\item \emph{tx_egsigma} Sigma of the extended Gaussian fit to the TX waveform.
+\item \emph{tx_egsigma_error} Error on tx_egsigma.
+\item \emph{tx_gloc} Location (mean) of the Gaussian fit to the TX waveform.
+\item \emph{tx_gloc_error} Error on tx_gloc.
+\item \emph{tx_pulseflag} Set to 1 if a pulse is detected in the TX waveform.
+\item \emph{tx_sample_count} The number of sample intervals (elements) in each transmit waveform.
+\item \emph{tx_sample_start_index} The index in the rxwaveform dataset of the first element of each RX waveform starting at 1.
+\item \emph{altitude_instrument} Height of the instrument diffractive optical element (DOE) above the WGS84 ellipsoid.
+\item \emph{altitude_instrument_error} Error on altitude_instrument.
+\item \emph{bounce_time_offset_bin0} The difference between the TX time and the time at the start of the RX window.
+\item \emph{bounce_time_offset_bin0_error} Error on bounce_time_offset_bin0.
+\item \emph{bounce_time_offset_lastbin} The difference between the TX time and the time at the end of the RX window.
+\item \emph{bounce_time_offset_lastbin_error} Error on bounce_time_offset_lastbin.
+\item \emph{degrade} Greater than zero if the shot occurs during a degrade period, zero otherwise.
+\item \emph{delta_time} Transmit time of the shot, measured in seconds since 2018-01-01.
+\item \emph{digital_elevation_model} Digital elevation model height above the WGS84 ellipsoid.
+\item \emph{elevation_bin0} Height of the start of the RX window, relative to the WGS-84 ellipsoid.
+\item \emph{elevation_bin0_error} Error on elevation_bin0.
+\item \emph{elevation_lastbin} Height of the end of the RX window, relative to the WGS-84 ellipsoid.
+\item \emph{elevation_lastbin_error} Error on elevation_lastbin.
+\item \emph{latitude_bin0} Latitude of the start of the RX window.
+\item \emph{latitude_bin0_error} Error on latitude_bin0.
+\item \emph{latitude_lastbin} Latitude of the end of the RX window.
+\item \emph{latitude_lastbin_error} Error on latitude_lastbin.
+\item \emph{latitude_instrument} Latitude of the instrument diffractive optical element (DOE) at laser transmit time.
+\item \emph{latitude_instrument_error} Error on latitude_instrument.
+\item \emph{local_beam_azimuth} Azimuth of the unit pointing vector for the laser in the local East, North, Up (ENU) frame.
+\item \emph{local_beam_azimuth_error} Error on local_beam_azimuth.
+\item \emph{local_beam_elevation} Elevation of the unit pointing vector for the laser in the local ENU frame.
+\item \emph{local_beam_elevation_error} Error on local_beam_elevation.
+\item \emph{longitude_bin0} Longitude of the start of the RX window.
+\item \emph{longitude_bin0_error} Error on longitude_bin0.
+\item \emph{longitude_lastbin} Longitude of the end of the RX window.
+\item \emph{longitude_lastbin_error} Error on longitude_lastbin.
+\item \emph{longitude_instrument} Longitude of the instrument diffractive optical element (DOE) at laser transmit time.
+\item \emph{longitude_instrument_error} Error on longitude_instrument.
+\item \emph{mean_sea_surface} Mean sea surface height above the WGS84 ellipsoid, includes the geoid	.
+\item \emph{neutat_delay_derivative_bin0} Change in neutral atmospheric delay per height change for the start of the RX window.
+\item \emph{neutat_delay_derivative_lastbin} Change in neutral atmospheric delay per height change for the end of the RX window.
+\item \emph{neutat_delay_total_bin0} Total neutral atmosphere delay correction (wet+dry) from the TX pulse to the start of the RX window.
+\item \emph{neutat_delay_total_lastbin} Total neutral atmosphere delay correction (wet+dry) from the TX pulse to the end of the RX window.
+\item \emph{range_bias_correction} The range bias applied to the range measurement.
+\item \emph{shot_number} Unique shot identifier	Number.
+\item \emph{solar_azimuth} The azimuth of the sun position vector.
+\item \emph{solar_elevation} The elevation of the sun position vector.
+\item \emph{surface_type} Flags describing which surface types.
+\item \emph{delta_time} Transmit time of the shot.
+\item \emph{dynamic_atmosphere_correction} Dynamic Atmospheric Correction (DAC) includes inverted barometer (IB) effect.
+\item \emph{geoid} Geoid height above WGS-84 reference ellipsoid.
+\item \emph{tide_earth} Solid Earth tides.
+\item \emph{tide_load} Load Tide - Local displacement due to Ocean Loading.
+\item \emph{tide_ocean} Ocean Tides including diurnal and semi-diurnal, and longerperiod tides.
+\item \emph{tide_ocean_pole} Oceanic surface rotational deformation due to polar motion.
+\item \emph{tide_pole} Solid Earth Pole Tide. Rotational deformation due to polar motion.
 }
 }
 \examples{

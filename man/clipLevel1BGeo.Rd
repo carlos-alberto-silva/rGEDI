@@ -2,7 +2,7 @@
 % Please edit documentation in R/clipLevel1BGeo.R
 \name{clipLevel1BGeo}
 \alias{clipLevel1BGeo}
-\title{Clip GEDI Full-Waveform Geolocations by Coordinates}
+\title{Clip GEDI Full Waveform Geolocations by Coordinates}
 \usage{
 clipLevel1BGeo(level1BGeo, xmin, xmax, ymin, ymax)
 }
@@ -37,7 +37,7 @@ level1Bpath <- unzip(level1B_fp_zip,exdir = dirname(level1B_fp_zip))
 # Reading GEDI level1B data (h5 file)
 level1b<-readLevel1B(level1Bpath=level1Bpath)
 
-# Extracting GEDI Full-Waveform Geolocations
+# Extracting GEDI Full Waveform Geolocations
 level1BGeo<-getLevel1BGeo(level1b)
 
 # Bounding rectangle coordinates
@@ -46,7 +46,7 @@ xmax = -44.10066
 ymin = -13.75831
 ymax = -13.71244
 
-# Clipping GEDI Full-Waveform Geolocations by boundary box extent
+# Clipping GEDI Full Waveform Geolocations by boundary box extent
 level1BGeo_clip <- clipLevel1BGeo(level1BGeo,xmin, xmax, ymin, ymax)
 
 library(leaflet)

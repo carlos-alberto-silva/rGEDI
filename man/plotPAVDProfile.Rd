@@ -2,12 +2,13 @@
 % Please edit documentation in R/plotPAVDProfile.R
 \name{plotPAVDProfile}
 \alias{plotPAVDProfile}
-\title{Plot Plant Area Volume Density Profile}
+\title{Plot GEDI Plant Area Volume Density Profile}
 \usage{
 plotPAVDProfile(level2BPAVDProfile, beam = "BEAM0101", elev = TRUE)
 }
 \arguments{
-\item{level2BPAVDProfile}{A GEDI Level2B object (output of \code{\link[rGEDI:getLevel2BPAVDProfile]{getLevel2BPAVDProfile}} function). A S4 object of class "data.table".}
+\item{level2BPAVDProfile}{A GEDI Level2B object (output of \code{\link[rGEDI:getLevel2BPAVDProfile]{getLevel2BPAVDProfile}} function).
+An S4 object of class "data.table".}
 
 \item{beam}{Select GEDI beam. Default is "BEAM0101". See details section.}
 

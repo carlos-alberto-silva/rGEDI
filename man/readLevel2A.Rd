@@ -2,12 +2,12 @@
 % Please edit documentation in R/readLevel2A.R
 \name{readLevel2A}
 \alias{readLevel2A}
-\title{Read GEDI Level2A data (Basic Waveform-derived Metrics)}
+\title{Read GEDI Level2A data (Basic Full Waveform derived Metrics)}
 \usage{
 readLevel2A(level2Apath)
 }
 \arguments{
-\item{level2Apath}{file path pointing to GEDI level2A data. Data in HDF5 Hierarchical Data Format (.h5).}
+\item{level2Apath}{File path pointing to GEDI level2A data. Data in HDF5 Hierarchical Data Format (.h5).}
 }
 \value{
 An S4 object of class "gedi.level1a".

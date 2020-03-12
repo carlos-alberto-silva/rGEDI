@@ -2,7 +2,8 @@
 % Please edit documentation in R/gridStatsLevel2AM.R
 \name{gridStatsLevel2AM}
 \alias{gridStatsLevel2AM}
-\title{Compute Grids with descriptive statistics of GEDI-derived Elevation and Height Metrics (Level2A)}
+\title{Compute Grids with Descriptive Statistics of
+GEDI derived Elevation and Height Metrics (Level2A)}
 \usage{
 gridStatsLevel2AM(level2AM, func, res)
 }
@@ -18,8 +19,8 @@ An S4 object of class "data.table".}
 Returns raster layer(s) of selected GEDI Elevation and Height Metric(s)
 }
 \description{
-This function computes a series of user-defined descriptive statistics within
-each grid cell for GEDI-derived Elevation and Height Metrics (Level2A)
+This function computes a series of user defined descriptive statistics within
+each grid cell for GEDI derived Elevation and Height Metrics (Level2A)
 }
 \examples{
 # specify the path to GEDI level2A data (zip file)
@@ -33,7 +34,7 @@ level2Apath <- unzip(level2A_fp_zip,exdir = dirname(level2A_fp_zip))
 # Reading GEDI level2A data (h5 file)
 level2a<-readLevel2A(level2Apath=level2Apath)
 
-# Get GEDI-derived Elevation and Height Metrics
+# Get GEDI derived Elevation and Height Metrics
 level2AM<-getLevel2AM(level2a)
 head(level2AM)
 
@@ -50,15 +51,15 @@ metrics = list(
 }
 
 #' Computing a serie of GEDI metrics
-ZTstats<-gridStatsLevel2AM(level2AM = level2AM, func=mySetOfMetrics(elev_highestreturn), res=0.0005)
+ZTstats<-gridStatsLevel2AM(level2AM = level2AM, func=mySetOfMetrics(elev_highestreturn), res=0.005)
 plot(ZTstats)
 
 #' Computing the maximum of RH100 only
-maxRH100<-gridStatsLevel2AM(level2AM = level2AM, func=max(rh100), res=0.0005)
+maxRH100<-gridStatsLevel2AM(level2AM = level2AM, func=max(rh100), res=0.005)
 plot(maxRH100)
 
 #' Computing the mean of ZG only
-ZGmean<-gridStatsLevel2AM(level2AM = level2AM, func=mean(elev_lowestmode), res=0.0005)
+ZGmean<-gridStatsLevel2AM(level2AM = level2AM, func=mean(elev_lowestmode), res=0.005)
 plot(ZGmean)
 
 close(level2a)
