@@ -1,11 +1,11 @@
-#'Read GEDI Level2A data (Basic Waveform-derived Metrics)
+#'Read GEDI Level2A data (Basic Full Waveform derived Metrics)
 #'
 #'@description This function reads GEDI level2A products: ground elevation, canopy top height, and relative heights (RH).
 #'
 #'
 #'@usage readLevel2A(level2Apath)
 #'
-#'@param level2Apath file path pointing to GEDI level2A data. Data in HDF5 Hierarchical Data Format (.h5).
+#'@param level2Apath File path pointing to GEDI level2A data. Data in HDF5 Hierarchical Data Format (.h5).
 #'
 #'@return An S4 object of class "gedi.level1a".
 #'

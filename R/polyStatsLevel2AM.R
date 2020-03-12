@@ -1,6 +1,6 @@
 #'Compute descriptive statistics of GEDI Elevation and Height Metrics
 #'
-#'@description Computes a Series of Statistics from GEDI-derived Elevation and Height Metrics (Level2A)
+#'@description Computes a Series of Statistics from GEDI derived Elevation and Height Metrics (Level2A)
 #'within a given area defined or not by a polygon
 #'
 #'@usage polyStatsLevel2AM(level2AM, func, id=NULL)

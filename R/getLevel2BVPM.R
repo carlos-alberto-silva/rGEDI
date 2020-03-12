@@ -16,11 +16,11 @@
 #'
 #'@details These are the biophysical variables extracted:
 #'\itemize{
-#'\item \emph{pai} - Total Plant Area Index.
-#'\item \emph{fhd_normal} -	Foliage Height Diversity.
-#'\item \emph{omega} -	Foliage Clumping Index.
-#'\item \emph{pgap_theta} -	Total Gap Probability (theta).
-#'\item \emph{cover} -	Total canopy cover.
+#'\item \emph{pai} Total Plant Area Index.
+#'\item \emph{fhd_normal} Foliage Height Diversity.
+#'\item \emph{omega} Foliage Clumping Index.
+#'\item \emph{pgap_theta} Total Gap Probability (theta).
+#'\item \emph{cover} Total canopy cover.
 #'}
 #'
 #'@examples

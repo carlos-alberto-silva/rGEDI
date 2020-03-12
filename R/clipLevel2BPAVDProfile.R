@@ -1,6 +1,6 @@
 #'Clip GEDI Plant Area Volume Density profile by Coordinates
 #'
-#'@description This function clips GEDI level2B-derived
+#'@description This function clips GEDI level2B derived
 #'Plant Area Volume Density profile within a given bounding coordinates
 #'
 #'@usage clipLevel2BPAVDProfile(level2BPAVDProfile, xmin, xmax, ymin, ymax)
@@ -62,7 +62,7 @@ clipLevel2BPAVDProfile = function(level2BPAVDProfile,xmin, xmax, ymin, ymax){
 
 #'Clip GEDI Plant Area Volume Density profile by geometry
 #'
-#'@description This function clips GEDI level2B-derived
+#'@description This function clips GEDI level2B derived
 #'Plant Area Index profile within a given geometry
 #'
 #'@usage clipLevel2BPAVDProfileGeometry(level2BPAVDProfile, polygon_spdf, split_by)

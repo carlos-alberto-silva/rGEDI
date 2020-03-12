@@ -1,6 +1,6 @@
 #'Compute descriptive statistics of GEDI Canopy Cover and Vertical Profile Metrics
 #'
-#'@description Computes a Series of Statistics of GEDI-derived Canopy Cover and Vertical Profile metrics
+#'@description Computes a Series of Statistics of GEDI derived Canopy Cover and Vertical Profile metrics
 #'within a given area defined or not by a polygon
 #'
 #'@usage polyStatsLevel2BVPM(level2BVPM, func, id=NULL)

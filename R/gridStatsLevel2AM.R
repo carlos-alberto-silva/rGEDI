@@ -1,7 +1,7 @@
-#'Compute Grids with descriptive statistics of GEDI-derived Elevation and Height Metrics (Level2A)
+#'Compute Grids with descriptive statistics of GEDI derived Elevation and Height Metrics (Level2A)
 #'
-#'@description This function computes a series of user-defined descriptive statistics within
-#'each grid cell for GEDI-derived Elevation and Height Metrics (Level2A)
+#'@description This function computes a series of user defined descriptive statistics within
+#'each grid cell for GEDI derived Elevation and Height Metrics (Level2A)
 #'
 #'@usage gridStatsLevel2AM(level2AM, func, res)
 #'
@@ -26,7 +26,7 @@
 #'# Reading GEDI level2A data (h5 file)
 #'level2a<-readLevel2A(level2Apath=level2Apath)
 #'
-#'# Get GEDI-derived Elevation and Height Metrics
+#'# Get GEDI derived Elevation and Height Metrics
 #'level2AM<-getLevel2AM(level2a)
 #'head(level2AM)
 #'

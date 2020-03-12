@@ -1,4 +1,4 @@
-#'Plot Plant Area Index (PAI) Profile
+#'Plot GEDI Plant Area Index (PAI) Profile
 #'
 #'@description This functions plots Plant Area Index (PAI) Profile (GEDI level2B)
 #'

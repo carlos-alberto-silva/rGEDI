@@ -1,4 +1,4 @@
-#'Get GEDI Pulse Full-Waveform (GEDI Level1B)
+#'Get GEDI Pulse Full Waveform (GEDI Level1B)
 #'
 #'@description This function extracts the full waveform of a given pulse from GEDI Level1B data.
 #'
@@ -25,10 +25,10 @@
 #'# Reading GEDI level1B data (h5 file)
 #'level1b<-readLevel1B(level1Bpath=level1Bpath)
 #'
-#'# Extracting GEDI full-waveform for a giving shotnumber
+#'# Extracting GEDI full waveform for a giving shotnumber
 #'wf <- getLevel1BWF(level1b, shot_number="19640521100108408")
 #'
-#'# Plotting GEDI Full-waveform
+#'# Plotting GEDI Full waveform
 #'par(mfrow = c(1,2), cex.axis = 1.5)
 #'plot(wf, relative=FALSE, polygon=TRUE, type="l", lwd=2, col="forestgreen",
 #'xlab="Waveform Amplitude", ylab="Elevation (m)")

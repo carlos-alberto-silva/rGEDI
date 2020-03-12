@@ -4,7 +4,7 @@
 #'
 #'@usage readLevel1B(level1Bpath)
 #'
-#'@param level1Bpath file path pointing to GEDI level1B data. Data in HDF5 Hierarchical Data Format (.h5).
+#'@param level1Bpath File path pointing to GEDI level1B data. Data in HDF5 Hierarchical Data Format (.h5).
 #'
 #'@return An S4 object of class "gedi.level1b".
 #'

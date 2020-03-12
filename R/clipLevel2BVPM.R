@@ -1,6 +1,6 @@
 #'Clip GEDI Canopy Cover and Vertical Profile Metrics by Coordinates
 #'
-#'@description This function clips GEDI level2B-derived
+#'@description This function clips GEDI level2B derived
 #'Canopy Cover and Vertical Profile metrics a within given bounding coordinates
 #'
 #'
@@ -76,7 +76,7 @@ clipLevel2BVPM = function(level2BVPM,xmin, xmax, ymin, ymax){
 
 #'Clip GEDI Canopy Cover and Vertical Profile Metrics by geometry
 #'
-#'@description This function clips GEDI level2B-derived
+#'@description This function clips GEDI level2B derived
 #'Canopy Cover and Vertical Profile metrics within a given geometry
 #'
 #'@usage clipLevel2BVPMGeometry(level2BVPM, polygon_spdf, split_by)

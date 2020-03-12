@@ -1,4 +1,4 @@
-#'Plot Plant Area Volume Density Profile
+#'Plot GEDI Plant Area Volume Density Profile
 #'
 #'@description This functions plots Plant Area Volume Density profile (GEDI level2B)
 #'

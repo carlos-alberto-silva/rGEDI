@@ -1,4 +1,4 @@
-#'GEDI-waveform plot with metrics
+#'GEDI full waveform plot with metrics
 #'
 #'@description Plots the waveform with overlaid RH metrics
 #'
@@ -47,7 +47,7 @@ plotWFMetrics = function(level1b, level2a, shot_number, rh=c(25, 50, 75), ...) {
   # Avoid NOTEs from checking
   elevation = NULL
 
-  # Extracting GEDI full-waveform for a giving shotnumber
+  # Extracting GEDI full waveform for a giving shotnumber
   wf <- getLevel1BWF(level1b, shot_number=shot_number)
 
   level2AM<-getLevel2AM(level2a)

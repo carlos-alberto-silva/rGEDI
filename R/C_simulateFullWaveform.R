@@ -1,6 +1,6 @@
-#'GEDI full-waveform data simulation
+#'GEDI full waveform data simulation
 #'
-#'@description Simulate GEDI full-waveform data from Airborne Laser Scanning (ALS) 3-D point cloud
+#'@description Simulate GEDI full waveform data from Airborne Laser Scanning (ALS) 3D point cloud
 #'
 #' Input and output filenames, and formats
 #' @param input character vector. lasfile input filename
@@ -48,13 +48,13 @@
 #' Octree
 #' @param noOctree do not use an octree
 #' @param octLevels n. number of octree levels to use
-#' @param nOctPix n. number of octree pixels along a side for the top-level
+#' @param nOctPix n. number of octree pixels along a side for the top level
 
-#' Using full-waveform input data (not tested)
+#' Using full waveform input data (not tested)
 # Not supported yet
 # @param decon deconvolve
 # @param indDecon deconvolve individual beams
-# @param readWave read full-waveform where available
+# @param readWave read full waveform where available
 # Miscellaneous
 
 # R user should never only list files
@@ -103,7 +103,7 @@
 #'xcenter_Savanna = mean(als_Savanna@bbox[1,])
 #'ycenter_Savanna = mean(als_Savanna@bbox[2,])
 #'
-#'# Simulating GEDI full-waveform
+#'# Simulating GEDI full waveform
 #'wf_Amazon<-gediWFSimulator(input=alsfile_Amazon_filepath,
 #'                           output=file.path(getwd(),"gediWF_amazon_simulation.h5"),
 #'                           coords = c(xcenter_Amazon, ycenter_Amazon))
@@ -112,7 +112,7 @@
 #'                            output=file.path(getwd(),"gediWF_Savanna_simulation.h5"),
 #'                            coords = c(xcenter_Savanna, ycenter_Savanna))
 #'
-#'# Plot ALS and GEDI simulated full-waveform
+#'# Plot ALS and GEDI simulated full waveform
 #'
 #'par(mfrow=c(2,2), mar=c(4,4,0,0), oma=c(0,0,1,1),cex.axis = 1.2)
 #'scatter3D(

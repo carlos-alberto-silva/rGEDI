@@ -1,6 +1,6 @@
 #'Clip GEDI Plant Area Index profile by Coordinates
 #'
-#'@description This function clips GEDI level2B-derived
+#'@description This function clips GEDI level2B derived
 #'Plant Area Index profile a within given bounding coordinates
 #'
 #'
@@ -63,7 +63,7 @@ clipLevel2BPAIProfile = function(level2BPAIProfile,xmin, xmax, ymin, ymax){
 
 #'Clip GEDI Plant Area Index profile by geometry
 #'
-#'@description This function clips GEDI level2B-derived
+#'@description This function clips GEDI level2B derived
 #'Plant Area Index profile within a given geometry
 #'
 #'@usage clipLevel2BPAIProfileGeometry(level2BPAIProfile, polygon_spdf, split_by)

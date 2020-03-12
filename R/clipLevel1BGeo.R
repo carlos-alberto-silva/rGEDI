@@ -1,4 +1,4 @@
-#'Clip GEDI Full-Waveform Geolocations by Coordinates
+#'Clip GEDI Full Waveform Geolocations by Coordinates
 #'
 #'@description This function clips GEDI level1B extracted geolocation (level1BGeo)
 #' data a within given bounding coordinates
@@ -101,7 +101,7 @@ clipLevel1BGeo = function(level1BGeo,xmin, xmax, ymin, ymax){
 #'# Reading GEDI level1B data (h5 file)
 #'level1b<-readLevel1B(level1Bpath=level1Bpath)
 #'
-#'# Extracting GEDI Full-Waveform Geolocations
+#'# Extracting GEDI Full Waveform Geolocations
 #'level1BGeo<-getLevel1BGeo(level1b)
 #'
 #'# Specifying the path to shapefile
@@ -111,7 +111,7 @@ clipLevel1BGeo = function(level1BGeo,xmin, xmax, ymin, ymax){
 #'library(raster)
 #'polygon_spdf<-shapefile(polygon_filepath)
 #'
-#'# Clipping GEDI Full-Waveform Geolocations by Geometry
+#'# Clipping GEDI Full Waveform Geolocations by Geometry
 #'level1BGeo_clip = clipLevel1BGeoGeometry(level1BGeo, polygon_spdf, split_by="id")
 #'
 #'library(leaflet)

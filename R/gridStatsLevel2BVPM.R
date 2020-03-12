@@ -1,8 +1,8 @@
 #'Compute Grids with descriptive statistics of
-#'GEDI-derived Canopy Cover and Vertical Profile Metrics (Level2B)
+#'GEDI derived Canopy Cover and Vertical Profile Metrics (Level2B)
 #'
-#'@description This function computes a series of user-defined descriptive statistics within
-#'each grid cell for GEDI-derived Canopy Cover and Vertical Profile Metrics (Level2B)
+#'@description This function computes a series of user defined descriptive statistics within
+#'each grid cell for GEDI derived Canopy Cover and Vertical Profile Metrics (Level2B)
 #'
 #'@usage gridStatsLevel2BVPM(level2BVPM, func, res)
 #'
@@ -27,7 +27,7 @@
 #'# Reading GEDI level2B data (h5 file)
 #'level2b<-readLevel2B(level2Bpath=level2Bpath)
 #'
-#'# Get GEDI-derived Canopy Cover and Vertical Profile Metrics
+#'# Get GEDI derived Canopy Cover and Vertical Profile Metrics
 #'level2BVPM<-getLevel2BVPM(level2b)
 #'head(level2BVPM)
 #'
@@ -43,7 +43,7 @@
 #'    return(metrics)
 #'}
 #'
-#'#' Computing a serie of statistics of GEDI-derived canopy cover
+#'#' Computing a serie of statistics of GEDI derived canopy cover
 #'cover_stats<-gridStatsLevel2BVPM(level2BVPM = level2BVPM, func=mySetOfMetrics(cover), res=0.005)
 #'plot(cover_stats)
 #'
