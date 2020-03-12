@@ -9,10 +9,10 @@ getLevel1BWF(level1b, shot_number)
 \arguments{
 \item{level1b}{A GEDI Level1B object (output of \code{\link[rGEDI:readLevel1B]{readLevel1B}} function). A S4 object of class "gedi.level1b".}
 
-\item{shot_number}{Shot number. A scalar represeting the shot number of a giving pulse.}
+\item{shot_number}{Shot number. A scalar representing the shot number of a giving pulse.}
 }
 \value{
-Returns An object of class "gedi.fullwaveform".
+Returns An S4 object of class "gedi.fullwaveform".
 }
 \description{
 This function extracts the full waveform of a given pulse from GEDI Level1B data.
@@ -21,7 +21,7 @@ This function extracts the full waveform of a given pulse from GEDI Level1B data
 Shot numbers can be extracted using \code{\link[rGEDI:readLevel1B]{readLevel1B}} function.
 }
 \examples{
-# specify the path to GEDI level1B data (zip file)
+# Specifying the path to GEDI level1B data (zip file)
 level1B_fp_zip <- system.file("extdata",
                   "GEDI01_B_2019108080338_O01964_T05337_02_003_01_sub.zip",
                   package="rGEDI")
@@ -32,10 +32,10 @@ level1Bpath <- unzip(level1B_fp_zip,exdir = dirname(level1B_fp_zip))
 # Reading GEDI level1B data (h5 file)
 level1b<-readLevel1B(level1Bpath=level1Bpath)
 
-# extracting GEDI full-waveform for a giving shotnumber
+# Extracting GEDI full-waveform for a giving shotnumber
 wf <- getLevel1BWF(level1b, shot_number="19640521100108408")
 
-# Plot Full-waveform
+# Plotting GEDI Full-waveform
 par(mfrow = c(1,2), cex.axis = 1.5)
 plot(wf, relative=FALSE, polygon=TRUE, type="l", lwd=2, col="forestgreen",
 xlab="Waveform Amplitude", ylab="Elevation (m)")

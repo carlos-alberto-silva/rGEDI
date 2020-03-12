@@ -2,30 +2,31 @@
 % Please edit documentation in R/clipLevel1BGeo.R
 \name{clipLevel1BGeo}
 \alias{clipLevel1BGeo}
-\title{Clip Level1BGeo data by Coordinates}
+\title{Clip GEDI Full-Waveform Geolocations by Coordinates}
 \usage{
 clipLevel1BGeo(level1BGeo, xmin, xmax, ymin, ymax)
 }
 \arguments{
-\item{level1BGeo}{A GEDI Level1b object (output of \code{\link[rGEDI:readLevel1B]{readLevel1B}} function). A S4 object of class "gedi.level1b".}
+\item{level1BGeo}{A GEDI Level1b object (output of \code{\link[rGEDI:readLevel1B]{readLevel1B}} function).
+An S4 object of class "gedi.level1b".}
 
-\item{xmin}{Numeric. West longitude (x) coordinate of bounding rectangle, in decimal degrees.}
+\item{xmin}{Numeric. West longitude (x) coordinate of the bounding rectangle, in decimal degrees.}
 
-\item{xmax}{Numeric. East longitude (x) coordinate of bounding rectangle, in decimal degrees.}
+\item{xmax}{Numeric. East longitude (x) coordinate of the bounding rectangle, in decimal degrees.}
 
-\item{ymin}{Numeric. South latitude (y) coordinate of bounding rectangle, in decimal degrees.}
+\item{ymin}{Numeric. South latitude (y) coordinate of the bounding rectangle, in decimal degrees.}
 
-\item{ymax}{Numeric. North latitude (y) coordinate of bounding rectangle, in decimal degrees.}
+\item{ymax}{Numeric. North latitude (y) coordinate of the bounding rectangle, in decimal degrees.}
 }
 \value{
 An S4 object of class \code{\link[data.table:data.table]{data.table-class}}.
 }
 \description{
 This function clips GEDI level1B extracted geolocation (level1BGeo)
-data within given bounding coordinates
+data a within given bounding coordinates
 }
 \examples{
-# specify the path to GEDI level1B data (zip file)
+# Specifying the path to GEDI level1B data (zip file)
 level1B_fp_zip <- system.file("extdata",
                   "GEDI01_B_2019108080338_O01964_T05337_02_003_01_sub.zip",
                   package="rGEDI")
@@ -36,7 +37,7 @@ level1Bpath <- unzip(level1B_fp_zip,exdir = dirname(level1B_fp_zip))
 # Reading GEDI level1B data (h5 file)
 level1b<-readLevel1B(level1Bpath=level1Bpath)
 
-# Get GEDI level1B geolocations
+# Extracting GEDI Full-Waveform Geolocations
 level1BGeo<-getLevel1BGeo(level1b)
 
 # Bounding rectangle coordinates
@@ -45,7 +46,7 @@ xmax = -44.10066
 ymin = -13.75831
 ymax = -13.71244
 
-# clip by boundary box coordinates
+# Clipping GEDI Full-Waveform Geolocations by boundary box extent
 level1BGeo_clip <- clipLevel1BGeo(level1BGeo,xmin, xmax, ymin, ymax)
 
 library(leaflet)

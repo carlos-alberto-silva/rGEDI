@@ -39,7 +39,7 @@
 #' @param decimate x. probability of accepting an ALS beam
 #' Computational speed options
 #' @param pBuff s. point reading buffer size in Gbytes
-#' @param maxBins for HDF5, limit number of bins to save trimming.
+#' @param maxBins for HDF5, limiting number of bins to save trimming.
 #' @param countOnly only use count method
 #' @param pulseAfter apply the pulse smoothing after binning for computational speed, at the risk of aliasing (default)
 #' @param pulseBefore apply the pulse smoothing before binning to avoid the risk of aliasing, at the expense of computational speed
@@ -48,7 +48,7 @@
 #' Octree
 #' @param noOctree do not use an octree
 #' @param octLevels n. number of octree levels to use
-#' @param nOctPix n. number of octree pixels along a side for the top level
+#' @param nOctPix n. number of octree pixels along a side for the top-level
 
 #' Using full-waveform input data (not tested)
 # Not supported yet
@@ -60,7 +60,7 @@
 # R user should never only list files
 # @param listFiles list files. Do not read them
 #' @param keepOld do not overwrite old files, if they exist
-#' @param useShadow account for shadowing in discrete return data through voxelisation
+#' @param useShadow account for shadowing in discrete return data through voxelization
 #' @param polyGround find mean ground elevation and slope through fitting a polynomial
 
 # nnGround is not working yet
@@ -68,7 +68,7 @@
 #' @param seed n integer. random number seed
 #'
 #' #'
-#' @return A S4 object of class \code{\link[hdf5r:H5File-class]{hdf5r::H5File}} in the \emph{hdf5r} package.
+#' @return An S4 object of class \code{\link[hdf5r:H5File-class]{hdf5r::H5File}} in the \emph{hdf5r} package.
 #'
 #' @seealso
 #' i) Hancock, S., Armston, J., Hofton, M., Sun, X., Tang, H., Duncanson, L.I., Kellner,
@@ -80,7 +80,7 @@
 #'
 #'@examples
 #'\dontshow{
-#'rm(list=ls()) 
+#'rm(list=ls())
 #'}
 #'libsAvailable = require(lidR) && require(plot3D)
 #'if (libsAvailable) {

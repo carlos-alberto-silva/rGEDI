@@ -1,11 +1,12 @@
-#'Clip Level2AM data by Coordinates
+#'Clip GEDI Elevation and Height Metrics by Coordinates
 #'
 #'@description This function clips GEDI Level2A extracted Elevation and Height Metrics (Level2AM)
-#' within given bounding coordinates
+#' within a given bounding coordinates
 #'
 #'@usage clipLevel2AM(level2AM, xmin, xmax, ymin, ymax)
 #'
-#'@param level2AM A GEDI Level2A object (output of \code{\link[rGEDI:readLevel2A]{readLevel2A}} function). A S4 object of class "gedi.level2a".
+#'@param level2AM A GEDI Level2A object (output of \code{\link[rGEDI:readLevel2A]{readLevel2A}} function).
+#'An S4 object of class "gedi.level2a".
 #'@param xmin Numeric. West longitude (x) coordinate of bounding rectangle, in decimal degrees.
 #'@param xmax Numeric. East longitude (x) coordinate of bounding rectangle, in decimal degrees.
 #'@param ymin Numeric. South latitude (y) coordinate of bounding rectangle, in decimal degrees.
@@ -17,7 +18,7 @@
 #'@seealso https://lpdaac.usgs.gov/products/gedi02_av001/
 #'
 #'@examples
-#'# specify the path to GEDI level2A data (zip file)
+#'# Specifying the path to GEDI level2A data (zip file)
 #'level2A_fp_zip <- system.file("extdata",
 #'                   "GEDI02_A_2019108080338_O01964_T05337_02_001_01_sub.zip",
 #'                   package="rGEDI")
@@ -28,7 +29,7 @@
 #'# Reading GEDI level2A data (h5 file)
 #'level2a<-readLevel2A(level2Apath=level2Apath)
 #'
-#'#' Extracting GEDI Elevation and Height Metrics
+#'# Extracting GEDI Elevation and Height Metrics
 #'level2AM = getLevel2AM(level2a)
 #'
 #'# Bounding rectangle coordinates
@@ -37,9 +38,9 @@
 #'ymin = -13.75831
 #'ymax = -13.71244
 #'
-#'# clip by extent boundary box
+#'# Clipping GEDI data by boundary box extent
 #'level2AM_clip <- clipLevel2AM(level2AM,xmin, xmax, ymin, ymax)
-#' 
+#'
 #'close(level2a)
 #'@import hdf5r
 #'@export
@@ -61,14 +62,15 @@ clipLevel2AM = function(level2AM,xmin, xmax, ymin, ymax){
   return (newFile)
 }
 
-#'Clip Level2AM data by Coordinates
+#'Clip GEDI Elevation and Height Metrics by Coordinates
 #'
 #'@description This function clips GEDI Level2A extracted Elevation and Height Metrics (Level2AM)
-#' within given bounding coordinates
+#' within a given bounding coordinates
 #'
 #'@usage clipLevel2AMGeometry(level2AM, polygon_spdf, split_by)
 #'
-#'@param level2AM A GEDI Level2A object (output of \code{\link[rGEDI:readLevel2A]{readLevel2A}} function). A S4 object of class "data.table".
+#'@param level2AM A GEDI Level2A object (output of \code{\link[rGEDI:readLevel2A]{readLevel2A}} function).
+#'An S4 object of class "data.table".
 #'@param polygon_spdf Polygon. An object of class \code{\link[sp]{SpatialPolygonsDataFrame-class}},
 #'which can be loaded as an ESRI shapefile using \code{\link[raster:shapefile]{raster::shapefile()}} function in the \emph{raster} package.
 #'@param split_by Polygon id. If defined, GEDI data will be clipped by each polygon using the polygon id from table of attribute defined by the user
@@ -76,7 +78,7 @@ clipLevel2AM = function(level2AM,xmin, xmax, ymin, ymax){
 #'@return A S4 object of class \code{\link[data.table:data.table]{data.table-class}}.
 #'
 #'@examples
-#'# specify the path to GEDI level2A data (zip file)
+#'# Specifying the path to GEDI level2A data (zip file)
 #'level2A_fp_zip <- system.file("extdata",
 #'                   "GEDI02_A_2019108080338_O01964_T05337_02_001_01_sub.zip",
 #'                   package="rGEDI")
@@ -87,16 +89,17 @@ clipLevel2AM = function(level2AM,xmin, xmax, ymin, ymax){
 #'# Reading GEDI level2A data (h5 file)
 #'level2a<-readLevel2A(level2Apath=level2Apath)
 #'
-#'#' Extracting GEDI Elevation and Height Metrics
+#'# Extracting GEDI Elevation and Height Metrics
 #'level2AM = getLevel2AM(level2a)
 #'
-#'# specify the path to shapefile
+#'# Specifying the path to shapefile
 #'polygon_filepath <- system.file("extdata", "stands_cerrado.shp", package="rGEDI")
 #'
 #'# Reading shapefile as SpatialPolygonsDataFrame object
 #'library(raster)
 #'polygon_spdf<-shapefile(polygon_filepath)
 #'
+#'# Clipping GEDI data by Geometry
 #'level2AM_clip = clipLevel2AMGeometry(level2AM, polygon_spdf, split_by="id")
 #'
 #'library(leaflet)

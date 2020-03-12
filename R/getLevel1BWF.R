@@ -5,16 +5,16 @@
 #'@usage getLevel1BWF(level1b, shot_number)
 #'
 #'@param level1b A GEDI Level1B object (output of \code{\link[rGEDI:readLevel1B]{readLevel1B}} function). A S4 object of class "gedi.level1b".
-#'@param shot_number Shot number. A scalar represeting the shot number of a giving pulse.
+#'@param shot_number Shot number. A scalar representing the shot number of a giving pulse.
 #'
-#'@return Returns An object of class "gedi.fullwaveform".
+#'@return Returns An S4 object of class "gedi.fullwaveform".
 #'
 #'@details Shot numbers can be extracted using \code{\link[rGEDI:readLevel1B]{readLevel1B}} function.
 #'
 #'@seealso https://lpdaac.usgs.gov/products/gedi01_bv001/
 #'
 #'@examples
-#'# specify the path to GEDI level1B data (zip file)
+#'# Specifying the path to GEDI level1B data (zip file)
 #'level1B_fp_zip <- system.file("extdata",
 #'                   "GEDI01_B_2019108080338_O01964_T05337_02_003_01_sub.zip",
 #'                   package="rGEDI")
@@ -25,10 +25,10 @@
 #'# Reading GEDI level1B data (h5 file)
 #'level1b<-readLevel1B(level1Bpath=level1Bpath)
 #'
-#'# extracting GEDI full-waveform for a giving shotnumber
+#'# Extracting GEDI full-waveform for a giving shotnumber
 #'wf <- getLevel1BWF(level1b, shot_number="19640521100108408")
 #'
-#'# Plot Full-waveform
+#'# Plotting GEDI Full-waveform
 #'par(mfrow = c(1,2), cex.axis = 1.5)
 #'plot(wf, relative=FALSE, polygon=TRUE, type="l", lwd=2, col="forestgreen",
 #'xlab="Waveform Amplitude", ylab="Elevation (m)")

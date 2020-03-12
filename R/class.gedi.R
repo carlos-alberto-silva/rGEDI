@@ -5,7 +5,11 @@ requireNamespace("data.table")
 
 #' Class for GEDI level1B
 #'
-#' @slot h5 Object of class H5File from hdf5r package
+#' @slot h5 Object of class H5File from \emph{hdf5r} package containing the
+#'GEDI level1B products: geolocated Waveforms
+#'
+#' @seealso \code{\link[hdf5r:H5File-class]{hdf5r::H5File}} in the \emph{hdf5r} package and
+#'https://lpdaac.usgs.gov/products/gedi01_bv001/
 #'
 #' @import methods
 #' @export
@@ -16,7 +20,11 @@ gedi.level1b <- setClass(
 
 #' Class for GEDI level2A
 #'
-#' @slot h5 Object of class H5File from hdf5r package
+#' @slot h5 Object of class H5File from \emph{hdf5r} package containing the
+#'GEDI level2A products: ground elevation, canopy top height, and relative heights (RH).
+#'
+#' @seealso \code{\link[hdf5r:H5File-class]{hdf5r::H5File}} in the \emph{hdf5r} package and
+#'https://lpdaac.usgs.gov/products/gedi02_av001/
 #'
 #' @import methods
 #' @export
@@ -27,7 +35,12 @@ gedi.level2a <- setClass(
 
 #' Class for GEDI level2B
 #'
-#' @slot h5 Object of class H5File from hdf5r package
+#' @slot h5 Object of class H5File from \emph{hdf5r} package containing the
+#'GEDI level2B products: canopy cover, Plant Area Index (PAI), Plant Area Volume Density (PAVD),
+#'and Foliage Height Diversity (FHD).
+#'
+#' @seealso \code{\link[hdf5r:H5File-class]{hdf5r::H5File}} in the \emph{hdf5r} package and
+#'https://lpdaac.usgs.gov/products/gedi02_bv001/
 #'
 #' @import methods
 #' @export
@@ -38,7 +51,16 @@ gedi.level2b <- setClass(
 
 #' Class for GEDI Full-Waveform Simulation
 #'
-#' @slot h5 Object of class H5File from hdf5r package
+#' @slot h5 Object of class H5File from \emph{hdf5r} package package containing the simulated
+#' GEDI full-waveform
+#'
+#' @seealso
+#' i) Hancock, S., Armston, J., Hofton, M., Sun, X., Tang, H., Duncanson, L.I., Kellner,
+#' J.R. and Dubayah, R., 2019. The GEDI simulator: A large‐footprint waveform lidar simulator
+#' for calibration and validation of spaceborne missions. Earth and Space Science.
+#' https://doi.org/10.1029/2018EA000506
+#'
+#' ii) gediSimulator: https://bitbucket.org/StevenHancock/gedisimulator/src/master/
 #'
 #' @import methods
 #' @export
@@ -49,7 +71,8 @@ gedi.level1bSim <- setClass(
 
 #' Class for GEDI level1B Full Waveform
 #'
-#' @slot dt Object of class data.table from data.table package
+#' @slot dt Object of class data.table from \emph{data.table} package containing
+#' the extracted GEDI full-waveform elevation and amplitude.
 #'
 #' @import methods
 #' @export
@@ -65,8 +88,8 @@ gedi.fullwaveform <- setClass(
 #'@param y not used (inherited from R base)
 #'@param ... will be passed to the main plot
 #'
-#'@param relative if TRUE, the Wavform Amplitude will be showed in percentage (\%)
-#'@param polygon if TRUE, polygon will be added to the plot
+#'@param relative if TRUE, the Waveform Amplitude will be showed in percentage (\%)
+#'@param polygon if TRUE, the polygon will be added to the plot
 #'
 #'@param method methods used for simulating the GEDI full-waveform ("RXWAVEINT","RXWAVEINT" or "RXWAVEINT"). Default is "RXWAVECOUNT".
 #'
@@ -75,9 +98,9 @@ gedi.fullwaveform <- setClass(
 setGeneric("plot", function(x, y, ...)
   standardGeneric("plot"))
 
-#'@description for gedi.fullwaveform: will plot the full waveform\cr\cr
+#'@description For gedi.fullwaveform: will plot the full waveform\cr\cr
 #'@examples
-#'# specify the path to GEDI level1B data (zip file)
+#'# Specifying the path to GEDI level1B data (zip file)
 #'level1B_fp_zip <- system.file("extdata",
 #'                   "GEDI01_B_2019108080338_O01964_T05337_02_003_01_sub.zip",
 #'                   package="rGEDI")
@@ -88,17 +111,17 @@ setGeneric("plot", function(x, y, ...)
 #'# Reading GEDI level1B data (h5 file)
 #'level1b<-readLevel1B(level1Bpath=level1Bpath)
 #'
-#'# extract the desired information into a dataframe
+#'# Extracting GEDI Full-Waveform
 #'wf <- getLevel1BWF(level1b, shot_number="19640521100108408")
 #'
-#'# Plot Full-waveform
+#'# Plotting GEDI Full-waveform
 #'par(mfrow = c(1,2), cex.axis = 1.5)
 #'plot(wf, relative=FALSE, polygon=TRUE, type="l", lwd=2, col="forestgreen",
 #'xlab="", ylab="Elevation (m)")
 #'
 #'plot(wf, relative=TRUE, polygon=TRUE, type="l", lwd=2, col="forestgreen",
 #'xlab="Waveform Amplitude (%)", ylab="Elevation (m)")
-#' 
+#'
 #'close(level1b)
 #' @rdname plot
 setMethod("plot", signature("gedi.fullwaveform", y = "missing"), function(x,relative=FALSE,polygon=FALSE,...) {
@@ -140,9 +163,9 @@ setMethod("plot", signature("gedi.fullwaveform", y = "missing"), function(x,rela
 #'
 #'@examples
 #'\dontshow{
-#'rm(list=ls()) 
+#'rm(list=ls())
 #'}
-#' 
+#'
 #'zipfile_amazon <- system.file("extdata", "Amazon.zip", package="rGEDI")
 #'zipfile_Savanna <- system.file("extdata", "Savanna.zip", package="rGEDI")
 #'
@@ -203,7 +226,7 @@ setMethod("plot", signature("gedi.fullwaveform", y = "missing"), function(x,rela
 #'plot(wf_Savanna, relative=TRUE, polygon=TRUE, type="l", lwd=2, col="green",
 #'     xlab="Waveform Amplitude (%)", ylab="Elevation (m)", ylim=c(815,835))
 #'grid()
-#' 
+#'
 #' close(wf_amazon)
 #' close(wf_Savanna)
 #'}

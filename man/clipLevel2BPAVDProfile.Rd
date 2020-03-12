@@ -2,20 +2,21 @@
 % Please edit documentation in R/clipLevel2BPAVDProfile.R
 \name{clipLevel2BPAVDProfile}
 \alias{clipLevel2BPAVDProfile}
-\title{Clip level2BPAVDProfile data by Coordinates}
+\title{Clip GEDI Plant Area Volume Density profile by Coordinates}
 \usage{
 clipLevel2BPAVDProfile(level2BPAVDProfile, xmin, xmax, ymin, ymax)
 }
 \arguments{
-\item{level2BPAVDProfile}{A GEDI Level2B object (output of \code{\link[rGEDI:getLevel2BPAVDProfile]{getLevel2BPAVDProfile}} function). A S4 object of class "data.table".}
+\item{level2BPAVDProfile}{A GEDI Level2B object (output of \code{\link[rGEDI:getLevel2BPAVDProfile]{getLevel2BPAVDProfile}} function).
+An S4 object of class "data.table".}
 
-\item{xmin}{Numeric. West longitude (x) coordinate of bounding rectangle, in decimal degrees.}
+\item{xmin}{Numeric. West longitude (x) coordinate of the bounding rectangle, in decimal degrees.}
 
-\item{xmax}{Numeric. East longitude (x) coordinate of bounding rectangle, in decimal degrees.}
+\item{xmax}{Numeric. East longitude (x) coordinate of the bounding rectangle, in decimal degrees.}
 
-\item{ymin}{Numeric. South latitude (y) coordinate of bounding rectangle, in decimal degrees.}
+\item{ymin}{Numeric. South latitude (y) coordinate of the bounding rectangle, in decimal degrees.}
 
-\item{ymax}{Numeric. North latitude (y) coordinate of bounding rectangle, in decimal degrees.}
+\item{ymax}{Numeric. North latitude (y) coordinate of the bounding rectangle, in decimal degrees.}
 }
 \value{
 An S4 object of class \code{\link[data.table:data.table]{data.table-class}}
@@ -23,7 +24,7 @@ containing the Plant Area Volume Density profile data.
 }
 \description{
 This function clips GEDI level2B-derived
-Plant Area Volume Density profile within given bounding coordinates
+Plant Area Volume Density profile within a given bounding coordinates
 }
 \examples{
 # specify the path to GEDI level2B data (zip file)
@@ -37,7 +38,7 @@ level2Bpath <- unzip(level2B_fp_zip,exdir = dirname(level2B_fp_zip))
 # Reading GEDI level2B data (h5 file)
 level2b<-readLevel2B(level2Bpath=level2Bpath)
 
-# Get Plant Area Volume Density profile
+# Extracting GEDI Plant Area Volume Density profile
 level2BPAVDProfile<-getLevel2BPAVDProfile(level2b)
 
 # Bounding rectangle coordinates
@@ -46,7 +47,7 @@ xmax = -44.10066
 ymin = -13.75831
 ymax = -13.71244
 
-# clip level2BVPM by extent boundary box
+# Clipping GEDI Plant Area Volume Density profile by boundary box extent
 level2BPAVDProfile_clip <- clipLevel2BPAVDProfile(level2BPAVDProfile,xmin, xmax, ymin, ymax)
 
 close(level2b)

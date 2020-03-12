@@ -4,40 +4,16 @@
 \alias{gediWFSimulator}
 \title{GEDI full-waveform data simulation}
 \usage{
-gediWFSimulator(
-  input,
-  output,
-  waveID = NULL,
-  coords = NULL,
-  listCoord = NULL,
-  gridBound = NULL,
-  gridStep = 30,
-  pSigma = -1,
-  pFWHM = 15,
-  readPulse = NULL,
-  fSigma = 5.5,
-  wavefront = NULL,
-  res = 0.15,
-  topHat = FALSE,
-  sideLobe = FALSE,
-  lobeAng = 0,
-  checkCover = FALSE,
-  maxScanAng = 1e+06,
-  decimate = 1,
-  pBuff = as.integer(2e+08),
-  maxBins = as.integer(1024),
-  countOnly = FALSE,
-  pulseAfter = FALSE,
-  pulseBefore = TRUE,
-  noNorm = FALSE,
-  noOctree = FALSE,
-  octLevels = as.integer(0),
-  nOctPix = as.integer(40),
-  keepOld = FALSE,
-  useShadow = FALSE,
-  polyGround = FALSE,
-  seed = NULL
-)
+gediWFSimulator(input, output, waveID = NULL, coords = NULL,
+  listCoord = NULL, gridBound = NULL, gridStep = 30, pSigma = -1,
+  pFWHM = 15, readPulse = NULL, fSigma = 5.5, wavefront = NULL,
+  res = 0.15, topHat = FALSE, sideLobe = FALSE, lobeAng = 0,
+  checkCover = FALSE, maxScanAng = 1e+06, decimate = 1,
+  pBuff = as.integer(2e+08), maxBins = as.integer(1024),
+  countOnly = FALSE, pulseAfter = FALSE, pulseBefore = TRUE,
+  noNorm = FALSE, noOctree = FALSE, octLevels = as.integer(0),
+  nOctPix = as.integer(40), keepOld = FALSE, useShadow = FALSE,
+  polyGround = FALSE, seed = NULL)
 }
 \arguments{
 \item{input}{character vector. lasfile input filename}
@@ -84,7 +60,7 @@ Computational speed options}
 
 \item{pBuff}{s. point reading buffer size in Gbytes}
 
-\item{maxBins}{for HDF5, limit number of bins to save trimming.}
+\item{maxBins}{for HDF5, limiting number of bins to save trimming.}
 
 \item{countOnly}{only use count method}
 
@@ -99,12 +75,12 @@ Octree}
 
 \item{octLevels}{n. number of octree levels to use}
 
-\item{nOctPix}{n. number of octree pixels along a side for the top level
+\item{nOctPix}{n. number of octree pixels along a side for the top-level
 Using full-waveform input data (not tested)}
 
 \item{keepOld}{do not overwrite old files, if they exist}
 
-\item{useShadow}{account for shadowing in discrete return data through voxelisation}
+\item{useShadow}{account for shadowing in discrete return data through voxelization}
 
 \item{polyGround}{find mean ground elevation and slope through fitting a polynomial}
 
@@ -113,7 +89,7 @@ Using full-waveform input data (not tested)}
 #'}
 }
 \value{
-A S4 object of class \code{\link[hdf5r:H5File-class]{hdf5r::H5File}} in the \emph{hdf5r} package.
+An S4 object of class \code{\link[hdf5r:H5File-class]{hdf5r::H5File}} in the \emph{hdf5r} package.
 }
 \description{
 Simulate GEDI full-waveform data from Airborne Laser Scanning (ALS) 3-D point cloud
@@ -122,7 +98,7 @@ Input and output filenames, and formats
 }
 \examples{
 \dontshow{
-rm(list=ls()) 
+rm(list=ls())
 }
 libsAvailable = require(lidR) && require(plot3D)
 if (libsAvailable) {

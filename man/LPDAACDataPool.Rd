@@ -35,5 +35,5 @@ LPDAACDataPool(filepath,outdir)
 }
 }
 \references{
-Credits to Cole Krehbiel. Code adpted from <https://git.earthdata.nasa.gov/projects/LPDUR/repos/daac_data_download_r/browse/DAACDataDownload.R>
+Credits to Cole Krehbiel. Code adapted from <https://git.earthdata.nasa.gov/projects/LPDUR/repos/daac_data_download_r/browse/DAACDataDownload.R>
 }

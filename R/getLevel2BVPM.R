@@ -7,9 +7,9 @@
 #'@usage getLevel2BVPM(level2b)
 #'
 #'@param level2b A GEDI Level2B object (output of \code{\link[rGEDI:readLevel2B]{readLevel2B}}
-#'function). A S4 object of class "gedi.level2b".
+#'function). An S4 object of class "gedi.level2b".
 #'
-#'#'@return An S4 object of class \code{\link[data.table:data.table]{data.table-class}}
+#'@return An S4 object of class \code{\link[data.table:data.table]{data.table-class}}
 #'containing the Vegetation Profile Biophysical Variables.
 #'
 #'@seealso https://lpdaac.usgs.gov/products/gedi02_bv001/
@@ -24,7 +24,7 @@
 #'}
 #'
 #'@examples
-#'# specify the path to GEDI level2B data (zip file)
+#'# Specifying the path to GEDI level2B data (zip file)
 #'level2B_fp_zip <- system.file("extdata",
 #'                   "GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub.zip",
 #'                   package="rGEDI")
@@ -35,7 +35,7 @@
 #'# Reading GEDI level2B data (h5 file)
 #'level2b<-readLevel2B(level2Bpath=level2Bpath)
 #'
-#'# Get GEDI Vegetation Profile Biophysical Variables
+#'# Extracting GEDI Vegetation Profile Biophysical Variables
 #'level2BVPM<-getLevel2BVPM(level2b)
 #'head(level2BVPM)
 #'

@@ -2,20 +2,21 @@
 % Please edit documentation in R/clipLevel2BPAIProfile.R
 \name{clipLevel2BPAIProfile}
 \alias{clipLevel2BPAIProfile}
-\title{Clip GEDI Plant Area Index profile data by Coordinates}
+\title{Clip GEDI Plant Area Index profile by Coordinates}
 \usage{
 clipLevel2BPAIProfile(level2BPAIProfile, xmin, xmax, ymin, ymax)
 }
 \arguments{
-\item{level2BPAIProfile}{A GEDI Level2B object (output of \code{\link[rGEDI:getLevel2BPAIProfile]{getLevel2BPAIProfile}} function). A S4 object of class "gedi.level2b".}
+\item{level2BPAIProfile}{A GEDI Level2B object (output of \code{\link[rGEDI:getLevel2BPAIProfile]{getLevel2BPAIProfile}} function).
+An S4 object of class "gedi.level2b".}
 
-\item{xmin}{Numeric. West longitude (x) coordinate of bounding rectangle, in decimal degrees.}
+\item{xmin}{Numeric. West longitude (x) coordinate of the bounding rectangle, in decimal degrees.}
 
-\item{xmax}{Numeric. East longitude (x) coordinate of bounding rectangle, in decimal degrees.}
+\item{xmax}{Numeric. East longitude (x) coordinate of the bounding rectangle, in decimal degrees.}
 
-\item{ymin}{Numeric. South latitude (y) coordinate of bounding rectangle, in decimal degrees.}
+\item{ymin}{Numeric. South latitude (y) coordinate of the bounding rectangle, in decimal degrees.}
 
-\item{ymax}{Numeric. North latitude (y) coordinate of bounding rectangle, in decimal degrees.}
+\item{ymax}{Numeric. North latitude (y) coordinate of the bounding rectangle, in decimal degrees.}
 }
 \value{
 An S4 object of class \code{\link[data.table:data.table]{data.table-class}}
@@ -23,10 +24,10 @@ containing the Plant Area Index profile data.
 }
 \description{
 This function clips GEDI level2B-derived
-Plant Area Index profile within given bounding coordinates
+Plant Area Index profile a within given bounding coordinates
 }
 \examples{
-# specify the path to GEDI level2B data (zip file)
+# Specifying the path to GEDI level2B data (zip file)
 level2B_fp_zip <- system.file("extdata",
                   "GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub.zip",
                   package="rGEDI")
@@ -37,7 +38,7 @@ level2Bpath <- unzip(level2B_fp_zip,exdir = dirname(level2B_fp_zip))
 # Reading GEDI level2B data (h5 file)
 level2b<-readLevel2B(level2Bpath=level2Bpath)
 
-# Get Plant Area Index profile
+# Extracting GEDI Plant Area Index profile
 level2BPAIProfile<-getLevel2BPAIProfile(level2b)
 
 # Bounding rectangle coordinates
@@ -46,7 +47,7 @@ xmax = -44.10066
 ymin = -13.75831
 ymax = -13.71244
 
-# clip level2BVPM by extent boundary box
+# Clipping GEDI Plant Area Index profile by extent boundary box
 level2b_clip <- clipLevel2BPAIProfile(level2BPAIProfile,xmin, xmax, ymin, ymax)
 
 close(level2b)

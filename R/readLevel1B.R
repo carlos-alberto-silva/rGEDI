@@ -1,4 +1,4 @@
-#'Read Geolocated Waveforms (GEDI Level1B)
+#'Read GEDI Level1B data (Geolocated Waveforms)
 #'
 #'@description This function reads GEDI level1B products: geolocated Waveforms
 #'
@@ -6,13 +6,13 @@
 #'
 #'@param level1Bpath file path pointing to GEDI level1B data. Data in HDF5 Hierarchical Data Format (.h5).
 #'
-#'@return S4 object of class "gedi.level1b".
+#'@return An S4 object of class "gedi.level1b".
 #'
 #'@seealso \code{\link[hdf5r:H5File-class]{hdf5r::H5File}} in the \emph{hdf5r} package and
 #'https://lpdaac.usgs.gov/products/gedi01_bv001/
 #'
 #'@examples
-#'# specify the path to GEDI level1B data (zip file)
+#'# Specifying the path to GEDI level1B data (zip file)
 #'level1B_fp_zip <- system.file("extdata",
 #'                   "GEDI01_B_2019108080338_O01964_T05337_02_003_01_sub.zip",
 #'                   package="rGEDI")

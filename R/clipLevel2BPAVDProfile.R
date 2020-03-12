@@ -1,15 +1,16 @@
-#'Clip level2BPAVDProfile data by Coordinates
+#'Clip GEDI Plant Area Volume Density profile by Coordinates
 #'
 #'@description This function clips GEDI level2B-derived
-#'Plant Area Volume Density profile within given bounding coordinates
+#'Plant Area Volume Density profile within a given bounding coordinates
 #'
 #'@usage clipLevel2BPAVDProfile(level2BPAVDProfile, xmin, xmax, ymin, ymax)
 #'
-#'@param level2BPAVDProfile A GEDI Level2B object (output of \code{\link[rGEDI:getLevel2BPAVDProfile]{getLevel2BPAVDProfile}} function). A S4 object of class "data.table".
-#'@param xmin Numeric. West longitude (x) coordinate of bounding rectangle, in decimal degrees.
-#'@param xmax Numeric. East longitude (x) coordinate of bounding rectangle, in decimal degrees.
-#'@param ymin Numeric. South latitude (y) coordinate of bounding rectangle, in decimal degrees.
-#'@param ymax Numeric. North latitude (y) coordinate of bounding rectangle, in decimal degrees.
+#'@param level2BPAVDProfile A GEDI Level2B object (output of \code{\link[rGEDI:getLevel2BPAVDProfile]{getLevel2BPAVDProfile}} function).
+#'An S4 object of class "data.table".
+#'@param xmin Numeric. West longitude (x) coordinate of the bounding rectangle, in decimal degrees.
+#'@param xmax Numeric. East longitude (x) coordinate of the bounding rectangle, in decimal degrees.
+#'@param ymin Numeric. South latitude (y) coordinate of the bounding rectangle, in decimal degrees.
+#'@param ymax Numeric. North latitude (y) coordinate of the bounding rectangle, in decimal degrees.
 #'
 #'@return An S4 object of class \code{\link[data.table:data.table]{data.table-class}}
 #'containing the Plant Area Volume Density profile data.
@@ -28,7 +29,7 @@
 #'# Reading GEDI level2B data (h5 file)
 #'level2b<-readLevel2B(level2Bpath=level2Bpath)
 #'
-#'# Get Plant Area Volume Density profile
+#'# Extracting GEDI Plant Area Volume Density profile
 #'level2BPAVDProfile<-getLevel2BPAVDProfile(level2b)
 #'
 #'# Bounding rectangle coordinates
@@ -37,7 +38,7 @@
 #'ymin = -13.75831
 #'ymax = -13.71244
 #'
-#'# clip level2BVPM by extent boundary box
+#'# Clipping GEDI Plant Area Volume Density profile by boundary box extent
 #'level2BPAVDProfile_clip <- clipLevel2BPAVDProfile(level2BPAVDProfile,xmin, xmax, ymin, ymax)
 #'
 #'close(level2b)
@@ -59,24 +60,25 @@ clipLevel2BPAVDProfile = function(level2BPAVDProfile,xmin, xmax, ymin, ymax){
 
 }
 
-#'Clip level2BPAVDProfile data by geometry
+#'Clip GEDI Plant Area Volume Density profile by geometry
 #'
 #'@description This function clips GEDI level2B-derived
-#'Plant Area Index profile within given geometry
+#'Plant Area Index profile within a given geometry
 #'
 #'@usage clipLevel2BPAVDProfileGeometry(level2BPAVDProfile, polygon_spdf, split_by)
 #'
-#'@param level2BPAVDProfile A GEDI Level2B object (output of \code{\link[rGEDI:getLevel2BPAIProfile]{getLevel2BPAIProfile}} function). A S4 object of class "gedi.level2b".
+#'@param level2BPAVDProfile A GEDI Level2B object (output of \code{\link[rGEDI:getLevel2BPAIProfile]{getLevel2BPAIProfile}} function).
+#'An S4 object of class "gedi.level2b".
 #'@param polygon_spdf Polygon. An object of class \code{\link[sp]{SpatialPolygonsDataFrame-class}},
 #'which can be loaded as an ESRI shapefile using \code{\link[raster:shapefile]{raster::shapefile()}} function in the \emph{shapefile} package.
-#'@param split_by Polygon id. If defined, GEDI data will be clipped by each polygon using the polygon id from table of attribute defined by the user
+#'@param split_by Polygon id. If defined, GEDI data will be clipped by each polygon using the attribute specified by \code{split_by} from the attribute table.
 #'
 #'@return An S4 object of class \code{\link[data.table:data.table]{data.table-class}}.
 #'
 #'@seealso https://lpdaac.usgs.gov/products/gedi02_bv001/
 #'
 #'@examples
-#'# specify the path to GEDI level2B data (zip file)
+#'# Specifying the path to GEDI level2B data (zip file)
 #'level2B_fp_zip <- system.file("extdata",
 #'                   "GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub.zip",
 #'                   package="rGEDI")
@@ -87,17 +89,17 @@ clipLevel2BPAVDProfile = function(level2BPAVDProfile,xmin, xmax, ymin, ymax){
 #'# Reading GEDI level2B data (h5 file)
 #'level2b<-readLevel2B(level2Bpath=level2Bpath)
 #'
-#'# Get Plant Area Volume Density profile
+#'# Extracting GEDI Plant Area Volume Density profile
 #'level2BPAVDProfile<-getLevel2BPAVDProfile(level2b)
 #'
-#'# specify the path to shapefile
+#'# Specifying the path to shapefile
 #'polygon_filepath <- system.file("extdata", "stands_cerrado.shp", package="rGEDI")
 #'
 #'# Reading shapefile as SpatialPolygonsDataFrame object
 #'library(raster)
 #'polygon_spdf<-shapefile(polygon_filepath)
 #'
-#'# clip level2BPAIProfile by geometry
+#'# Clipping GEDI Plant Area Volume Density profile by geometry
 #'level2BPAVDProfile_clip <- clipLevel2BPAVDProfileGeometry(
 #'                                                          level2BPAVDProfile,
 #'                                                          polygon_spdf,

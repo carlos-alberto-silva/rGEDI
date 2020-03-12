@@ -7,26 +7,28 @@
 clipLevel2A(level2a, xmin, xmax, ymin, ymax, output)
 }
 \arguments{
-\item{level2a}{A GEDI Level2A object (output of \code{\link[rGEDI:readLevel2A]{readLevel2A}} function). A S4 object of class "gedi.level2a".}
+\item{level2a}{A GEDI Level2A object (output of \code{\link[rGEDI:readLevel2A]{readLevel2A}} function).
+An S4 object of class "gedi.level2a".}
 
-\item{xmin}{Numeric. West longitude (x) coordinate of bounding rectangle, in decimal degrees.}
+\item{xmin}{Numeric. West longitude (x) coordinate of the bounding rectangle, in decimal degrees.}
 
-\item{xmax}{Numeric. East longitude (x) coordinate of bounding rectangle, in decimal degrees.}
+\item{xmax}{Numeric. East longitude (x) coordinate of the bounding rectangle, in decimal degrees.}
 
-\item{ymin}{Numeric. South latitude (y) coordinate of bounding rectangle, in decimal degrees.}
+\item{ymin}{Numeric. South latitude (y) coordinate of the bounding rectangle, in decimal degrees.}
 
-\item{ymax}{Numeric. North latitude (y) coordinate of bounding rectangle, in decimal degrees.}
+\item{ymax}{Numeric. North latitude (y) coordinate of the bounding rectangle, in decimal degrees.}
 
 \item{output}{Optional character path where to save the new hdf5file. The default stores a temporary file only.}
 }
 \value{
-Returns a list of S4 object of class "gedi.level2a".
+Returns a list of S4 objects of class "gedi.level2a".
 }
 \description{
-This function clips GEDI Level2A data within given bounding coordinates
+This function clips GEDI Level2A data within a given bounding coordinates
 }
 \examples{
-# specify the path to GEDI level2A data (zip file)
+\donttest{
+# Specifying the path to GEDI level2A data (zip file)
 level2A_fp_zip <- system.file("extdata",
                   "GEDI02_A_2019108080338_O01964_T05337_02_001_01_sub.zip",
                   package="rGEDI")
@@ -43,14 +45,15 @@ xmax = -44.10066
 ymin = -13.73031
 ymax = -13.72044
 
-# Spepecifing output file and path
+# Specifying output file and path
 output<-file.path(getwd(),"GEDI02_A_2019108080338_O01964_T05337_02_001_01_clip.h5")
 
-# clip by extent boundary box
+# Clipping GEDI Level2A data by boundary box extent
 level2a_clip <- clipLevel2A(level2a,xmin,xmax,ymin,ymax,output)
 
 close(level2a)
 close(level2a_clip)
+}
 }
 \seealso{
 https://lpdaac.usgs.gov/products/gedi02_av001/

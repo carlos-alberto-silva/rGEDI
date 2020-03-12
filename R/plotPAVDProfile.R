@@ -3,15 +3,15 @@
 #'@description This functions plots Plant Area Volume Density profile (GEDI level2B)
 #'
 #'@param level2BPAVDProfile A GEDI Level2B object (output of \code{\link[rGEDI:getLevel2BPAVDProfile]{getLevel2BPAVDProfile}} function). A S4 object of class "data.table".
-#'@param beam select GEDI beam. Default is "BEAM0101". See details section.
-#'@param elev if TRUE, elevation will be used for plotting the PAVD profile. Otherwise,
+#'@param beam Select GEDI beam. Default is "BEAM0101". See details section.
+#'@param elev If TRUE, elevation will be used for plotting the PAVD profile. Otherwise,
 #'height will be used instead.
 #'
 #'@return Returns a ggplot object. See \code{\link[ggplot2:ggplot]{ggplot}} package.
 #'
 #'@seealso https://lpdaac.usgs.gov/products/gedi02_bv001/
 #'
-#'@details list of GEDI beams. See output of \code{\link[rGEDI:getLevel2BPAVDProfile]{getLevel2BPAVDProfile}} function.
+#'@details list of GEDI beams. See the output of \code{\link[rGEDI:getLevel2BPAVDProfile]{getLevel2BPAVDProfile}} function.
 #'\itemize{
 #'\item \emph{BEAM0000}
 #'\item \emph{BEAM0001}

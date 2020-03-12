@@ -4,27 +4,29 @@
 \alias{clipLevel1BGeometry}
 \title{Clip GEDI Level1B data by geometry}
 \usage{
-clipLevel1BGeometry(level1b, polygon_spdf, output = "", split_by = NULL)
+clipLevel1BGeometry(level1b, polygon_spdf, output = "",
+  split_by = NULL)
 }
 \arguments{
-\item{level1b}{A GEDI Level1B object (output of \code{\link[rGEDI:readLevel1B]{readLevel1B}} function). A S4 object of class "gedi.level1b".}
+\item{level1b}{A GEDI Level1B object (output of \code{\link[rGEDI:readLevel1B]{readLevel1B}} function).
+An S4 object of class "gedi.level1b".}
 
 \item{polygon_spdf}{Polygon. An object of class \code{\link[sp]{SpatialPolygonsDataFrame-class}},
 which can be loaded as an ESRI shapefile using \code{\link[raster:shapefile]{raster::shapefile()}} function in the \emph{raster} package.}
 
 \item{output}{Optional character path where to save the new hdf5file. The default stores a temporary file only.}
 
-\item{split_by}{Polygon id. If defined, GEDI data will be clipped by each polygon using attribute specified by \code{split_by} from attribute table.}
+\item{split_by}{Polygon id. If defined, GEDI data will be clipped by each polygon using the attribute specified by \code{split_by} from the attribute table.}
 }
 \value{
 Returns a list of S4 object of class "gedi.level1b".
 }
 \description{
-This function clips GEDI Level1B data within a bounding geometry
+This function clips GEDI Level1B (geolocated waveforms) data within a given bounding geometry
 }
 \examples{
 \donttest{
-# specify the path to GEDI level1B data (zip file)
+# Specifying the path to GEDI level1B data (zip file)
 level1B_fp_zip <- system.file("extdata",
                   "GEDI01_B_2019108080338_O01964_T05337_02_003_01_sub.zip",
                   package="rGEDI")
@@ -35,7 +37,7 @@ level1Bpath <- unzip(level1B_fp_zip,exdir = dirname(level1B_fp_zip))
 # Reading GEDI level1B data (h5 file)
 level1b<-readLevel1B(level1Bpath=level1Bpath)
 
-# specify the path to shapefile
+# Specifying the path to shapefile
 polygon_filepath <- system.file("extdata", "stands_cerrado.shp", package="rGEDI")
 
 # Reading shapefile as SpatialPolygonsDataFrame object
@@ -45,7 +47,7 @@ polygon_spdf<-shapefile(polygon_filepath)
 # Spepecifing output file and path
 output<-file.path(getwd(),"GEDI01_B_2019108080338_O01964_T05337_02_003_01_clip")
 
-# clip by extent boundary box
+# clipping GEDI Level1B data by extent boundary box
 level1b_clip <- clipLevel1BGeometry(level1b, polygon_spdf = polygon_spdf,
                                    output=output,
                                    split_by="id")

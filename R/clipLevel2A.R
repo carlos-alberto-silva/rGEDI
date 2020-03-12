@@ -1,22 +1,24 @@
 #'Clip GEDI Level2A data by Coordinates
 #'
-#'@description This function clips GEDI Level2A data within given bounding coordinates
+#'@description This function clips GEDI Level2A data within a given bounding coordinates
 #'
 #'@usage clipLevel2A(level2a, xmin, xmax, ymin, ymax, output)
 #'
-#'@param level2a A GEDI Level2A object (output of \code{\link[rGEDI:readLevel2A]{readLevel2A}} function). A S4 object of class "gedi.level2a".
-#'@param xmin Numeric. West longitude (x) coordinate of bounding rectangle, in decimal degrees.
-#'@param xmax Numeric. East longitude (x) coordinate of bounding rectangle, in decimal degrees.
-#'@param ymin Numeric. South latitude (y) coordinate of bounding rectangle, in decimal degrees.
-#'@param ymax Numeric. North latitude (y) coordinate of bounding rectangle, in decimal degrees.
+#'@param level2a A GEDI Level2A object (output of \code{\link[rGEDI:readLevel2A]{readLevel2A}} function).
+#'An S4 object of class "gedi.level2a".
+#'@param xmin Numeric. West longitude (x) coordinate of the bounding rectangle, in decimal degrees.
+#'@param xmax Numeric. East longitude (x) coordinate of the bounding rectangle, in decimal degrees.
+#'@param ymin Numeric. South latitude (y) coordinate of the bounding rectangle, in decimal degrees.
+#'@param ymax Numeric. North latitude (y) coordinate of the bounding rectangle, in decimal degrees.
 #'@param output Optional character path where to save the new hdf5file. The default stores a temporary file only.
 #'
-#'@return Returns a list of S4 object of class "gedi.level2a".
+#'@return Returns a list of S4 objects of class "gedi.level2a".
 #'
 #'@seealso https://lpdaac.usgs.gov/products/gedi02_av001/
 #'
 #'@examples
-#'# specify the path to GEDI level2A data (zip file)
+#'\donttest{
+#'# Specifying the path to GEDI level2A data (zip file)
 #'level2A_fp_zip <- system.file("extdata",
 #'                   "GEDI02_A_2019108080338_O01964_T05337_02_001_01_sub.zip",
 #'                   package="rGEDI")
@@ -33,14 +35,15 @@
 #'ymin = -13.73031
 #'ymax = -13.72044
 #'
-#'# Spepecifing output file and path
+#'# Specifying output file and path
 #'output<-file.path(getwd(),"GEDI02_A_2019108080338_O01964_T05337_02_001_01_clip.h5")
 #'
-#'# clip by extent boundary box
+#'# Clipping GEDI Level2A data by boundary box extent
 #'level2a_clip <- clipLevel2A(level2a,xmin,xmax,ymin,ymax,output)
 #'
 #'close(level2a)
 #'close(level2a_clip)
+#'}
 #'@export
 clipLevel2A = function(level2a, xmin, xmax, ymin, ymax, output=""){
   if (output == "") {
@@ -65,15 +68,16 @@ clipLevel2A = function(level2a, xmin, xmax, ymin, ymax, output=""){
 
 #'Clip GEDI Level2A data by geometry
 #'
-#'@description This function clips GEDI Level2A data within given geometry
+#'@description This function clips GEDI Level2A data within a given geometry
 #'
 #'@usage clipLevel2AGeometry(level2a, polygon_spdf, output="", split_by=NULL)
 #'
-#'@param level2a A GEDI Level2A object (output of \code{\link[rGEDI:readLevel2A]{readLevel2A}} function). A S4 object of class "gedi.level2a".
+#'@param level2a A GEDI Level2A object (output of \code{\link[rGEDI:readLevel2A]{readLevel2A}} function).
+#'An S4 object of class "gedi.level2a".
 #'@param polygon_spdf Polygon. An object of class \code{\link[sp]{SpatialPolygonsDataFrame-class}},
 #'which can be loaded as an ESRI shapefile using \code{\link[raster:shapefile]{raster::shapefile()}} function in the \emph{raster} package.
 #'@param output optional character path where to save the new h5file. Default "" (temporary file).
-#'@param split_by Polygon id. If defined, GEDI data will be clipped by each polygon using attribute specified by \code{split_by} from attribute table.
+#'@param split_by Polygon id. If defined, GEDI data will be clipped by each polygon using the attribute specified by \code{split_by} from the attribute table.
 #'
 #'@return Returns a list of S4 object of class "gedi.level2a".
 #'
@@ -81,7 +85,7 @@ clipLevel2A = function(level2a, xmin, xmax, ymin, ymax, output=""){
 #'
 #'@examples
 #'\donttest{
-#'# specify the path to GEDI level2A data (zip file)
+#'# Specifying the path to GEDI level2A data (zip file)
 #'level2A_fp_zip <- system.file("extdata",
 #'                   "GEDI02_A_2019108080338_O01964_T05337_02_001_01_sub.zip",
 #'                   package="rGEDI")
@@ -92,17 +96,17 @@ clipLevel2A = function(level2a, xmin, xmax, ymin, ymax, output=""){
 #'# Reading GEDI level2A data (h5 file)
 #'level2a<-readLevel2A(level2Apath=level2Apath)
 #'
-#'# specify the path to shapefile
+#'# Specifying the path to shapefile
 #'polygon_filepath <- system.file("extdata", "stands_cerrado.shp", package="rGEDI")
 #'
 #'# Reading shapefile as SpatialPolygonsDataFrame object
 #'library(raster)
 #'polygon_spdf<-shapefile(polygon_filepath)
 #'
-#'# Spepecifing output file and path
+#'# Specifying output file and path
 #'output<-file.path(getwd(),"GEDI02_A_2019108080338_O01964_T05337_02_001_01_clip")
 #'
-#'# clip by extent boundary box
+#'# Clipping GEDI Level2A data by geometry
 #'level2a_clip <- clipLevel2AGeometry(level2a, polygon_spdf = polygon_spdf,
 #'                                    output=output,
 #'                                    split_by="id")

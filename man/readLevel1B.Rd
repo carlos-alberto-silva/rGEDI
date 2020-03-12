@@ -2,7 +2,7 @@
 % Please edit documentation in R/readLevel1B.R
 \name{readLevel1B}
 \alias{readLevel1B}
-\title{Read Geolocated Waveforms (GEDI Level1B)}
+\title{Read GEDI Level1B data (Geolocated Waveforms)}
 \usage{
 readLevel1B(level1Bpath)
 }
@@ -10,13 +10,13 @@ readLevel1B(level1Bpath)
 \item{level1Bpath}{file path pointing to GEDI level1B data. Data in HDF5 Hierarchical Data Format (.h5).}
 }
 \value{
-S4 object of class "gedi.level1b".
+An S4 object of class "gedi.level1b".
 }
 \description{
 This function reads GEDI level1B products: geolocated Waveforms
 }
 \examples{
-# specify the path to GEDI level1B data (zip file)
+# Specifying the path to GEDI level1B data (zip file)
 level1B_fp_zip <- system.file("extdata",
                   "GEDI01_B_2019108080338_O01964_T05337_02_003_01_sub.zip",
                   package="rGEDI")

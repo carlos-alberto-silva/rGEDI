@@ -2,12 +2,13 @@
 % Please edit documentation in R/clipLevel2AM.R
 \name{clipLevel2AMGeometry}
 \alias{clipLevel2AMGeometry}
-\title{Clip Level2AM data by Coordinates}
+\title{Clip GEDI Elevation and Height Metrics by Coordinates}
 \usage{
 clipLevel2AMGeometry(level2AM, polygon_spdf, split_by)
 }
 \arguments{
-\item{level2AM}{A GEDI Level2A object (output of \code{\link[rGEDI:readLevel2A]{readLevel2A}} function). A S4 object of class "data.table".}
+\item{level2AM}{A GEDI Level2A object (output of \code{\link[rGEDI:readLevel2A]{readLevel2A}} function).
+An S4 object of class "data.table".}
 
 \item{polygon_spdf}{Polygon. An object of class \code{\link[sp]{SpatialPolygonsDataFrame-class}},
 which can be loaded as an ESRI shapefile using \code{\link[raster:shapefile]{raster::shapefile()}} function in the \emph{raster} package.}
@@ -19,10 +20,10 @@ A S4 object of class \code{\link[data.table:data.table]{data.table-class}}.
 }
 \description{
 This function clips GEDI Level2A extracted Elevation and Height Metrics (Level2AM)
-within given bounding coordinates
+within a given bounding coordinates
 }
 \examples{
-# specify the path to GEDI level2A data (zip file)
+# Specifying the path to GEDI level2A data (zip file)
 level2A_fp_zip <- system.file("extdata",
                   "GEDI02_A_2019108080338_O01964_T05337_02_001_01_sub.zip",
                   package="rGEDI")
@@ -33,16 +34,17 @@ level2Apath <- unzip(level2A_fp_zip,exdir = dirname(level2A_fp_zip))
 # Reading GEDI level2A data (h5 file)
 level2a<-readLevel2A(level2Apath=level2Apath)
 
-#' Extracting GEDI Elevation and Height Metrics
+# Extracting GEDI Elevation and Height Metrics
 level2AM = getLevel2AM(level2a)
 
-# specify the path to shapefile
+# Specifying the path to shapefile
 polygon_filepath <- system.file("extdata", "stands_cerrado.shp", package="rGEDI")
 
 # Reading shapefile as SpatialPolygonsDataFrame object
 library(raster)
 polygon_spdf<-shapefile(polygon_filepath)
 
+# Clipping GEDI data by Geometry
 level2AM_clip = clipLevel2AMGeometry(level2AM, polygon_spdf, split_by="id")
 
 library(leaflet)

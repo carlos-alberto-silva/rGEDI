@@ -1,4 +1,4 @@
-#'Read GEDI Basic Waveform Metrics (Level2A data)
+#'Read GEDI Level2A data (Basic Waveform-derived Metrics)
 #'
 #'@description This function reads GEDI level2A products: ground elevation, canopy top height, and relative heights (RH).
 #'
@@ -7,12 +7,12 @@
 #'
 #'@param level2Apath file path pointing to GEDI level2A data. Data in HDF5 Hierarchical Data Format (.h5).
 #'
-#'@return S4 object of class "gedi.level1a".
+#'@return An S4 object of class "gedi.level1a".
 #'
 #'@seealso https://lpdaac.usgs.gov/products/gedi02_av001/
 #'
 #'@examples
-#'# specify the path to GEDI level2A data (zip file)
+#'# Specifying the path to GEDI level2A data (zip file)
 #'level2A_fp_zip <- system.file("extdata",
 #'                   "GEDI02_A_2019108080338_O01964_T05337_02_001_01_sub.zip",
 #'                   package="rGEDI")

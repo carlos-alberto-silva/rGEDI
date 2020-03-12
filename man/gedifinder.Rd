@@ -9,16 +9,16 @@ gedifinder(level, xmin, xmax, ymin, ymax)
 \arguments{
 \item{level}{GEDI data level; Options: "GEDI01_B", "GEDI02_A" or "GEDI02_B"}
 
-\item{xmin}{Numeric. West longitude (x) coordinate of bounding rectangle, in decimal degrees.}
+\item{xmin}{Numeric. West longitude (x) coordinate of the bounding rectangle, in decimal degrees.}
 
-\item{xmax}{Numeric. East longitude (x) coordinate of bounding rectangle, in decimal degrees.}
+\item{xmax}{Numeric. East longitude (x) coordinate of the bounding rectangle, in decimal degrees.}
 
-\item{ymin}{Numeric. South latitude (y) coordinate of bounding rectangle, in decimal degrees.}
+\item{ymin}{Numeric. South latitude (y) coordinate of the bounding rectangle, in decimal degrees.}
 
-\item{ymax}{Numeric. North latitude (y) coordinate of bounding rectangle, in decimal degrees.}
+\item{ymax}{Numeric. North latitude (y) coordinate of the bounding rectangle, in decimal degrees.}
 }
 \value{
-vector object pointing out the path for download GEDI data within
+Vector object pointing out the path saving the downloaded GEDI data within
 the boundary box coordinates provided
 }
 \description{
@@ -39,6 +39,6 @@ gedi02b_list<-gedifinder(level="GEDI02_B",xmin,xmax,ymin,ymax)
 
 }
 \seealso{
-This function just call the gedifilder tool developted by LPDAAC:
+This function just call the gedifinder tool developted by LPDAAC:
 https://lpdaacsvc.cr.usgs.gov/services/gedifinder
 }

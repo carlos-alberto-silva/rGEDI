@@ -4,75 +4,24 @@
 \alias{gediWFMetrics}
 \title{GEDI full waveform data processing}
 \usage{
-gediWFMetrics(
-  input,
-  outRoot,
-  writeFit = FALSE,
-  writeGauss = FALSE,
-  bounds = NULL,
-  ground = FALSE,
-  useInt = FALSE,
-  useFrac = FALSE,
-  rhRes = 5,
-  laiRes = 10,
-  laiH = 30,
-  noRHgauss = FALSE,
-  gTol = 0,
-  fhdHistRes = 0.001,
-  forcePsigma = FALSE,
-  bayesGround = FALSE,
-  dontTrustGround = FALSE,
-  noRoundCoord = FALSE,
-  noCanopy = FALSE,
-  dcBias = 0,
-  nSig = 0,
-  seed = NULL,
-  hNoise = 0,
-  linkNoise = NULL,
-  linkFsig = NULL,
-  linkPsig = NULL,
-  trueSig = NULL,
-  bitRate = NULL,
-  maxDN = NULL,
-  renoise = FALSE,
-  newPsig = -1,
-  oldPsig = 0.764331,
-  addDrift = NULL,
-  missGround = FALSE,
-  minGap = NULL,
-  photonCount = FALSE,
-  pcl = FALSE,
-  nPhotons = 2.1,
-  photonWind = 200,
-  noiseMult = 0.1,
-  rhoVrhoG = 1,
-  nPhotC = 2.1,
-  nPhotG = -1,
-  photHDF = FALSE,
-  meanN = 0,
-  thresh = 1e-14,
-  varNoise = FALSE,
-  varScale = NULL,
-  statsLen = NULL,
-  noiseTrack = FALSE,
-  sWidth = NULL,
-  psWidth = 0,
-  msWidth = NULL,
-  preMatchF = FALSE,
-  postMatchF = FALSE,
-  pFile = NULL,
-  gWidth = 1.2,
-  minGsig = 0.764331,
-  minWidth = 0,
-  medNoise = FALSE,
-  varDrift = NULL,
-  driftFac = NULL,
-  rhoG = 0.4,
-  rhoC = 0.57,
-  pSigma = NULL,
-  gold = FALSE,
-  deconTol = NULL
-)
+gediWFMetrics(input, outRoot, writeFit = FALSE, writeGauss = FALSE,
+  bounds = NULL, ground = FALSE, useInt = FALSE, useFrac = FALSE,
+  rhRes = 5, laiRes = 10, laiH = 30, noRHgauss = FALSE, gTol = 0,
+  fhdHistRes = 0.001, forcePsigma = FALSE, bayesGround = FALSE,
+  dontTrustGround = FALSE, noRoundCoord = FALSE, noCanopy = FALSE,
+  dcBias = 0, nSig = 0, seed = NULL, hNoise = 0,
+  linkNoise = NULL, linkFsig = NULL, linkPsig = NULL,
+  trueSig = NULL, bitRate = NULL, maxDN = NULL, renoise = FALSE,
+  newPsig = -1, oldPsig = 0.764331, addDrift = NULL,
+  missGround = FALSE, minGap = NULL, photonCount = FALSE,
+  pcl = FALSE, nPhotons = 2.1, photonWind = 200, noiseMult = 0.1,
+  rhoVrhoG = 1, nPhotC = 2.1, nPhotG = -1, photHDF = FALSE,
+  meanN = 0, thresh = 1e-14, varNoise = FALSE, varScale = NULL,
+  statsLen = NULL, noiseTrack = FALSE, sWidth = NULL, psWidth = 0,
+  msWidth = NULL, preMatchF = FALSE, postMatchF = FALSE,
+  pFile = NULL, gWidth = 1.2, minGsig = 0.764331, minWidth = 0,
+  medNoise = FALSE, varDrift = NULL, driftFac = NULL, rhoG = 0.4,
+  rhoC = 0.57, pSigma = NULL, gold = FALSE, deconTol = NULL)
 }
 \arguments{
 \item{input}{\code{\link[rGEDI:gedi.level1bSim-class]{gedi.level1bSim}} (may be a list of objects). Simulated waveform input object(s).}
@@ -250,18 +199,38 @@ wf_Savanna<-gediWFSimulator(input=alsfile_Savanna_filepath,
                            output=file.path(getwd(),"gediWF_Savanna_simulation.h5"),
                            coords = c(xcenter_Savanna, ycenter_Savanna))
 
-# Extracting GEDI full-waveform derived metrics
+# Extracting GEDI full-waveform derived metrics without adding noise to the full-waveform
 wf_amazon_metrics<-gediWFMetrics(input=wf_Amazon,outRoot=file.path(getwd(), "amazon"))
-wf_savanna_metrics<-gediWFMetrics(input=wf_Savanna,outRoot=file.path(getwd(), "Savanna"))
-
-close(wf_Amazon)
-close(wf_Savanna)
+wf_savanna_metrics<-gediWFMetrics(input=wf_Savanna,outRoot=file.path(getwd(), "savanna"))
 
 metrics<-rbind(wf_amazon_metrics,wf_savanna_metrics)
 rownames(metrics)<-c("Amazon","Savanna")
 head(metrics)
-}
 
+# Extracting GEDI full-waveform derived metrics after adding noise to the waveform
+wf_amazon_metrics_noise<-gediWFMetrics(input=wf_Amazon,
+                        outRoot=file.path(getwd(), "amazon"),
+                        linkNoise= c(3.0103,0.95),
+                        maxDN= 4096,
+                        sWidth= 0.5,
+                        varScale= 3)
+
+wf_savanna_metrics_noise<-gediWFMetrics(
+                       input=wf_Savanna,
+                       outRoot=file.path(getwd(), "savanna"),
+                       linkNoise= c(3.0103,0.95),
+                       maxDN= 4096,
+                       sWidth= 0.5,
+                       varScale= 3)
+
+close(wf_Amazon)
+close(wf_Savanna)
+
+metrics_noise<-rbind(wf_amazon_metrics_noise,wf_savanna_metrics_noise)
+rownames(metrics_noise)<-c("Amazon","Savanna")
+head(metrics_noise)
+
+}
 }
 \seealso{
 i) Hancock, S., Armston, J., Hofton, M., Sun, X., Tang, H., Duncanson, L.I., Kellner,

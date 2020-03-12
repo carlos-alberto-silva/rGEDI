@@ -1,21 +1,22 @@
-#'Compute descriptive statistics of GEDI Level2A-derived Metrics
+#'Compute descriptive statistics of GEDI Elevation and Height Metrics
 #'
 #'@description Computes a Series of Statistics from GEDI-derived Elevation and Height Metrics (Level2A)
-#'within defined polygon ids or entire area
+#'within a given area defined or not by a polygon
 #'
 #'@usage polyStatsLevel2AM(level2AM, func, id=NULL)
 #'
-#'@param level2AM A GEDI Level2AM object (output of \code{\link[rGEDI:getLevel2AM]{getLevel2AM}} function). A S4 object of class "data.table".
-#'@param func the function to be applied for computing the defined statistics
-#'@param id a vector contatining the polygon id for each GEDI observation. Defaut is NULL
+#'@param level2AM A GEDI Level2AM object (output of \code{\link[rGEDI:getLevel2AM]{getLevel2AM}} function).
+#'An S4 object of class "data.table".
+#'@param func The function to be applied for computing the defined statistics
+#'@param id A vector containing the polygon id for each GEDI observation. Default is NULL
 #'
-#'@return A S4 object of class \code{\link[data.table:data.table]{data.table-class}}
+#'@return An S4 object of class \code{\link[data.table:data.table]{data.table-class}}
 #'containting Statistics of GEDI level2A defined metrics
 #'
 #'@seealso https://lpdaac.usgs.gov/products/gedi02_av001/
 #'
 #'@examples
-#'# specify the path to GEDI level2A data (zip file)
+#'# Specifying the path to GEDI level2A data (zip file)
 #'level2A_fp_zip <- system.file("extdata",
 #'                   "GEDI02_A_2019108080338_O01964_T05337_02_001_01_sub.zip",
 #'                   package="rGEDI")
@@ -26,18 +27,18 @@
 #'# Reading GEDI level2A data (h5 file)
 #'level2a<-readLevel2A(level2Apath=level2Apath)
 #'
-#'# specify the path to shapefile
+#'# Specifying the path to shapefile
 #'polygon_filepath <- system.file("extdata", "stands_cerrado.shp", package="rGEDI")
 #'
 #'# Reading shapefile as SpatialPolygonsDataFrame object
 #'library(raster)
 #'polygon_spdf<-shapefile(polygon_filepath)
 #'
-#'# Get GEDI Eleveation and Relative Metrics (level2A)
+#'# Extracting GEDI Eleveation and Relative Metrics (level2A)
 #'level2AM<-getLevel2AM(level2a)
 #'head(level2AM)
 #'
-#'# clipping level2a by geometry
+#'# Clipping GEDI data by geometry
 #'level2AM_clip = clipLevel2AMGeometry(level2AM, polygon_spdf, split_by="id")
 #'
 #'#' Define your own function

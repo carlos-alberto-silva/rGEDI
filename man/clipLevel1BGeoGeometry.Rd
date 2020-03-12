@@ -2,12 +2,13 @@
 % Please edit documentation in R/clipLevel1BGeo.R
 \name{clipLevel1BGeoGeometry}
 \alias{clipLevel1BGeoGeometry}
-\title{Clip Level1BGeo data by geometry}
+\title{Clip GEDI Full-Waveform Geolocations by geometry}
 \usage{
 clipLevel1BGeoGeometry(level1BGeo, polygon_spdf, split_by)
 }
 \arguments{
-\item{level1BGeo}{A GEDI Level1b object (output of \code{\link[rGEDI:readLevel1B]{readLevel1B}} function). A S4 object of class "data.table".}
+\item{level1BGeo}{A GEDI Level1b object (output of \code{\link[rGEDI:readLevel1B]{readLevel1B}} function).
+An S4 object of class "data.table".}
 
 \item{polygon_spdf}{Polygon. An object of class \code{\link[sp]{SpatialPolygonsDataFrame-class}},
 which can be loaded as an ESRI shapefile using \code{\link[raster:shapefile]{raster::shapefile()}} function in the \emph{raster} package.}
@@ -19,10 +20,10 @@ A S4 object of class \code{\link[data.table:data.table]{data.table-class}}.
 }
 \description{
 This function clips GEDI level1B extracted geolocation (level1BGeo)
-data within given geometry
+data within a given geometry
 }
 \examples{
-# specify the path to GEDI level1B data (zip file)
+# Specifying the path to GEDI level1B data (zip file)
 level1B_fp_zip <- system.file("extdata",
                   "GEDI01_B_2019108080338_O01964_T05337_02_003_01_sub.zip",
                   package="rGEDI")
@@ -33,16 +34,17 @@ level1Bpath <- unzip(level1B_fp_zip,exdir = dirname(level1B_fp_zip))
 # Reading GEDI level1B data (h5 file)
 level1b<-readLevel1B(level1Bpath=level1Bpath)
 
-# Get GEDI level1B geolocations
+# Extracting GEDI Full-Waveform Geolocations
 level1BGeo<-getLevel1BGeo(level1b)
 
-# specify the path to shapefile
+# Specifying the path to shapefile
 polygon_filepath <- system.file("extdata", "stands_cerrado.shp", package="rGEDI")
 
 # Reading shapefile as SpatialPolygonsDataFrame object
 library(raster)
 polygon_spdf<-shapefile(polygon_filepath)
 
+# Clipping GEDI Full-Waveform Geolocations by Geometry
 level1BGeo_clip = clipLevel1BGeoGeometry(level1BGeo, polygon_spdf, split_by="id")
 
 library(leaflet)

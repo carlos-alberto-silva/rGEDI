@@ -11,6 +11,7 @@ Class for GEDI level1B Full Waveform
 \section{Slots}{
 
 \describe{
-\item{\code{dt}}{Object of class data.table from data.table package}
+\item{\code{dt}}{Object of class data.table from \emph{data.table} package containing
+the extracted GEDI full-waveform elevation and amplitude.}
 }}
 

@@ -4,11 +4,13 @@
 #'
 #'@usage plotWFMetrics(level1b, level2a, shot_number, rh=c(25, 50, 75),...)
 #'
-#'@param level1b A GEDI Level1B object (output of \code{\link[rGEDI:readLevel1B]{readLevel1B}} function). A S4 object of class "gedi.level1b".
-#'@param level2a A GEDI Level2A object (output of \code{\link[rGEDI:readLevel2A]{readLevel2A}} function). A S4 object of class "gedi.level2a".
-#'@param shot_number Shot number. A scalar represeting the shot number of a giving pulse.
-#'@param rh integer vector. Specify which RH metrics to plot except rh0 and rh100, default c(25, 50, 75).
-#'@param ... will be passed to the main plot.
+#'@param level1b A GEDI Level1B object (output of \code{\link[rGEDI:readLevel1B]{readLevel1B}} function).
+#'An S4 object of class "gedi.level1b".
+#'@param level2a A GEDI Level2A object (output of \code{\link[rGEDI:readLevel2A]{readLevel2A}} function).
+#'An S4 object of class "gedi.level2a".
+#'@param shot_number Shot number. A scalar representing the shot number of a giving pulse.
+#'@param rh Integer vector. Specify which RH metrics to plot except rh0 and rh100, default c(25, 50, 75).
+#'@param ... Will be passed to the main plot.
 #'
 #'@return Returns raster layer(s) of selected GEDI Canopy Cover and Vertical Profile Metric(s)
 #'

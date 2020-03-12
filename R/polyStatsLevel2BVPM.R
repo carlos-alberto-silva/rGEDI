@@ -1,21 +1,22 @@
-#'Compute descriptive statistics of GEDI Level2BVPM-derived Metrics
+#'Compute descriptive statistics of GEDI Canopy Cover and Vertical Profile Metrics
 #'
-#'@description Computes a Series of Statistics of GEDI-derived Canopy Cover and Vertical Profile metrics (Level2BVPM)
-#'for all obsercation or only those defined within a giving polygon
+#'@description Computes a Series of Statistics of GEDI-derived Canopy Cover and Vertical Profile metrics
+#'within a given area defined or not by a polygon
 #'
 #'@usage polyStatsLevel2BVPM(level2BVPM, func, id=NULL)
 #'
-#'@param level2BVPM A GEDI Level2BVPM object (output of \code{\link[rGEDI:getLevel2BVPM]{getLevel2BVPM}} function). A S4 object of class "data.table".
-#'@param func the function to be applied for computing the defined statistics
-#'@param id a vector contatining the polygon id for each GEDI observation. Defaut is NULL
+#'@param level2BVPM A GEDI Level2BVPM object (output of \code{\link[rGEDI:getLevel2BVPM]{getLevel2BVPM}} function).
+#'An S4 object of class "data.table".
+#'@param func The function to be applied for computing the defined statistics
+#'@param id A vector containing the polygon id for each GEDI observation. Default is NULL
 #'
-#'@return A S4 object of class \code{\link[data.table:data.table]{data.table-class}}
+#'@return An S4 object of class \code{\link[data.table:data.table]{data.table-class}}
 #'containting Statistics of GEDI level2BVPM defined metrics
 #'
 #'@seealso https://lpdaac.usgs.gov/products/gedi02_bv001/
 #'
 #'@examples
-#'# specify the path to GEDI level2B data (zip file)
+#'# Specifying the path to GEDI level2B data (zip file)
 #'level2B_fp_zip <- system.file("extdata",
 #'                   "GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub.zip",
 #'                   package="rGEDI")
@@ -26,18 +27,18 @@
 #'# Reading GEDI level2B data (h5 file)
 #'level2b<-readLevel2B(level2Bpath=level2Bpath)
 #'
-#'# specify the path to shapefile
+#'# Specifying the path to shapefile
 #'polygon_filepath <- system.file("extdata", "stands_cerrado.shp", package="rGEDI")
 #'
 #'# Reading shapefile as SpatialPolygonsDataFrame object
 #'library(raster)
 #'polygon_spdf<-shapefile(polygon_filepath)
 #'
-#'# Get GEDI Canopy Cover and Vertical Profile Metrics
+#'# Extracting GEDI Canopy Cover and Vertical Profile Metrics
 #'level2BVPM<-getLevel2BVPM(level2b)
 #'head(level2BVPM)
 #'
-#'# clipping level2BVPM by geometry
+#'# Clipping GEDI data by geometry
 #'level2BVPM_clip = clipLevel2BVPMGeometry(level2BVPM, polygon_spdf, split_by="id")
 #'
 #'# Define your own function

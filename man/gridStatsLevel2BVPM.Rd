@@ -8,11 +8,12 @@ GEDI-derived Canopy Cover and Vertical Profile Metrics (Level2B)}
 gridStatsLevel2BVPM(level2BVPM, func, res)
 }
 \arguments{
-\item{level2BVPM}{A GEDI Level2AM object (output of \code{\link[rGEDI:getLevel2BVPM]{getLevel2BVPM}} function). A S4 object of class "data.table".}
+\item{level2BVPM}{A GEDI Level2AM object (output of \code{\link[rGEDI:getLevel2BVPM]{getLevel2BVPM}} function).
+An S4 object of class "data.table".}
 
-\item{func}{the function(s) to be applied to each cell}
+\item{func}{The function(s) to be applied to each cell}
 
-\item{res}{spatial resolution in decimal degrees for the output raster layer}
+\item{res}{Spatial resolution in decimal degrees for the output raster layer}
 }
 \value{
 Returns raster layer(s) of selected GEDI Canopy Cover and Vertical Profile Metric(s)

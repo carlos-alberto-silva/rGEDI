@@ -11,6 +11,15 @@ Class for GEDI Full-Waveform Simulation
 \section{Slots}{
 
 \describe{
-\item{\code{h5}}{Object of class H5File from hdf5r package}
+\item{\code{h5}}{Object of class H5File from \emph{hdf5r} package package containing the simulated
+GEDI full-waveform}
 }}
 
+\seealso{
+i) Hancock, S., Armston, J., Hofton, M., Sun, X., Tang, H., Duncanson, L.I., Kellner,
+J.R. and Dubayah, R., 2019. The GEDI simulator: A large‐footprint waveform lidar simulator
+for calibration and validation of spaceborne missions. Earth and Space Science.
+https://doi.org/10.1029/2018EA000506
+
+ii) gediSimulator: https://bitbucket.org/StevenHancock/gedisimulator/src/master/
+}

@@ -11,6 +11,11 @@ Class for GEDI level1B
 \section{Slots}{
 
 \describe{
-\item{\code{h5}}{Object of class H5File from hdf5r package}
+\item{\code{h5}}{Object of class H5File from \emph{hdf5r} package containing the
+GEDI level1B products: geolocated Waveforms}
 }}
 
+\seealso{
+\code{\link[hdf5r:H5File-class]{hdf5r::H5File}} in the \emph{hdf5r} package and
+https://lpdaac.usgs.gov/products/gedi01_bv001/
+}

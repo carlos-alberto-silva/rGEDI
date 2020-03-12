@@ -1,22 +1,24 @@
 #'Clip GEDI Level1B data by Coordinates
 #'
-#'@description This function clips GEDI Level1B data within given bounding coordinates
+#'@description This function clips GEDI Level1B data (geolocated waveforms) within a given bounding coordinates
 #'
 #'@usage clipLevel1B(level1b, xmin, xmax, ymin, ymax, output)
 #'
-#'@param level1b A GEDI Level1B object (output of \code{\link[rGEDI:readLevel1B]{readLevel1B}} function). A S4 object of class "gedi.level1b".
-#'@param xmin Numeric. West longitude (x) coordinate of bounding rectangle, in decimal degrees.
-#'@param xmax Numeric. East longitude (x) coordinate of bounding rectangle, in decimal degrees.
-#'@param ymin Numeric. South latitude (y) coordinate of bounding rectangle, in decimal degrees.
-#'@param ymax Numeric. North latitude (y) coordinate of bounding rectangle, in decimal degrees.
+#'@param level1b A GEDI Level1B object (output of \code{\link[rGEDI:readLevel1B]{readLevel1B}} function).
+#'An S4 object of class "gedi.level1b".
+#'@param xmin Numeric. West longitude (x) coordinate of the bounding rectangle, in decimal degrees.
+#'@param xmax Numeric. East longitude (x) coordinate of the bounding rectangle, in decimal degrees.
+#'@param ymin Numeric. South latitude (y) coordinate of the bounding rectangle, in decimal degrees.
+#'@param ymax Numeric. North latitude (y) coordinate of the bounding rectangle, in decimal degrees.
 #'@param output Optional character path where to save the new hdf5file. The default stores a temporary file only.
 #'
-#'@return Returns a list of S4 object of class "gedi.level1b".
+#'@return Returns a list of S4 objects of class "gedi.level1b".
 #'
 #'@seealso https://lpdaac.usgs.gov/products/gedi01_bv001/
 #'
 #'@examples
-#'# specify the path to GEDI level1B data (zip file)
+#'\donttest{
+#'# Specifying the path to GEDI level1B data (zip file)
 #'level1B_fp_zip <- system.file("extdata",
 #'                   "GEDI01_B_2019108080338_O01964_T05337_02_003_01_sub.zip",
 #'                   package="rGEDI")
@@ -33,14 +35,15 @@
 #'ymin = -13.73031
 #'ymax = -13.72044
 #'
-#'# Spepecifing output file and path
+#'# Specifying output file and path
 #'output<-file.path(getwd(),"GEDI01_B_2019108080338_O01964_T05337_02_003_01_clip")
 #'
-#'# clip by extent boundary box
+#'# Clipping GEDI Level1B data by extent boundary box
 #'level1b_clip <- clipLevel1B(level1b,xmin, xmax, ymin, ymax,output)
 #'
 #' close(level1b)
 #' close(level1b_clip)
+#'}
 #'@import hdf5r fs
 #'@export
 clipLevel1B = function(level1b, xmin, xmax, ymin, ymax, output=""){
@@ -63,20 +66,21 @@ clipLevel1B = function(level1b, xmin, xmax, ymin, ymax, output=""){
 
 #'Clip GEDI Level1B data by geometry
 #'
-#'@description This function clips GEDI Level1B data within a bounding geometry
+#'@description This function clips GEDI Level1B (geolocated waveforms) data within a given bounding geometry
 #'
 #'
-#'@param level1b A GEDI Level1B object (output of \code{\link[rGEDI:readLevel1B]{readLevel1B}} function). A S4 object of class "gedi.level1b".
+#'@param level1b A GEDI Level1B object (output of \code{\link[rGEDI:readLevel1B]{readLevel1B}} function).
+#'An S4 object of class "gedi.level1b".
 #'@param polygon_spdf Polygon. An object of class \code{\link[sp]{SpatialPolygonsDataFrame-class}},
 #'which can be loaded as an ESRI shapefile using \code{\link[raster:shapefile]{raster::shapefile()}} function in the \emph{raster} package.
 #'@param output Optional character path where to save the new hdf5file. The default stores a temporary file only.
-#'@param split_by Polygon id. If defined, GEDI data will be clipped by each polygon using attribute specified by \code{split_by} from attribute table.
+#'@param split_by Polygon id. If defined, GEDI data will be clipped by each polygon using the attribute specified by \code{split_by} from the attribute table.
 #'
 #'@return Returns a list of S4 object of class "gedi.level1b".
 #'
 #'@examples
 #'\donttest{
-#'# specify the path to GEDI level1B data (zip file)
+#'# Specifying the path to GEDI level1B data (zip file)
 #'level1B_fp_zip <- system.file("extdata",
 #'                   "GEDI01_B_2019108080338_O01964_T05337_02_003_01_sub.zip",
 #'                   package="rGEDI")
@@ -87,7 +91,7 @@ clipLevel1B = function(level1b, xmin, xmax, ymin, ymax, output=""){
 #'# Reading GEDI level1B data (h5 file)
 #'level1b<-readLevel1B(level1Bpath=level1Bpath)
 #'
-#'# specify the path to shapefile
+#'# Specifying the path to shapefile
 #'polygon_filepath <- system.file("extdata", "stands_cerrado.shp", package="rGEDI")
 #'
 #'# Reading shapefile as SpatialPolygonsDataFrame object
@@ -97,7 +101,7 @@ clipLevel1B = function(level1b, xmin, xmax, ymin, ymax, output=""){
 #'# Spepecifing output file and path
 #'output<-file.path(getwd(),"GEDI01_B_2019108080338_O01964_T05337_02_003_01_clip")
 #'
-#'# clip by extent boundary box
+#'# clipping GEDI Level1B data by extent boundary box
 #'level1b_clip <- clipLevel1BGeometry(level1b, polygon_spdf = polygon_spdf,
 #'                                    output=output,
 #'                                    split_by="id")

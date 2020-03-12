@@ -4,7 +4,8 @@
 #'
 #'@usage getLevel2AM(level2a)
 #'
-#'@param level2a A GEDI Level2A object (output of \code{\link[rGEDI:readLevel2A]{readLevel2A}} function). A S4 object of class "gedi.level2a".
+#'@param level2a A GEDI Level2A object (output of \code{\link[rGEDI:readLevel2A]{readLevel2A}} function).
+#'An S4 object of class "gedi.level2a".
 #'
 #'@return An S4 object of class \code{\link[data.table:data.table]{data.table-class}}
 #'containing the elevation and relative heights.
@@ -13,7 +14,7 @@
 #'
 #'@examples
 #'
-#'# specify the path to GEDI level2A data (zip file)
+#'# Specifying the path to GEDI level2A data (zip file)
 #'level2A_fp_zip <- system.file("extdata",
 #'                   "GEDI02_A_2019108080338_O01964_T05337_02_001_01_sub.zip",
 #'                   package="rGEDI")
@@ -24,7 +25,7 @@
 #'# Reading GEDI level2A data (h5 file)
 #'level2a<-readLevel2A(level2Apath=level2Apath)
 #'
-#'# Get GEDI Elevation and Height Metrics
+#'# Extracting GEDI Elevation and Height Metrics
 #'level2AM<-getLevel2AM(level2a)
 #'head(level2AM)
 #'

@@ -7,17 +7,18 @@
 getLevel2BPAIProfile(level2b)
 }
 \arguments{
-\item{level2b}{A GEDI Level2B object (output of \code{\link[rGEDI:readLevel2B]{readLevel2B}} function). A S4 object of class "gedi.level2b".}
+\item{level2b}{A GEDI Level2B object (output of \code{\link[rGEDI:readLevel2B]{readLevel2B}} function).
+An S4 object of class "gedi.level2b".}
 }
 \value{
 An S4 object of class \code{\link[data.table:data.table]{data.table-class}}
 containing the elevation and relative heights.
 }
 \description{
-This function extracts a Plant Area Index (PAI) Profile from GEDI Level2B data.
+This function extracts the Plant Area Index (PAI) Profile from GEDI Level2B data.
 }
 \examples{
-# specify the path to GEDI level2B data (zip file)
+# Specifying the path to GEDI level2B data (zip file)
 level2B_fp_zip <- system.file("extdata",
                   "GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub.zip",
                   package="rGEDI")
@@ -28,7 +29,7 @@ level2Bpath <- unzip(level2B_fp_zip,exdir = dirname(level2B_fp_zip))
 # Reading GEDI level2B data (h5 file)
 level2b<-readLevel2B(level2Bpath=level2Bpath)
 
-# Get GEDI Plant Area Index (PAI) Profile (GEDI Level2B)
+# Extracting GEDI Plant Area Index (PAI) Profile (GEDI Level2B)
 level2BPAIProfile<-getLevel2BPAIProfile(level2b)
 head(level2BPAIProfile)
 

@@ -7,11 +7,12 @@
 gridStatsLevel2AM(level2AM, func, res)
 }
 \arguments{
-\item{level2AM}{A GEDI Level2AM object (output of \code{\link[rGEDI:getLevel2AM]{getLevel2AM}} function). A S4 object of class "data.table".}
+\item{level2AM}{A GEDI Level2AM object (output of \code{\link[rGEDI:getLevel2AM]{getLevel2AM}} function).
+An S4 object of class "data.table".}
 
-\item{func}{the function(s) to be applied to each cell}
+\item{func}{The function(s) to be applied to each cell}
 
-\item{res}{spatial resolution in decimal degrees for the output raster layer}
+\item{res}{Spatial resolution in decimal degrees for the output raster layer}
 }
 \value{
 Returns raster layer(s) of selected GEDI Elevation and Height Metric(s)
