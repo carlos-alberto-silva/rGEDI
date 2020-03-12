@@ -10,7 +10,6 @@
 ^src/libclidar$
 ^src/cmpfit-1.2$
 ^readme$
-^m4$
 ^.vscode$
 ^Meta$
 ^doc$
