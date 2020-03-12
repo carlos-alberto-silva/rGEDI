@@ -1,4 +1,5 @@
-#'Compute Grids with descriptive statistics of GEDI derived Elevation and Height Metrics (Level2A)
+#'Compute Grids with Descriptive Statistics of
+#'GEDI derived Elevation and Height Metrics (Level2A)
 #'
 #'@description This function computes a series of user defined descriptive statistics within
 #'each grid cell for GEDI derived Elevation and Height Metrics (Level2A)

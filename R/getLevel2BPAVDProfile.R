@@ -1,6 +1,6 @@
-#'Get GEDI Plant Area Volume Density (PAVD) Index (GEDI Level2B)
+#'Get GEDI Plant Area Volume Density (PAVD) Index Profile (GEDI Level2B)
 #'
-#'@description This function extracts the Plant Area Volume Density (PAVD) Index from GEDI Level2B data.
+#'@description This function extracts the Plant Area Volume Density (PAVD) Profile from GEDI Level2B data.
 #'
 #'@usage getLevel2BPAVDProfile(level2b)
 #'
@@ -8,7 +8,7 @@
 #'An S4 object of class "gedi.level2b".
 #'
 #'@return An S4 object of class \code{\link[data.table:data.table]{data.table-class}}
-#'containing the PAVD Index.
+#'containing the Plant Area Volume Density Index.
 #'
 #'@seealso https://lpdaac.usgs.gov/products/gedi02_bv001/
 #'

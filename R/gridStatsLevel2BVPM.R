@@ -1,4 +1,4 @@
-#'Compute Grids with descriptive statistics of
+#'Compute Grids with Descriptive Statistics of
 #'GEDI derived Canopy Cover and Vertical Profile Metrics (Level2B)
 #'
 #'@description This function computes a series of user defined descriptive statistics within

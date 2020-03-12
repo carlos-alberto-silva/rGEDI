@@ -2,7 +2,8 @@
 #'
 #'@description This functions plots Plant Area Volume Density profile (GEDI level2B)
 #'
-#'@param level2BPAVDProfile A GEDI Level2B object (output of \code{\link[rGEDI:getLevel2BPAVDProfile]{getLevel2BPAVDProfile}} function). A S4 object of class "data.table".
+#'@param level2BPAVDProfile A GEDI Level2B object (output of \code{\link[rGEDI:getLevel2BPAVDProfile]{getLevel2BPAVDProfile}} function).
+#'An S4 object of class "data.table".
 #'@param beam Select GEDI beam. Default is "BEAM0101". See details section.
 #'@param elev If TRUE, elevation will be used for plotting the PAVD profile. Otherwise,
 #'height will be used instead.

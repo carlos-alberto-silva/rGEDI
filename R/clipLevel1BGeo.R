@@ -28,7 +28,7 @@
 #'# Reading GEDI level1B data (h5 file)
 #'level1b<-readLevel1B(level1Bpath=level1Bpath)
 #'
-#'# Extracting GEDI Full-Waveform Geolocations
+#'# Extracting GEDI Full Waveform Geolocations
 #'level1BGeo<-getLevel1BGeo(level1b)
 #'
 #'# Bounding rectangle coordinates
@@ -37,7 +37,7 @@
 #'ymin = -13.75831
 #'ymax = -13.71244
 #'
-#'# Clipping GEDI Full-Waveform Geolocations by boundary box extent
+#'# Clipping GEDI Full Waveform Geolocations by boundary box extent
 #'level1BGeo_clip <- clipLevel1BGeo(level1BGeo,xmin, xmax, ymin, ymax)
 #'
 #'library(leaflet)
@@ -73,7 +73,7 @@ clipLevel1BGeo = function(level1BGeo,xmin, xmax, ymin, ymax){
 
 }
 
-#'Clip GEDI Full-Waveform Geolocations by geometry
+#'Clip GEDI Full Waveform Geolocations by geometry
 #'
 #'@description This function clips GEDI level1B extracted geolocation (level1BGeo)
 #' data within a given geometry
@@ -84,8 +84,10 @@ clipLevel1BGeo = function(level1BGeo,xmin, xmax, ymin, ymax){
 #'An S4 object of class "data.table".
 #'@param polygon_spdf Polygon. An object of class \code{\link[sp]{SpatialPolygonsDataFrame-class}},
 #'which can be loaded as an ESRI shapefile using \code{\link[raster:shapefile]{raster::shapefile()}} function in the \emph{raster} package.
-#'@param split_by Polygon id. If defined, GEDI data will be clipped by each polygon using the polygon id from table of attribute defined by the user
-#'@return A S4 object of class \code{\link[data.table:data.table]{data.table-class}}.
+#'@param split_by Polygon id. If defined, GEDI data will be clipped by each polygon using the polygon id from table of attribute defined by the user.
+#'
+#'@return An S4 object of class \code{\link[data.table:data.table]{data.table-class}} containing the
+#'clipped GEDI level1B extracted geolocations.
 #'
 #'@seealso https://lpdaac.usgs.gov/products/gedi01_bv001/
 #'

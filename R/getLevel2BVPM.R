@@ -1,4 +1,4 @@
-#'Get GEDI Vegetation Profile Biophysical Variables (GEDI Level2B)
+#'Get GEDI Canopy Cover and Vertical Profile Metrics (GEDI Level2B)
 #'
 #'@description This function extracts information from GEDI Level2B data:
 #'Total Plant Area Index,	Foliage Height Diversity, Foliage Clumping Index,
