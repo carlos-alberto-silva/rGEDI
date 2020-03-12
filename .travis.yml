@@ -83,11 +83,13 @@ script:
   - popd
   - R CMD build .
   - R CMD check *tar.gz --as-cran
-  - cat ${PKGNAME}.Rcheck/00check.log
-  - cat ${PKGNAME}/00install.out
   - R CMD INSTALL . --build
 
-# safelist
+after_script:
+  - cat ${PKGNAME}.Rcheck/00check.log
+  - cat ${PKGNAME}.Rcheck/00install.out
+
+  # safelist
 branches:
   only:
   - master
