@@ -351,7 +351,7 @@ head(cover_metrics_st)
 <img align="right" src="https://github.com/carlos-alberto-silva/rGEDI/blob/master/readme/fig5.png" width="300">
 
 ```r
-# Computing the serie of statistics of GEDI RH100 metric
+# Computing GEDI RH100 Metrics
 rh100metrics<-gridStatsLevel2AM(level2AM = level2AM, func=mySetOfMetrics(rh100), res=0.005)
 
 # View maps
@@ -391,7 +391,7 @@ dev.off()
 <img align="right" src="https://github.com/carlos-alberto-silva/rGEDI/blob/master/readme/fig6.png" width="300">
 
 ```r
-# Computing the max of the Total Plant Area Index only
+# Computing Total Plant Area Index Metrics
 level2BVPM$pai[level2BVPM$pai==-9999]<-NA # assing NA to -9999
 pai_metrics<-gridStatsLevel2BVPM(level2BVPM = level2BVPM, func=mySetOfMetrics(pai), res=0.005)
 
