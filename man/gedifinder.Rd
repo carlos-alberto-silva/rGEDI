@@ -27,16 +27,17 @@ This function finds the path to GEDI data within a boundary box coordinates prov
 #'@usage gedifinder(level="GEDI02_B",xmin,xmax,ymin,ymax)
 }
 \examples{
-
-# specify bounding box coordinates
+\donttest{
+# Specifying bounding box coordinates
 xmin<- -44.17246
 ymin<- -44.0654
 xmax<- -13.76913
 ymax<- -13.67646
 
-# Getting the path to GEDI data for the specified boundary box coordinates
+# Extracting the path to GEDI data for the specified boundary box coordinates
 gedi02b_list<-gedifinder(level="GEDI02_B",xmin,xmax,ymin,ymax)
 
+}
 }
 \seealso{
 This function just call the gedifinder tool developted by LPDAAC:

@@ -1,5 +1,5 @@
 ---
-title: "rGEDI: An R Package for NASA's Global Ecosystem Dynamics Investigation (GEDI) data downloading, visualizing and processing"
+title: "rGEDI: An R Package for NASA's Global Ecosystem Dynamics Investigation (GEDI) Data Visualization and Processing for Forestry Applications"
 author: "Carlos Alberto Silva, Caio Hamamura, Ruben Valbuena, Steve Hancock, Adrian Cardil, Eben N. Broadbent, Danilo R. A. de Almeida, Celso H. L. Silva Junior and Carine Klauberg"
 output: 
   rmarkdown::html_vignette: 
