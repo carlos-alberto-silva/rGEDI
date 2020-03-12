@@ -100,9 +100,8 @@
 #' @details
 #' a) Metrics descriptions
 #'
-#'\itemize{
 #' a.1) Metrics available to GEDI
-#'
+#'\itemize{
 #'\item \emph{gHeight} Ground elevation (m) from Gaussian fitting
 #'\item \emph{maxGround} Ground elevation (m) from lowest maximum
 #'\item \emph{inflGround} Ground elevation (m) from inflection points.
@@ -125,8 +124,10 @@
 #'\item \emph{FHD} Foliage height diversity
 #'\item \emph{niM2} Wenge Ni's biomass metric, equal to the sum of the RH metrics to the power of 2 (unpublished)
 #'\item \emph{niM2.1} Wenge Ni's biomass metric, equal to the sum of the RH metrics to the power of 2.1 (unpublished)
+#'}
 #'
 #' a.2) Metrics unavailable to GEDI
+#'\itemize{
 #'\item \emph{wave ID} Waveform label, relates to plot name and footprint number.
 #'\item \emph{true ground} Ground elevation (m) from ALS. Centre of gravity of ground points within footprint
 #'\item \emph{true top} Levation of highest point of waveform (m), without noise. Includes pulse blurring.
@@ -138,8 +139,10 @@
 #'\item \emph{groundInfl} d2y/dx2 of inflection point between ground and canopy return. A measure of understorey.
 #'\item \emph{pointDense} Average ALS point density within GEDI footprint.
 #'\item \emph{beamDense} Average ALS beam density within GEDI footprint.
+#'}
 #'
 #' a.3) System settings
+#'\itemize{
 #'\item \emph{pSigma} GEDI system pulse width, sigma (m).
 #'\item \emph{fSigma} GEDI footprint width, sigma (m).
 #'\item \emph{linkM} Link margin if noise is added (db).
@@ -148,36 +151,31 @@
 #'}
 #'
 #' b) Signal processing description
-#'
 #'\itemize{
-#' b1) Gaussian fitting
-#' Used for "gHeight", "rhGauss" and "gaussHalfCov".
+#'\item \emph{Gaussian fitting} Used for "gHeight", "rhGauss" and "gaussHalfCov".
 #' The waveform is denoised (mean+5*sigma, noise tracking to avoid truncation), smoothed (pSigma*0.75) and Gaussians fitted with Levenberg-Marquardt optimisation.
 #' The center of the lowest Gaussian containing at least 0.5% of the waveform energy is selected as the ground.
 #'
-#' b2) Maximum
-#' Used for "maxGround", "rhMax" and "maxHalfCov".
+#'\item \emph{Maximum} Used for "maxGround", "rhMax" and "maxHalfCov".
 #' The waveform is denoised (mean+5*sigma, noise tracking to avoid truncation), smoothed (pSigma*0.75).
 #' The lowest maximum is taken as the ground.
 #'
-#' b3) Inflection points
-#' Used for "inflGround", "rhInfl" and "inflHalfCov".
+#'\item \emph{Inflection points} Used for "inflGround", "rhInfl" and "inflHalfCov".
 #' The waveform is denoised (mean+5*sigma, noise tracking to avoid truncation), smoothed (pSigma*0.75).
 #' The centre of gravity between the lowest two inflection points is taken as the ground.
 #'
-#' b4) Half covers
-#' Used for "gaussHalfCov", "maxHalfCov" and "inflHalfCov".
+#'\item \emph{Half covers} Used for "gaussHalfCov", "maxHalfCov" and "inflHalfCov".
 #' Sum energy beneath estimated ground position.
 #' Double that is the ground energy.
 #' Calculate canopy cover, correcting for rho_v and rho_g.
 #'
-#' Cover = \frac{E_{can}}{E_{can} + E_g*\frac{rho_v}{rho_g}}
+#'
+#'\eqn{cover = \frac{E_{can}}{E_{can} + E_g*\frac{rho_v}{rho_g}}}
+#'
 #'
 #' Where Ecan is the canopy energy, Eg is the ground energy, rho_v is the vegetation reflectance and rho_g is the ground reflectance.
 #'
-#' b5) Edge extents
-#' These are described in:
-#' Lefsky, Michael A., Michael Keller, Yong Pang, Plinio B. De Camargo, and Maria O. Hunter.
+#'\item \emph{Edge extents} These are described in: Lefsky, Michael A., Michael Keller, Yong Pang, Plinio B. De Camargo, and Maria O. Hunter.
 #' "Revised method for forest canopy height estimation from Geoscience Laser Altimeter System waveforms." Journal of Applied Remote Sensing 1, no. 1 (2007): 013537-013537.
 #'}
 #'
