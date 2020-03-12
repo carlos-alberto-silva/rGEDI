@@ -276,6 +276,9 @@ h5closeall = function(con, ...) {
 
 #'Close hdf5 connections from gedi* objects
 #'
+#' @description 
+#' Closing files will avoid locking HDF5 GEDI files.
+#' 
 #'@param con An object of class gedi*
 #'@param ... Inherited from base
 #'
@@ -285,11 +288,15 @@ h5closeall = function(con, ...) {
 setGeneric("close", function(con, ...)
   standardGeneric("close"))
 
+#' Handles the \link[rGEDI:gedi.level1bSim-class]{\code{gedi.level1b}}.
 #'@rdname close
 setMethod("close", signature = c("gedi.level1b"), h5closeall)
+#' Handles the \link[rGEDI:gedi.level2a-class]{\code{gedi.level2a}}.
 #'@rdname close
 setMethod("close", signature = c("gedi.level2a"), h5closeall)
+#' Handles the \link[rGEDI:gedi.level2b-class]{\code{gedi.level2b}}.
 #'@rdname close
 setMethod("close", signature = c("gedi.level2b"), h5closeall)
+#' Handles the \link[rGEDI:gedi.level1bSim-class]{\code{gedi.level1bSim}}.
 #'@rdname close
 setMethod("close", signature = c("gedi.level1bSim"), h5closeall)

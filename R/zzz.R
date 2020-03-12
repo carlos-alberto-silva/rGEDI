@@ -11,6 +11,13 @@
 }
 
 .onLoad <- function(libname, pkgname){
+  # This will reopen closed files which are in the environment,
+  # necessary for cleaning up between calls of gedisimulator.
+  # 'gedisimulator' is a foreign C library, which have some
+  # memory issues. Unloading and reloading solves the problem,
+  # but unloading should handle hdf5 opened files to avoid
+  # IO locking, so that when reloading, the objects needs to
+  # be opened again.
   objs = c("gedi.level2a", "gedi.level1b", "gedi.level2b", "gedi.level1bSim")
   classes = sapply(ls(.GlobalEnv), function(x) class(get(x)))
   classes = classes[classes %in% objs]
