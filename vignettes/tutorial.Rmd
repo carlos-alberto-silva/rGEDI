@@ -478,7 +478,7 @@ pai_max<-polyStatsLevel2BVPM(level2BVPM_clip_gb,func=max(pai), id=NULL)
 head(pai_max)
 
 
-# Computing the serie of statistics of Canopy Cover stratified by polygon
+# Computing a serie of statistics of Canopy Cover stratified by polygon
 cover_metrics_st<-polyStatsLevel2BVPM(level2BVPM_clip_gb,func=mySetOfMetrics(cover),id="poly_id")
 head(cover_metrics_st)
 ```
@@ -486,7 +486,7 @@ head(cover_metrics_st)
 
 ## Compute Grids with descriptive statistics of GEDI-derived Elevation and Height Metrics (Level2A)
 ```{r, fig.width=7, fig.height=3}
-# Computing the serie of statistics of GEDI RH100 metric
+# Computing a serie of statistics of GEDI RH100 metric
 rh100metrics<-gridStatsLevel2AM(level2AM = level2AM, func=mySetOfMetrics(rh100), res=0.005)
 
 # View maps
@@ -516,7 +516,7 @@ levelplot(rh100metrics,
 
 ## Compute Grids with descriptive statistics of GEDI-derived Canopy Cover and Vertical Profile Metrics (Level2B)
 ```{r, fig.width=7, fig.height=3}
-# Computing the max of the Total Plant Area Index only
+# Computing a serie of statistics of Total Plant Area Index
 level2BVPM$pai[level2BVPM$pai==-9999]<-NA # assing NA to -9999
 pai_metrics<-gridStatsLevel2BVPM(level2BVPM = level2BVPM, func=mySetOfMetrics(pai), res=0.005)
 
