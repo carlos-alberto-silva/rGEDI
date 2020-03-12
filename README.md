@@ -427,9 +427,9 @@ dev.off()
 
 ## Simulating GEDI full-waveform data from Airborne Laser Scanning (ALS) 3-D point cloud and extracting canopy derived metrics
 ```r
-# specify the path to ALS data
-lasfile_amazon <- system.file("extdata", "Amazon.las", package="rGEDI")
-lasfile_savanna <- system.file("extdata", "Savanna.las", package="rGEDI")
+# Specifying the path to ALS data
+lasfile_amazon <- paste0(outdir, "\\Amazon.las")
+lasfile_savanna <- paste0(outdir, "\\Savanna.las")
 
 # Reading and plot ALS file
 library(lidR)
@@ -447,7 +447,7 @@ ycenter_savanna = mean(las_savanna@bbox[2,])
 wf_amazon<-gediWFSimulator(input=lasfile_amazon,output=paste0(getwd(),"//gediWF_amazon_simulation.h5"),coords = c(xcenter_amazon, ycenter_amazon))
 wf_savanna<-gediWFSimulator(input=lasfile_savanna,output=paste0(getwd(),"//gediWF_savanna_simulation.h5"),coords = c(xcenter_savanna, ycenter_savanna))
 
-# Plot ALS and GEDI simulated full-waveform
+# Plotting ALS and GEDI simulated full-waveform
 png("gediWf.png", width = 8, height = 6, units = 'in', res = 300)
 
 par(mfrow=c(2,2), mar=c(4,4,0,0), oma=c(0,0,1,1),cex.axis = 1.2)
