@@ -13,7 +13,7 @@ Authors@R: c(
     person("Celso H. L.", "Silva Junior", email = "celso.junior@inpe.br", role = ("ctb"), comment = "Reviews the documentation"),
     person("Carine", "Klauberg", email = "carine_klauberg@hotmail.com", role = ("ctb"), comment = "Reviews the documentation"))
 Maintainer: Carlos Alberto Silva <carlos_engflorestal@outlook.com> and Caio Hamamura <caiohamamura@gmail.com>
-Description: Set of tools for downloading, reading, visualizing and processing GEDI data for forestry applications.
+Description: Set of tools for downloading, reading, visualizing and processing GEDI Leve1B, Leve2A and Leve2B data.
 License: GPL-3
 Encoding: UTF-8
 LazyData: true

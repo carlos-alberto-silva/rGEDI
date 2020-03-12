@@ -20,7 +20,8 @@ An S4 object of class \code{\link[data.table:data.table]{data.table-class}} cont
 This function extracts Pulse Full Waveform Geolocations from GEDI Level1B data
 }
 \details{
-Besides of the fields specified as defaul, GEDI mission level 1B description (https://lpdaac.usgs.gov/products/gedi01_bv001/) details all the information that can be extracted:
+Besides of the fields specified as defaul, GEDI mission level 1B description
+(https://lpdaac.usgs.gov/products/gedi01_bv001/) details all the information that can be extracted:
 \itemize{
 \item \emph{all_samples_sum} Sum of all values within the 10 km range window.
 \item \emph{beam} Beam number	Number.

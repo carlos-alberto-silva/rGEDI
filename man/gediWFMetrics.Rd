@@ -159,10 +159,96 @@ gediWFMetrics(input, outRoot, writeFit = FALSE, writeGauss = FALSE,
 \item{deconTol}{deconvolution tolerance}
 }
 \value{
-A S4 object of class \code{\link[hdf5r:H5File-class]{hdf5r::H5File}} in the \emph{hdf5r} package.
+A list of metrics derived from the simulated full waveform.
+A text file (txt) containing the metrics will be saved in the output folder (outRoot).
+Please see the details section for checking the definition of the metrics.
 }
 \description{
 GEDI full waveform data processing and metrics extraction
+}
+\details{
+a) Metrics descriptions
+
+\itemize{
+a.1) Metrics available to GEDI
+
+\item \emph{gHeight} Ground elevation (m) from Gaussian fitting
+\item \emph{maxGround} Ground elevation (m) from lowest maximum
+\item \emph{inflGround} Ground elevation (m) from inflection points.
+\item \emph{signal top} Elevation of first point above noise (may include noise tracking).
+\item \emph{signal bottom} Elevation of last return above noise (may include noise tracking).
+\item \emph{cover} Canopy cover (fraction) from area of Gaussian fitted ground. Uses rho_v=0.57 and rho_g=0.4.
+\item \emph{leading edge ext} Leading edge extent (m), from Lefksy et al (2007).
+\item \emph{trailing edge extent} Trailing edge extent (m), from Lefksy et al (2007).
+\item \emph{rhGauss 0-100} RH metrics, 0%-100%, using ground from Gaussian fitting (m).
+\item \emph{rhMax 0-100} RH metrics, 0%-100%, using ground from lowest maximum (m).
+\item \emph{rhInfl 0-100} RH metrics, 0%-100%, using ground from inflection points (m).
+\item \emph{gaussHalfCov} Canopy cover (fraction) from double the energy beneath the Gaussian ground. Uses rho_v=0.57 and rho_g=0.4.
+\item \emph{maxHalfCov} Canopy cover (fraction) from double the energy beneath the lowest maximum ground. Uses rho_v=0.57 and rho_g=0.4.
+\item \emph{infHalfCov} Canopy cover (fraction) from double the energy beneath the inflection point ground. Uses rho_v=0.57 and rho_g=0.4.
+\item \emph{bayHalfCov} Canopy cover (fraction) from double the energy beneath the experimental "Bayesian" ground. Uses rho_v=0.57 and rho_g=0.4.
+\item \emph{lon} Footprint centre longitude in projection of ALS data (m).
+\item \emph{lat} Footprint centre latitude in projection of ALS data (m).
+\item \emph{waveEnergy} Total energy within waveform (will be 1 scaled by noise for simulations).
+\item \emph{blairSense} Blair's sensitivity metric. Canopy cover at which this SNR would have90% chance of detecting ground (does not account for rho_v/rho_g).
+\item \emph{FHD} Foliage height diversity
+\item \emph{niM2} Wenge Ni's biomass metric, equal to the sum of the RH metrics to the power of 2 (unpublished)
+\item \emph{niM2.1} Wenge Ni's biomass metric, equal to the sum of the RH metrics to the power of 2.1 (unpublished)
+
+a.2) Metrics unavailable to GEDI
+\item \emph{wave ID} Waveform label, relates to plot name and footprint number.
+\item \emph{true ground} Ground elevation (m) from ALS. Centre of gravity of ground points within footprint
+\item \emph{true top} Levation of highest point of waveform (m), without noise. Includes pulse blurring.
+\item \emph{ground slope} Effective ground slope (degrees), from width of ground return. Includes roughness.
+\item \emph{ALS cover} Canopy cover (fraction) from ALS data. Uses rho_v=0.57 and rho_g=0.4.
+\item \emph{rhReal 0-100} RH metrics, 0%-100%, using "true" ground from ALS data (m).
+\item \emph{groundOverlap} Fraction of ground return overlapping with canopy return. A measure of understorey.
+\item \emph{groundMin} Depth of minimum between ground and canopy return. A measure of understorey.
+\item \emph{groundInfl} d2y/dx2 of inflection point between ground and canopy return. A measure of understorey.
+\item \emph{pointDense} Average ALS point density within GEDI footprint.
+\item \emph{beamDense} Average ALS beam density within GEDI footprint.
+
+a.3) System settings
+\item \emph{pSigma} GEDI system pulse width, sigma (m).
+\item \emph{fSigma} GEDI footprint width, sigma (m).
+\item \emph{linkM} Link margin if noise is added (db).
+\item \emph{linkCov} Canopy cover at which the above link margin is true (fraction).
+\item \emph{filename} Name of input waveform file.
+}
+
+b) Signal processing description
+
+\itemize{
+b1) Gaussian fitting
+Used for "gHeight", "rhGauss" and "gaussHalfCov".
+The waveform is denoised (mean+5*sigma, noise tracking to avoid truncation), smoothed (pSigma*0.75) and Gaussians fitted with Levenberg-Marquardt optimisation.
+The center of the lowest Gaussian containing at least 0.5% of the waveform energy is selected as the ground.
+
+b2) Maximum
+Used for "maxGround", "rhMax" and "maxHalfCov".
+The waveform is denoised (mean+5*sigma, noise tracking to avoid truncation), smoothed (pSigma*0.75).
+The lowest maximum is taken as the ground.
+
+b3) Inflection points
+Used for "inflGround", "rhInfl" and "inflHalfCov".
+The waveform is denoised (mean+5*sigma, noise tracking to avoid truncation), smoothed (pSigma*0.75).
+The centre of gravity between the lowest two inflection points is taken as the ground.
+
+b4) Half covers
+Used for "gaussHalfCov", "maxHalfCov" and "inflHalfCov".
+Sum energy beneath estimated ground position.
+Double that is the ground energy.
+Calculate canopy cover, correcting for rho_v and rho_g.
+
+Cover = \frac{E_{can}}{E_{can} + E_g*\frac{rho_v}{rho_g}}
+
+Where Ecan is the canopy energy, Eg is the ground energy, rho_v is the vegetation reflectance and rho_g is the ground reflectance.
+
+b5) Edge extents
+These are described in:
+Lefsky, Michael A., Michael Keller, Yong Pang, Plinio B. De Camargo, and Maria O. Hunter.
+"Revised method for forest canopy height estimation from Geoscience Laser Altimeter System waveforms." Journal of Applied Remote Sensing 1, no. 1 (2007): 013537-013537.
+}
 }
 \examples{
 \dontshow{
@@ -172,7 +258,7 @@ rm(list=ls())
 libsAvailable = require(lidR) && require(plot3D)
 if (libsAvailable) {
 
-# specify the path to ALS data (zip)
+# Specifying the path to ALS data (zip)
 alsfile_Amazon_zip <- system.file("extdata", "Amazon.zip", package="rGEDI")
 alsfile_Savanna_zip <- system.file("extdata", "Savanna.zip", package="rGEDI")
 
