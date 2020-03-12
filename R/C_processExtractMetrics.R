@@ -435,7 +435,11 @@ gediWFMetrics = function(
     metricData = read.csv(output, sep=" ", skip=1, na.strings = "?", header = FALSE)
     if (ncol(metricData) == length(header)) {
       names(metricData) = header
-    }
+    } else {
+      diff = ncol(metricData) - length(header)
+      metricData = metricData[,-c(99:(99+diff-1))]
+      metricData[,98] = outRoot
+      names(metricData) = header }
   }
 
   if (class(input)=="list") {
