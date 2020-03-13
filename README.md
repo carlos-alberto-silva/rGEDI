@@ -26,6 +26,7 @@ devtools::install_github("carlos-alberto-silva/rGEDI", dependencies = TRUE)
 
 # loading rGEDI package
 library(rGEDI)
+
 ```    
 
 ## Find GEDI data within your study area (GEDI finder tool)
@@ -546,4 +547,5 @@ Dr. Carlos Alberto Silva (carlos_engflorestal@outlook.com) was funded through th
 The Brazilian National Council for Scientific and Technological Development (CNPq) for funding the project entitled "Mapping fuel load and simulation of fire behaviour and spread in the Cerrado biome using modeling and remote sensing technologies" and leaded by Prof. Dr. Carine Klauberg (carine_klauberg@hotmail.com) and Dr. Carlos Alberto Silva.
 
 # Disclaimer
+
 **rGEDI package has not been developted by the GEDI team. It comes with no guarantee, expressed or implied, and the authors hold no responsibility for its use or reliability of its outputs.**
