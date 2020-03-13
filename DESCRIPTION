@@ -1,6 +1,6 @@
 Package: rGEDI
 Type: Package
-Title: rGEDI: NASA's Global Ecosystem Dynamics Investigation (GEDI) Data Visualization and Processing
+Title:NASA's Global Ecosystem Dynamics Investigation (GEDI) Data Visualization and Processing
 Version: 0.0.1
 Authors@R: c(
     person("Carlos Alberto", "Silva", email = "carlos_engflorestal@outlook.com", role = c("aut", "cre", "cph")),
@@ -12,7 +12,7 @@ Authors@R: c(
     person("Danilo Roberti Alves de", "Almeida", email = "daniloflorestas@gmail.com", role = ("ctb"), comment = "Reviews the documentation"),
     person("Celso H. L.", "Silva Junior", email = "celso.junior@inpe.br", role = ("ctb"), comment = "Reviews the documentation"),
     person("Carine", "Klauberg", email = "carine_klauberg@hotmail.com", role = ("ctb"), comment = "Reviews the documentation"))
-Maintainer: Carlos Alberto Silva <carlos_engflorestal@outlook.com> and Caio Hamamura <caiohamamura@gmail.com>
+Maintainer: Carlos Alberto Silva <carlos_engflorestal@outlook.com>
 Description: Set of tools for downloading, reading, visualizing and processing GEDI Level1B, Level2A and Level2B data.
 License: GPL-3
 Encoding: UTF-8
