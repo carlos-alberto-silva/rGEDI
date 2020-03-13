@@ -8,7 +8,7 @@
 #define main gediMetric
 #define control metric_control
 #define readCommands readCommands_metric
-#define fprintf(out, ...) (out) == stdout ? Rprintf(__VA_ARGS__) : fprintf(out, __VA_ARGS__)
+#define fprintf(out, ...) (out) == stdout ? Rprintf(__VA_ARGS__) : (out) == stderr ? REprintf(__VA_ARGS__) : (void)fprintf(out, __VA_ARGS__)
     #include "gedisimulator/gediMetric.h"
     #include "gedisimulator/gediMetric.c"
 #undef fprintf
