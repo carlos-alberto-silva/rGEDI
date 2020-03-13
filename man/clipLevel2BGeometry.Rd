@@ -4,8 +4,7 @@
 \alias{clipLevel2BGeometry}
 \title{Clip GEDI Level2B data by geometry}
 \usage{
-clipLevel2BGeometry(level2b, polygon_spdf, output = "",
-  split_by = NULL)
+clipLevel2BGeometry(level2b, polygon_spdf, output = "", split_by = NULL)
 }
 \arguments{
 \item{level2b}{A GEDI Level2B object (output of \code{\link[rGEDI:readLevel2B]{readLevel2B}} function).

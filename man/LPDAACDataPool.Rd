@@ -16,7 +16,7 @@ Download GEDI data from LP DAAC Data Pool. Users will need to enter their
 Earth Explore login Information for downloading the data.
 }
 \examples{
-\donttest{
+\dontrun{
 #' Set path to GEDI data
 filepath=c(paste0(
                  "https://e4ftl01.cr.usgs.gov/GEDI/GEDI02_B.001",

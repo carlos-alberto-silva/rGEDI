@@ -526,7 +526,7 @@ close(gedilevel2b)
 Dubayah, R., Blair, J.B., Goetz, S., Fatoyinbo, L., Hansen, M., Healey, S., Hofton, M., Hurtt, G.,         Kellner, J., Luthcke, S., & Armston, J. (2020) The Global Ecosystem Dynamics Investigation:         High-resolution laser ranging of the Earth’s forests and topography. Science of Remote             Sensing, p.100002. https://doi.org/10.1016/j.srs.2020.100002
 
 Hancock, S., Armston, J., Hofton, M., Sun, X., Tang, H., Duncanson, L.I., Kellner,
-       J.R. and Dubayah, R., 2019. The GEDI simulator: A large‐footprint waveform lidar simulator
+       J.R. and Dubayah, R., 2019. The GEDI simulator: A large-footprint waveform lidar simulator
        for calibration and validation of spaceborne missions. Earth and Space Science.
        https://doi.org/10.1029/2018EA000506
 
