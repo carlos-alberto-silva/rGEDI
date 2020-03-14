@@ -45,7 +45,7 @@ OBJECTS = $(LIBCLIDAR_ROOT)/libLasProcess.o $(LIBCLIDAR_ROOT)/libLasRead.o \
 	$(LIBCLIDAR_ROOT)/libOctree.o $(GEDIRAT_ROOT)/gediNoise.o \
     $(HANCOCKTOOLS_ROOT)/tools.o $(CMPFIT_ROOT)/mpfit.o \
     $(GEDIRAT_ROOT)/photonCount.o \
-   argParse.o gediMetrics.o gediSimulator.o addNoiseHDF.o \
+   argParse.o gediMetrics.o gediSimulator.o \
    registerDynamicSymbol.o
 
 
