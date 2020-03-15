@@ -6,8 +6,8 @@ CMPFIT_ROOT = cmpfit-1.2
 GSL_ROOT = gsl
 
 PKG_CFLAGS += -DDLLEXPORT -D_USE_MATH_DEFINES -D_WIN32 \
-						  -DWIN32 -DH5_BUILT_AS_DYNAMIC_LIB -DDLL_EXPORTS \
-						  -DUSEPHOTON
+	-DWIN32 -DH5_BUILT_AS_DYNAMIC_LIB -DDLL_EXPORTS \
+	-DUSEPHOTON
 
 ARCH=$(PROCESSOR_ARCHITECTURE)
 
@@ -46,7 +46,7 @@ OBJECTS = $(LIBCLIDAR_ROOT)/libLasProcess.o $(LIBCLIDAR_ROOT)/libLasRead.o \
     $(HANCOCKTOOLS_ROOT)/tools.o $(CMPFIT_ROOT)/mpfit.o \
     $(GEDIRAT_ROOT)/photonCount.o \
    argParse.o gediMetrics.o gediSimulator.o \
-   registerDynamicSymbol.o
+   registerDynamicSymbol.o msgHandling.o
 
 
 VERSION = 2.2.3
