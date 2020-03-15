@@ -35,8 +35,7 @@ gediWFSimulator(
   nOctPix = as.integer(40),
   keepOld = FALSE,
   useShadow = FALSE,
-  polyGround = FALSE,
-  seed = NULL
+  polyGround = FALSE
 )
 }
 \arguments{
@@ -106,9 +105,7 @@ Using full waveform input data (not tested)}
 
 \item{useShadow}{account for shadowing in discrete return data through voxelization}
 
-\item{polyGround}{find mean ground elevation and slope through fitting a polynomial}
-
-\item{seed}{n integer. random number seed
+\item{polyGround}{find mean ground elevation and slope through fitting a polynomial
 
 #'}
 }

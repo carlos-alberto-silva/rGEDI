@@ -34,7 +34,7 @@ downloadDep("libclidar",
 	    "libclidar-0.4.0")
 downloadDepBitBucket("gedisimulator",
                      "gediRat.c",
-                     "caiohamamura-gedisimulator-9700aeec5e47")
+                     "caiohamamura-gedisimulator-3947f27f56fa")
 downloadDep("tools",
             "tools.c",
             "https://github.com/caiohamamura/tools/archive/v0.4.0.tar.gz",

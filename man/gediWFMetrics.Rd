@@ -26,7 +26,6 @@ gediWFMetrics(
   noCanopy = FALSE,
   dcBias = 0,
   nSig = 0,
-  seed = NULL,
   hNoise = 0,
   linkNoise = NULL,
   linkFsig = NULL,
@@ -116,8 +115,6 @@ gediWFMetrics(
 \item{dcBias}{n. mean noise level}
 
 \item{nSig}{sig. noise sigma}
-
-\item{seed}{n. random number seed}
 
 \item{hNoise}{n. hard threshold noise as a fraction of integral}
 

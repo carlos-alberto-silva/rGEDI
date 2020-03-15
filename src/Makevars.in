@@ -32,7 +32,7 @@ src = $(LIBCLIDAR_ROOT)/libLasProcess.c $(LIBCLIDAR_ROOT)/libLasRead.c \
 	$(GEDIRAT_ROOT)/photonCount.c  \
 	gediMetrics.c gediSimulator.c \
 	argParse.c registerDynamicSymbol.c \
-	msgHandling.c
+	functionWrappers.c
 
 #src_cpp = process.cpp RcppExports.cpp
 OBJECTS = $(src:.c=.o)

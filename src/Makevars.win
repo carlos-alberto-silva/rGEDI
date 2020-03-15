@@ -46,7 +46,7 @@ OBJECTS = $(LIBCLIDAR_ROOT)/libLasProcess.o $(LIBCLIDAR_ROOT)/libLasRead.o \
     $(HANCOCKTOOLS_ROOT)/tools.o $(CMPFIT_ROOT)/mpfit.o \
     $(GEDIRAT_ROOT)/photonCount.o \
    argParse.o gediMetrics.o gediSimulator.o \
-   registerDynamicSymbol.o msgHandling.o
+   registerDynamicSymbol.o functionWrappers.o
 
 
 VERSION = 2.2.3

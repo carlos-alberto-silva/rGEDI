@@ -65,7 +65,7 @@
 
 # nnGround is not working yet
 # @param nnGround find mean ground elevation and slope through nearest neighbour
-#' @param seed n integer. random number seed
+# @param seed n integer. random number seed
 #'
 #' #'
 #' @return An S4 object of class \code{\link[hdf5r:H5File-class]{hdf5r::H5File}} in the \emph{hdf5r} package.
@@ -179,8 +179,7 @@ gediWFSimulator = function(
 
   keepOld = FALSE,
   useShadow = FALSE,
-  polyGround = FALSE,
-  seed = NULL) {
+  polyGround = FALSE) {
 
   # Set parameters that shouldn't be changed for GEDI
   ground = TRUE
@@ -227,8 +226,7 @@ gediWFSimulator = function(
     "nOctPix is invalid!"=checkInteger(nOctPix),
     "keepOld is invalid!"=checkLogical(keepOld),
     "useShadow is invalid!"=checkLogical(useShadow),
-    "polyGround is invalid!"=checkLogical(polyGround),
-    "seed is invalid!"=checkInteger(seed)
+    "polyGround is invalid!"=checkLogical(polyGround)
   )
 
   if (is.null(coords) && is.null(listCoord) && is.null(gridBound)) {
@@ -289,7 +287,7 @@ gediWFSimulator = function(
         useShadow,
         polyGround,
         nnGround,
-        as.integer(seed))
+        NULL)
 
   unloadLibrary()
 

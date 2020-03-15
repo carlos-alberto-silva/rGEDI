@@ -8,10 +8,8 @@
 #define main gediRat
 #define control metric_control
 #define readCommands readCommands_rat
-#define fprintf(stdout, ...) Rprintf(__VA_ARGS__)
     #include "gedisimulator/gediRat.h"
     #include "gedisimulator/gediRat.c"
-#undef fprintf
 #undef readCommands
 #undef control
 #undef main
@@ -125,8 +123,9 @@ SEXP C_gediSimulator(
         Rprintf("%s ", argv[i]);
     }
 #endif
-
+    GetRNGstate();
     gediRat(argc, argv);
+    GetRNGstate();
 
     for (int i = 0; i < argc; i++) {
         free(argv[i]);

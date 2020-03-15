@@ -42,7 +42,7 @@
 #! \bold{Adding noise}
 #' @param dcBias n. mean noise level
 #' @param nSig sig. noise sigma
-#' @param seed n. random number seed
+# @param seed n. random number seed
 #' @param hNoise n. hard threshold noise as a fraction of integral
 #' @param linkNoise linkM cov. apply Gaussian noise based on link margin at a cover
 #' @param linkFsig sig. footprint width to use when calculating and applying signal noise
@@ -282,7 +282,6 @@ gediWFMetrics = function(
   noCanopy = FALSE,
   dcBias = 0.0,
   nSig = 0.0,
-  seed = NULL,
   hNoise = 0.0,
   linkNoise = NULL,
   linkFsig = NULL,
@@ -358,7 +357,6 @@ gediWFMetrics = function(
     "noCanopy is invalid!"=checkLogical(noCanopy),
     "dcBias is invalid!"=checkNumeric(dcBias),
     "nSig is invalid!"=checkNumeric(nSig),
-    "seed is invalid!"=checkInteger(seed),
     "hNoise is invalid!"=checkNumeric(hNoise),
     "linkNoise is invalid!"=checkNumericLength(linkNoise, 2),
     "linkFsig is invalid!"=checkNumeric(linkFsig),
@@ -458,7 +456,7 @@ gediWFMetrics = function(
               # Adding noise
               dcBias,
               nSig,
-              seed,
+              NULL,
               hNoise,
               linkNoise,
               linkFsig,

@@ -8,10 +8,8 @@
 #define main gediMetric
 #define control metric_control
 #define readCommands readCommands_metric
-#define fprintf(out, ...) (out) == stdout ? Rprintf(__VA_ARGS__) : (out) == stderr ? REprintf(__VA_ARGS__) : (void)fprintf(out, __VA_ARGS__)
     #include "gedisimulator/gediMetric.h"
     #include "gedisimulator/gediMetric.c"
-#undef fprintf
 #undef readCommands
 #undef control
 #undef main
@@ -198,7 +196,9 @@ SEXP C_gediMetrics(
     }
 #endif
 
+    GetRNGstate();
     gediMetric(argc, argv);
+    PutRNGstate();
 
     for (int i = 0; i < argc; i++) {
         free(argv[i]);
