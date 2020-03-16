@@ -541,9 +541,10 @@ GEDI Finder. Accessed on February 15 2020 https://lpdaacsvc.cr.usgs.gov/services
 # Acknowledgements
 The University of Maryland and NASA's Goddard Space Flight Center for developing GEDI mission.
 
-Dr. Carlos Alberto Silva (carlos_engflorestal@outlook.com) was funded through the NASA’s Carbon Monitoring System project entitled "Future Mission Fusion for High Biomass Forest Carbon Accounting" (CMS, grant 15-CMS15-0055) led by Dr. Laura Duncanson (lduncans@umd.edu, Universtiy of Maryland) and Dr. Lola Fatoyinbo (lola.fatoyinbo@nasa.gov, NASA's Goddard Space Flight Center).
+We gratefully acknowledge funding from NASA’s Carbon Monitoring Systems, grant NNH15ZDA001N-CMS. Project entitled "Future Mission Fusion for High Biomass Forest Carbon Accounting" led by Dr. Laura Duncanson (lduncans@umd.edu, University of Maryland) and Dr. Lola Fatoyinbo (lola.fatoyinbo@nasa.gov, NASA's Goddard Space Flight Center).
 
-The Brazilian National Council for Scientific and Technological Development (CNPq) for funding the project entitled "Mapping fuel load and simulation of fire behaviour and spread in the Cerrado biome using modeling and remote sensing technologies" and leaded by Prof. Dr. Carine Klauberg (carine_klauberg@hotmail.com) and Dr. Carlos Alberto Silva.
+The Brazilian National Council for Scientific and Technological Development (CNPq) for funding the project entitled "Mapping fuel load and simulation of fire behaviour and spread in the Cerrado biome using modeling and remote sensing technologies" and leaded by Prof. Dr. Carine Klauberg (carine_klauberg@hotmail.com) and Dr. Carlos Alberto Silva
+(carlos_engflorestal@outlook.com).
 
 # Disclaimer
 
