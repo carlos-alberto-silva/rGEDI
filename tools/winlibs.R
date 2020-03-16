@@ -1,14 +1,13 @@
 # Download GSL 2.4; hdf5; libgeotiff;
 
-# Download gdal-2.2.0 from rwinlib
-VERSION <- commandArgs(TRUE)
-# if(!file.exists(sprintf("../windows/gdal2-%s/include/gdal/gdal.h", VERSION))){
-#   print("Downloading and installing GDAL...")
-#   download.file(sprintf("https://github.com/rwinlib/gdal2/archive/v%s.zip", VERSION), "lib.zip", quiet = FALSE)
-#   dir.create("../windows", showWarnings = FALSE)
-#   unzip("lib.zip", exdir = "../windows")
-#   unlink("lib.zip")
-# }
+# Download gdal
+if(!file.exists("../windows/gdal2-2.2.3/include/gdal/gdal.h")){
+  print("Downloading and installing GDAL...")
+  download.file("https://github.com/rwinlib/gdal2/archive/v2.2.3.zip", "lib.zip", quiet = FALSE)
+  dir.create("../windows", showWarnings = FALSE)
+  unzip("lib.zip", exdir = "../windows")
+  unlink("lib.zip")
+}
 
 if(!file.exists("../windows/gsl-2.4/include/gsl/gsl_blas.h")){
   print("Downloading and installing GSL...")
