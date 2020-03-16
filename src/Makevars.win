@@ -7,7 +7,7 @@ GSL_ROOT = gsl
 
 PKG_CFLAGS += -DDLLEXPORT -D_USE_MATH_DEFINES -D_WIN32 \
 	-DWIN32 -DH5_BUILT_AS_DYNAMIC_LIB -DDLL_EXPORTS \
-	-DUSEPHOTON
+	-DUSEPHOTON -DWITHOUT_GDAL
 
 ARCH=$(PROCESSOR_ARCHITECTURE)
 
@@ -15,28 +15,7 @@ HDF5_LIB = ../windows/include/
 PKG_CPPFLAGS += -Igedisimulator -I$(HANCOCKTOOLS_ROOT) -I$(CMPFIT_ROOT) \
 -I${LIBCLIDAR_ROOT} -I. -I../windows/mingw64-libhdf5-dev-1.8.20/include \
 -I../windows/gsl-2.4/include -I./cmpfit-1.2 -I../windows/libgeotiff-1.4.3 \
--I../windows/libgeotiff-1.4.3/libxtiff -I../windows/libtiff-4.0.9/include \
--I$(RWINLIB)/include/gdal
-
-
-#PKG_CXXFLAGS = $(PKG_CFLAGS)
-#CXX_STD = CXX11
-
-#PKG_CFLAGS += -D__USE_MINGW_ANSI_STDIO
-
-#src = $(LIBCLIDAR_ROOT)/libLasProcess.c $(LIBCLIDAR_ROOT)/libLasRead.c \
-	$(LIBCLIDAR_ROOT)/tiffWrite.c $(LIBCLIDAR_ROOT)/gaussFit.c \
-	$(LIBCLIDAR_ROOT)/libLidVoxel.c  $(LIBCLIDAR_ROOT)/libTLSread.c \
-	$(LIBCLIDAR_ROOT)/libLidarHDF.c $(GEDIRAT_ROOT)/gediIO.c \
-	$(LIBCLIDAR_ROOT)/libOctree.c $(GEDIRAT_ROOT)/gediNoise.c \
-	$(GEDIRAT_ROOT)/gediRat.o \
-	$(HANCOCKTOOLS_ROOT)/tools.c
-#src += $(CMPFIT_ROOT)/mpfit.c
-#src += msgHandling.c
-#OBJECTS = $(src:.c=.o)
-
-src_cpp = $(wildcard *.cpp)
-#OBJECTS += $(src_cpp:.cpp=.o)
+-I../windows/libgeotiff-1.4.3/libxtiff -I../windows/libtiff-4.0.9/include
 
 OBJECTS = $(LIBCLIDAR_ROOT)/libLasProcess.o $(LIBCLIDAR_ROOT)/libLasRead.o \
 	$(LIBCLIDAR_ROOT)/tiffWrite.o $(LIBCLIDAR_ROOT)/gaussFit.o \
@@ -48,26 +27,15 @@ OBJECTS = $(LIBCLIDAR_ROOT)/libLasProcess.o $(LIBCLIDAR_ROOT)/libLasRead.o \
    argParse.o gediMetrics.o gediSimulator.o \
    registerDynamicSymbol.o functionWrappers.o
 
-
-VERSION = 2.2.3
-RWINLIB = ../windows/gdal2-$(VERSION)
-
-
 PKG_LIBS += \
 	-L$(RWINLIB)/lib$(R_ARCH) \
 	-L../windows/gsl-2.4/lib$(R_ARCH) \
-	-lgdal -lsqlite3 -lspatialite -lproj -lgeos_c -lgeos  \
-	-ljson-c -lnetcdf -lmariadbclient -lpq -lintl -lwebp -lcurl -lssh2 -lssl -lcrypto \
-	-lkea -lhdf5_cpp -lhdf5_hl -lhdf5 -lexpat -lfreexl -lcfitsio \
-	-lmfhdf -ldf -lxdr \
-	-lopenjp2 -ljasper -lpng16 -ljpeg -ltiff -lgeotiff -lgif -lxml2 -llzma -lszip -lz \
-	-lodbc32 -lodbccp32 -liconv -lpsapi -lws2_32 -lcrypt32 -lwldap32 -lsecur32 -lgdi32 \
-	-lgsl
+	-ltiff -lgeotiff -lgsl
 
 all: winlibs deps
 
 winlibs:
-	"$(R_HOME)/bin/Rscript" "../tools/winlibs.R" $(VERSION)
+	"$(R_HOME)/bin/Rscript" "../tools/winlibs.R"
 
 deps:
 	"$(R_HOME)/bin/Rscript" "../tools/deps.R"

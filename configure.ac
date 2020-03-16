@@ -21,12 +21,6 @@ AX_PATH_GSL(0.1,,
 
 
 ##################
-## GDAL
-##################
-AX_LIB_GDAL2()
-
-
-##################
 ## HDF5
 ##################
 AX_LIB_HDF5()
@@ -54,8 +48,11 @@ else
 	fi
 fi
 
+GEOTIFF_LIBS="-lgeotiff $LIBS"
+
 
 AC_SUBST(GEOTIFF_INCLUDE,$GEOTIFF_INCLUDE)
+AC_SUBST(GEOTIFF_LIBS, $GEOTIFF_LIBS)
 
 ##################
 ## END

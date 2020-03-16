@@ -2,13 +2,13 @@
 
 # Download gdal-2.2.0 from rwinlib
 VERSION <- commandArgs(TRUE)
-if(!file.exists(sprintf("../windows/gdal2-%s/include/gdal/gdal.h", VERSION))){
-  print("Downloading and installing GDAL...")
-  download.file(sprintf("https://github.com/rwinlib/gdal2/archive/v%s.zip", VERSION), "lib.zip", quiet = FALSE)
-  dir.create("../windows", showWarnings = FALSE)
-  unzip("lib.zip", exdir = "../windows")
-  unlink("lib.zip")
-}
+# if(!file.exists(sprintf("../windows/gdal2-%s/include/gdal/gdal.h", VERSION))){
+#   print("Downloading and installing GDAL...")
+#   download.file(sprintf("https://github.com/rwinlib/gdal2/archive/v%s.zip", VERSION), "lib.zip", quiet = FALSE)
+#   dir.create("../windows", showWarnings = FALSE)
+#   unzip("lib.zip", exdir = "../windows")
+#   unlink("lib.zip")
+# }
 
 if(!file.exists("../windows/gsl-2.4/include/gsl/gsl_blas.h")){
   print("Downloading and installing GSL...")
