@@ -1,7 +1,7 @@
 #include <R.h>
 #include <stdio.h>
 #include <stdarg.h>
-#include <functionWrappers.h>
+#include "tools/functionWrappers.h"
 
 int msgf(const char *format, ...)
 {
@@ -22,9 +22,8 @@ int errorf(const char *format, ...) {
 
 float frand() {
     return((float)unif_rand());
-};
-
+}
 
 void srand2(int seed) {
     return;
-};
+}
