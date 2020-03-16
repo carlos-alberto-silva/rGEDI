@@ -143,6 +143,17 @@ head(level2AM[,c("beam","shot_number","elev_highestreturn","elev_lowestmode","rh
 ##  4: BEAM0000 19640003400109385           775.9838        770.6652  5.31
 ##  5: BEAM0000 19640003600109386           777.8409        773.0841  4.75
 ##  6: BEAM0000 19640003800109387           778.7181        773.6990  5.01
+
+# Converting shot_number as "integer64" to "character"
+level2AM$shot_number<-paste0(level2AM$shot_number)
+
+# Converting Elevation and Height Metrics as data.table to SpatialPointsDataFrame
+level2AM_spdf<-SpatialPointsDataFrame(cbind(level2AM$lon_lowestmode,level2AM$lat_lowestmode),
+                                        data=level2AM)
+
+# Exporting Elevation and Height Metrics as ESRI Shapefile
+writeOGR(level2AM_spdf,dsn=outdir,layer="GEDI02_A_2019108080338_O01964_T05337_02_001_01_sub",drive="ESRI Shapefile")
+
 ```
 
 ## Plot waveform with RH metrics
@@ -166,6 +177,16 @@ head(level2BVPM[,c("beam","shot_number","pai","fhd_normal","omega","pgap_theta",
 ##   4: BEAM0000 19640003400109385 0.079557180  1.6625489     1  0.9609926 0.038997617
 ##   5: BEAM0000 19640003600109386 0.018724868  1.5836401     1  0.9906789 0.009318732
 ##   6: BEAM0000 19640003800109387 0.017654873  1.2458609     1  0.9912092 0.008788579
+
+# Converting shot_number as "integer64" to "character"
+level2BVPM$shot_number<-paste0(level2BVPM$shot_number)
+
+# Converting GEDI Vegetation Profile Biophysical Variables as data.table to SpatialPointsDataFrame
+level2BVPM_spdf<-SpatialPointsDataFrame(cbind(level2BVPM$lon_lowestmode,level2BVPM$lat_lowestmode),
+                                      data=level2BVPM)
+
+# Exporting GEDI Vegetation Profile Biophysical Variables as ESRI Shapefile
+writeOGR(level2BVPM_spdf,dsn=outdir,layer="GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub",drive="ESRI Shapefile")
 
 ```
 
@@ -192,6 +213,21 @@ head(level2BPAVDProfile[,c("beam","shot_number","pavd_z0_5m","pavd_z5_10m")])
 ##   4: BEAM0000 19640003400109385 0.015822290 0.0079557188
 ##   5: BEAM0000 19640003600109386 0.003744974 0.0018724868
 ##   6: BEAM0000 19640003800109387 0.003530974 0.0017654872
+
+# Converting shot_number as "integer64" to "character"
+level2BPAIProfile$shot_number<-paste0(level2BPAIProfile$shot_number)
+level2BPAVDProfile$shot_number<-paste0(level2BPAVDProfile$shot_number)
+
+# Converting PAI and PAVD Profiles as data.table to SpatialPointsDataFrame
+level2BPAIProfile_spdf<-SpatialPointsDataFrame(cbind(level2BPAIProfile$lon_lowestmode,level2BPAIProfile$lat_lowestmode),
+                                        data=level2BPAIProfile)
+level2BPAVDProfile_spdf<-SpatialPointsDataFrame(cbind(level2BPAVDProfile$lon_lowestmode,level2BPAVDProfile$lat_lowestmode),
+                                               data=level2BPAVDProfile)
+
+# Exporting PAI and PAVD Profiles as ESRI Shapefile
+writeOGR(level2BPAIProfile_spdf,dsn=outdir,layer="GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub_PAIProfile",drive="ESRI Shapefile")
+writeOGR(level2BPAVDProfile_spdf,dsn=outdir,layer="GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub_PAVDProfile",drive="ESRI Shapefile")
+
 ```
 
 ## Plot Plant Area Index (PAI) and Plant Area Volume Density (PAVD) Profiles 
