@@ -86,8 +86,7 @@ level1BGeo$shot_number<-paste0(level1BGeo$shot_number)
 
 # Converting level1BGeo as data.table to SpatialPointsDataFrame
 library(sp)
-level1BGeo_spdf<-SpatialPointsDataFrame(cbind(level1BGeo$longitude_bin0,
-                                        level1BGeo$latitude_bin0),
+level1BGeo_spdf<-SpatialPointsDataFrame(cbind(level1BGeo$longitude_bin0, level1BGeo$latitude_bin0),
                                         data=level1BGeo)
 
 # Exporting level1BGeo as ESRI Shapefile
