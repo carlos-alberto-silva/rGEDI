@@ -27,10 +27,14 @@ OBJECTS = $(LIBCLIDAR_ROOT)/libLasProcess.o $(LIBCLIDAR_ROOT)/libLasRead.o \
    argParse.o gediMetrics.o gediSimulator.o \
    registerDynamicSymbol.o functionWrappers.o
 
+VERSION = 2.2.3
+RWINLIB = ../windows/gdal2-$(VERSION)
+
 PKG_LIBS += \
 	-L$(RWINLIB)/lib$(R_ARCH) \
+	-L../windows/mingw64-libhdf5-dev-1.8.20/lib \
 	-L../windows/gsl-2.4/lib$(R_ARCH) \
-	-ljpeg -ltiff -lgeotiff -llzma -lszip -lz -lgsl
+	-ltiff -lgeotiff -ljpeg -lhdf5 -llzma -lszip -lz -lgsl
 
 all: winlibs deps
 
