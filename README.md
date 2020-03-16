@@ -80,6 +80,20 @@ head(level1bGeo)
 ##  4: 19640003400109385     -13.75780        -13.75777      -44.17124         -44.17124       820.1437
 ##  5: 19640003600109386     -13.75738        -13.75736      -44.17093         -44.17093       821.7012
 ##  6: 19640003800109387     -13.75697        -13.75695      -44.17061         -44.17061       823.2526
+
+# Converting shot_number as "integer64" to "character"
+level1BGeo$shot_number<-paste0(level1BGeo$shot_number)
+
+# Converting level1BGeo as data.table to SpatialPointsDataFrame
+library(sp)
+level1BGeo_spdf<-SpatialPointsDataFrame(cbind(level1BGeo$longitude_bin0,
+                                        level1BGeo$latitude_bin0),
+                                        data=level1BGeo)
+
+# Exporting level1BGeo as ESRI Shapefile
+library(rgdal)
+writeOGR(level1BGeo_spdf,dsn=outdir,layer="GEDI01_B_2019108080338_O01964_T05337_02_003_01_sub",drive="ESRI Shapefile")
+
 ```
 <img align="right" src="https://github.com/carlos-alberto-silva/rGEDI/blob/master/readme/fig2.PNG"  width="400">
 
