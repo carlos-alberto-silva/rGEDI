@@ -30,7 +30,7 @@ OBJECTS = $(LIBCLIDAR_ROOT)/libLasProcess.o $(LIBCLIDAR_ROOT)/libLasRead.o \
 PKG_LIBS += \
 	-L$(RWINLIB)/lib$(R_ARCH) \
 	-L../windows/gsl-2.4/lib$(R_ARCH) \
-	-ltiff -lgeotiff -lgsl
+	-ljpeg -ltiff -lgeotiff -llzma -lszip -lz -lgsl
 
 all: winlibs deps
 
