@@ -4,18 +4,18 @@
 \alias{gedifinder}
 \title{GEDI finder}
 \usage{
-gedifinder(level, xmin, xmax, ymin, ymax)
+gedifinder(level, ul_lat, ul_lon, lr_lat, lr_lon)
 }
 \arguments{
 \item{level}{GEDI data level; Options: "GEDI01_B", "GEDI02_A" or "GEDI02_B"}
 
-\item{xmin}{Numeric. West longitude (x) coordinate of the bounding rectangle, in decimal degrees.}
+\item{ul_lat}{Numeric. Upper left (ul) corner coordinates, in lat (decimal degrees) for the bounding box of the area of interest.}
 
-\item{xmax}{Numeric. East longitude (x) coordinate of the bounding rectangle, in decimal degrees.}
+\item{ul_lon}{Numeric. Upper left (ul) corner coordinates, in lon (decimal degrees) for the bounding box of the area of interest.}
 
-\item{ymin}{Numeric. South latitude (y) coordinate of the bounding rectangle, in decimal degrees.}
+\item{lr_lat}{Numeric. Lower right (ul) corner coordinates, in lat (decimal degrees) for the bounding box of the area of interest.}
 
-\item{ymax}{Numeric. North latitude (y) coordinate of the bounding rectangle, in decimal degrees.}
+\item{lr_lon}{Numeric. Lower right (ul) corner coordinates, in lon (decimal degrees) for the bounding box of the area of interest.}
 }
 \value{
 Vector object pointing out the path saving the downloaded GEDI data within
@@ -29,17 +29,18 @@ This function finds the path to GEDI data within a boundary box coordinates prov
 \examples{
 \donttest{
 # Specifying bounding box coordinates
-xmin<- -44.17246
-ymin<- -44.0654
-xmax<- -13.76913
-ymax<- -13.67646
+ul_lat<- 42.0
+ul_lon<- -100
+lr_lat<- 40.0
+lr_lon<- -96.0
 
 # Extracting the path to GEDI data for the specified boundary box coordinates
-gedi02b_list<-gedifinder(level="GEDI02_B",xmin,xmax,ymin,ymax)
+gedi02b_list<-gedifinder(level="GEDI02_B",ul_lat, ul_lon, lr_lat, lr_lon)
 
 }
 }
 \seealso{
+bbox: The correct format is upper left and lower right corner coordinates, in lat,lon ordering, for the bounding box of the area of interest (e.g. [ul_lat,ul_lon,lr_lat,lr_lon]).
 This function just call the gedifinder tool developted by LPDAAC:
 https://lpdaacsvc.cr.usgs.gov/services/gedifinder
 }
