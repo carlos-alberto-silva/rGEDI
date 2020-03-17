@@ -54,6 +54,30 @@ GEOTIFF_LIBS="-lgeotiff $LIBS"
 AC_SUBST(GEOTIFF_INCLUDE,$GEOTIFF_INCLUDE)
 AC_SUBST(GEOTIFF_LIBS, $GEOTIFF_LIBS)
 
+
+##################
+## SZIP
+##################
+AC_CHECK_LIB( sz, SZ_BufftoBuffCompress, 
+	     HAVE_LIBSZ="yes",
+	     AC_MSG_ERROR(could not find szip:
+                         Debian: sudo apt install libsz2
+                         RPM-based: sudo yum install szip
+                         MacOS: brew install szip))
+
+
+
+
+##################
+## LIBZ
+##################
+AX_CHECK_ZLIB(,
+	      AC_MSG_ERROR(could not find libz:
+                         Debian: sudo apt install zlib1g-dev
+                         RPM-based: sudo yum install zlib-devel
+                         MacOS: brew install zlib))
+
+
 ##################
 ## END
 ##################
