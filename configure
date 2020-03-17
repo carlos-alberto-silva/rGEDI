@@ -3959,6 +3959,12 @@ $as_echo "#define HAVE_HDF5 1" >>confdefs.h
 fi
 
 
+if test "$HAVE_HDF5" = "no" ; then
+	as_fn_error $? "could not find hdf5:
+                         Debian: sudo apt install libhdf5-dev
+                         RPM-based: sudo yum install hdf5-devel
+                         MacOS: brew install hdf5" "$LINENO" 5
+fi
 
 ##################
 ## GEOTIFF

@@ -25,6 +25,12 @@ AX_PATH_GSL(0.1,,
 ##################
 AX_LIB_HDF5()
 
+if test "$HAVE_HDF5" = "no" ; then
+	AC_MSG_ERROR(could not find hdf5:
+                         Debian: sudo apt install libhdf5-dev
+                         RPM-based: sudo yum install hdf5-devel
+                         MacOS: brew install hdf5)
+fi
 
 ##################
 ## GEOTIFF
