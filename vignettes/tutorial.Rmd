@@ -155,7 +155,7 @@ head(level1BGeo)
 ```{r, echo=FALSE}
 head(level1BGeo)
 ```
-```{r, echo=TRUE, results="hide"}
+```{r, eval=FALSE}
 # Converting shot_number as "integer64" to "character"
 level1BGeo$shot_number<-paste0(level1BGeo$shot_number)
 
@@ -235,7 +235,7 @@ head(level2AM[,c("beam","shot_number","elev_highestreturn","elev_lowestmode","rh
 ```{r, echo=FALSE}
 head(level2AM[,c("beam","shot_number","elev_highestreturn","elev_lowestmode","rh100")])
 ```
-```{r, echo=TRUE, results="hide"}
+```{r, eval=FALSE}
 # Converting shot_number as "integer64" to "character"
 level2AM$shot_number<-paste0(level2AM$shot_number)
 
@@ -263,7 +263,7 @@ head(level2BVPM[,c("beam","shot_number","pai","fhd_normal","omega","pgap_theta",
 ```{r, echo=FALSE}
 head(level2BVPM[,c("beam","shot_number","pai","fhd_normal","omega","pgap_theta","cover")])
 ```
-```{r, echo=TRUE, results="hide"}
+```{r, eval=FALSE}
 # Converting shot_number as "integer64" to "character"
 level2BVPM$shot_number<-paste0(level2BVPM$shot_number)
 
@@ -290,16 +290,15 @@ head(level2BPAVDProfile[,c("beam","shot_number","pavd_z0_5m","pavd_z5_10m")])
 ```{r, echo=FALSE}
 head(level2BPAVDProfile[,c("beam","shot_number","pavd_z0_5m","pavd_z5_10m")])
 ```
-```{r, echo=TRUE, results="hide"}
+```{r, eval=FALSE}
 # Converting shot_number as "integer64" to "character"
 level2BPAIProfile$shot_number<-paste0(level2BPAIProfile$shot_number)
 level2BPAVDProfile$shot_number<-paste0(level2BPAVDProfile$shot_number)
 
 # Converting PAI and PAVD Profiles as data.table to SpatialPointsDataFrame
-level2BPAIProfile_spdf<-SpatialPointsDataFrame(cbind(level2BPAIProfile$lon_lowestmode,level2BPAIProfile$lat_lowestmode),
-                                        data=level2BPAIProfile)
-level2BPAVDProfile_spdf<-SpatialPointsDataFrame(cbind(level2BPAVDProfile$lon_lowestmode,level2BPAVDProfile$lat_lowestmode),
-                                               data=level2BPAVDProfile)
+level2BPAIProfile_spdf<-SpatialPointsDataFrame(cbind(level2BPAIProfile$lon_lowestmode,level2BPAIProfile$lat_lowestmode),data=level2BPAIProfile)
+
+level2BPAVDProfile_spdf<-SpatialPointsDataFrame(cbind(level2BPAVDProfile$lon_lowestmode,level2BPAVDProfile$lat_lowestmode),data=level2BPAVDProfile)
 
 # Exporting PAI and PAVD Profiles as ESRI Shapefile
 raster::shapefile(level2BPAIProfile_spdf,paste0(outdir,"\\GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub_PAIProfile"))
