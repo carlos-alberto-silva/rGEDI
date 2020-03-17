@@ -17,7 +17,6 @@
 #'https://lpdaacsvc.cr.usgs.gov/services/gedifinder
 #'
 #'@examples
-#'\donttest{
 #'# Specifying bounding box coordinates
 #'ul_lat<- 42.0
 #'ul_lon<- -100
@@ -26,13 +25,11 @@
 #'
 #'# Extracting the path to GEDI data for the specified boundary box coordinates
 #'gedi02b_list<-gedifinder(level="GEDI02_B",ul_lat, ul_lon, lr_lat, lr_lon)
-#'
-#'}
 #'@export
 gedifinder<-function(level, ul_lat, ul_lon, lr_lat, lr_lon){
   response = httr::GET(paste0("https://lpdaacsvc.cr.usgs.gov/services/gedifinder?product=",level,"&version=001&bbox=",ul_lat,",",ul_lon,",",lr_lat,",",lr_lon,"&output=html"))
   content = httr::content(response, "text")
-  links = gsub(".*a href=([^<]*).*", "\\1", strsplit(content,"<br/>")[[1]])
+  links = gsub(".*a href=([^>]*).*", "\\1", strsplit(content,"<br/>")[[1]])
   return(links)
 }
 
