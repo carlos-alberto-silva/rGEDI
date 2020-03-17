@@ -155,7 +155,18 @@ head(level1BGeo)
 ```{r, echo=FALSE}
 head(level1BGeo)
 ```
+```{r, echo=TRUE, results="hide"}
+# Converting shot_number as "integer64" to "character"
+level1BGeo$shot_number<-paste0(level1BGeo$shot_number)
 
+# Converting level1BGeo as data.table to SpatialPointsDataFrame
+library(sp)
+level1BGeo_spdf<-SpatialPointsDataFrame(cbind(level1BGeo$longitude_bin0, level1BGeo$latitude_bin0),
+                                        data=level1BGeo)
+
+# Exporting level1BGeo as ESRI Shapefile
+raster::shapefile(level1BGeo_spdf,paste0(outdir,"\\GEDI01_B_2019108080338_O01964_T05337_02_003_01_sub"))
+```
 
 ```{r, eval=FALSE}
 library(leaflet)
@@ -224,7 +235,17 @@ head(level2AM[,c("beam","shot_number","elev_highestreturn","elev_lowestmode","rh
 ```{r, echo=FALSE}
 head(level2AM[,c("beam","shot_number","elev_highestreturn","elev_lowestmode","rh100")])
 ```
+```{r, echo=TRUE, results="hide"}
+# Converting shot_number as "integer64" to "character"
+level2AM$shot_number<-paste0(level2AM$shot_number)
 
+# Converting Elevation and Height Metrics as data.table to SpatialPointsDataFrame
+level2AM_spdf<-SpatialPointsDataFrame(cbind(level2AM$lon_lowestmode,level2AM$lat_lowestmode),
+                                        data=level2AM)
+
+# Exporting Elevation and Height Metrics as ESRI Shapefile
+raster::shapefile(level2AM_spdf,paste0(outdir,"\\GEDI02_A_2019108080338_O01964_T05337_02_001_01_sub"))
+```
 
 ## Plot waveform with RH metrics
 ```{r, results="hide", fig.width=7, fig.height=7}
@@ -242,7 +263,17 @@ head(level2BVPM[,c("beam","shot_number","pai","fhd_normal","omega","pgap_theta",
 ```{r, echo=FALSE}
 head(level2BVPM[,c("beam","shot_number","pai","fhd_normal","omega","pgap_theta","cover")])
 ```
+```{r, echo=TRUE, results="hide"}
+# Converting shot_number as "integer64" to "character"
+level2BVPM$shot_number<-paste0(level2BVPM$shot_number)
 
+# Converting GEDI Vegetation Profile Biophysical Variables as data.table to SpatialPointsDataFrame
+level2BVPM_spdf<-SpatialPointsDataFrame(cbind(level2BVPM$lon_lowestmode,level2BVPM$lat_lowestmode),
+                                      data=level2BVPM)
+
+# Exporting GEDI Vegetation Profile Biophysical Variables as ESRI Shapefile
+raster::shapefile(level2BVPM_spdf,paste0(outdir,"\\GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub_VPM"))
+```
 
 ## Get Plant Area Index (PAI) and Plant Area Volume Density (PAVD) Profiles (GEDI Level2B)
 ```{r, results="hide"}
@@ -259,7 +290,21 @@ head(level2BPAVDProfile[,c("beam","shot_number","pavd_z0_5m","pavd_z5_10m")])
 ```{r, echo=FALSE}
 head(level2BPAVDProfile[,c("beam","shot_number","pavd_z0_5m","pavd_z5_10m")])
 ```
+```{r, echo=TRUE, results="hide"}
+# Converting shot_number as "integer64" to "character"
+level2BPAIProfile$shot_number<-paste0(level2BPAIProfile$shot_number)
+level2BPAVDProfile$shot_number<-paste0(level2BPAVDProfile$shot_number)
 
+# Converting PAI and PAVD Profiles as data.table to SpatialPointsDataFrame
+level2BPAIProfile_spdf<-SpatialPointsDataFrame(cbind(level2BPAIProfile$lon_lowestmode,level2BPAIProfile$lat_lowestmode),
+                                        data=level2BPAIProfile)
+level2BPAVDProfile_spdf<-SpatialPointsDataFrame(cbind(level2BPAVDProfile$lon_lowestmode,level2BPAVDProfile$lat_lowestmode),
+                                               data=level2BPAVDProfile)
+
+# Exporting PAI and PAVD Profiles as ESRI Shapefile
+raster::shapefile(level2BPAIProfile_spdf,paste0(outdir,"\\GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub_PAIProfile"))
+raster::shapefile(level2BPAVDProfile_spdf,paste0(outdir,"\\GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub_PAVDProfile"))
+```
 
 ## Plot Plant Area Index (PAI) and Plant Area Volume Density (PAVD) Profiles
 ```{r, fig.width=500/90}
@@ -665,7 +710,7 @@ GEDI Finder. Accessed on February 15 2020 https://lpdaacsvc.cr.usgs.gov/services
 # Acknowledgements
 University of Maryland and NASA Goddard Space Flight Center for developing GEDI mission.
 
-Dr. Carlos Alberto Silva (carlos_engflorestal@outlook.com) was funded through the NASA’s Carbon Monitoring System project entitled "Future Mission Fusion for High Biomass Forest Carbon Accounting" (CMS, grant 15-CMS15-0055) led by Dr. Laura Duncanson (lduncans@umd.edu, Universtiy of Maryland) and Dr. Lola Fatoyinbo (lola.fatoyinbo@nasa.gov, NASA's Goddard Space Flight Center).
+We gratefully acknowledge funding from NASA’s Carbon Monitoring Systems, grant NNH15ZDA001N-CMS. Project entitled "Future Mission Fusion for High Biomass Forest Carbon Accounting" led by Dr. Laura Duncanson (lduncans@umd.edu, University of Maryland) and Dr. Lola Fatoyinbo (lola.fatoyinbo@nasa.gov, NASA's Goddard Space Flight Center).
 
 Brazilian National Council for Scientific and Technological Development (CNPq) for funding the project entitled "Mapping fuel load and simulation of fire behaviour and spread in the Cerrado biome using modeling and remote sensing technologies" and leaded by Prof. Dr. Carine Klauberg (carine_klauberg@hotmail.com) and
 Dr. Carlos Alberto Silva (carlos_engflorestal@outlook.com).
