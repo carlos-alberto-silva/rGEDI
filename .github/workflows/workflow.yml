@@ -3,3 +3,9 @@
   with:
     # What should be run? One of: ["all", "build"]
     action: all
+
+on:
+  push:
+    branches:
+    - master
+    - release/*
