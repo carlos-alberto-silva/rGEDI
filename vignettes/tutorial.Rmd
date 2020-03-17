@@ -78,15 +78,15 @@ library(rGEDI)
 ## Find GEDI data within your study area (GEDI finder tool)
 ```{r, eval = FALSE}
 # Study area boundary box coordinates
-xmin<- -44.17246
-xmax<- -44.0654
-ymin<- -13.76913
-ymax<- -13.67646
+ul_lat<- -44.0654
+lr_lat<- -44.17246
+ul_lon<- -13.76913
+lr_lon<- -13.67646
 
 # Get path to GEDI data
-gLevel1B<-gedifinder(level="GEDI01_B",xmin, xmax, ymin, ymax)
-gLevel2A<-gedifinder(level="GEDI02_A",xmin, xmax, ymin, ymax)
-gLevel2B<-gedifinder(level="GEDI02_B",xmin, xmax, ymin, ymax)
+gLevel1B<-gedifinder(level="GEDI01_B",ul_lat, ul_lon, lr_lat, lr_lon)
+gLevel2A<-gedifinder(level="GEDI02_A",ul_lat, ul_lon, lr_lat, lr_lon)
+gLevel2B<-gedifinder(level="GEDI02_B",ul_lat, ul_lon, lr_lat, lr_lon)
 
 # Set output dir for downloading the files
 outdir=getwd()
