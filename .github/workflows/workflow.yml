@@ -1,0 +1,5 @@
+- name: R-actions
+  uses: Swechhya/R-actions@v1.1
+  with:
+    # What should be run? One of: ["all", "build"]
+    action: all
