@@ -90,9 +90,7 @@ level1BGeo_spdf<-SpatialPointsDataFrame(cbind(level1BGeo$longitude_bin0, level1B
                                         data=level1BGeo)
 
 # Exporting level1BGeo as ESRI Shapefile
-library(rgdal)
-writeOGR(level1BGeo_spdf,dsn=outdir,layer="GEDI01_B_2019108080338_O01964_T05337_02_003_01_sub",drive="ESRI Shapefile")
-
+raster::shapefile(level1BGeo_spdf,paste0(outdir,"\\GEDI01_B_2019108080338_O01964_T05337_02_003_01_sub"))
 ```
 <img align="right" src="https://github.com/carlos-alberto-silva/rGEDI/blob/master/readme/fig2.PNG"  width="400">
 
@@ -152,8 +150,7 @@ level2AM_spdf<-SpatialPointsDataFrame(cbind(level2AM$lon_lowestmode,level2AM$lat
                                         data=level2AM)
 
 # Exporting Elevation and Height Metrics as ESRI Shapefile
-writeOGR(level2AM_spdf,dsn=outdir,layer="GEDI02_A_2019108080338_O01964_T05337_02_001_01_sub",drive="ESRI Shapefile")
-
+raster::shapefile(level2AM_spdf,paste0(outdir,"\\GEDI02_A_2019108080338_O01964_T05337_02_001_01_sub"))
 ```
 
 ## Plot waveform with RH metrics
@@ -186,7 +183,7 @@ level2BVPM_spdf<-SpatialPointsDataFrame(cbind(level2BVPM$lon_lowestmode,level2BV
                                       data=level2BVPM)
 
 # Exporting GEDI Vegetation Profile Biophysical Variables as ESRI Shapefile
-writeOGR(level2BVPM_spdf,dsn=outdir,layer="GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub",drive="ESRI Shapefile")
+raster::shapefile(level2BVPM_spdf,paste0(outdir,"\\GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub_VPM"))
 
 ```
 
@@ -225,8 +222,8 @@ level2BPAVDProfile_spdf<-SpatialPointsDataFrame(cbind(level2BPAVDProfile$lon_low
                                                data=level2BPAVDProfile)
 
 # Exporting PAI and PAVD Profiles as ESRI Shapefile
-writeOGR(level2BPAIProfile_spdf,dsn=outdir,layer="GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub_PAIProfile",drive="ESRI Shapefile")
-writeOGR(level2BPAVDProfile_spdf,dsn=outdir,layer="GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub_PAVDProfile",drive="ESRI Shapefile")
+raster::shapefile(level2BPAIProfile_spdf,paste0(outdir,"\\GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub_PAIProfile"))
+raster::shapefile(level2BPAVDProfile_spdf,paste0(outdir,"\\GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub_PAVDProfile"))
 
 ```
 
