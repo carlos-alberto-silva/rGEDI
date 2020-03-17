@@ -16,7 +16,7 @@ downloadDepBitBucket = function(name, file, origName) {
   fileCheck = file.path(".",name,file)
   if(!file.exists(fileCheck)) {
     print(paste0("Downloading ",name,"..."))
-    url = paste0("https://bitbucket.org/caiohamamura/",name,"/get/v0.4.0.zip")
+    url = paste0("https://bitbucket.org/caiohamamura/",name,"/get/v0.4.1.zip")
     download.file(url, "lib.zip", quiet=FALSE)
     unzip("lib.zip", exdir=".")
     unlink("lib.zip")
@@ -34,7 +34,7 @@ downloadDep("libclidar",
 	    "libclidar-0.4.0")
 downloadDepBitBucket("gedisimulator",
                      "gediRat.c",
-                     "caiohamamura-gedisimulator-cdcc9d710a6f")
+                     "caiohamamura-gedisimulator-f3c8c65849ca")
 downloadDep("tools",
             "tools.c",
             "https://github.com/caiohamamura/tools/archive/v0.4.0.tar.gz",
