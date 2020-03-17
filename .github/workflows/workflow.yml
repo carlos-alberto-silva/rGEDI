@@ -1,11 +1,19 @@
-- name: R-actions
-  uses: Swechhya/R-actions@v1.1
-  with:
-    # What should be run? One of: ["all", "build"]
-    action: all
-
+name: R Build and Checks
 on:
+  pull_request:
+    branches: [master]
   push:
     branches:
     - master
     - release/*
+
+jobs:
+  build:
+    runs-on: ubuntu-18.04
+    steps:
+    - uses: actions/checkout@v1
+    - name: R Build and Checks
+      uses: Swechhya/R-actions@v1.1
+      with:
+        action: 'all'
+
