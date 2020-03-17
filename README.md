@@ -47,9 +47,9 @@ gLevel2B<-gedifinder(level="GEDI02_B",ul_lat, ul_lon, lr_lat, lr_lon)
 outdir=getwd()
 
 # Downloading GEDI data
-LPDAACDataPool(filepath=gLevel1B,outdir=outdir)
-LPDAACDataPool(filepath=gLevel2A,outdir=outdir)
-LPDAACDataPool(filepath=gLevel2B,outdir=outdir)
+gediDownload(filepath=gLevel1B,outdir=outdir)
+gediDownload(filepath=gLevel2A,outdir=outdir)
+gediDownload(filepath=gLevel2B,outdir=outdir)
 
 #** Herein, we are using only a GEDI sample dataset for this tutorial.
 # downloading zip file

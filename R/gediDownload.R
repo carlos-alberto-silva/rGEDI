@@ -3,20 +3,21 @@
 #'@description Download GEDI data from LP DAAC Data Pool. Users will need to enter their
 #'Earth Explore login Information for downloading the data.
 #'
-#'@usage LPDAACDataPool(filepath,outdir)
+#'@usage gediDownload(filepath,outdir)
 #'
 #'@param filepath Vector object; path to the GEDI data
 #'@param outdir Vector object, output directory for downloading GEDI data
 #'@references Credits to Cole Krehbiel. Code adapted from <https://git.earthdata.nasa.gov/projects/LPDUR/repos/daac_data_download_r/browse/DAACDataDownload.R>
 #'@examples
-#'\dontrun{
-#'#' Set path to GEDI data
+#'\donttest{
+#'# Set path to GEDI data
+#'# herein we will only download xml metedata
 #'filepath=c(paste0(
 #'                  "https://e4ftl01.cr.usgs.gov/GEDI/GEDI02_B.001",
-#'                  "/2019.04.18/GEDI02_B_2019108032534_O01961_T03911_02_001_01.h5"
+#'                  "/2019.04.18/GEDI02_B_2019108032534_O01961_T03911_02_001_01.h5.xml"
 #'                  ),
 #'           paste0("https://e4ftl01.cr.usgs.gov/GEDI/GEDI02_B.001",
-#'                  "/2019.04.18/GEDI02_B_2019108045815_O01962_T01066_02_001_01.h5"
+#'                  "/2019.04.18/GEDI02_B_2019108045815_O01962_T01066_02_001_01.h5.xml"
 #'                 )
 #'          )
 #'
@@ -24,10 +25,10 @@
 #'outdir=tempdir()
 #'
 #'#' Downloading GEDI data
-#'LPDAACDataPool(filepath,outdir)
+#'gediDownload(filepath,outdir)
 #'}
 #'@export
-LPDAACDataPool<-function(filepath,outdir){
+gediDownload<-function(filepath,outdir){
     # ---------------------------------SET UP ENVIRONMENT--------------------------------------------- #
     # IMPORTANT: Update the line below if you want to download to a different directory (ex: "c:/data/")
     if (is.null(outdir)){
@@ -52,18 +53,25 @@ LPDAACDataPool<-function(filepath,outdir){
     files<-filepath
     # Loop through all files
     for (i in 1:length(files)) {
-      filename <-  tail(strsplit(files[i], '/')[[1]], n = 1) # Keep original filename
+      filename <-  basename(files[i]) # Keep original filename
 
       message(paste0("Downloading file ",filename))
+      response <- httr::GET(files[i])
+      redirect <- response[1]$url
+
       # Write file to disk (authenticating with netrc) using the current directory/filename
-      response <- httr::GET(files[i], httr::write_disk(file.path(outdir, "",filename), overwrite = TRUE), httr::progress(),
-                            httr::config(netrc = TRUE, netrc_file = netrc), httr::set_cookies("LC" = "cookies"))
+      response <- httr::GET(redirect, 
+                            httr::write_disk(file.path(outdir, "",filename), 
+                                             overwrite = TRUE),
+                            httr::progress(),
+                            httr::config(netrc = TRUE, netrc_file = netrc), 
+                            httr::set_cookies("LC" = "cookies"))
 
       # Check to see if file downloaded correctly
       if (response$status_code == 200) {
         message(sprintf("Done!","%s downloaded at %s", filename, dl_dir))
       } else {
-        message(sprintf("%s not downloaded. Verify that your username and password are correct in %s", filename, netrc))
+        message(sprintf("%s not downloaded. Please, check if your username and password are correct in %s", filename, netrc))
       }
      }
 }
