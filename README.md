@@ -593,7 +593,7 @@ The Brazilian National Council for Scientific and Technological Development (CNP
 (carlos_engflorestal@outlook.com).
 
 # Reporting Issues 
-Please report any issue reagardling the rGEDI package herein https://chat.stackexchange.com/rooms/105648/rgedi
+Please report any issue reagardling the rGEDI package herein https://groups.yahoo.com/neo/groups/rGEDI
 
 # Disclaimer
 
