@@ -714,6 +714,8 @@ We gratefully acknowledge funding from NASA’s Carbon Monitoring Systems, grant
 Brazilian National Council for Scientific and Technological Development (CNPq) for funding the project entitled "Mapping fuel load and simulation of fire behaviour and spread in the Cerrado biome using modeling and remote sensing technologies" and leaded by Prof. Dr. Carine Klauberg (carine_klauberg@hotmail.com) and
 Dr. Carlos Alberto Silva (carlos_engflorestal@outlook.com).
 
+# Reporting Issues 
+Please report any issue reagardling the rGEDI package herein https://chat.stackexchange.com/rooms/105648/rgedi
 
 # Disclaimer
 **rGEDI package has not been developted by the GEDI team. It comes with no guarantee, expressed or implied, and the authors hold no responsibility for its use or reliability of its outputs.**
