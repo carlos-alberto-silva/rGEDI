@@ -8,7 +8,6 @@
 ^src/gedisimulator$
 ^src/tools$
 ^src/libclidar$
-^src/cmpfit-1.2$
 ^readme$
 ^.vscode$
 ^Meta$
