@@ -20,7 +20,7 @@ knitr::opts_chunk$set(message = FALSE,
                       fig.align="center",
                       results = "asis",
                       out.maxwidth='100%')
-outdir = getwd()
+outdir = tempdir()
 knitr::opts_knit$set(root.dir=outdir)
 if (!require("xtable")) {
   install.packages("xtable")
@@ -610,11 +610,11 @@ ycenter_savanna = mean(las_savanna@bbox[2,])
 # Simulating GEDI full-waveform
 wf_amazon<-gediWFSimulator(
   input  = lasfile_amazon,
-  output = file.path(getwd(),"gediWF_amazon_simulation.h5"),
+  output = file.path(outdir,"gediWF_amazon_simulation.h5"),
   coords = c(xcenter_amazon, ycenter_amazon))
 wf_savanna<-gediWFSimulator(
   input  = lasfile_savanna,
-  output = file.path(getwd(),"/gediWF_savanna_simulation.h5"),
+  output = file.path(outdir,"/gediWF_savanna_simulation.h5"),
   coords = c(xcenter_savanna, ycenter_savanna))
 
 # Plot ALS and GEDI simulated full-waveform
@@ -640,10 +640,10 @@ grid()
 ```{r, results=FALSE}
 wf_amazon_metrics<-gediWFMetrics(
   input   = wf_amazon,
-  outRoot = file.path(getwd(), "amazon"))
+  outRoot = file.path(outdir, "amazon"))
 wf_savanna_metrics<-gediWFMetrics(
   input   = wf_savanna,
-  outRoot = file.path(getwd(), "savanna"))
+  outRoot = file.path(outdir, "savanna"))
 
 metrics<-rbind(wf_amazon_metrics,wf_savanna_metrics)
 rownames(metrics)<-c("Amazon","Savanna")
@@ -656,7 +656,7 @@ head(metrics[,1:8])
 ## Extracting GEDI full-waveform derived metrics after adding noise to the waveform
 ```{r, results=FALSE}
 wf_amazon_metrics_noise<-gediWFMetrics(input=wf_amazon,
-                         outRoot=file.path(getwd(), "amazon"),
+                         outRoot=file.path(outdir, "amazon"),
                          linkNoise= c(3.0103,0.95),
                          maxDN= 4096,
                          sWidth= 0.5,
@@ -664,7 +664,7 @@ wf_amazon_metrics_noise<-gediWFMetrics(input=wf_amazon,
 
 wf_savanna_metrics_noise<-gediWFMetrics(
                         input=wf_savanna,
-                        outRoot=file.path(getwd(), "savanna"),
+                        outRoot=file.path(outdir, "savanna"),
                         linkNoise= c(3.0103,0.95),
                         maxDN= 4096,
                         sWidth= 0.5,
