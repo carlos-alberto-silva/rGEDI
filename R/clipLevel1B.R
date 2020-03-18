@@ -187,9 +187,20 @@ clipByMask1B = function(level1b, masks, output = "") {
     hdf5r::createGroup(newFile, group)
     createAttributesWithinGroup(level1b@h5, newFile, group)
 
-    for (dt in hdf5r::list.datasets(level1b@h5[[group]], recursive = FALSE, full.names = T)) {
-      if (grepl("[rt]x_sample_start_index$", dt)) next
+    if(beam_id != "METADATA") {
       beam_shot_n = level1b@h5[[beam_id]][["shot_number"]]$dims
+      total_waveforms = list()
+      total_waveforms[["rx"]] = sum(level1b@h5[[beam_id]][["rx_sample_count"]][])
+      total_waveforms[["tx"]] = sum(level1b@h5[[beam_id]][["tx_sample_count"]][])
+    }
+
+
+    for (dt in hdf5r::list.datasets(level1b@h5[[group]], recursive = FALSE, full.names = T)) {
+      if (grepl("[rt]x_sample_start_index$", dt)) {
+        progress = progress + 1
+        utils::setTxtProgressBar(pb, progress)
+        next
+      }
       h5_dt = level1b@h5[[dt]]
       dt_dim = h5_dt$dims
       dtype = h5_dt$get_type()
@@ -205,7 +216,7 @@ clipByMask1B = function(level1b, masks, output = "") {
           hdf5r::createDataSet(newFile,dt,h5_dt[], dtype=dtype, chunk_dim=chunkdims)
         } else if (dt_dim == beam_shot_n) {
           hdf5r::createDataSet(newFile,dt,h5_dt[mask], dtype=dtype, chunk_dim=chunkdims)
-        } else if ((dt_dim %% beam_shot_n) == 0) {
+        } else if (dt_dim %in% total_waveforms) {
           prefix = ifelse(substr(basename(dt),1,2)=="rx", "rx", "tx")
           sampleCount = sprintf("%s_sample_count", prefix)
           sampleStartIndex = sprintf("%s_sample_start_index", prefix)
