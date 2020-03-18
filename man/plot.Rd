@@ -59,17 +59,22 @@ rm(list=ls())
 }
 
 zipfile_amazon <- system.file("extdata", "Amazon.zip", package="rGEDI")
+zipfile_Savanna <- system.file("extdata", "Savanna.zip", package="rGEDI")
 
 lasfile_amazon <- unzip(zipfile_amazon)
+lasfile_Savanna <- unzip(zipfile_Savanna)
 
 # Reading and plot ALS file
 libsAvailable = require(lidR) && require(plot3D)
 if (libsAvailable) {
 las_amazon<-readLAS(lasfile_amazon)
+las_Savanna<-readLAS(lasfile_Savanna)
 
 # Extracting plot center geolocations
 xcenter_amazon = mean(las_amazon@bbox[1,])
 ycenter_amazon = mean(las_amazon@bbox[2,])
+xcenter_Savanna = mean(las_Savanna@bbox[1,])
+ycenter_Savanna = mean(las_Savanna@bbox[2,])
 
 # Simulating GEDI full-waveform
 wf_amazon<-gediWFSimulator(
@@ -79,7 +84,13 @@ wf_amazon<-gediWFSimulator(
                                         "gediWF_amazon_simulation.h5"
                                         ),
                           coords = c(xcenter_amazon, ycenter_amazon))
-
+wf_Savanna<-gediWFSimulator(
+                            input=lasfile_Savanna,
+                            output=file.path(
+                                          getwd(),
+                                          "gediWF_Savanna_simulation.h5"
+                                          ),
+                            coords = c(xcenter_Savanna, ycenter_Savanna))
 # Plot Full-waveform
 par(mfrow=c(2,2), mar=c(4,4,0,0), oma=c(0,0,1,1),cex.axis = 1.2)
 scatter3D(
@@ -95,7 +106,19 @@ scatter3D(
 plot(wf_amazon, relative=TRUE, polygon=TRUE, type="l", lwd=2, col="forestgreen",
     xlab="", ylab="Elevation (m)", ylim=c(90,140))
 grid()
+scatter3D(
+         las_Savanna@data$X,las_Savanna@data$Y,las_Savanna@data$Z,
+         pch = 16,colkey = FALSE, main="",
+         cex = 0.5,bty = "u",col.panel ="gray90",
+         phi = 30,alpha=1,theta=45,col.grid = "gray50",
+         xlab="UTM Easting (m)", ylab="UTM Northing (m)", zlab="Elevation (m)"
+         )
+
+plot(wf_Savanna, relative=TRUE, polygon=TRUE, type="l", lwd=2, col="green",
+    xlab="Waveform Amplitude (\%)", ylab="Elevation (m)", ylim=c(815,835))
+grid()
 
 close(wf_amazon)
+close(wf_Savanna)
 }
 }
