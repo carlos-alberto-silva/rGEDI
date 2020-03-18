@@ -14,7 +14,7 @@ ARCH=$(PROCESSOR_ARCHITECTURE)
 HDF5_LIB = ../windows/include/
 PKG_CPPFLAGS += -Igedisimulator -I$(HANCOCKTOOLS_ROOT) -I$(CMPFIT_ROOT) \
 -I${LIBCLIDAR_ROOT} -I. -I../windows/mingw64-libhdf5-dev-1.8.20/include \
--I../windows/gsl-2.4/include -I./cmpfit-1.2 -I../windows/libgeotiff-1.4.3 \
+-I../windows/gsl-2.4/include -I../windows/libgeotiff-1.4.3 \
 -I../windows/libgeotiff-1.4.3/libxtiff -I../windows/libtiff-4.0.9/include
 
 OBJECTS = $(LIBCLIDAR_ROOT)/libLasProcess.o $(LIBCLIDAR_ROOT)/libLasRead.o \
