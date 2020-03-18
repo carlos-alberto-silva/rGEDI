@@ -11,7 +11,7 @@ PKG_CFLAGS=@HDF5_CPPFLAGS@ \
 	   -DUSEPHOTON -DWITHOUT_GDAL\
 	   -I$(GEDIRAT_ROOT) -I$(HANCOCKTOOLS_ROOT) -I$(CMPFIT_ROOT) \
 	   -I${LIBCLIDAR_ROOT} -I. -I/usr/include/geotiff \
-	   -I./cmpfit-1.2 -I/usr/include/libgeotiff
+	   -I/usr/include/libgeotiff
 
 PKG_LIBS=@HDF5_LDFLAGS@ @HDF5_LIBS@\
          @GSL_LIBS@ @GEOTIFF_LIBS@
