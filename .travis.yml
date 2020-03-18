@@ -76,11 +76,6 @@ r_packages:
 language: r
 
 script:
-  - pushd inst/extdata
-  - 'curl -vLJ -o ''examples.zip'' ''https://github.com/carlos-alberto-silva/rGEDI/releases/download/datasets/examples.zip''
-    -H ''Accept: application/octet-stream'''
-  - ls
-  - popd
   - R CMD build .
   - R CMD check *tar.gz --as-cran
   - R CMD INSTALL . --build
