@@ -526,10 +526,10 @@ gediWFMetrics = function(
 
   if (class(input)=="list") {
     files = sapply(input, function(x) {
-      x@h5 = hdf5r::H5File$new(x@h5$filename, mode="r+")
+      x@h5 = hdf5r::H5File$new(x@h5$filename, mode="r")
     })
   } else {
-    input@h5 = hdf5r::H5File$new(input@h5$filename, mode="r+")
+    input@h5 = hdf5r::H5File$new(input@h5$filename, mode="r")
   }
 
   return (metricData)
