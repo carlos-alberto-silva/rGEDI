@@ -112,8 +112,8 @@
 #'level1b<-readLevel1B(level1Bpath=level1Bpath)
 #'
 #'# Extracting GEDI level1B geolocations
-#'level1BGeo<-getLevel1BGeo(level1b,select=c("elevation_bin0", "elevation_lastbin"))
-#'head(level1BGeo)
+#'level1bGeo<-getLevel1BGeo(level1b,select=c("elevation_bin0", "elevation_lastbin"))
+#'head(level1bGeo)
 #'
 #'close(level1b)
 #'@export

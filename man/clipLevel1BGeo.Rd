@@ -38,7 +38,7 @@ level1Bpath <- unzip(level1B_fp_zip,exdir = dirname(level1B_fp_zip))
 level1b<-readLevel1B(level1Bpath=level1Bpath)
 
 # Extracting GEDI Full Waveform Geolocations
-level1BGeo<-getLevel1BGeo(level1b)
+level1bGeo<-getLevel1BGeo(level1b)
 
 # Bounding rectangle coordinates
 xmin = -44.15036
@@ -47,12 +47,12 @@ ymin = -13.75831
 ymax = -13.71244
 
 # Clipping GEDI Full Waveform Geolocations by boundary box extent
-level1BGeo_clip <- clipLevel1BGeo(level1BGeo,xmin, xmax, ymin, ymax)
+level1bGeo_clip <- clipLevel1BGeo(level1bGeo,xmin, xmax, ymin, ymax)
 
 library(leaflet)
 leaflet() \%>\%
- addCircleMarkers(level1BGeo_clip$longitude_bin0,
-                  level1BGeo_clip$latitude_bin0,
+ addCircleMarkers(level1bGeo_clip$longitude_bin0,
+                  level1bGeo_clip$latitude_bin0,
                   radius = 1,
                   opacity = 1,
                   color = "red")  \%>\%

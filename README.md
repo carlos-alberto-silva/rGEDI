@@ -82,15 +82,15 @@ head(level1bGeo)
 ##  6: 19640003800109387     -13.75697        -13.75695      -44.17061         -44.17061       823.2526
 
 # Converting shot_number as "integer64" to "character"
-level1BGeo$shot_number<-paste0(level1BGeo$shot_number)
+level1bGeo$shot_number<-paste0(level1bGeo$shot_number)
 
-# Converting level1BGeo as data.table to SpatialPointsDataFrame
+# Converting level1bGeo as data.table to SpatialPointsDataFrame
 library(sp)
-level1BGeo_spdf<-SpatialPointsDataFrame(cbind(level1BGeo$longitude_bin0, level1BGeo$latitude_bin0),
-                                        data=level1BGeo)
+level1bGeo_spdf<-SpatialPointsDataFrame(cbind(level1bGeo$longitude_bin0, level1bGeo$latitude_bin0),
+                                        data=level1bGeo)
 
-# Exporting level1BGeo as ESRI Shapefile
-raster::shapefile(level1BGeo_spdf,paste0(outdir,"\\GEDI01_B_2019108080338_O01964_T05337_02_003_01_sub"))
+# Exporting level1bGeo as ESRI Shapefile
+raster::shapefile(level1bGeo_spdf,paste0(outdir,"\\GEDI01_B_2019108080338_O01964_T05337_02_003_01_sub"))
 ```
 <img align="right" src="https://github.com/carlos-alberto-silva/rGEDI/blob/master/readme/fig2.PNG"  width="400">
 
@@ -274,14 +274,14 @@ level2b_clip_gb <- clipLevel2BGeometry(gedilevel2b,polygon_spdf,output=paste0(ou
 ## Clip GEDI data (data.table objects)
 ```r
 ## Clipping GEDI data within boundary box
-level1BGeo_clip_bb <-clipLevel1BGeo(level1bGeo, xmin, xmax, ymin, ymax)
+level1bGeo_clip_bb <-clipLevel1BGeo(level1bGeo, xmin, xmax, ymin, ymax)
 level2AM_clip_bb <- clipLevel2AM(level2AM, xmin, xmax, ymin, ymax)
 level2BVPM_clip_bb <- clipLevel2BVPM(level2BVPM, xmin, xmax, ymin, ymax)
 level1BPAIProfile_clip_bb <- clipLevel2BPAIProfile(level2BPAIProfile, xmin, xmax, ymin, ymax)
 level2BPAVDProfile_clip_bb <- clipLevel2BPAVDProfile(level2BPAVDProfile, xmin, xmax, ymin, ymax)
 
 ## Clipping GEDI data by geometry
-level1BGeo_clip_gb <- clipLevel1BGeoGeometry(level1bGeo,polygon_spdf, split_by=split_by)
+level1bGeo_clip_gb <- clipLevel1BGeoGeometry(level1bGeo,polygon_spdf, split_by=split_by)
 level2AM_clip_gb <- clipLevel2AMGeometry(level2AM,polygon_spdf, split_by=split_by)
 level2BVPM_clip_gb <- clipLevel2BVPMGeometry(level2BVPM,polygon_spdf, split_by=split_by)
 level1BPAIProfile_clip_gb <- clipLevel2BPAIProfileGeometry(level2BPAIProfile,polygon_spdf, split_by=split_by)

@@ -126,30 +126,22 @@ if (libsAvailable) {
 
 # specify the path to ALS data (zip)
 alsfile_Amazon_zip <- system.file("extdata", "Amazon.zip", package="rGEDI")
-alsfile_Savanna_zip <- system.file("extdata", "Savanna.zip", package="rGEDI")
 
 # Unzipping ALS data
 alsfile_Amazon_filepath <- unzip(alsfile_Amazon_zip,exdir = dirname(alsfile_Amazon_zip))
-alsfile_Savanna_filepath <- unzip(alsfile_Savanna_zip,exdir = dirname(alsfile_Savanna_zip))
 
 # Reading and plot ALS file (las file)
 als_Amazon<-readLAS(alsfile_Amazon_filepath)
-als_Savanna<-readLAS(alsfile_Savanna_filepath)
 
 # Extracting plot center geolocations
 xcenter_Amazon = mean(als_Amazon@bbox[1,])
 ycenter_Amazon = mean(als_Amazon@bbox[2,])
-xcenter_Savanna = mean(als_Savanna@bbox[1,])
-ycenter_Savanna = mean(als_Savanna@bbox[2,])
 
 # Simulating GEDI full waveform
 wf_Amazon<-gediWFSimulator(input=alsfile_Amazon_filepath,
                           output=file.path(getwd(),"gediWF_amazon_simulation.h5"),
                           coords = c(xcenter_Amazon, ycenter_Amazon))
 
-wf_Savanna<-gediWFSimulator(input=alsfile_Savanna_filepath,
-                           output=file.path(getwd(),"gediWF_Savanna_simulation.h5"),
-                           coords = c(xcenter_Savanna, ycenter_Savanna))
 
 # Plot ALS and GEDI simulated full waveform
 
@@ -164,19 +156,8 @@ scatter3D(
 plot(wf_Amazon, relative=TRUE, polygon=TRUE, type="l", lwd=2, col="forestgreen",
     xlab="", ylab="Elevation (m)", ylim=c(90,140))
 grid()
-scatter3D(
-         als_Savanna@data$X,als_Savanna@data$Y,als_Savanna@data$Z,
-         pch = 16,colkey = FALSE, main="",
-         cex = 0.5,bty = "u",col.panel ="gray90",
-         phi = 30,alpha=1,theta=45,col.grid = "gray50",
-         xlab="UTM Easting (m)", ylab="UTM Northing (m)", zlab="Elevation (m)")
-
-plot(wf_Savanna, relative=TRUE, polygon=TRUE, type="l", lwd=2, col="green",
-    xlab="Waveform Amplitude (\%)", ylab="Elevation (m)", ylim=c(815,835))
-grid()
 
 close(wf_Amazon)
-close(wf_Savanna)
 }
 
 }
