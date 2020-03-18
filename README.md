@@ -53,10 +53,10 @@ gediDownload(filepath=gLevel2B,outdir=outdir)
 
 #** Herein, we are using only a GEDI sample dataset for this tutorial.
 # downloading zip file
-download.file("https://github.com/carlos-alberto-silva/rGEDI/releases/download/datasets/examples.zip",destfile=paste0(outdir, "/examples.zip"))
+download.file("https://github.com/carlos-alberto-silva/rGEDI/releases/download/datasets/examples.zip",destfile=file.path(outdir, "examples.zip"))
 
 # unzip file 
-unzip(paste0(outdir,"\\examples.zip"))
+unzip(file.path(outdir,"examples.zip"))
 
 ```
 
@@ -474,8 +474,8 @@ dev.off()
 ## Simulating GEDI full-waveform data from Airborne Laser Scanning (ALS) 3-D point cloud and extracting canopy derived metrics
 ```r
 # Specifying the path to ALS data
-lasfile_amazon <- paste0(outdir, "\\Amazon.las")
-lasfile_savanna <- paste0(outdir, "\\Savanna.las")
+lasfile_amazon <- file.path(outdir, "Amazon.las")
+lasfile_savanna <- file.path(outdir, "Savanna.las")
 
 # Reading and plot ALS file
 library(lidR)
