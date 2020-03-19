@@ -46,10 +46,8 @@
 #'}
 #'@export
 clipLevel2A = function(level2a, xmin, xmax, ymin, ymax, output=""){
-  if (output == "") {
-    output = tempfile(fileext = ".h5")
-  }
-  output = fs::path_ext_set(output, "h5")
+  output = checkOutput(output)
+  checkClipExtentInputs(level2a, "gedi.level2a", xmin, xmax, ymin, ymax)
 
   # Get all spatial data as a list of dataframes with spatial information
   spData = getSpatialData2A(level2a)
@@ -116,9 +114,7 @@ clipLevel2A = function(level2a, xmin, xmax, ymin, ymax, output=""){
 #'@export
 clipLevel2AGeometry = function(level2a, polygon_spdf, output="", split_by = NULL) {
   output = checkOutput(output)
-  stopifnotMessage(
-    "split_by not in polygon_spdf"=is.null(split_by) || split_by %in% colnames(polygon_spdf@data)
-  )
+  checkClipGeoInputs(level2a, "gedi.level2a", polygon_spdf, split_by)
 
   spData = getSpatialData2A(level2a)
 

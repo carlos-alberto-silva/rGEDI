@@ -40,10 +40,10 @@ level1Bpath <- unzip(level1B_fp_zip,exdir = dirname(level1B_fp_zip))
 level1b<-readLevel1B(level1Bpath=level1Bpath)
 
 # Bounding rectangle coordinates
-xmin = -44.10136
-xmax = -44.10066
-ymin = -13.73031
-ymax = -13.72044
+xmin=-44.13
+xmax=-44.12
+ymin=-13.74
+ymax=-13.73
 
 # Specifying output file and path
 output<-file.path(getwd(),"GEDI01_B_2019108080338_O01964_T05337_02_003_01_clip")

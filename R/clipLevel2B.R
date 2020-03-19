@@ -47,6 +47,7 @@
 clipLevel2B = function(level2b, xmin, xmax, ymin, ymax, output=""){
   # Get all spatial data as a list of dataframes with spatial information
   spData = getSpatialData2B(level2b)
+  checkClipExtentInputs(level2b, "gedi.level2b", xmin, xmax, ymin, ymax)
 
   masks = clipSpDataByExtentLevelB(spData, xmin, xmax, ymin, ymax)
 
@@ -114,6 +115,8 @@ clipLevel2B = function(level2b, xmin, xmax, ymin, ymax, output=""){
 #'@export
 clipLevel2BGeometry = function(level2b, polygon_spdf, output="", split_by=NULL) {
   output = checkOutput(output)
+  checkClipGeoInputs(level2b, "gedi.level2b", polygon_spdf, split_by)
+
   spData = getSpatialData2B(level2b)
 
   xmin = polygon_spdf@bbox[1,1]

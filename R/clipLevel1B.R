@@ -48,6 +48,7 @@
 #'@export
 clipLevel1B = function(level1b, xmin, xmax, ymin, ymax, output=""){
   output = checkOutput(output)
+  checkClipExtentInputs(level1b, "gedi.level1b", xmin, xmax, ymin, ymax)
 
   # Get all spatial data as a list of dataframes with spatial information
   spData = getSpatialData1B(level1b)
@@ -113,6 +114,7 @@ clipLevel1B = function(level1b, xmin, xmax, ymin, ymax, output=""){
 #'@export
 clipLevel1BGeometry = function(level1b, polygon_spdf, output="", split_by=NULL) {
   output = checkOutput(output)
+  checkClipGeoInputs(level1b, "gedi.level1b", polygon_spdf, split_by)
 
   spData = getSpatialData1B(level1b)
 

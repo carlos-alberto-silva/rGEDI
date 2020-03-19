@@ -23,6 +23,9 @@ clipSpDataByExtentLevel2A = function(spData, xmin, xmax, ymin, ymax) {
     })
     return (masks2)
   })
+  if(all(sapply(masks, function(x) sum(sapply(x, length)))==0)){
+    stop("The clipping ROI does not intersect with the data!")
+  }
   return (masks)
 }
 
@@ -75,6 +78,9 @@ getPolygonMaskLevel2A = function(spData, masks, polygon_spdf, split_by) {
     }
   }
   close(pb)
+  if(all(sapply(polygon_masks, function(x) sum(sapply(x, length)))==0)){
+    stop("The clipping polygon does not intersect with the data!")
+  }
   return (polygon_masks)
 }
 
@@ -92,6 +98,9 @@ clipSpDataByExtentLevelB = function(spData, xmin, xmax, ymin, ymax) {
 
     return ((1:length(x$longitude_bin0))[mask])
   })
+  if (all(sapply(masks, length)==0)) {
+    stop("The clipping ROI does not intersect with the data!")
+  }
   return (masks)
 }
 
@@ -146,6 +155,10 @@ getPolygonMaskLevelB = function(spData, masks, polygon_spdf, split_by) {
     utils::setTxtProgressBar(pb, progress)
   }
   close(pb)
+
+  if (all(sapply(polygon_masks, length)==0)) {
+    stop("The polygon does not intersect with the data!")
+  }
   return (polygon_masks)
 }
 
@@ -165,4 +178,27 @@ clipByMasks = function(h5file, polygon_masks, output, split_by, clipFun) {
   }
 
   return (results)
+}
+
+
+checkClipExtentInputs = function(obj, className, xmin, xmax, ymin, ymax) {
+  criterias = list()
+  criterias[paste0("Object is not from class", className)] = class(obj) == className
+  criterias = c(criterias, list(
+    "xmin is not numeric" = class(xmin) == "numeric",
+    "xmax is not numeric" = class(xmax) == "numeric",
+    "ymin is not numeric" = class(ymin) == "numeric",
+    "ymax is not numeric" = class(ymax) == "numeric"
+  ))
+  do.call(stopifnotMessage, criterias)
+}
+
+checkClipGeoInputs = function(obj, className, polygon_spdf, split_by) {
+  criterias = list()
+  criterias[paste0("Object is not from class", className)] = class(obj) == className
+  criterias = c(criterias, list(
+    "polygon_spdf is not a SpatialPolygonsDataFrame" = class(polygon_spdf) == "SpatialPolygonsDataFrame",
+    "split_by is not a valid attribute of polygon_spdf" = is.null(split_by) || split_by %in% colnames(polygon_spdf@data)
+  ))
+  do.call(stopifnotMessage, criterias)
 }
