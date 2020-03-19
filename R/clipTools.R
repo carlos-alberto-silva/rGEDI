@@ -78,7 +78,14 @@ getPolygonMaskLevel2A = function(spData, masks, polygon_spdf, split_by) {
     }
   }
   close(pb)
-  if(all(sapply(polygon_masks, function(x) sum(sapply(x, length)))==0)){
+  if(all(
+    sapply(
+      polygon_masks, function(x) {
+        res=sapply(x, function(y) sum(sapply(y, length)))
+        ifelse(length(res)>0,sum(res),0)
+      }
+    )==0))
+    {
     stop("The clipping polygon does not intersect with the data!")
   }
   return (polygon_masks)
