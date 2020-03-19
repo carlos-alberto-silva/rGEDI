@@ -58,11 +58,13 @@ close(level1b)
 rm(list=ls())
 }
 
+outdir <- tempdir()
+
 zipfile_amazon <- system.file("extdata", "Amazon.zip", package="rGEDI")
 zipfile_Savanna <- system.file("extdata", "Savanna.zip", package="rGEDI")
 
-lasfile_amazon <- unzip(zipfile_amazon)
-lasfile_Savanna <- unzip(zipfile_Savanna)
+lasfile_amazon <- unzip(zipfile_amazon,exdir=outdir)
+lasfile_Savanna <- unzip(zipfile_Savanna,exdir=outdir)
 
 # Reading and plot ALS file
 libsAvailable = require(lidR) && require(plot3D)
@@ -80,14 +82,14 @@ ycenter_Savanna = mean(las_Savanna@bbox[2,])
 wf_amazon<-gediWFSimulator(
                           input=lasfile_amazon,
                           output=file.path(
-                                        getwd(),
+                                        outdir,
                                         "gediWF_amazon_simulation.h5"
                                         ),
                           coords = c(xcenter_amazon, ycenter_amazon))
 wf_Savanna<-gediWFSimulator(
                             input=lasfile_Savanna,
                             output=file.path(
-                                          getwd(),
+                                          outdir,
                                           "gediWF_Savanna_simulation.h5"
                                           ),
                             coords = c(xcenter_Savanna, ycenter_Savanna))

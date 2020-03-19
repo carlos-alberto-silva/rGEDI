@@ -123,14 +123,15 @@ rm(list=ls())
 }
 libsAvailable = require(lidR) && require(plot3D)
 if (libsAvailable) {
+outdir=tempdir()
 
 # specify the path to ALS data (zip)
 alsfile_Amazon_zip <- system.file("extdata", "Amazon.zip", package="rGEDI")
 alsfile_Savanna_zip <- system.file("extdata", "Savanna.zip", package="rGEDI")
 
 # Unzipping ALS data
-alsfile_Amazon_filepath <- unzip(alsfile_Amazon_zip,exdir = dirname(alsfile_Amazon_zip))
-alsfile_Savanna_filepath <- unzip(alsfile_Savanna_zip,exdir = dirname(alsfile_Savanna_zip))
+alsfile_Amazon_filepath <- unzip(alsfile_Amazon_zip,exdir = outdir)
+alsfile_Savanna_filepath <- unzip(alsfile_Savanna_zip,exdir = outdir)
 
 # Reading and plot ALS file (las file)
 als_Amazon<-readLAS(alsfile_Amazon_filepath)
@@ -144,11 +145,11 @@ ycenter_Savanna = mean(als_Savanna@bbox[2,])
 
 # Simulating GEDI full waveform
 wf_Amazon<-gediWFSimulator(input=alsfile_Amazon_filepath,
-                          output=file.path(getwd(),"gediWF_amazon_simulation.h5"),
+                          output=file.path(outdir,"gediWF_amazon_simulation.h5"),
                           coords = c(xcenter_Amazon, ycenter_Amazon))
 
 wf_Savanna<-gediWFSimulator(input=alsfile_Savanna_filepath,
-                           output=file.path(getwd(),"gediWF_Savanna_simulation.h5"),
+                           output=file.path(outdir,"gediWF_Savanna_simulation.h5"),
                            coords = c(xcenter_Savanna, ycenter_Savanna))
 
 # Plot ALS and GEDI simulated full waveform
