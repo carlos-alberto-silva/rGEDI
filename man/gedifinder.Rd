@@ -27,6 +27,10 @@ This function finds the path to GEDI data within a boundary box coordinates prov
 #'@usage gedifinder(level="GEDI02_B",xmin,xmax,ymin,ymax)
 }
 \examples{
+\donttest{
+# gedifinder is a web service provided by NASA
+# usually the request takes more than 5 seconds
+
 # Specifying bounding box coordinates
 ul_lat<- 42.0
 ul_lon<- -100
@@ -35,6 +39,7 @@ lr_lon<- -96.0
 
 # Extracting the path to GEDI data for the specified boundary box coordinates
 gedi02b_list<-gedifinder(level="GEDI02_B",ul_lat, ul_lon, lr_lat, lr_lon)
+}
 }
 \seealso{
 bbox: The correct format is upper left and lower right corner coordinates, in lat,lon ordering, for the bounding box of the area of interest (e.g. [ul_lat,ul_lon,lr_lat,lr_lon]).
