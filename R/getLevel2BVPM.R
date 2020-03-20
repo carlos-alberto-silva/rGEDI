@@ -55,7 +55,7 @@ getLevel2BVPM<-function(level2b){
     m<-data.table::data.table(
       beam<-rep(i,length(level2b_i[["shot_number"]][])),
       shot_number=level2b_i[["shot_number"]][],
-      delta_time=level2b_i[["delta_time"]][],
+      delta_time=level2b_i[["geolocation/delta_time"]][],
       latitude_lastbin=level2b_i[["geolocation/latitude_lastbin"]][],
       latitude_bin0=level2b_i[["geolocation/latitude_bin0"]][],
       longitude_bin0=level2b_i[["geolocation/longitude_bin0"]][],
