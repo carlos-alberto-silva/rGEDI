@@ -53,6 +53,7 @@ clipLevel2BPAIProfile = function(level2BPAIProfile,xmin, xmax, ymin, ymax){
     level2BPAIProfile$lat_lowestmode >= ymin &
     level2BPAIProfile$lat_lowestmode <=  ymax
 
+  mask[!stats::complete.cases(mask)] = FALSE
   mask = (1:length(level2BPAIProfile$lon_lowestmode))[mask]
   newFile<-level2BPAIProfile[mask,]
   if (nrow(newFile) == 0) {print("The polygon does not overlap the GEDI data")} else {

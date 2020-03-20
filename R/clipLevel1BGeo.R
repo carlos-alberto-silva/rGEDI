@@ -63,7 +63,7 @@ clipLevel1BGeo = function(level1BGeo,xmin, xmax, ymin, ymax){
     level1BGeo$longitude_lastbin <= xmax &
     level1BGeo$latitude_lastbin >= ymin &
     level1BGeo$latitude_lastbin <=  ymax
-
+  mask[!stats::complete.cases(mask)] = FALSE
   mask = (1:length(level1BGeo$longitude_bin0))[mask]
   newFile<-level1BGeo[mask,]
   #newFile<- new("gedi.level1b.dt", dt = x[mask,])

@@ -29,7 +29,8 @@ Imports:
   lazyeval,
   raster,
   RColorBrewer,
-  sp
+  sp,
+  stats
 Suggests:
   curl,
   knitr,

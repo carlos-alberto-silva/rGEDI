@@ -19,6 +19,7 @@ clipSpDataByExtentLevel2A = function(spData, xmin, xmax, ymin, ymax) {
         y$latitude_lowest >= ymin &
         y$latitude_lowest <= ymax
 
+      mask[!stats::complete.cases(mask)] = FALSE
       return ((1:length(y$longitude_lowest))[mask])
     })
     return (masks2)
@@ -103,6 +104,7 @@ clipSpDataByExtentLevelB = function(spData, xmin, xmax, ymin, ymax) {
       x$latitude_lastbin >= ymin &
       x$latitude_lastbin <= ymax
 
+    mask[!stats::complete.cases(mask)] = FALSE
     return ((1:length(x$longitude_bin0))[mask])
   })
   if (all(sapply(masks, length)==0)) {

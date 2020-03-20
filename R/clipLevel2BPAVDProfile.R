@@ -51,6 +51,7 @@ clipLevel2BPAVDProfile = function(level2BPAVDProfile,xmin, xmax, ymin, ymax){
     level2BPAVDProfile$lat_lowestmode >= ymin &
     level2BPAVDProfile$lat_lowestmode <=  ymax
 
+  mask[!stats::complete.cases(mask)] = FALSE
   mask = (1:length(level2BPAVDProfile$lon_lowestmode))[mask]
   newFile<-level2BPAVDProfile[mask,]
   #newFile<- new("gedi.level1b.dt", dt = level2bdt[mask,])

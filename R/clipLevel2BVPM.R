@@ -69,6 +69,7 @@ clipLevel2BVPM = function(level2BVPM,xmin, xmax, ymin, ymax){
     level2BVPM$latitude_lastbin >= ymin &
     level2BVPM$latitude_lastbin <=  ymax
 
+  mask[!stats::complete.cases(mask)] = FALSE
   mask = (1:length(level2BVPM$longitude_bin0))[mask]
   newFile<-level2BVPM[mask,]
   return (newFile)

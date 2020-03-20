@@ -42,7 +42,7 @@
 #'level2AM_clip <- clipLevel2AM(level2AM,xmin, xmax, ymin, ymax)
 #'
 #'close(level2a)
-#'@import hdf5r
+#'@import hdf5r stats
 #'@export
 clipLevel2AM = function(level2AM,xmin, xmax, ymin, ymax){
   # xmin ymin xmax ymax
@@ -55,7 +55,7 @@ clipLevel2AM = function(level2AM,xmin, xmax, ymin, ymax){
     level2AM$lon_lowestmode <= xmax &
     level2AM$lat_lowestmode >= ymin &
     level2AM$lat_lowestmode <=  ymax
-
+  mask[!stats::complete.cases(mask)] = FALSE
   mask = (1:length(level2AM$lat_lowestmode))[mask]
   newFile<-level2AM[mask,]
   #newFile<- new("gedi.level1b.dt", dt = level1bdt[mask,])
