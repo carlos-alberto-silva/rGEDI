@@ -1,7 +1,7 @@
 ![](https://github.com/carlos-alberto-silva/rGEDI/blob/master/readme/fig1.png)<br/>
 
-![Github](https://img.shields.io/badge/CRAN-0.0.4-green.svg)
-![Github](https://img.shields.io/badge/Github-0.0.4-green.svg)
+![Github](https://img.shields.io/badge/CRAN-0.0.5-green.svg)
+![Github](https://img.shields.io/badge/Github-0.0.5-green.svg)
 ![licence](https://img.shields.io/badge/Licence-GPL--3-blue.svg) 
 ![Downloads](https://cranlogs.r-pkg.org/badges/grand-total/rGEDI)
 [![Build Status](https://travis-ci.com/carlos-alberto-silva/rGEDI.svg?token=Jqizwyc6gBxNafNccTdU&branch=master)](https://travis-ci.com/carlos-alberto-silva/rGEDI)
