@@ -4,12 +4,16 @@
 \alias{gediDownload}
 \title{Download GEDI data}
 \usage{
-gediDownload(filepath,outdir)
+gediDownload(filepath, outdir = NULL, overwrite = FALSE, buffer_size = 512)
 }
 \arguments{
 \item{filepath}{Vector object; path to the GEDI data}
 
-\item{outdir}{Vector object, output directory for downloading GEDI data}
+\item{outdir}{Vector object, output directory for downloading GEDI data, default tempdir()}
+
+\item{overwrite}{logical; overwrite file if they already exists in destination, default FALSE}
+
+\item{buffer_size}{integer; the size of download chunk in KB to hold in memory before writing to file, default 512.}
 }
 \description{
 Download GEDI data from LP DAAC Data Pool. Users will need to enter their

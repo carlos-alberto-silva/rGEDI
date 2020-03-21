@@ -20,7 +20,7 @@
 #'\donttest{
 #' # gedifinder is a web service provided by NASA
 #' # usually the request takes more than 5 seconds
-#' 
+#'
 #'# Specifying bounding box coordinates
 #'ul_lat<- 42.0
 #'ul_lon<- -100
@@ -30,12 +30,18 @@
 #'# Extracting the path to GEDI data for the specified boundary box coordinates
 #'gedi02b_list<-gedifinder(level="GEDI02_B",ul_lat, ul_lon, lr_lat, lr_lon)
 #'}
+#'@import jsonlite curl
 #'@export
 gedifinder<-function(level, ul_lat, ul_lon, lr_lat, lr_lon){
-  response = httr::GET(paste0("https://lpdaacsvc.cr.usgs.gov/services/gedifinder?product=",level,"&version=001&bbox=",ul_lat,",",ul_lon,",",lr_lat,",",lr_lon,"&output=html"))
-  content = httr::content(response, "text")
-  links = gsub(".*a href=([^>]*).*", "\\1", strsplit(content,"<br/>")[[1]])
-  return(links)
+  response = curl::curl(sprintf(
+    "https://lpdaacsvc.cr.usgs.gov/services/gedifinder?%s=%s&version=001&%s=%f,%f,%f,%f&output=json",
+    "level", level,
+    "bbox", ul_lat, ul_lon, lr_lat,lr_lon))
+  content = suppressWarnings(readLines(response))
+  close(response)
+  results = jsonlite::parse_json(content)
+  if(results$message != "") {
+    stop(results$message)
+  }
+  return(simplify2array(results$data))
 }
-
-

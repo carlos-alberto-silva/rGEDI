@@ -102,31 +102,19 @@ gediDownload(filepath=gLevel2B,outdir=outdir)
 
 #** Herein, we are using only a GEDI sample dataset for this tutorial.
 # downloading zip file
-download.file("https://github.com/carlos-alberto-silva/rGEDI/releases/download/datasets/examples.zip",destfile=file.path(outdir, "examples.zip"))
+zipfile = file.path(outdir, "examples.zip")
+download.file("https://github.com/carlos-alberto-silva/rGEDI/releases/download/datasets/examples.zip",destfile=zipfile)
 
 # unzip file
-unzip(file.path(outdir, "examples.zip"), exdir=outdir)
+unzip(zipfile, exdir=outdir)
 ```
 ```{r, echo = FALSE, results="hide"}
 zipfile = file.path(outdir, "examples.zip")
 if (!file.exists(zipfile)) {
-  config = httr::add_headers(
-    Authorization=paste0("token ", Sys.getenv("TRAVIS_TOKEN")),
-    Accept="application/octet-stream")
-  res=httr::GET(
-      "https://github.com/carlos-alberto-silva/rGEDI/releases/download/datasets/examples.zip", 
-    config = config
+  res=download.file(
+    url="https://github.com/carlos-alberto-silva/rGEDI/releases/download/datasets/examples.zip", 
+    destfile=zipfile
   )
-  h=curl::new_handle()
-  curl::handle_setheaders(h, 
-                          Autorization=sprintf(
-                            "token %s", 
-                            Sys.getenv("TRAVIS_TOKEN")))
-  
-  curl::curl_download(res$url,
-                destfile=zipfile,
-                handle=h,
-                quiet=FALSE)
 }
 unzip(zipfile, exdir=outdir)
 ```
