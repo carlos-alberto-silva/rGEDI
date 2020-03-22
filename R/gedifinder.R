@@ -35,7 +35,7 @@
 gedifinder<-function(level, ul_lat, ul_lon, lr_lat, lr_lon){
   response = curl::curl(sprintf(
     "https://lpdaacsvc.cr.usgs.gov/services/gedifinder?%s=%s&version=001&%s=%f,%f,%f,%f&output=json",
-    "level", level,
+    "product", level,
     "bbox", ul_lat, ul_lon, lr_lat,lr_lon))
   content = suppressWarnings(readLines(response))
   close(response)
