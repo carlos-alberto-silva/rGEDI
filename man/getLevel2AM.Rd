@@ -11,7 +11,7 @@ getLevel2AM(level2a)
 An S4 object of class "gedi.level2a".}
 }
 \value{
-An S4 object of class \code{\link[data.table:data.table]{data.table-class}}
+Returns an S4 object of class \code{\link[data.table:data.table]{data.table-class}}
 containing the elevation and relative heights.
 }
 \description{

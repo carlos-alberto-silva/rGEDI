@@ -19,7 +19,7 @@ An S4 object of class "gedi.level2a".}
 \item{ymax}{Numeric. North latitude (y) coordinate of bounding rectangle, in decimal degrees.}
 }
 \value{
-An S4 object of class \code{\link[data.table:data.table]{data.table-class}}
+Returns an S4 object of class \code{\link[data.table:data.table]{data.table-class}}
 containing the clipped elevation and relative heights metrics.
 }
 \description{

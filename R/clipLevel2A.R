@@ -18,6 +18,8 @@
 #'
 #'@examples
 #'\donttest{
+#'outdir = tempdir()
+#' 
 #'# Specifying the path to GEDI level2A data (zip file)
 #'level2A_fp_zip <- system.file("extdata",
 #'                   "GEDI02_A_2019108080338_O01964_T05337_02_001_01_sub.zip",
@@ -36,7 +38,7 @@
 #'ymax=-13.73
 #'
 #'# Specifying output file and path
-#'output<-file.path(getwd(),"GEDI02_A_2019108080338_O01964_T05337_02_001_01_clip.h5")
+#'output<-file.path(outdir,"GEDI02_A_2019108080338_O01964_T05337_02_001_01_clip.h5")
 #'
 #'# Clipping GEDI Level2A data by boundary box extent
 #'level2a_clip <- clipLevel2A(level2a,xmin,xmax,ymin,ymax,output)
@@ -83,6 +85,8 @@ clipLevel2A = function(level2a, xmin, xmax, ymin, ymax, output=""){
 #'
 #'@examples
 #'\donttest{
+#'outdir = tempdir()
+#' 
 #'# Specifying the path to GEDI level2A data (zip file)
 #'level2A_fp_zip <- system.file("extdata",
 #'                   "GEDI02_A_2019108080338_O01964_T05337_02_001_01_sub.zip",
@@ -102,7 +106,7 @@ clipLevel2A = function(level2a, xmin, xmax, ymin, ymax, output=""){
 #'polygon_spdf<-shapefile(polygon_filepath)
 #'
 #'# Specifying output file and path
-#'output<-file.path(getwd(),"GEDI02_A_2019108080338_O01964_T05337_02_001_01_clip")
+#'output<-file.path(outdir,"GEDI02_A_2019108080338_O01964_T05337_02_001_01_clip")
 #'
 #'# Clipping GEDI Level2A data by geometry
 #'level2a_clip <- clipLevel2AGeometry(level2a, polygon_spdf = polygon_spdf,

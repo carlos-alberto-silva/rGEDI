@@ -28,6 +28,8 @@ This function clips GEDI Level2A data within a given bounding coordinates
 }
 \examples{
 \donttest{
+outdir = tempdir()
+
 # Specifying the path to GEDI level2A data (zip file)
 level2A_fp_zip <- system.file("extdata",
                   "GEDI02_A_2019108080338_O01964_T05337_02_001_01_sub.zip",
@@ -46,7 +48,7 @@ ymin=-13.74
 ymax=-13.73
 
 # Specifying output file and path
-output<-file.path(getwd(),"GEDI02_A_2019108080338_O01964_T05337_02_001_01_clip.h5")
+output<-file.path(outdir,"GEDI02_A_2019108080338_O01964_T05337_02_001_01_clip.h5")
 
 # Clipping GEDI Level2A data by boundary box extent
 level2a_clip <- clipLevel2A(level2a,xmin,xmax,ymin,ymax,output)

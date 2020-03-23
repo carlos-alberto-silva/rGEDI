@@ -14,7 +14,7 @@ An S4 object of class "gedi.level1b".}
 by default it will extract \emph{latitude_bin0}, \emph{latitude_lastbin}, \emph{longitude_bin0}, \emph{longitude_lastbin}, and \emph{shot_number}. See details for more options.}
 }
 \value{
-An S4 object of class \code{\link[data.table:data.table]{data.table-class}} containing the GEDI Full Waveform Geolocations
+Returns an S4 object of class \code{\link[data.table:data.table]{data.table-class}} containing the GEDI Full Waveform Geolocations
 }
 \description{
 This function extracts Pulse Full Waveform Geolocations from GEDI Level1B data

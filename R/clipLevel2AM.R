@@ -12,7 +12,7 @@
 #'@param ymin Numeric. South latitude (y) coordinate of bounding rectangle, in decimal degrees.
 #'@param ymax Numeric. North latitude (y) coordinate of bounding rectangle, in decimal degrees.
 #'
-#'@return An S4 object of class \code{\link[data.table:data.table]{data.table-class}}
+#'@return Returns an S4 object of class \code{\link[data.table:data.table]{data.table-class}}
 #'containing the clipped elevation and relative heights metrics.
 #'
 #'@seealso https://lpdaac.usgs.gov/products/gedi02_av001/
@@ -75,7 +75,7 @@ clipLevel2AM = function(level2AM,xmin, xmax, ymin, ymax){
 #'which can be loaded as an ESRI shapefile using \code{\link[raster:shapefile]{raster::shapefile()}} function in the \emph{raster} package.
 #'@param split_by Polygon id. If defined, GEDI data will be clipped by each polygon using the polygon id from table of attribute defined by the user
 #'
-#'@return An S4 object of class \code{\link[data.table:data.table]{data.table-class}}
+#'@return Returns an S4 object of class \code{\link[data.table:data.table]{data.table-class}}
 #'containing the clipped elevation and relative heights metrics.
 #'
 #'@examples

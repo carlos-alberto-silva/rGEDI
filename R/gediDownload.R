@@ -7,6 +7,8 @@
 #'@param outdir Vector object, output directory for downloading GEDI data, default tempdir()
 #'@param overwrite logical; overwrite file if they already exists in destination, default FALSE
 #'@param buffer_size integer; the size of download chunk in KB to hold in memory before writing to file, default 512.
+#' 
+#'@return No return value on success, on failure it will \code{stop()}
 #'@references Credits to Cole Krehbiel. Code adapted from <https://git.earthdata.nasa.gov/projects/LPDUR/repos/daac_data_download_r/browse/DAACDataDownload.R>
 #'@examples
 #'\donttest{

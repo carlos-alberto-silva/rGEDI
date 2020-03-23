@@ -7,7 +7,7 @@
 #'@param level1b A GEDI Level1B object (output of \code{\link[rGEDI:readLevel1B]{readLevel1B}} function). A S4 object of class "gedi.level1b".
 #'@param shot_number Shot number. A scalar representing the shot number of a giving pulse.
 #'
-#'@return Returns An S4 object of class "gedi.fullwaveform".
+#'@return Returns an S4 object of class "gedi.fullwaveform".
 #'
 #'@details Shot numbers can be extracted using \code{\link[rGEDI:readLevel1B]{readLevel1B}} function.
 #'
@@ -29,6 +29,7 @@
 #'wf <- getLevel1BWF(level1b, shot_number="19640521100108408")
 #'
 #'# Plotting GEDI Full waveform
+#'oldpar<-par()
 #'par(mfrow = c(1,2), cex.axis = 1.5)
 #'plot(wf, relative=FALSE, polygon=TRUE, type="l", lwd=2, col="forestgreen",
 #'xlab="Waveform Amplitude", ylab="Elevation (m)")
@@ -36,6 +37,7 @@
 #'plot(wf, relative=TRUE, polygon=TRUE, type="l", lwd=2, col="forestgreen",
 #'xlab="Waveform Amplitude (%)", ylab="Elevation (m)")
 #'
+#'par(oldpar)
 #'close(level1b)
 #'@export
 #'

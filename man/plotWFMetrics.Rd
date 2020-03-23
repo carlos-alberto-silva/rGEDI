@@ -20,7 +20,7 @@ An S4 object of class "gedi.level2a".}
 \item{...}{Will be passed to the main plot.}
 }
 \value{
-Returns raster layer(s) of selected GEDI Canopy Cover and Vertical Profile Metric(s)
+Returns a raster layer(s) of selected GEDI Canopy Cover and Vertical Profile Metric(s)
 }
 \description{
 Plots the waveform with overlaid RH metrics

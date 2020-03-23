@@ -12,7 +12,7 @@
 #'@param rh Integer vector. Specify which RH metrics to plot except rh0 and rh100, default c(25, 50, 75).
 #'@param ... Will be passed to the main plot.
 #'
-#'@return Returns raster layer(s) of selected GEDI Canopy Cover and Vertical Profile Metric(s)
+#'@return Returns a raster layer(s) of selected GEDI Canopy Cover and Vertical Profile Metric(s)
 #'
 #'@seealso https://lpdaac.usgs.gov/products/gedi02_bv001/
 #'
@@ -46,6 +46,8 @@
 plotWFMetrics = function(level1b, level2a, shot_number, rh=c(25, 50, 75), ...) {
   # Avoid NOTEs from checking
   elevation = NULL
+  oldpar <- par(no.readonly = TRUE)
+  on.exit(par(oldpar)) 
 
   # Extracting GEDI full waveform for a giving shotnumber
   wf <- getLevel1BWF(level1b, shot_number=shot_number)

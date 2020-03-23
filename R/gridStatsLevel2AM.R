@@ -11,7 +11,7 @@
 #'@param func The function(s) to be applied to each cell
 #'@param res Spatial resolution in decimal degrees for the output raster layer
 #'
-#'@return Returns raster layer(s) of selected GEDI Elevation and Height Metric(s)
+#'@return Return a raster layer(s) of selected GEDI Elevation and Height Metric(s)
 #'
 #'@seealso https://lpdaac.usgs.gov/products/gedi02_av001/
 #'

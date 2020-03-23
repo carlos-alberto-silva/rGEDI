@@ -15,7 +15,7 @@ An S4 object of class "data.table".}
 \item{id}{A vector containing the polygon id for each GEDI observation. Default is NULL}
 }
 \value{
-An S4 object of class \code{\link[data.table:data.table]{data.table-class}}
+Returns an S4 object of class \code{\link[data.table:data.table]{data.table-class}}
 containting Statistics of GEDI level2A defined metrics
 }
 \description{

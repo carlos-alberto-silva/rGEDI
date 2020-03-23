@@ -92,6 +92,7 @@ gedi.fullwaveform <- setClass(
 #'@param polygon if TRUE, the polygon will be added to the plot
 #'
 #'@param method methods used for simulating the GEDI full-waveform ("RXWAVEINT","RXWAVEINT" or "RXWAVEINT"). Default is "RXWAVECOUNT".
+#'@return No return value
 #'
 #' @export
 #' @method plot gedi.fullwaveform
@@ -115,6 +116,7 @@ setGeneric("plot", function(x, y, ...)
 #'wf <- getLevel1BWF(level1b, shot_number="19640521100108408")
 #'
 #'# Plotting GEDI Full-waveform
+#'oldpar<-par()
 #'par(mfrow = c(1,2), cex.axis = 1.5)
 #'plot(wf, relative=FALSE, polygon=TRUE, type="l", lwd=2, col="forestgreen",
 #'xlab="", ylab="Elevation (m)")
@@ -122,6 +124,7 @@ setGeneric("plot", function(x, y, ...)
 #'plot(wf, relative=TRUE, polygon=TRUE, type="l", lwd=2, col="forestgreen",
 #'xlab="Waveform Amplitude (%)", ylab="Elevation (m)")
 #'
+#'par(oldpar) 
 #'close(level1b)
 #' @rdname plot
 setMethod("plot", signature("gedi.fullwaveform", y = "missing"), function(x,relative=FALSE,polygon=FALSE,...) {
@@ -162,10 +165,6 @@ setMethod("plot", signature("gedi.fullwaveform", y = "missing"), function(x,rela
 #'@description for gedi.level1bSim: will plot the simulated waveform
 #'
 #'@examples
-#'\dontshow{
-#'rm(list=ls())
-#'}
-#'
 #'outdir <- tempdir()
 #' 
 #'zipfile_amazon <- system.file("extdata", "Amazon.zip", package="rGEDI")

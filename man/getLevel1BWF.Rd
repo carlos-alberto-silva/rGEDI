@@ -12,7 +12,7 @@ getLevel1BWF(level1b, shot_number)
 \item{shot_number}{Shot number. A scalar representing the shot number of a giving pulse.}
 }
 \value{
-Returns An S4 object of class "gedi.fullwaveform".
+Returns an S4 object of class "gedi.fullwaveform".
 }
 \description{
 This function extracts the full waveform of a given pulse from GEDI Level1B data.
@@ -36,6 +36,7 @@ level1b<-readLevel1B(level1Bpath=level1Bpath)
 wf <- getLevel1BWF(level1b, shot_number="19640521100108408")
 
 # Plotting GEDI Full waveform
+oldpar<-par()
 par(mfrow = c(1,2), cex.axis = 1.5)
 plot(wf, relative=FALSE, polygon=TRUE, type="l", lwd=2, col="forestgreen",
 xlab="Waveform Amplitude", ylab="Elevation (m)")
@@ -43,6 +44,7 @@ xlab="Waveform Amplitude", ylab="Elevation (m)")
 plot(wf, relative=TRUE, polygon=TRUE, type="l", lwd=2, col="forestgreen",
 xlab="Waveform Amplitude (\%)", ylab="Elevation (m)")
 
+par(oldpar)
 close(level1b)
 }
 \seealso{

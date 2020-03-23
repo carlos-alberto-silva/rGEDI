@@ -9,7 +9,7 @@ stopifnotMessage = function(...) {
     }
   }
   if (ok == FALSE) {
-    stop(paste0("\n\nError validating the arguments:\n    ", paste(errors, collapse="\n    ")))
+    stop(paste0("\n\nWhen validating the arguments:\n    ", paste(errors, collapse="\n    ")))
   }
 }
 

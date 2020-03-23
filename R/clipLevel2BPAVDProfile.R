@@ -12,7 +12,7 @@
 #'@param ymin Numeric. South latitude (y) coordinate of the bounding rectangle, in decimal degrees.
 #'@param ymax Numeric. North latitude (y) coordinate of the bounding rectangle, in decimal degrees.
 #'
-#'@return An S4 object of class \code{\link[data.table:data.table]{data.table-class}}
+#'@return Returns an S4 object of class \code{\link[data.table:data.table]{data.table-class}}
 #'containing the Plant Area Volume Density profile data.
 #'
 #'@seealso https://lpdaac.usgs.gov/products/gedi02_bv001/
@@ -74,7 +74,7 @@ clipLevel2BPAVDProfile = function(level2BPAVDProfile,xmin, xmax, ymin, ymax){
 #'which can be loaded as an ESRI shapefile using \code{\link[raster:shapefile]{raster::shapefile()}} function in the \emph{shapefile} package.
 #'@param split_by Polygon id. If defined, GEDI data will be clipped by each polygon using the attribute specified by \code{split_by} from the attribute table.
 #'
-#'@return An S4 object of class \code{\link[data.table:data.table]{data.table-class}}
+#'@return Returns an S4 object of class \code{\link[data.table:data.table]{data.table-class}}
 #'containing the Plant Area Volume Density profile data.
 #'
 #'@seealso https://lpdaac.usgs.gov/products/gedi02_bv001/

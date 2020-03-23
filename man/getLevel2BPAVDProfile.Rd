@@ -11,7 +11,7 @@ getLevel2BPAVDProfile(level2b)
 An S4 object of class "gedi.level2b".}
 }
 \value{
-An S4 object of class \code{\link[data.table:data.table]{data.table-class}}
+Returns an S4 object of class \code{\link[data.table:data.table]{data.table-class}}
 containing the Plant Area Volume Density Index.
 }
 \description{

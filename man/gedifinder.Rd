@@ -18,7 +18,7 @@ gedifinder(level, ul_lat, ul_lon, lr_lat, lr_lon)
 \item{lr_lon}{Numeric. Lower right (ul) corner coordinates, in lon (decimal degrees) for the bounding box of the area of interest.}
 }
 \value{
-Vector object pointing out the path saving the downloaded GEDI data within
+Return a vector object pointing out the path saving the downloaded GEDI data within
 the boundary box coordinates provided
 }
 \description{

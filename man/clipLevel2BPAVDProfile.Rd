@@ -19,7 +19,7 @@ An S4 object of class "data.table".}
 \item{ymax}{Numeric. North latitude (y) coordinate of the bounding rectangle, in decimal degrees.}
 }
 \value{
-An S4 object of class \code{\link[data.table:data.table]{data.table-class}}
+Returns an S4 object of class \code{\link[data.table:data.table]{data.table-class}}
 containing the Plant Area Volume Density profile data.
 }
 \description{

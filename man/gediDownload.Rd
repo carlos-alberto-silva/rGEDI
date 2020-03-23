@@ -15,6 +15,9 @@ gediDownload(filepath, outdir = NULL, overwrite = FALSE, buffer_size = 512)
 
 \item{buffer_size}{integer; the size of download chunk in KB to hold in memory before writing to file, default 512.}
 }
+\value{
+No return value on success, on failure it will \code{stop()}
+}
 \description{
 Download GEDI data from LP DAAC Data Pool. Users will need to enter their
 Earth Explore login Information for downloading the data.

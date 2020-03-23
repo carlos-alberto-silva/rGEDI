@@ -19,6 +19,8 @@
 #'@examples
 #'\donttest{
 #'# Specifying the path to GEDI level1B data (zip file)
+#'outdir = tempdir()
+#' 
 #'level1B_fp_zip <- system.file("extdata",
 #'                   "GEDI01_B_2019108080338_O01964_T05337_02_003_01_sub.zip",
 #'                   package="rGEDI")
@@ -36,7 +38,7 @@
 #'ymax=-13.73
 #'
 #'# Specifying output file and path
-#'output<-file.path(getwd(),"GEDI01_B_2019108080338_O01964_T05337_02_003_01_clip")
+#'output<-file.path(outdir,"GEDI01_B_2019108080338_O01964_T05337_02_003_01_clip")
 #'
 #'# Clipping GEDI Level1B data by extent boundary box
 #'level1b_clip <- clipLevel1B(level1b,xmin, xmax, ymin, ymax,output)
@@ -81,6 +83,8 @@ clipLevel1B = function(level1b, xmin, xmax, ymin, ymax, output=""){
 #'
 #'@examples
 #'\donttest{
+#'outdir = tempdir()
+#' 
 #'# Specifying the path to GEDI level1B data (zip file)
 #'level1B_fp_zip <- system.file("extdata",
 #'                   "GEDI01_B_2019108080338_O01964_T05337_02_003_01_sub.zip",
@@ -100,7 +104,7 @@ clipLevel1B = function(level1b, xmin, xmax, ymin, ymax, output=""){
 #'polygon_spdf<-shapefile(polygon_filepath)
 #'
 #'# Spepecifing output file and path
-#'output<-file.path(getwd(),"GEDI01_B_2019108080338_O01964_T05337_02_003_01_clip")
+#'output<-file.path(outdir,"GEDI01_B_2019108080338_O01964_T05337_02_003_01_clip")
 #'
 #'# clipping GEDI Level1B data by extent boundary box
 #'level1b_clip <- clipLevel1BGeometry(level1b, polygon_spdf = polygon_spdf,
@@ -257,7 +261,7 @@ clipByMask1B = function(level1b, masks, output = "") {
         }
         hdf5r::createDataSet(newFile,dt,level1b@h5[[dt]][mask,], dtype=dtype, chunk_dim=chunkdims)
       } else {
-        stop(paste0("Don't know how to treat dataset: ", dt, "\nContact the maintainer of the package!"))
+        stop(paste0("Don't know how to handle dataset: ", dt, "\nContact the maintainer of the package!"))
       }
 
       #Update progress

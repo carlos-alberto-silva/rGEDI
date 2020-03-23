@@ -7,7 +7,7 @@
 #'@param level2a A GEDI Level2A object (output of \code{\link[rGEDI:readLevel2A]{readLevel2A}} function).
 #'An S4 object of class "gedi.level2a".
 #'
-#'@return An S4 object of class \code{\link[data.table:data.table]{data.table-class}}
+#'@return Returns an S4 object of class \code{\link[data.table:data.table]{data.table-class}}
 #'containing the elevation and relative heights.
 #'
 #'@seealso https://lpdaac.usgs.gov/products/gedi02_av001/

@@ -68,7 +68,7 @@
 # @param seed n integer. random number seed
 #'
 #' #'
-#' @return An S4 object of class \code{\link[hdf5r:H5File-class]{hdf5r::H5File}} in the \emph{hdf5r} package.
+#' @return Returns an S4 object of class \code{\link[hdf5r:H5File-class]{hdf5r::H5File}} in the \emph{hdf5r} package.
 #'
 #' @seealso
 #' i) Hancock, S., Armston, J., Hofton, M., Sun, X., Tang, H., Duncanson, L.I., Kellner,
@@ -115,6 +115,7 @@
 #'
 #'# Plot ALS and GEDI simulated full waveform
 #'
+#'oldpar<-par()
 #'par(mfrow=c(2,2), mar=c(4,4,0,0), oma=c(0,0,1,1),cex.axis = 1.2)
 #'scatter3D(
 #'          als_Amazon@data$X,als_Amazon@data$Y,als_Amazon@data$Z,
@@ -137,6 +138,8 @@
 #'     xlab="Waveform Amplitude (%)", ylab="Elevation (m)", ylim=c(815,835))
 #'grid()
 #'
+#'par(oldpar)
+#' 
 #'close(wf_Amazon)
 #'close(wf_Savanna)
 #'}

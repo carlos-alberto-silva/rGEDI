@@ -10,7 +10,7 @@
 #'@param func The function to be applied for computing the defined statistics
 #'@param id A vector containing the polygon id for each GEDI observation. Default is NULL
 #'
-#'@return An S4 object of class \code{\link[data.table:data.table]{data.table-class}}
+#'@return Returns an S4 object of class \code{\link[data.table:data.table]{data.table-class}}
 #'containting Statistics of GEDI level2BVPM defined metrics
 #'
 #'@seealso https://lpdaac.usgs.gov/products/gedi02_bv001/

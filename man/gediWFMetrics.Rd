@@ -207,7 +207,7 @@ gediWFMetrics(
 \item{deconTol}{deconvolution tolerance}
 }
 \value{
-A list of metrics derived from the simulated full waveform.
+Returns a list of metrics derived from the simulated full waveform.
 A text file (txt) containing the metrics will be saved in the output folder (outRoot).
 Please see the details section for checking the definition of the metrics.
 }

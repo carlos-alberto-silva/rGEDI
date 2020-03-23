@@ -25,6 +25,8 @@ This function extracts GEDI Level1B data within a given geometry
 }
 \examples{
 \donttest{
+outdir = tempdir()
+
 # Specifying the path to GEDI level2B data (zip file)
 level2B_fp_zip <- system.file("extdata",
                   "GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub.zip",
@@ -44,7 +46,7 @@ library(raster)
 polygon_spdf<-shapefile(polygon_filepath)
 
 # Specifying output file and path
-output<-file.path(getwd(),"GEDI02_B_2019108080338_O01964_T05337_02_001_01_clip")
+output<-file.path(outdir,"GEDI02_B_2019108080338_O01964_T05337_02_001_01_clip")
 
 # Clipping GEDI data by extent boundary box
 level2b_clip <- clipLevel2BGeometry(level2b, polygon_spdf = polygon_spdf,

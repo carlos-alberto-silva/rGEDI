@@ -25,6 +25,9 @@ plot(x, y, ...)
 
 \item{method}{methods used for simulating the GEDI full-waveform ("RXWAVEINT","RXWAVEINT" or "RXWAVEINT"). Default is "RXWAVECOUNT".}
 }
+\value{
+No return value
+}
 \description{
 For gedi.fullwaveform: will plot the full waveform\cr\cr
 
@@ -46,6 +49,7 @@ level1b<-readLevel1B(level1Bpath=level1Bpath)
 wf <- getLevel1BWF(level1b, shot_number="19640521100108408")
 
 # Plotting GEDI Full-waveform
+oldpar<-par()
 par(mfrow = c(1,2), cex.axis = 1.5)
 plot(wf, relative=FALSE, polygon=TRUE, type="l", lwd=2, col="forestgreen",
 xlab="", ylab="Elevation (m)")
@@ -53,11 +57,8 @@ xlab="", ylab="Elevation (m)")
 plot(wf, relative=TRUE, polygon=TRUE, type="l", lwd=2, col="forestgreen",
 xlab="Waveform Amplitude (\%)", ylab="Elevation (m)")
 
+par(oldpar) 
 close(level1b)
-\dontshow{
-rm(list=ls())
-}
-
 outdir <- tempdir()
 
 zipfile_amazon <- system.file("extdata", "Amazon.zip", package="rGEDI")

@@ -9,7 +9,7 @@
 #'@param select A character vector specifying the fields to extract from GEDI Level1B data. If NULL,
 #'by default it will extract \emph{latitude_bin0}, \emph{latitude_lastbin}, \emph{longitude_bin0}, \emph{longitude_lastbin}, and \emph{shot_number}. See details for more options.
 #'
-#'@return An S4 object of class \code{\link[data.table:data.table]{data.table-class}} containing the GEDI Full Waveform Geolocations
+#'@return Returns an S4 object of class \code{\link[data.table:data.table]{data.table-class}} containing the GEDI Full Waveform Geolocations
 #'
 #'
 #'@seealso https://lpdaac.usgs.gov/products/gedi01_bv001/

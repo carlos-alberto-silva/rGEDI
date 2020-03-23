@@ -10,7 +10,7 @@
 #'@param lr_lat Numeric. Lower right (ul) corner coordinates, in lat (decimal degrees) for the bounding box of the area of interest.
 #'@param lr_lon Numeric. Lower right (ul) corner coordinates, in lon (decimal degrees) for the bounding box of the area of interest.
 #'
-#'@return Vector object pointing out the path saving the downloaded GEDI data within
+#'@return Return a vector object pointing out the path saving the downloaded GEDI data within
 #'the boundary box coordinates provided
 #'@seealso bbox: The correct format is upper left and lower right corner coordinates, in lat,lon ordering, for the bounding box of the area of interest (e.g. [ul_lat,ul_lon,lr_lat,lr_lon]).
 #'This function just call the gedifinder tool developted by LPDAAC:
