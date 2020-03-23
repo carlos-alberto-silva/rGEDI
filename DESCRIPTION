@@ -49,3 +49,5 @@ SystemRequirements:
 NeedsCompilation: yes
 RoxygenNote: 7.0.2
 VignetteBuilder: knitr
+BugReports: https://groups.yahoo.com/neo/groups/rGEDI
+URL: https://github.com/carlos-alberto-silva/rGEDI
