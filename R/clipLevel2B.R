@@ -11,14 +11,14 @@
 #'@param ymax Numeric. North latitude (y) coordinate of the bounding rectangle, in decimal degrees.
 #'@param output Optional character path where to save the new hdf5 file. The default stores a temporary file only.
 #'
-#'@return Returns a list of S4 object of class "gedi.level2b".
+#'@return Returns a list of S4 object of class "gedi.level2b" containing clipped GEDI Level2B data.
 #'
 #'@seealso https://lpdaac.usgs.gov/products/gedi01_bv001/
 #'
 #'@examples
 #'\donttest{
 #'outdir = tempdir()
-#' 
+#'
 #'# Specifying the path to GEDI level2B data (zip file)
 #'level2B_fp_zip <- system.file("extdata",
 #'                   "GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub.zip",
@@ -79,14 +79,14 @@ clipLevel2B = function(level2b, xmin, xmax, ymin, ymax, output=""){
 #'@param output optional character path where to save the new h5file. Default "" (temporary file).
 #'@param split_by Polygon id. If defined, GEDI data will be clipped by each polygon using the attribute specified by \code{split_by} from the attribute table.
 #'
-#'@return Returns a list of S4 objects of class "gedi.level2b".
+#'@return Returns a list of S4 objects of class "gedi.level2b" containing clipped GEDI Level2B data.
 #'
 #'@seealso https://lpdaac.usgs.gov/products/gedi01_bv001/
 #'
 #'@examples
 #'\donttest{
 #'outdir = tempdir()
-#' 
+#'
 #'# Specifying the path to GEDI level2B data (zip file)
 #'level2B_fp_zip <- system.file("extdata",
 #'                   "GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub.zip",

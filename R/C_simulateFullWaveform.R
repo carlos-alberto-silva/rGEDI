@@ -68,7 +68,8 @@
 # @param seed n integer. random number seed
 #'
 #' #'
-#' @return Returns an S4 object of class \code{\link[hdf5r:H5File-class]{hdf5r::H5File}} in the \emph{hdf5r} package.
+#' @return Returns an S4 object of class \code{\link[hdf5r:H5File-class]{hdf5r::H5File}} form the \emph{hdf5r} package
+#' containing the simulated GEDI full-waveform.
 #'
 #' @seealso
 #' i) Hancock, S., Armston, J., Hofton, M., Sun, X., Tang, H., Duncanson, L.I., Kellner,
@@ -139,7 +140,7 @@
 #'grid()
 #'
 #'par(oldpar)
-#' 
+#'
 #'close(wf_Amazon)
 #'close(wf_Savanna)
 #'}
