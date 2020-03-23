@@ -3,11 +3,11 @@
 #'@description This function finds the path to GEDI data within a boundary box coordinates provided
 #'
 #'@param product GEDI data level; Options: "GEDI01_B", "GEDI02_A" or "GEDI02_B"
-#'@param version Character. The version of the GEDI product files to be returned.
 #'@param ul_lat Numeric. Upper left (ul) corner coordinates, in lat (decimal degrees) for the bounding box of the area of interest.
 #'@param ul_lon Numeric. Upper left (ul) corner coordinates, in lon (decimal degrees) for the bounding box of the area of interest.
 #'@param lr_lat Numeric. Lower right (ul) corner coordinates, in lat (decimal degrees) for the bounding box of the area of interest.
 #'@param lr_lon Numeric. Lower right (ul) corner coordinates, in lon (decimal degrees) for the bounding box of the area of interest.
+#'@param version Character. The version of the GEDI product files to be returned. Default "001".
 #'
 #'@return Return a vector object pointing out the path saving the downloaded GEDI data within
 #'the boundary box coordinates provided
@@ -27,11 +27,11 @@
 #'lr_lon<- -96.0
 #'
 #'# Extracting the path to GEDI data for the specified boundary box coordinates
-#'gedi02b_list<-gedifinder(product="GEDI02_B",version="001",ul_lat, ul_lon, lr_lat, lr_lon)
+#'gedi02b_list<-gedifinder(product="GEDI02_B",ul_lat, ul_lon, lr_lat, lr_lon,version="001")
 #'}
 #'@import jsonlite curl
 #'@export
-gedifinder<-function(product,version="001", ul_lat, ul_lon, lr_lat, lr_lon){
+gedifinder<-function(product, ul_lat, ul_lon, lr_lat, lr_lon,version="001"){
   response = curl::curl(sprintf(
     "https://lpdaacsvc.cr.usgs.gov/services/gedifinder?%s=%s&%s=%s&%s=%f,%f,%f,%f&output=json",
     "version",version,

@@ -4,7 +4,8 @@
 \alias{clipLevel1BGeometry}
 \title{Clip GEDI Level1B data by geometry}
 \usage{
-clipLevel1BGeometry(level1b, polygon_spdf, output = "", split_by = NULL)
+clipLevel1BGeometry(level1b, polygon_spdf, output = "",
+  split_by = NULL)
 }
 \arguments{
 \item{level1b}{A GEDI Level1B object (output of \code{\link[rGEDI:readLevel1B]{readLevel1B}} function).
@@ -18,7 +19,7 @@ which can be loaded as an ESRI shapefile using \code{\link[raster:shapefile]{ras
 \item{split_by}{Polygon id. If defined, GEDI data will be clipped by each polygon using the attribute specified by \code{split_by} from the attribute table.}
 }
 \value{
-Returns a list of S4 object of class "gedi.level1b".
+Returns a list of S4 object of class "gedi.level1b" containing clipped GEDI Level1B data.
 }
 \description{
 This function clips GEDI Level1B (geolocated waveforms) data within a given bounding geometry

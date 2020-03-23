@@ -10,7 +10,7 @@ readLevel2A(level2Apath)
 \item{level2Apath}{File path pointing to GEDI level2A data. Data in HDF5 Hierarchical Data Format (.h5).}
 }
 \value{
-Returns an S4 object of class "gedi.level1a".
+Returns an S4 object of class "gedi.level2a" containing GEDI level2A data.
 }
 \description{
 This function reads GEDI level2A products: ground elevation, canopy top height, and relative heights (RH).

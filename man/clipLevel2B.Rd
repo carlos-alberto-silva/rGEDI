@@ -21,7 +21,7 @@ An S4 object of class "gedi.level2b".}
 \item{output}{Optional character path where to save the new hdf5 file. The default stores a temporary file only.}
 }
 \value{
-Returns a list of S4 object of class "gedi.level2b".
+Returns a list of S4 object of class "gedi.level2b" containing clipped GEDI Level2B data.
 }
 \description{
 This function extracts GEDI Level1B data a within given bounding coordinates

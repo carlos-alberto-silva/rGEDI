@@ -37,9 +37,9 @@ ul_lon<- -13.76913
 lr_lon<- -13.67646
 
 # Get path to GEDI data
-gLevel1B<-gedifinder(product="GEDI01_B",version="001",ul_lat, ul_lon, lr_lat, lr_lon)
-gLevel2A<-gedifinder(product="GEDI02_A",version="001",ul_lat, ul_lon, lr_lat, lr_lon)
-gLevel2B<-gedifinder(product="GEDI02_B",version="001",ul_lat, ul_lon, lr_lat, lr_lon)
+gLevel1B<-gedifinder(product="GEDI01_B",ul_lat, ul_lon, lr_lat, lr_lon,version="001")
+gLevel2A<-gedifinder(product="GEDI02_A",ul_lat, ul_lon, lr_lat, lr_lon,version="001")
+gLevel2B<-gedifinder(product="GEDI02_B",ul_lat, ul_lon, lr_lat, lr_lon,version="001")
 ```
 ## Downloading GEDI data
 ```r

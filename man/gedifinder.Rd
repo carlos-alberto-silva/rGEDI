@@ -4,10 +4,10 @@
 \alias{gedifinder}
 \title{GEDI finder}
 \usage{
-gedifinder(level, ul_lat, ul_lon, lr_lat, lr_lon)
+gedifinder(product, ul_lat, ul_lon, lr_lat, lr_lon, version = "001")
 }
 \arguments{
-\item{level}{GEDI data level; Options: "GEDI01_B", "GEDI02_A" or "GEDI02_B"}
+\item{product}{GEDI data level; Options: "GEDI01_B", "GEDI02_A" or "GEDI02_B"}
 
 \item{ul_lat}{Numeric. Upper left (ul) corner coordinates, in lat (decimal degrees) for the bounding box of the area of interest.}
 
@@ -16,6 +16,8 @@ gedifinder(level, ul_lat, ul_lon, lr_lat, lr_lon)
 \item{lr_lat}{Numeric. Lower right (ul) corner coordinates, in lat (decimal degrees) for the bounding box of the area of interest.}
 
 \item{lr_lon}{Numeric. Lower right (ul) corner coordinates, in lon (decimal degrees) for the bounding box of the area of interest.}
+
+\item{version}{Character. The version of the GEDI product files to be returned. Default "001".}
 }
 \value{
 Return a vector object pointing out the path saving the downloaded GEDI data within
@@ -23,8 +25,6 @@ the boundary box coordinates provided
 }
 \description{
 This function finds the path to GEDI data within a boundary box coordinates provided
-
-#'@usage gedifinder(level="GEDI02_B",xmin,xmax,ymin,ymax)
 }
 \examples{
 \donttest{
@@ -38,7 +38,7 @@ lr_lat<- 40.0
 lr_lon<- -96.0
 
 # Extracting the path to GEDI data for the specified boundary box coordinates
-gedi02b_list<-gedifinder(level="GEDI02_B",ul_lat, ul_lon, lr_lat, lr_lon)
+gedi02b_list<-gedifinder(product="GEDI02_B",ul_lat, ul_lon, lr_lat, lr_lon,version="001")
 }
 }
 \seealso{

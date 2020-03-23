@@ -4,7 +4,8 @@
 \alias{clipLevel2BGeometry}
 \title{Clip GEDI Level2B data by geometry}
 \usage{
-clipLevel2BGeometry(level2b, polygon_spdf, output = "", split_by = NULL)
+clipLevel2BGeometry(level2b, polygon_spdf, output = "",
+  split_by = NULL)
 }
 \arguments{
 \item{level2b}{A GEDI Level2B object (output of \code{\link[rGEDI:readLevel2B]{readLevel2B}} function).
@@ -18,7 +19,7 @@ which can be loaded as an ESRI shapefile using \code{\link[raster:shapefile]{ras
 \item{split_by}{Polygon id. If defined, GEDI data will be clipped by each polygon using the attribute specified by \code{split_by} from the attribute table.}
 }
 \value{
-Returns a list of S4 objects of class "gedi.level2b".
+Returns a list of S4 objects of class "gedi.level2b" containing clipped GEDI Level2B data.
 }
 \description{
 This function extracts GEDI Level1B data within a given geometry

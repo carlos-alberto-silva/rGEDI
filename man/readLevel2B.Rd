@@ -10,7 +10,7 @@ readLevel2B(level2Bpath)
 \item{level2Bpath}{File path pointing to GEDI level2B data. Data in HDF5 Hierarchical Data Format (.h5).}
 }
 \value{
-Returns an S4 object of class "gedi.level1b".
+Returns an S4 object of class "gedi.level2b" containing GEDI level2B data.
 }
 \description{
 This function reads GEDI level2B products: canopy cover, Plant Area Index (PAI), Plant Area Volume Density (PAVD), and Foliage Height Diversity (FHD).

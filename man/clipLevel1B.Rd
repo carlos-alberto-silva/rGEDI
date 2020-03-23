@@ -21,7 +21,7 @@ An S4 object of class "gedi.level1b".}
 \item{output}{Optional character path where to save the new hdf5file. The default stores a temporary file only.}
 }
 \value{
-Returns a list of S4 objects of class "gedi.level1b".
+Returns a list of S4 objects of class "gedi.level1b" containing clipped GEDI Level1B data.
 }
 \description{
 This function clips GEDI Level1B data (geolocated waveforms) within a given bounding coordinates

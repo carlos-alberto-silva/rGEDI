@@ -18,7 +18,7 @@ which can be loaded as an ESRI shapefile using \code{\link[raster:shapefile]{ras
 \item{split_by}{Polygon id. If defined, GEDI data will be clipped by each polygon using the attribute specified by \code{split_by} from the attribute table.}
 }
 \value{
-Returns a list of S4 object of class "gedi.level2a".
+Returns a list of S4 object of class "gedi.level2a" containing clipped GEDI Level2A data.
 }
 \description{
 This function clips GEDI Level2A data within a given geometry
