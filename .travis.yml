@@ -64,6 +64,7 @@ addons:
     packages:
       - ccache
       - gdal
+      - proj
       - libgeotiff
       - gsl
       - hdf5
