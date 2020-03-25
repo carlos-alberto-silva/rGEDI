@@ -62,6 +62,7 @@ addons:
 
   homebrew:
     packages:
+      - sqlite3
       - ccache
       - gdal
       - proj
