@@ -3,22 +3,23 @@ HANCOCKTOOLS_ROOT = tools
 GEDIRAT_ROOT = gedisimulator
 LIBCLIDAR_ROOT = libclidar
 CMPFIT_ROOT = cmpfit-1.2
-GSL_ROOT = gsl
+HDF5_VERSION = 1.8.16
+HDF5_LIB = ../windows/hdf5-${HDF5_VERSION}
 
-PKG_CFLAGS += -DDLLEXPORT -D_USE_MATH_DEFINES -D_WIN32 \
-	-DWIN32 -DH5_BUILT_AS_DYNAMIC_LIB -DDLL_EXPORTS \
-	-DUSEPHOTON -DWITHOUT_GDAL
+PKG_CFLAGS += -D_USE_MATH_DEFINES -D_WIN32 \
+	-DWIN32 -DUSEPHOTON -DWITHOUT_GDAL
 
-ARCH=$(PROCESSOR_ARCHITECTURE)
-
-HDF5_LIB = ../windows/include/
 PKG_CPPFLAGS += -Igedisimulator -I$(HANCOCKTOOLS_ROOT) -I$(CMPFIT_ROOT) \
--I${LIBCLIDAR_ROOT} -I. -I../windows/mingw64-libhdf5-dev-1.8.20/include \
--I../windows/gsl-2.4/include -I../windows/libgeotiff-1.4.3 \
--I../windows/libgeotiff-1.4.3/libxtiff -I../windows/libtiff-4.0.9/include
+-I${LIBCLIDAR_ROOT} -I. -I${HDF5_LIB}/include \
+-I${LIB_GSL}/include
+
+PKG_LIBS += \
+	-L${HDF5_LIB}/lib-4.9.3${R_ARCH} \
+	-L${LIB_GSL}/lib \
+	-lhdf5 -lhdf5_hl -lz -lm -lgsl
 
 OBJECTS = $(LIBCLIDAR_ROOT)/libLasProcess.o $(LIBCLIDAR_ROOT)/libLasRead.o \
-	$(LIBCLIDAR_ROOT)/tiffWrite.o $(LIBCLIDAR_ROOT)/gaussFit.o \
+	$(LIBCLIDAR_ROOT)/gaussFit.o \
 	$(LIBCLIDAR_ROOT)/libLidVoxel.o  $(LIBCLIDAR_ROOT)/libTLSread.o \
 	$(LIBCLIDAR_ROOT)/libLidarHDF.o $(GEDIRAT_ROOT)/gediIO.o \
 	$(LIBCLIDAR_ROOT)/libOctree.o $(GEDIRAT_ROOT)/gediNoise.o \
@@ -27,19 +28,12 @@ OBJECTS = $(LIBCLIDAR_ROOT)/libLasProcess.o $(LIBCLIDAR_ROOT)/libLasRead.o \
    argParse.o gediMetrics.o gediSimulator.o \
    registerDynamicSymbol.o functionWrappers.o
 
-VERSION = 2.2.3
-RWINLIB = ../windows/gdal2-$(VERSION)
 
-PKG_LIBS += \
-	-L$(RWINLIB)/lib$(R_ARCH) \
-	-L../windows/mingw64-libhdf5-dev-1.8.20/lib \
-	-L../windows/gsl-2.4/lib$(R_ARCH) \
-	-ltiff -lgeotiff -ljpeg -lhdf5 -llzma -lszip -lz -lgsl
 
 all: winlibs deps
 
 winlibs:
-	"$(R_HOME)/bin/Rscript" "../tools/winlibs.R"
+	"$(R_HOME)/bin/Rscript" "../tools/winlibs.R" $(HDF5_VERSION)
 
 deps:
 	"$(R_HOME)/bin/Rscript" "../tools/deps.R"
