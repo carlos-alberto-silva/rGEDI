@@ -54,7 +54,6 @@ addons:
       - ccache
       - libgdal1-dev
       - libhdf5-serial-dev
-      - libgeotiff-dev
       - libgsl-dev
       - libudunits2-dev
       - libglu1-mesa-dev
@@ -62,11 +61,8 @@ addons:
 
   homebrew:
     packages:
-      - sqlite3
       - ccache
       - gdal
-      - proj
-      - libgeotiff
       - gsl
       - hdf5
       - udunits
