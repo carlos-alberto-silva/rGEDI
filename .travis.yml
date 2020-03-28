@@ -62,6 +62,7 @@ addons:
   homebrew:
     packages:
       - ccache
+      - pkg-config
       - gdal
       - gsl
       - hdf5
