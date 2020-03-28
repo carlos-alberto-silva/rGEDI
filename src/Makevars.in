@@ -10,20 +10,18 @@ PKG_CFLAGS=@HDF5_CPPFLAGS@ \
 	   -DDLLEXPORT -D__STDC_FORMAT_MACROS \
 	   -DUSEPHOTON -DWITHOUT_GDAL\
 	   -I$(GEDIRAT_ROOT) -I$(HANCOCKTOOLS_ROOT) -I$(CMPFIT_ROOT) \
-	   -I${LIBCLIDAR_ROOT} -I. -I/usr/include/geotiff \
-	   -I/usr/include/libgeotiff
+	   -I${LIBCLIDAR_ROOT} -I.
 
 PKG_LIBS=@HDF5_LDFLAGS@ @HDF5_LIBS@\
-         @GSL_LIBS@ @GEOTIFF_LIBS@
+         @GSL_LIBS@
 
 
 src = $(LIBCLIDAR_ROOT)/libLasProcess.c $(LIBCLIDAR_ROOT)/libLasRead.c \
-	$(LIBCLIDAR_ROOT)/tiffWrite.c $(LIBCLIDAR_ROOT)/gaussFit.c \
-	$(LIBCLIDAR_ROOT)/libLidVoxel.c  $(LIBCLIDAR_ROOT)/libTLSread.c \
-	$(LIBCLIDAR_ROOT)/libLidarHDF.c $(GEDIRAT_ROOT)/gediIO.c \
+	$(LIBCLIDAR_ROOT)/gaussFit.c $(LIBCLIDAR_ROOT)/libLidVoxel.c \
+	$(LIBCLIDAR_ROOT)/libTLSread.c $(LIBCLIDAR_ROOT)/libLidarHDF.c \
+	$(GEDIRAT_ROOT)/gediIO.c $(GEDIRAT_ROOT)/photonCount.c \
 	$(LIBCLIDAR_ROOT)/libOctree.c $(GEDIRAT_ROOT)/gediNoise.c \
 	$(CMPFIT_ROOT)/mpfit.c  $(HANCOCKTOOLS_ROOT)/tools.c \
-	$(GEDIRAT_ROOT)/photonCount.c  \
 	gediMetrics.c gediSimulator.c \
 	argParse.c registerDynamicSymbol.c \
 	functionWrappers.c

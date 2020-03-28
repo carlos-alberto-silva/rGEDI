@@ -1,6 +1,6 @@
 # Download GSL 2.4; hdf5; libgeotiff;
 VERSION <- commandArgs(TRUE)
-
+R_ARCH=Sys.getenv("R_ARCH")
 
 
 # # Download gdal
@@ -12,16 +12,18 @@ VERSION <- commandArgs(TRUE)
 #   unlink("lib.zip")
 # }
 #
-# if(!file.exists("../windows/gsl-2.4/include/gsl/gsl_blas.h")){
-#   print("Downloading and installing GSL...")
-#   download.file("https://github.com/rwinlib/gsl/archive/v2.4.zip", "lib.zip", quiet = FALSE)
-#   dir.create("../windows", showWarnings = FALSE)
-#   unzip("lib.zip", exdir = "../windows")
-#   unlink("lib.zip")
-# }
+if (Sys.getenv("LIB_GSL") == "") {
+  if(!file.exists("../windows/gsl-2.4/include/gsl/gsl_blas.h")){
+    print("Downloading and unpacking GSL...")
+    download.file("https://github.com/rwinlib/gsl/archive/v2.4.zip", "lib.zip", quiet = TRUE)
+    dir.create("../windows", showWarnings = FALSE)
+    unzip("lib.zip", exdir = "../windows")
+    unlink("lib.zip")
+  }
+}
 
 if(!file.exists(sprintf("../windows/hdf5-%s/include/hdf5.h", VERSION))){
-  print("Downloading and installing HDF5...")
+  print("Downloading and unpacking HDF5...")
   download.file(sprintf("https://github.com/rwinlib/hdf5/archive/v%s.zip", VERSION),
                 "lib.zip", quiet = TRUE)
   dir.create("../windows", showWarnings = FALSE)
