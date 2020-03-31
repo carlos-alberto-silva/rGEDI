@@ -12,7 +12,7 @@ Authors@R: c(
     person("Danilo Roberti Alves de", "Almeida", email = "daniloflorestas@gmail.com", role = c("aut","ctb")),
     person("Celso H. L.", "Silva Junior", email = "celso.junior@inpe.br", role = c("aut","ctb")),
     person("Carine", "Klauberg", email = "carine_klauberg@hotmail.com", role = c("aut","ctb")),
-    person("Burton", "Garbon", email = "", role = ("cph"), comment = "Is the author of the MINPACK-1 Least Squares Fitting Library"),
+    person("Burton", "Garbow", email = "", role = ("cph"), comment = "Is the author of the MINPACK-1 Least Squares Fitting Library"),
     person("Kenneth", "Hillstrom", email = "", role = ("cph"), comment = "Is the author of the MINPACK-1 Least Squares Fitting Library"),
     person("Jorge", "More", email = "", role = ("cph"), comment = "Is the author of the MINPACK-1 Least Squares Fitting Library"),
     person("Craig", "Markwardt", email = "", role = ("cph"), comment = "Is the author of the enhanced MINPACK-1 Least Squares Fitting Library"))
