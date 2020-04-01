@@ -4,7 +4,8 @@ env:
   - PKGNAME=rGEDI
 matrix:
   include:
-  - os: linux
+  - r: release
+    os: linux
     env: BADGE=linux
     cache:
       - ccache
@@ -13,11 +14,9 @@ matrix:
       - mkdir $HOME/.R && echo -e 'CXX_STD = CXX14\n\nVER=\nCCACHE=ccache\nCC=$(CCACHE)
         gcc$(VER) -std=gnu99\nCXX=$(CCACHE) g++$(VER)\nC11=$(CCACHE) g++$(VER)\nC14=$(CCACHE)
         g++$(VER)\nFC=$(CCACHE) gfortran$(VER)\nF77=$(CCACHE) gfortran$(VER)' > $HOME/.R/Makevars
-  - os: osx
-    env:
-      - BADGE=osx
-      - LD_LIBRARY_PATH=" /opt/local/lib:$LD_LIBRARY_PATH"
-      - CPATH="/opt/local/include:$CPATH"
+  - r: devel
+    os: linux
+    env: BADGE=linux
     cache:
       - ccache
       - packages
@@ -25,8 +24,21 @@ matrix:
       - mkdir $HOME/.R && echo -e 'CXX_STD = CXX14\n\nVER=\nCCACHE=ccache\nCC=$(CCACHE)
         gcc$(VER) -std=gnu99\nCXX=$(CCACHE) g++$(VER)\nC11=$(CCACHE) g++$(VER)\nC14=$(CCACHE)
         g++$(VER)\nFC=$(CCACHE) gfortran$(VER)\nF77=$(CCACHE) gfortran$(VER)' > $HOME/.R/Makevars
-      - if [ "$TRAVIS_OS_NAME" = "osx" ]; then export PATH="$(brew --prefix llvm)/bin:$PATH";
-        fi
+  # osx libproj has a bug
+  # - os: osx
+  #   env:
+  #     - BADGE=osx
+  #     - LD_LIBRARY_PATH=" /opt/local/lib:$LD_LIBRARY_PATH"
+  #     - CPATH="/opt/local/include:$CPATH"
+  #   cache:
+  #     - ccache
+  #     - packages
+  #   before_install:
+  #     - mkdir $HOME/.R && echo -e 'CXX_STD = CXX14\n\nVER=\nCCACHE=ccache\nCC=$(CCACHE)
+  #       gcc$(VER) -std=gnu99\nCXX=$(CCACHE) g++$(VER)\nC11=$(CCACHE) g++$(VER)\nC14=$(CCACHE)
+  #       g++$(VER)\nFC=$(CCACHE) gfortran$(VER)\nF77=$(CCACHE) gfortran$(VER)' > $HOME/.R/Makevars
+  #     - if [ "$TRAVIS_OS_NAME" = "osx" ]; then export PATH="$(brew --prefix llvm)/bin:$PATH";
+  #       fi
   - os: windows
     language: bash
     install:
