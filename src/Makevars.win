@@ -30,19 +30,22 @@ PKG_LIBS += \
 	-L${GSL_LIB} \
 	-lhdf5 -lhdf5_hl -lz -lm -lgsl
 
-OBJECTS = $(LIBCLIDAR_ROOT)/libLasProcess.o $(LIBCLIDAR_ROOT)/libLasRead.o \
-	$(LIBCLIDAR_ROOT)/gaussFit.o \
-	$(LIBCLIDAR_ROOT)/libLidVoxel.o  $(LIBCLIDAR_ROOT)/libTLSread.o \
-	$(LIBCLIDAR_ROOT)/libLidarHDF.o $(GEDIRAT_ROOT)/gediIO.o \
-	$(LIBCLIDAR_ROOT)/libOctree.o $(GEDIRAT_ROOT)/gediNoise.o \
-    $(HANCOCKTOOLS_ROOT)/tools.o $(CMPFIT_ROOT)/mpfit.o \
-    $(GEDIRAT_ROOT)/photonCount.o \
-   argParse.o gediMetrics.o gediSimulator.o \
-   registerDynamicSymbol.o functionWrappers.o
+src = $(LIBCLIDAR_ROOT)/libLasProcess.c $(LIBCLIDAR_ROOT)/libLasRead.c \
+	$(LIBCLIDAR_ROOT)/gaussFit.c $(LIBCLIDAR_ROOT)/libLidVoxel.c \
+	$(LIBCLIDAR_ROOT)/libTLSread.c $(LIBCLIDAR_ROOT)/libLidarHDF.c \
+	$(GEDIRAT_ROOT)/gediIO.c $(GEDIRAT_ROOT)/photonCount.c \
+	$(LIBCLIDAR_ROOT)/libOctree.c $(GEDIRAT_ROOT)/gediNoise.c \
+	$(CMPFIT_ROOT)/mpfit.c  $(HANCOCKTOOLS_ROOT)/tools.c \
+	gediMetrics.c gediSimulator.c \
+	argParse.c registerDynamicSymbol.c \
+	functionWrappers.c
 
+OBJECTS = $(src:.c=.o)
 
-
-all: winlibs deps
+all: $(SHLIB)
+$(SHLIB): $(OBJECTS)
+$(OBJECTS): $(src)
+$(src): winlibs deps
 
 winlibs:
 	"$(R_HOME)/bin/Rscript" "../tools/winlibs.R" $(HDF5_VERSION)
@@ -50,4 +53,4 @@ winlibs:
 deps:
 	"$(R_HOME)/bin/Rscript" "../tools/deps.R"
 
-.PHONY: winlibs deps
+.PHONY: all winlibs deps

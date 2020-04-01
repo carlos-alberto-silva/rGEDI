@@ -28,10 +28,12 @@ src = $(LIBCLIDAR_ROOT)/libLasProcess.c $(LIBCLIDAR_ROOT)/libLasRead.c \
 
 OBJECTS = $(src:.c=.o)
 
-
-all: deps
+all: $(SHLIB)
+$(SHLIB): $(OBJECTS)
+$(OBJECTS): $(src)
+$(src): deps
 
 deps:
 	"$(R_HOME)/bin/Rscript" ../tools/deps.R
 
-.PHONY: deps clean
+.PHONY: all deps

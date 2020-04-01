@@ -4,8 +4,7 @@
 \alias{gediDownload}
 \title{Download GEDI data}
 \usage{
-gediDownload(filepath, outdir = NULL, overwrite = FALSE,
-  buffer_size = 512)
+gediDownload(filepath, outdir = NULL, overwrite = FALSE, buffer_size = 512)
 }
 \arguments{
 \item{filepath}{Vector object; path to the GEDI data}
