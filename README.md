@@ -596,7 +596,7 @@ Please report any issue reagardling the rGEDI package herein https://groups.yaho
 
 # Citing rGEDI
 Silva,C.A; Hamamura,C.; Valbuena, R.; Hancock,S.; Cardil,A.; Broadbent, E. N.; Almeida,D.R.A.; Silva Junior, C.H.L; Klauberg, C. rGEDI: NASA's Global Ecosystem Dynamics Investigation (GEDI) Data Visualization and Processing.
-version 0.1.2, accessed April. 1 2020, available at <https://cran.r-project.org/web/packages/rGEDI/index.html>
+version 0.1.2, accessed on April. 1 2020, available at: <https://cran.r-project.org/web/packages/rGEDI/index.html>
 
 # Disclaimer
 **rGEDI package has not been developted by the GEDI team. It comes with no guarantee, expressed or implied, and the authors hold no responsibility for its use or reliability of its outputs.**
