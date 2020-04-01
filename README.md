@@ -179,8 +179,7 @@ head(level2BVPM[,c("beam","shot_number","pai","fhd_normal","omega","pgap_theta",
 level2BVPM$shot_number<-paste0(level2BVPM$shot_number)
 
 # Converting GEDI Vegetation Profile Biophysical Variables as data.table to SpatialPointsDataFrame
-level2BVPM_spdf<-SpatialPointsDataFrame(cbind(level2BVPM$lon_lowestmode,level2BVPM$lat_lowestmode),
-                                      data=level2BVPM)
+level2BVPM_spdf<-SpatialPointsDataFrame(cbind(level2BVPM$longitude_lastbin,level2BVPM$latitude_lastbin),data=level2BVPM)
 
 # Exporting GEDI Vegetation Profile Biophysical Variables as ESRI Shapefile
 raster::shapefile(level2BVPM_spdf,paste0(outdir,"\\GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub_VPM"))
