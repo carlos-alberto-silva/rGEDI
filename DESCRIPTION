@@ -1,6 +1,6 @@
 Package: rGEDI
 Type: Package
-Title:NASA's Global Ecosystem Dynamics Investigation (GEDI) Data Visualization and Processing
+Title: NASA's Global Ecosystem Dynamics Investigation (GEDI) Data Visualization and Processing
 Version: 0.1.2
 Authors@R: c(
     person("Carlos Alberto", "Silva", email = "carlos_engflorestal@outlook.com", role = c("aut", "cre", "cph")),
@@ -48,11 +48,13 @@ Suggests:
   viridis,
   xtable
 SystemRequirements: 
-  GNU Scientific Library >= 2.1,
+  GNU Scientific Library (>= 2.1),
   HDF5 (>= 1.8.13),
-  libgeotiff (>= 1.4.0)
+  libgeotiff (>= 1.4.0),
+  szip (>= 2.1)
+  zlib (>= 1.2)
 NeedsCompilation: yes
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.0
 VignetteBuilder: knitr
 BugReports: https://groups.yahoo.com/neo/groups/rGEDI
 URL: https://github.com/carlos-alberto-silva/rGEDI

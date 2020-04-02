@@ -3098,7 +3098,7 @@ rm -f core conftest.err conftest.$ac_objext \
 #     GSL_LIBS=""
      as_fn_error $? "could not find GSL:
 			 Debian: sudo apt install libgsl-dev
-			 RPM-based: sudo yum install gsl-devel
+			 RPM-based: sudo dnf install gsl-devel
 			 MacOS: brew install gsl" "$LINENO" 5
   fi
 
@@ -3962,7 +3962,7 @@ fi
 if test "$HAVE_HDF5" = "no" ; then
 	as_fn_error $? "could not find hdf5:
                          Debian: sudo apt install libhdf5-dev
-                         RPM-based: sudo yum install hdf5-devel
+                         RPM-based: sudo dnf install hdf5-devel
                          MacOS: brew install hdf5" "$LINENO" 5
 fi
 
@@ -4049,7 +4049,7 @@ if test "x$ac_cv_lib_sz_SZ_BufftoBuffCompress" = xyes; then :
 else
   as_fn_error $? "could not find szip:
                          Debian: sudo apt install libsz2
-                         RPM-based: sudo yum install szip
+                         RPM-based: sudo dnf install szip
                          MacOS: brew install szip" "$LINENO" 5
 fi
 
@@ -4191,7 +4191,7 @@ $as_echo "#define HAVE_LIBZ 1" >>confdefs.h
     #
     as_fn_error $? "could not find libz:
                          Debian: sudo apt install zlib1g-dev
-                         RPM-based: sudo yum install zlib-devel
+                         RPM-based: sudo dnf install zlib-devel
                          MacOS: brew install zlib" "$LINENO" 5
   fi
 fi

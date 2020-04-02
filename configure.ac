@@ -16,7 +16,7 @@ AC_PROG_CC
 AX_PATH_GSL(0.1,,
 	    AC_MSG_ERROR(could not find GSL:
 			 Debian: sudo apt install libgsl-dev
-			 RPM-based: sudo yum install gsl-devel
+			 RPM-based: sudo dnf install gsl-devel
 			 MacOS: brew install gsl))
 
 
@@ -28,7 +28,7 @@ AX_LIB_HDF5()
 if test "$HAVE_HDF5" = "no" ; then
 	AC_MSG_ERROR(could not find hdf5:
                          Debian: sudo apt install libhdf5-dev
-                         RPM-based: sudo yum install hdf5-devel
+                         RPM-based: sudo dnf install hdf5-devel
                          MacOS: brew install hdf5)
 fi
 
@@ -68,7 +68,7 @@ AC_CHECK_LIB( sz, SZ_BufftoBuffCompress,
 	     HAVE_LIBSZ="yes",
 	     AC_MSG_ERROR(could not find szip:
                          Debian: sudo apt install libsz2
-                         RPM-based: sudo yum install szip
+                         RPM-based: sudo dnf install szip
                          MacOS: brew install szip))
 
 
@@ -80,7 +80,7 @@ AC_CHECK_LIB( sz, SZ_BufftoBuffCompress,
 AX_CHECK_ZLIB(,
 	      AC_MSG_ERROR(could not find libz:
                          Debian: sudo apt install zlib1g-dev
-                         RPM-based: sudo yum install zlib-devel
+                         RPM-based: sudo dnf install zlib-devel
                          MacOS: brew install zlib))
 
 
