@@ -27,6 +27,7 @@ Plots the waveform with overlaid RH metrics
 }
 \examples{
 # specify the path to GEDI level1B and Level2A data (zip file)
+outdir = tempdir()
 level1B_fp_zip <- system.file("extdata",
                   "GEDI01_B_2019108080338_O01964_T05337_02_003_01_sub.zip",
                   package="rGEDI")
@@ -36,8 +37,8 @@ level2A_fp_zip <- system.file("extdata",
                   package="rGEDI")
 
 # Unzipping GEDI level1B data
-level1Bpath <- unzip(level1B_fp_zip,exdir = dirname(level1B_fp_zip))
-level2Apath <- unzip(level2A_fp_zip,exdir = dirname(level2A_fp_zip))
+level1Bpath <- unzip(level1B_fp_zip,exdir = outdir)
+level2Apath <- unzip(level2A_fp_zip,exdir = outdir)
 
 # Reading GEDI level1B and Level2A data (h5 file)
 level1b<-readLevel1B(level1Bpath=level1Bpath)

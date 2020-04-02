@@ -26,7 +26,7 @@
 #'                   package="rGEDI")
 #'
 #'# Unzipping GEDI level2A data
-#'level2Apath <- unzip(level2A_fp_zip,exdir = dirname(level2A_fp_zip))
+#'level2Apath <- unzip(level2A_fp_zip,exdir = outdir)
 #'
 #'# Reading GEDI level2A data (h5 file)
 #'level2a<-readLevel2A(level2Apath=level2Apath)
@@ -93,7 +93,7 @@ clipLevel2A = function(level2a, xmin, xmax, ymin, ymax, output=""){
 #'                   package="rGEDI")
 #'
 #'# Unzipping GEDI level2A data
-#'level2Apath <- unzip(level2A_fp_zip,exdir = dirname(level2A_fp_zip))
+#'level2Apath <- unzip(level2A_fp_zip,exdir = outdir)
 #'
 #'# Reading GEDI level2A data (h5 file)
 #'level2a<-readLevel2A(level2Apath=level2Apath)

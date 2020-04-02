@@ -36,7 +36,7 @@ level2A_fp_zip <- system.file("extdata",
                   package="rGEDI")
 
 # Unzipping GEDI level2A data
-level2Apath <- unzip(level2A_fp_zip,exdir = dirname(level2A_fp_zip))
+level2Apath <- unzip(level2A_fp_zip,exdir = outdir)
 
 # Reading GEDI level2A data (h5 file)
 level2a<-readLevel2A(level2Apath=level2Apath)

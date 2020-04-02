@@ -17,12 +17,13 @@
 #'
 #'@examples
 #'# specify the path to GEDI level2A data (zip file)
+#'outdir = tempdir()
 #'level2A_fp_zip <- system.file("extdata",
 #'                   "GEDI02_A_2019108080338_O01964_T05337_02_001_01_sub.zip",
 #'                   package="rGEDI")
 #'
 #'# Unzipping GEDI level2A data
-#'level2Apath <- unzip(level2A_fp_zip,exdir = dirname(level2A_fp_zip))
+#'level2Apath <- unzip(level2A_fp_zip,exdir = outdir)
 #'
 #'# Reading GEDI level2A data (h5 file)
 #'level2a<-readLevel2A(level2Apath=level2Apath)

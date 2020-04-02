@@ -31,12 +31,13 @@ These are the biophysical variables extracted:
 }
 \examples{
 # Specifying the path to GEDI level2B data (zip file)
+outdir = tempdir()
 level2B_fp_zip <- system.file("extdata",
                   "GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub.zip",
                   package="rGEDI")
 
 # Unzipping GEDI level2A data
-level2Bpath <- unzip(level2B_fp_zip,exdir = dirname(level2B_fp_zip))
+level2Bpath <- unzip(level2B_fp_zip,exdir = outdir)
 
 # Reading GEDI level2B data (h5 file)
 level2b<-readLevel2B(level2Bpath=level2Bpath)
