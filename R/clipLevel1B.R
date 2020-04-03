@@ -222,7 +222,7 @@ clipByMask1B = function(level1b, masks, output = "") {
           hdf5r::createDataSet(newFile,dt,h5_dt[], dtype=dtype, chunk_dim=chunkdims)
         } else if (dt_dim == beam_shot_n) {
           hdf5r::createDataSet(newFile,dt,h5_dt[mask], dtype=dtype, chunk_dim=chunkdims)
-        } else if (dt_dim %in% total_waveforms) {
+        } else if (dt_dim %in% total_waveforms | dt_dim %% beam_shot_n == 0) {
           prefix = ifelse(substr(basename(dt),1,2)=="rx", "rx", "tx")
           sampleCount = sprintf("%s_sample_count", prefix)
           sampleStartIndex = sprintf("%s_sample_start_index", prefix)
