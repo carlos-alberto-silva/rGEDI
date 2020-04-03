@@ -19,8 +19,8 @@
 #'
 #'@examples
 #'\donttest{
-#' # gedifinder is a web service provided by NASA
-#' # usually the request takes more than 5 seconds
+#'# gedifinder is a web service provided by NASA
+#'# usually the request takes more than 5 seconds
 #'
 #'# Specifying bounding box coordinates
 #'ul_lat<- 42.0
@@ -28,8 +28,12 @@
 #'lr_lat<- 40.0
 #'lr_lon<- -96.0
 #'
+#'# Specifying the date range
+#'daterange=c("2019-07-01","2020-05-22")
+#'
 #'# Extracting the path to GEDI data for the specified boundary box coordinates
-#'gedi02b_list<-gedifinder(product="GEDI02_B",ul_lat, ul_lon, lr_lat, lr_lon,version="001",daterange=c("2019-07-01","2020-05-22"))
+#'gedi02b_list<-gedifinder(product="GEDI02_B",ul_lat, ul_lon, lr_lat, lr_lon,version="001",daterange=daterange)
+#'
 #'}
 #'@import jsonlite curl
 #'@export
