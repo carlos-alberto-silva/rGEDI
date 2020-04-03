@@ -4,7 +4,15 @@
 \alias{gedifinder}
 \title{GEDI finder}
 \usage{
-gedifinder(product, ul_lat, ul_lon, lr_lat, lr_lon, version = "001")
+gedifinder(
+  product,
+  ul_lat,
+  ul_lon,
+  lr_lat,
+  lr_lon,
+  version = "001",
+  daterange = NULL
+)
 }
 \arguments{
 \item{product}{GEDI data level; Options: "GEDI01_B", "GEDI02_A" or "GEDI02_B"}
@@ -18,13 +26,17 @@ gedifinder(product, ul_lat, ul_lon, lr_lat, lr_lon, version = "001")
 \item{lr_lon}{Numeric. Lower right (ul) corner coordinates, in lon (decimal degrees) for the bounding box of the area of interest.}
 
 \item{version}{Character. The version of the GEDI product files to be returned. Default "001".}
+
+\item{daterange}{Vector. Date range. Specify your start and end dates (year-month-day). Ex.: c("2019-07-01","2020-05-22"). If NULL (default),
+the date range filter will be not applied.}
 }
 \value{
 Return a vector object pointing out the path saving the downloaded GEDI data within
 the boundary box coordinates provided
 }
 \description{
-This function finds the path to GEDI data within a boundary box coordinates provided
+This function finds the exact granule(s) that contain GEDI data for a given region of interest and date range
+'
 }
 \examples{
 \donttest{
@@ -37,12 +49,16 @@ ul_lon<- -100
 lr_lat<- 40.0
 lr_lon<- -96.0
 
+# Specifying the date range
+daterange=c("2019-07-01","2020-05-22")
+
 # Extracting the path to GEDI data for the specified boundary box coordinates
-gedi02b_list<-gedifinder(product="GEDI02_B",ul_lat, ul_lon, lr_lat, lr_lon,version="001")
+gedi02b_list<-gedifinder(product="GEDI02_B",ul_lat, ul_lon, lr_lat, lr_lon,version="001",daterange=daterange)
+
 }
 }
 \seealso{
-bbox: The correct format is upper left and lower right corner coordinates, in lat,lon ordering, for the bounding box of the area of interest (e.g. [ul_lat,ul_lon,lr_lat,lr_lon]).
-This function just call the gedifinder tool developted by LPDAAC:
+bbox: Defined by the upper left and lower right corner coordinates, in lat,lon ordering, for the bounding box of the area of interest (e.g. [ul_lat,ul_lon,lr_lat,lr_lon]).
+This function relies on the existing LP DAAC gedifinder tool:
 https://lpdaacsvc.cr.usgs.gov/services/gedifinder
 }
