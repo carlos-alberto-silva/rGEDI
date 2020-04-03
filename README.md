@@ -17,7 +17,7 @@ The rGEDI package provides functions for i) downloading, ii) visualizing, iii) c
 ## Installation
 ```r
 #The CRAN version:
-#install.packages("rGEDI") **...will be available soon**
+install.packages("rGEDI")
 
 #The development version:
 library(devtools)
