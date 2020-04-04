@@ -32,7 +32,13 @@
 #'daterange=c("2019-07-01","2020-05-22")
 #'
 #'# Extracting the path to GEDI data for the specified boundary box coordinates
-#'gedi02b_list<-gedifinder(product="GEDI02_B",ul_lat, ul_lon, lr_lat, lr_lon,version="001",daterange=daterange)
+#'gedi02b_list<-gedifinder(product="GEDI02_B",
+#'                                 ul_lat, 
+#'                                 ul_lon, 
+#'                                 lr_lat,
+#'                                 lr_lon,
+#'                                 version="001",
+#'                                 daterange=daterange)
 #'
 #'}
 #'@import jsonlite curl
