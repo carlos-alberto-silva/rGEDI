@@ -165,7 +165,7 @@ plotWFMetrics(gedilevel1b, gedilevel2a, shot_number, rh=c(25, 50, 75, 90))
 dev.off()
 ```
 ![](https://github.com/carlos-alberto-silva/rGEDI/blob/master/readme/fig8.png)
-## Get GEDI Vegetation Profile Biophysical Variables (GEDI Level2B)
+## Get GEDI Vegetation Biophysical Variables (GEDI Level2B)
 ```r
 level2BVPM<-getLevel2BVPM(gedilevel2b)
 head(level2BVPM[,c("beam","shot_number","pai","fhd_normal","omega","pgap_theta","cover")])
