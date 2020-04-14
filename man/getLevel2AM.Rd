@@ -12,10 +12,25 @@ An S4 object of class "gedi.level2a".}
 }
 \value{
 Returns an S4 object of class \code{\link[data.table:data.table]{data.table-class}}
-containing the elevation and relative heights.
+containing the elevation and relative heights metrics.
 }
 \description{
-This function extracts Elevation and Relative Height (RH) metrics from GEDI Level2A data .
+This function extracts Elevation and Relative Height (RH) metrics from GEDI Level2A data.
+}
+\details{
+Characteristics. Flag indicating likely invalid waveform (1=valid, 0=invalid).
+\itemize{
+\item \emph{beam} Beam identifie
+\item \emph{shot_number} Shot number
+\item \emph{degrade_flag} Flag indicating degraded state of pointing and/or positioning information
+\item \emph{quality_flag} Flag simplifying selection of most useful data
+\item \emph{delta_time} Transmit time of the shot since Jan 1 00:00 2018
+\item \emph{lat_lowestmode} Latitude of center of lowest mode
+\item \emph{lon_lowestmode} Longitude of center of lowest mode
+\item \emph{elev_highestreturn} Elevation of highest detected return relative to reference ellipsoid Meters
+\item \emph{elev_lowestmode} Elevation of center of lowest mode relative to reference ellipsoid
+\item \emph{rh} Relative height metrics at 1\% interval
+}
 }
 \examples{
 

@@ -1,6 +1,6 @@
 #'Get GEDI Elevation and Height Metrics (GEDI Level2A)
 #'
-#'@description This function extracts Elevation and Relative Height (RH) metrics from GEDI Level2A data .
+#'@description This function extracts Elevation and Relative Height (RH) metrics from GEDI Level2A data.
 #'
 #'@usage getLevel2AM(level2a)
 #'
@@ -8,9 +8,23 @@
 #'An S4 object of class "gedi.level2a".
 #'
 #'@return Returns an S4 object of class \code{\link[data.table:data.table]{data.table-class}}
-#'containing the elevation and relative heights.
+#'containing the elevation and relative heights metrics.
 #'
 #'@seealso https://lpdaac.usgs.gov/products/gedi02_av001/
+#'
+#'@details Characteristics. Flag indicating likely invalid waveform (1=valid, 0=invalid).
+#'\itemize{
+#'\item \emph{beam} Beam identifie
+#'\item \emph{shot_number} Shot number
+#'\item \emph{degrade_flag} Flag indicating degraded state of pointing and/or positioning information
+#'\item \emph{quality_flag} Flag simplifying selection of most useful data
+#'\item \emph{delta_time} Transmit time of the shot since Jan 1 00:00 2018
+#'\item \emph{lat_lowestmode} Latitude of center of lowest mode
+#'\item \emph{lon_lowestmode} Longitude of center of lowest mode
+#'\item \emph{elev_highestreturn} Elevation of highest detected return relative to reference ellipsoid Meters
+#'\item \emph{elev_lowestmode} Elevation of center of lowest mode relative to reference ellipsoid
+#'\item \emph{rh} Relative height metrics at 1\% interval
+#'}
 #'
 #'@examples
 #'
@@ -56,6 +70,9 @@ getLevel2AM<-function(level2a){
     rhs<-data.table::data.table(
       beam<-rep(i,length(level2a_i[["shot_number"]][])),
       shot_number=level2a_i[["shot_number"]][],
+      degrade_flag=level2a_i[["degrade_flag"]][],
+      quality_flag=level2a_i[["quality_flag"]][],
+      quality_flag=level2a_i[["delta_time"]][],
       lat_lowestmode=level2a_i[["lat_lowestmode"]][],
       lon_lowestmode=level2a_i[["lon_lowestmode"]][],
       elev_highestreturn=level2a_i[["elev_highestreturn"]][],
@@ -65,7 +82,7 @@ getLevel2AM<-function(level2a){
     }
   }
 
-  colnames(rh.dt)<-c("beam","shot_number","lat_lowestmode","lon_lowestmode",
+  colnames(rh.dt)<-c("beam","shot_number","degrade_flag","quality_flag","delta_time","lat_lowestmode","lon_lowestmode",
                      "elev_highestreturn","elev_lowestmode",paste0("rh",seq(0,100)))
   close(pb)
   return(rh.dt)

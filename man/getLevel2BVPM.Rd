@@ -20,13 +20,22 @@ Total Plant Area Index,	Foliage Height Diversity, Foliage Clumping Index,
 Total Gap Probability (theta), and Total canopy cover.
 }
 \details{
-These are the biophysical variables extracted:
+These are the biophysical variables and additional information extracted:
 \itemize{
-\item \emph{pai} Total Plant Area Index.
-\item \emph{fhd_normal} Foliage Height Diversity.
-\item \emph{omega} Foliage Clumping Index.
-\item \emph{pgap_theta} Total Gap Probability (theta).
-\item \emph{cover} Total canopy cover.
+\item \emph{beam} Beam identifie
+\item \emph{shot_number} Shot number
+\item \emph{algorithmrun_flag} The L2B algorithm is run if this flag is set to 1 indicating data have sufficient waveform fidelity for L2B to run
+\item \emph{l2b_quality_flag} L2B quality flag
+\item \emph{delta_time} Transmit time of the shot since Jan 1 00:00 2018
+\item \emph{latitude_lastbin} Latitude of last bin of the pgap_theta_z, interpolated from L1B waveform coordinate
+\item \emph{latitude_bin0} Latitude of first bin of the pgap_theta_z, interpolated from L1B waveform coordinate
+\item \emph{elev_highestreturn} Elevation of highest detected return relative to reference ellipsoid
+\item \emph{elev_lowestmode} Elevation of center of lowest mode relative to reference ellipsoid
+\item \emph{pai} Total Plant Area Index
+\item \emph{fhd_normal} Foliage Height Diversity
+\item \emph{omega} Foliage Clumping Index
+\item \emph{pgap_theta} Total Gap Probability (theta)
+\item \emph{cover} Total canopy cover
 }
 }
 \examples{

@@ -12,6 +12,21 @@
 #'
 #'@seealso https://lpdaac.usgs.gov/products/gedi02_bv001/
 #'
+#'@details Characteristics. Flag indicating likely invalid waveform (1=valid, 0=invalid).
+#'\itemize{
+#'\item \emph{beam} Beam identifie
+#'\item \emph{shot_number} Shot number
+#'\item \emph{algorithmrun_flag} The L2B algorithm is run if this flag is set to 1 indicating data have sufficient waveform fidelity for L2B to run
+#'\item \emph{l2b_quality_flag} L2B quality flag
+#'\item \emph{delta_time} Transmit time of the shot since Jan 1 00:00 2018
+#'\item \emph{lat_lowestmode} Latitude of center of lowest mode
+#'\item \emph{lon_lowestmode} Longitude of center of lowest mode
+#'\item \emph{elev_highestreturn} Elevation of highest detected return relative to reference ellipsoid
+#'\item \emph{elev_lowestmode} Elevation of center of lowest mode relative to reference ellipsoid
+#'\item \emph{height_lastbin} Height of the last bin of the pgap_theta_z, relative to the ground
+#'\item \emph{pai_z} Plant Area Index profile
+#'}
+#'
 #'@examples
 #'# Specifying the path to GEDI level2B data (zip file)
 #'outdir = tempdir()
@@ -48,6 +63,9 @@ getLevel2BPAIProfile<-function(level2b){
     m<-data.table::data.table(
       beam<-rep(i,length(level2b_i[["shot_number"]][])),
       shot_number=level2b_i[["shot_number"]][],
+      algorithmrun_flag=level2b_i[["algorithmrun_flag"]][],
+      l2b_quality_flag=level2b_i[["l2b_quality_flag"]][],
+      delta_time=level2b_i[["geolocation/delta_time"]][],
       lat_lowestmode=level2b_i[["geolocation/lat_lowestmode"]][],
       lon_lowestmode=level2b_i[["geolocation/lon_lowestmode"]][],
       elev_highestreturn=level2b_i[["geolocation/elev_highestreturn"]][],
@@ -57,7 +75,8 @@ getLevel2BPAIProfile<-function(level2b){
       pai_z=t(level2b_i[["pai_z"]][,1:level2b_i[["pai_z"]]$dims[2]]))
     m.dt<-rbind(m.dt,m)
   }
-  colnames(m.dt)<-c("beam","shot_number","lat_lowestmode",
+  colnames(m.dt)<-c("beam","shot_number","algorithmrun_flag",
+                    "l2b_quality_flag","delta_time","lat_lowestmode",
                     "lon_lowestmode","elev_highestreturn",
                     "elev_lowestmode","height_lastbin",
                     "height_bin0",paste0("pai_z",seq(0,30*5,5)[-31],"_",seq(5,30*5,5),"m"))

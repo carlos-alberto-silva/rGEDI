@@ -14,8 +14,7 @@
 #'
 #'@seealso https://lpdaac.usgs.gov/products/gedi01_bv001/
 #'
-#'@details Besides of the fields specified as defaul, GEDI mission level 1B description
-#'(https://lpdaac.usgs.gov/products/gedi01_bv001/) details all the information that can be extracted:
+#'@details Additional fields to be extracted from GEDI level 1B:
 #'\itemize{
 #'\item \emph{all_samples_sum} Sum of all values within the 10 km range window.
 #'\item \emph{beam} Beam number	Number.
@@ -89,7 +88,6 @@
 #'\item \emph{solar_azimuth} The azimuth of the sun position vector.
 #'\item \emph{solar_elevation} The elevation of the sun position vector.
 #'\item \emph{surface_type} Flags describing which surface types.
-#'\item \emph{delta_time} Transmit time of the shot.
 #'\item \emph{dynamic_atmosphere_correction} Dynamic Atmospheric Correction (DAC) includes inverted barometer (IB) effect.
 #'\item \emph{geoid} Geoid height above WGS-84 reference ellipsoid.
 #'\item \emph{tide_earth} Solid Earth tides.

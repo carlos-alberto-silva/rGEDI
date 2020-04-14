@@ -17,6 +17,22 @@ containing the Plant Area Volume Density Index.
 \description{
 This function extracts the Plant Area Volume Density (PAVD) Profile from GEDI Level2B data.
 }
+\details{
+Characteristics. Flag indicating likely invalid waveform (1=valid, 0=invalid).
+\itemize{
+\item \emph{beam} Beam identifie
+\item \emph{shot_number} Shot number
+\item \emph{algorithmrun_flag} The L2B algorithm is run if this flag is set to 1 indicating data have sufficient waveform fidelity for L2B to run
+\item \emph{l2b_quality_flag} L2B quality flag
+\item \emph{delta_time} Transmit time of the shot since Jan 1 00:00 2018
+\item \emph{lat_lowestmode} Latitude of center of lowest mode
+\item \emph{lon_lowestmode} Longitude of center of lowest mode
+\item \emph{elev_highestreturn} Elevation of highest detected return relative to reference ellipsoid
+\item \emph{elev_lowestmode} Elevation of center of lowest mode relative to reference ellipsoid
+\item \emph{height_lastbin} Height of the last bin of the pgap_theta_z, relative to the ground
+\item \emph{pavd_z} Plant Area Volume Density profile
+}
+}
 \examples{
 # Specifying the path to GEDI level2B data (zip file)
 outdir = tempdir()
