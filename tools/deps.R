@@ -28,14 +28,14 @@ downloadDepBitBucket = function(name, file, origName) {
 # downloadDep("cmpfit-1.2",
 #             "mpfit.h",
 #             "https://www.physics.wisc.edu/~craigm/idl/down/cmpfit-1.2.tar.gz")
-downloadDep("libclidar",
-	    "libLasProcess.h",
-	    "https://github.com/caiohamamura/libclidar/archive/v0.4.0.tar.gz",
-	    "libclidar-0.4.0")
-downloadDepBitBucket("gedisimulator",
-                     "gediRat.c",
-                     "caiohamamura-gedisimulator-f3c8c65849ca")
-downloadDep("tools",
-            "tools.c",
-            "https://github.com/caiohamamura/tools/archive/v0.4.0.tar.gz",
-	    "tools-0.4.0")
+#downloadDep("libclidar",
+#	    "libLasProcess.h",
+#	    "https://github.com/caiohamamura/libclidar/archive/v0.4.0.tar.gz",
+#	    "libclidar-0.4.0")
+#downloadDepBitBucket("gedisimulator",
+#                     "gediRat.c",
+#                     "caiohamamura-gedisimulator-f3c8c65849ca")
+#downloadDep("tools",
+#            "tools.c",
+#            "https://github.com/caiohamamura/tools/archive/v0.4.0.tar.gz",
+#	    "tools-0.4.0")

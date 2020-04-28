@@ -1,0 +1,9 @@
+[submodule "src/libclidar"]
+	path = src/libclidar
+	url = https://github.com/caiohamamura/libclidar
+[submodule "src/tools"]
+	path = src/tools
+	url = https://github.com/caiohamamura/tools
+[submodule "src/gedisimulator"]
+	path = src/gedisimulator
+	url = https://bitbucket.org/caiohamamura/gedisimulator

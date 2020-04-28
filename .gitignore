@@ -4,9 +4,6 @@
 .Ruserdata
 notrack
 windows
-src/tools
-src/gedisimulator
-src/libclidar
 *.o
 *.dll
 *.obj

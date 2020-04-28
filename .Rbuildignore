@@ -5,9 +5,6 @@
 ^notrack.*$
 .travis.yml
 ^windows$
-^src/gedisimulator$
-^src/tools$
-^src/libclidar$
 ^readme$
 ^.vscode$
 ^Meta$
