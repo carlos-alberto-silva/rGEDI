@@ -19,6 +19,8 @@
 #'\item \emph{degrade_flag} Flag indicating degraded state of pointing and/or positioning information
 #'\item \emph{quality_flag} Flag simplifying selection of most useful data
 #'\item \emph{delta_time} Transmit time of the shot since Jan 1 00:00 2018
+#'\item \emph{sensitivity} Maxmimum canopy cover that can be penetrated
+#'\item \emph{solar_elevation} Solar elevation
 #'\item \emph{lat_lowestmode} Latitude of center of lowest mode
 #'\item \emph{lon_lowestmode} Longitude of center of lowest mode
 #'\item \emph{elev_highestreturn} Elevation of highest detected return relative to reference ellipsoid Meters
@@ -73,6 +75,8 @@ getLevel2AM<-function(level2a){
       degrade_flag=level2a_i[["degrade_flag"]][],
       quality_flag=level2a_i[["quality_flag"]][],
       quality_flag=level2a_i[["delta_time"]][],
+      sensitivity=level2a_i[["sensitivity"]][],
+      solar_elevation=level2a_i[["solar_elevation"]][],
       lat_lowestmode=level2a_i[["lat_lowestmode"]][],
       lon_lowestmode=level2a_i[["lon_lowestmode"]][],
       elev_highestreturn=level2a_i[["elev_highestreturn"]][],
@@ -82,7 +86,8 @@ getLevel2AM<-function(level2a){
     }
   }
 
-  colnames(rh.dt)<-c("beam","shot_number","degrade_flag","quality_flag","delta_time","lat_lowestmode","lon_lowestmode",
+  colnames(rh.dt)<-c("beam","shot_number","degrade_flag","quality_flag","delta_time",
+                     "sensitivity","solar_elevation","lat_lowestmode","lon_lowestmode",
                      "elev_highestreturn","elev_lowestmode",paste0("rh",seq(0,100)))
   close(pb)
   return(rh.dt)
