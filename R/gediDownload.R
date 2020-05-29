@@ -26,6 +26,16 @@
 #'# Set dir to download files to
 #'outdir=tempdir()
 #'
+#'# Create .netrc file
+#'netrc_conn <- file(netrc)
+#'
+#'writeLines(c("machine urs.earthdata.nasa.gov",
+#'             sprintf("login %s", Sys.getenv("NASA_USER")),
+#'             sprintf("password %s", Sys.getenv("NASA_PASSWORD"))
+#'), netrc_conn)
+#'
+#'close(netrc_conn)
+#'
 #'#' Downloading GEDI data
 #'gediDownload(filepath,outdir)
 #'}
