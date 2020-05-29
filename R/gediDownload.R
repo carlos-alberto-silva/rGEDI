@@ -11,7 +11,7 @@
 #'@return No return value on success, on failure it will \code{stop()}
 #'@references Credits to Cole Krehbiel. Code adapted from <https://git.earthdata.nasa.gov/projects/LPDUR/repos/daac_data_download_r/browse/DAACDataDownload.R>
 #'@examples
-#'\donttest{
+#'\dontrun{
 #'# Set path to GEDI data
 #'# herein we will only download xml metedata
 #'filepath=c(paste0(

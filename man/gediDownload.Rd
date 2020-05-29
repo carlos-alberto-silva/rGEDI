@@ -23,7 +23,7 @@ Download GEDI data from LP DAAC Data Pool. Users will need to enter their
 Earth Explore login Information for downloading the data.
 }
 \examples{
-\donttest{
+\dontrun{
 # Set path to GEDI data
 # herein we will only download xml metedata
 filepath=c(paste0(
