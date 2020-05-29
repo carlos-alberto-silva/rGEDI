@@ -137,7 +137,7 @@ gediDownloadFile = function(url, outdir, overwrite, buffer_size, netrc) {
 getNetRC = function(dl_dir) {
   netrc <- file.path(dl_dir,'.netrc')  # Path to netrc file
   # ------------------------------------CREATE .NETRC FILE------------------------------------------ #
-  if (file.exists(netrc) == FALSE || grepl("urs.earthdata.nasa.gov", readLines(netrc)) == FALSE) {
+  if (file.exists(netrc) == FALSE || any(grepl("urs.earthdata.nasa.gov", readLines(netrc))) == FALSE) {
     netrc_conn <- file(netrc)
 
     # User will be prompted for NASA Earthdata Login Username and Password below
