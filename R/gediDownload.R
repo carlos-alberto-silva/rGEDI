@@ -27,6 +27,7 @@
 #'outdir=tempdir()
 #'
 #'# Create .netrc file
+#'netrc = file.path(outdir, ".netrc")
 #'netrc_conn <- file(netrc)
 #'
 #'writeLines(c("machine urs.earthdata.nasa.gov",
