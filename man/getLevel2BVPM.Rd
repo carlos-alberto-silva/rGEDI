@@ -27,6 +27,8 @@ These are the biophysical variables and additional information extracted:
 \item \emph{algorithmrun_flag} The L2B algorithm is run if this flag is set to 1 indicating data have sufficient waveform fidelity for L2B to run
 \item \emph{l2b_quality_flag} L2B quality flag
 \item \emph{delta_time} Transmit time of the shot since Jan 1 00:00 2018
+\item \emph{sensitivity} Maxmimum canopy cover that can be penetrated
+\item \emph{solar_elevation} Solar elevation
 \item \emph{latitude_lastbin} Latitude of last bin of the pgap_theta_z, interpolated from L1B waveform coordinate
 \item \emph{latitude_bin0} Latitude of first bin of the pgap_theta_z, interpolated from L1B waveform coordinate
 \item \emph{elev_highestreturn} Elevation of highest detected return relative to reference ellipsoid

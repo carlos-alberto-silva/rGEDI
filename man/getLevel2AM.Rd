@@ -25,6 +25,8 @@ Characteristics. Flag indicating likely invalid waveform (1=valid, 0=invalid).
 \item \emph{degrade_flag} Flag indicating degraded state of pointing and/or positioning information
 \item \emph{quality_flag} Flag simplifying selection of most useful data
 \item \emph{delta_time} Transmit time of the shot since Jan 1 00:00 2018
+\item \emph{sensitivity} Maxmimum canopy cover that can be penetrated
+\item \emph{solar_elevation} Solar elevation
 \item \emph{lat_lowestmode} Latitude of center of lowest mode
 \item \emph{lon_lowestmode} Longitude of center of lowest mode
 \item \emph{elev_highestreturn} Elevation of highest detected return relative to reference ellipsoid Meters
