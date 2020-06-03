@@ -78,7 +78,7 @@ language: r
 
 script:
   - R CMD build .
-  - R CMD check *tar.gz --as-cran
+  - travis_wait 30 R CMD check *tar.gz --as-cran
   - R CMD INSTALL . --build
 
 after_script:
