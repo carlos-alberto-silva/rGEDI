@@ -32,7 +32,7 @@ matrix:
   - os: windows
     language: bash
     install:
-      - choco install -y r --version 3.6.2
+      - choco install -y r --version 3.6.3
       - choco install -y rtools --version 3.5.0.4
       - "url=$(curl https://miktex.org/download | sed -n 's/.*href=.\\(.*x64.exe\\).*/https:\\/\\/miktex.org\\1/p' | head -1)"
       - if ! [ -f $HOME/AppData/Local/Temp/chocolatey/miktex.exe ]; then
@@ -42,7 +42,7 @@ matrix:
       - $HOME/AppData/Local/Temp/chocolatey/miktex.exe --unattended --auto-install=yes
       - "export PATH=/c/Program\\ Files/MiKTeX\\ 2.9/miktex/bin/x64:$PATH"
       - choco install -y pandoc
-      - "export PATH=/c/Program\\ Files/R/R-3.6.2/bin/x64:/c/Rtools/bin:/c/Rtools/mingw_64/bin:$PATH"
+      - "export PATH=/c/Program\\ Files/R/R-3.6.3/bin/x64:/c/Rtools/bin:/c/Rtools/mingw_64/bin:$PATH"
       - mkdir -p ${HOME}/Documents/R/win-library/3.6
       - export R_LIBS_USER=${HOME}/Documents/R/win-library/3.6
       - echo 'options(repos = c(CRAN = "https://cloud.r-project.org"))' > .Rprofile
