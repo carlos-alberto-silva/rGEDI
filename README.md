@@ -1,7 +1,7 @@
 ![](https://github.com/carlos-alberto-silva/rGEDI/blob/master/readme/fig1.png)<br/>
 
 [![CRAN](https://www.r-pkg.org/badges/version/rGEDI)](https://cran.r-project.org/package=rGEDI)
-![Github](https://img.shields.io/badge/Github-0.1.7-green.svg)
+![Github](https://img.shields.io/badge/Github-0.1.8-green.svg)
 ![licence](https://img.shields.io/badge/Licence-GPL--3-blue.svg) 
 ![Downloads](https://cranlogs.r-pkg.org/badges/grand-total/rGEDI)
 [![Build Status](https://travis-ci.com/carlos-alberto-silva/rGEDI.svg?token=Jqizwyc6gBxNafNccTdU&branch=master)](https://travis-ci.com/carlos-alberto-silva/rGEDI)
@@ -21,7 +21,7 @@ install.packages("rGEDI")
 
 #The development version:
 library(devtools)
-devtools::install_github("carlos-alberto-silva/rGEDI", dependencies = TRUE)
+devtools::install_git("https://github.com/carlos-alberto-silva/rGEDI", dependencies = TRUE)
 
 # loading rGEDI package
 library(rGEDI)

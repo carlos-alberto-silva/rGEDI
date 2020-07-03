@@ -99,7 +99,10 @@ gediDownloadFile = function(url, outdir, overwrite, buffer_size, netrc) {
 
   tryCatch({
     fileHandle=file(resume, open="ab", raw = T)
-    conn=curl::curl(url, handle=h, open="rb")
+    conn = tryCatch(curl::curl(url, handle=h, open="rb"), error = function(e) {
+          file.remove(netrc)
+          stop(e)
+        })
     headers=rawToChar(curl::handle_data(h)$headers)
     total_size=as.numeric(gsub("[^\u00e7]*Content-Length: ([0-9]+)[^\u00e7]*","\\1",x=headers, perl = T))
     while(TRUE) {

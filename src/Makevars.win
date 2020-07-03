@@ -9,7 +9,7 @@ ifdef LIB_GSL
 	GSL_INC = ${LIB_GSL}/include
 	GSL_LIB = ${LIB_GSL}/lib
 else
-	LIB_GSL = "../windows/gsl-2.4"
+	LIB_GSL = ../windows/gsl-2.4
 	GSL_INC = ${LIB_GSL}/include
 	GSL_LIB = ${LIB_GSL}/lib${R_ARCH}
 endif
