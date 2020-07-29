@@ -1,3 +1,4 @@
+
 #'Get GEDI Canopy Cover and Vertical Profile Metrics (GEDI Level2B)
 #'
 #'@description This function extracts information from GEDI Level2B data:
@@ -60,38 +61,43 @@ getLevel2BVPM<-function(level2b){
   m.dt<-data.table::data.table()
   pb <- utils::txtProgressBar(min = 0, max = length(groups_id), style = 3)
   i.s=0
+  var.map = data.table::data.table(t(data.frame(list(
+    # COL_NAMES              # H5_ADDRESS
+    c("shot_number",         "shot_number"),
+    c("algorithmrun_flag",   "algorithmrun_flag"),
+    c("l2b_quality_flag",    "l2b_quality_flag"),
+    c("delta_time",          "geolocation/delta_time"),
+    c("sensitivity",         "sensitivity"),
+    c("solar_elevation",     "geolocation/solar_elevation"),
+    c("latitude_lastbin",    "geolocation/latitude_lastbin"),
+    c("latitude_bin0",       "geolocation/latitude_bin0"),
+    c("longitude_bin0",      "geolocation/longitude_bin0"),
+    c("longitude_lastbin",   "geolocation/longitude_lastbin"),
+    c("elev_highestreturn",  "geolocation/elev_highestreturn"),
+    c("elev_lowestmode",     "geolocation/elev_lowestmode"),
+    c("rh100",               "rh100"),
+    c("pai",                 "pai"),
+    c("fhd_normal",          "fhd_normal"),
+    c("omega",               "omega"),
+    c("pgap_theta",          "pgap_theta"),
+    c("cover",               "cover")
+  ))))
+  colnames(var.map) = c("COL_NAMES", "H5_ADDRESS")
+
   for ( i in groups_id){
     i.s<-i.s+1
     utils::setTxtProgressBar(pb, i.s)
     level2b_i<-level2b[[i]]
     m<-data.table::data.table(
-      beam<-rep(i,length(level2b_i[["shot_number"]][])),
-      shot_number=level2b_i[["shot_number"]][],
-      algorithmrun_flag=level2b_i[["algorithmrun_flag"]][],
-      l2b_quality_flag=level2b_i[["l2b_quality_flag"]][],
-      delta_time=level2b_i[["geolocation/delta_time"]][],
-      sensitivity=level2b_i[["sensitivity"]][],
-      solar_elevation=level2b_i[["geolocation/solar_elevation"]][],
-      latitude_lastbin=level2b_i[["geolocation/latitude_lastbin"]][],
-      latitude_bin0=level2b_i[["geolocation/latitude_bin0"]][],
-      longitude_bin0=level2b_i[["geolocation/longitude_bin0"]][],
-      longitude_lastbin=level2b_i[["geolocation/longitude_lastbin"]][],
-      elev_highestreturn=level2b_i[["geolocation/elev_highestreturn"]][],
-      elev_lowestmode=level2b_i[["geolocation/elev_lowestmode"]][],
-      pai=level2b_i[["pai"]][],
-      fhd_normal=level2b_i[["fhd_normal"]][],
-      omega=level2b_i[["omega"]][],
-      pgap_theta=level2b_i[["pgap_theta"]][],
-      cover=level2b_i[["cover"]][])
+      beam=rep(i,length(level2b_i[["shot_number"]][])))
+    for (row_index in 1:nrow(var.map)) {
+      colname = var.map$COL_NAMES[row_index]
+      h5.address = var.map$H5_ADDRESS[row_index]
+      m[[colname]] <- level2b_i[[h5.address]][]
+    }
     m.dt<-rbind(m.dt,m)
   }
-  colnames(m.dt)<-c("beam","shot_number","algorithmrun_flag",
-                    "l2b_quality_flag","delta_time",
-                    "sensitivity","solar_elevation",
-                    "latitude_lastbin","latitude_bin0",
-                    "longitude_lastbin","longitude_bin0",
-                    "elev_highestreturn","elev_lowestmode","pai",
-                    "fhd_normal","omega","pgap_theta","cover")
+  colnames(m.dt)<-c("beam", var.map$COL_NAMES)
   close(pb)
   return(m.dt)
 }
