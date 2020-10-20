@@ -103,20 +103,27 @@ gediDownload(filepath=gLevel2B,outdir=outdir)
 #** Herein, we are using only a GEDI sample dataset for this tutorial.
 # downloading zip file
 zipfile = file.path(outdir, "examples.zip")
-download.file("https://github.com/carlos-alberto-silva/rGEDI/releases/download/datasets/examples.zip",destfile=zipfile)
+download.file("https://github.com/carlos-alberto-silva/rGEDI/releases/download/datasets/examples.zip", destfile=zipfile)
 
 # unzip file
 unzip(zipfile, exdir=outdir)
 ```
 ```{r, echo = FALSE, results="hide"}
 zipfile = file.path(outdir, "examples.zip")
-if (!file.exists(zipfile)) {
-  res=download.file(
-    url="https://github.com/carlos-alberto-silva/rGEDI/releases/download/datasets/examples.zip", 
-    destfile=zipfile
-  )
-}
-unzip(zipfile, exdir=outdir)
+
+tryCatch({
+  if (!file.exists(zipfile)) {
+    res=download.file(
+      url="https://github.com/carlos-alberto-silva/rGEDI/releases/download/datasets/examples.zip", 
+      destfile=zipfile,
+      timeout=600
+    )
+  }
+  unzip(zipfile, exdir=outdir)
+}, error=function(e) {
+  message("Could not download the example file, vignette is aborting")
+  knitr::opts_chunk$set(eval=FALSE)
+})
 ```
 
 

@@ -50,7 +50,10 @@ elif test -r /usr/include/libgeotiff/geotiff.h ; then
 else
 	AC_CHECK_HEADERS([geotiff.h])
 	if test "$ac_cv_header_geotiff_h" = "no" ; then
-		AC_MSG_ERROR([cannot find geotiff.h])
+		AC_MSG_ERROR([could not find geotiff.h:
+                         Debian: sudo apt install libgeotiff-dev
+                         RPM-based: sudo dnf install libgeotiff-devel
+                         MacOS: brew install libgeotiff])
 	fi
 fi
 
@@ -64,7 +67,7 @@ AC_SUBST(GEOTIFF_LIBS, $GEOTIFF_LIBS)
 ##################
 ## SZIP
 ##################
-AC_CHECK_LIB( sz, SZ_BufftoBuffCompress, 
+AC_CHECK_LIB( sz, SZ_BufftoBuffCompress,
 	     HAVE_LIBSZ="yes",
 	     AC_MSG_ERROR(could not find szip:
                          Debian: sudo apt install libsz2
