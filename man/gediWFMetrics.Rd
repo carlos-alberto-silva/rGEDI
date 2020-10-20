@@ -104,7 +104,7 @@ gediWFMetrics(
 
 \item{forcePsigma}{do not read pulse sigma from file}
 
-\item{bayesGround}{use Bayseian ground finding}
+\item{bayesGround}{use Bayesian ground finding}
 
 \item{dontTrustGround}{don't trust ground in waveforms, if included}
 
