@@ -39,6 +39,7 @@ Imports:
 Suggests:
   devtools,
   knitr,
+  lattice,
   leaflet,
   leafsync,
   lidR,
