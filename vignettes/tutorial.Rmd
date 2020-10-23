@@ -558,12 +558,10 @@ levelplot(rh100metrics,
 ```
 
 ```{r, fig.width=7, fig.heiglht=3, echo=FALSE, eval=TRUE}
-# View maps
-tryCatch({
-  library(rasterVis)
-library(viridis)
+rasterVisLoaded = require(rasterVis) & require(viridis)
 
-levelplot(rh100metrics,
+if (rasterVisLoaded) {
+  levelplot(rh100metrics,
                     layout=c(4, 1),
                     margin=FALSE,
                     xlab = "Longitude (degree)", ylab = "Latitude (degree)",
@@ -581,18 +579,18 @@ levelplot(rh100metrics,
                     col.regions=viridis,
                     at=seq(0, 18, len=101),
                     names.attr=c("rh100 min","rh100 max","rh100 mean", "rh100 sd"))
-}, error = function(err) {
-  message(err)
-})
+}
 ```
 
 
 ## Compute Grids with descriptive statistics of GEDI-derived Canopy Cover and Vertical Profile Metrics (Level2B)
-```{r, fig.width=7, fig.height=3}
+```{r}
 # Computing a serie of statistics of Total Plant Area Index
 level2BVPM$pai[level2BVPM$pai==-9999]<-NA # assing NA to -9999
 pai_metrics<-gridStatsLevel2BVPM(level2BVPM = level2BVPM, func=mySetOfMetrics(pai), res=0.005)
 
+```
+```{r, eval = FALSE, echo=TRUE}
 # View maps
 levelplot(pai_metrics,
                    layout=c(4, 1),
@@ -612,7 +610,29 @@ levelplot(pai_metrics,
                    col.regions=viridis,
                    at=seq(0, 1.5, len=101),
                    names.attr=c("PAI min","PAI max","PAI mean", "PAI sd"))
+```
 
+```{r, fig.width=7, fig.height=3, eval = TRUE, echo = FALSE}
+if (rasterVisLoaded) {
+  levelplot(pai_metrics,
+                   layout=c(4, 1),
+                   margin=FALSE,
+                   xlab = "Longitude (degree)", ylab = "Latitude (degree)",
+                   colorkey=list(
+                     space='right',
+                     labels=list(at=seq(0, 1.5, 0.2), font=4),
+                     axis.line=list(col='black'),
+                     width=1),
+                   par.settings=list(
+                     strip.border=list(col='gray'),
+                     strip.background=list(col='gray'),
+                     axis.line=list(col='gray')
+                   ),
+                   scales=list(draw=TRUE),
+                   col.regions=viridis,
+                   at=seq(0, 1.5, len=101),
+                   names.attr=c("PAI min","PAI max","PAI mean", "PAI sd"))
+}
 ```
 
 
