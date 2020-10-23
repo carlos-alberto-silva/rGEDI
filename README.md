@@ -1,7 +1,7 @@
 ![](https://github.com/carlos-alberto-silva/rGEDI/blob/master/readme/fig1.png)<br/>
 
 [![CRAN](https://www.r-pkg.org/badges/version/rGEDI)](https://cran.r-project.org/package=rGEDI)
-![Github](https://img.shields.io/badge/Github-0.1.8-green.svg)
+![Github](https://img.shields.io/badge/Github-0.1.9-green.svg)
 ![licence](https://img.shields.io/badge/Licence-GPL--3-blue.svg) 
 ![Downloads](https://cranlogs.r-pkg.org/badges/grand-total/rGEDI)
 [![Build Status](https://travis-ci.com/carlos-alberto-silva/rGEDI.svg?token=Jqizwyc6gBxNafNccTdU&branch=master)](https://travis-ci.com/carlos-alberto-silva/rGEDI)
@@ -599,7 +599,7 @@ Please report any issue reagardling the rGEDI package herein https://groups.yaho
 
 # Citing rGEDI
 Silva,C.A; Hamamura,C.; Valbuena, R.; Hancock,S.; Cardil,A.; Broadbent, E. N.; Almeida,D.R.A.; Silva Junior, C.H.L; Klauberg, C. rGEDI: NASA's Global Ecosystem Dynamics Investigation (GEDI) Data Visualization and Processing.
-version 0.1.2, accessed on April. 1 2020, available at: <https://CRAN.R-project.org/package=rGEDI>
+version 0.1.9, accessed on October. 22 2020, available at: <https://CRAN.R-project.org/package=rGEDI>
 
 # Disclaimer
 **rGEDI package has not been developted by the GEDI team. It comes with no guarantee, expressed or implied, and the authors hold no responsibility for its use or reliability of its outputs.**
