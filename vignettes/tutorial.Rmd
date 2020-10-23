@@ -527,10 +527,12 @@ head(cover_metrics_st)
 
 
 ## Compute Grids with descriptive statistics of GEDI-derived Elevation and Height Metrics (Level2A)
-```{r, fig.width=7, fig.height=3}
+```{r, echo=TRUE, eval=TRUE}
 # Computing a serie of statistics of GEDI RH100 metric
 rh100metrics<-gridStatsLevel2AM(level2AM = level2AM, func=mySetOfMetrics(rh100), res=0.005)
+```
 
+```{r, fig.width=7, fig.heiglht=3, echo=TRUE, eval=FALSE}
 # View maps
 library(rasterVis)
 library(viridis)
@@ -553,6 +555,35 @@ levelplot(rh100metrics,
                     col.regions=viridis,
                     at=seq(0, 18, len=101),
                     names.attr=c("rh100 min","rh100 max","rh100 mean", "rh100 sd"))
+```
+
+```{r, fig.width=7, fig.heiglht=3, echo=FALSE, eval=TRUE}
+# View maps
+tryCatch({
+  library(rasterVis)
+library(viridis)
+
+levelplot(rh100metrics,
+                    layout=c(4, 1),
+                    margin=FALSE,
+                    xlab = "Longitude (degree)", ylab = "Latitude (degree)",
+                    colorkey=list(
+                      space='right',
+                      labels=list(at=seq(0, 18, 2), font=4),
+                      axis.line=list(col='black'),
+                      width=1),
+                    par.settings=list(
+                      strip.border=list(col='gray'),
+                      strip.background=list(col='gray'),
+                      axis.line=list(col='gray')
+                    ),
+                    scales=list(draw=TRUE),
+                    col.regions=viridis,
+                    at=seq(0, 18, len=101),
+                    names.attr=c("rh100 min","rh100 max","rh100 mean", "rh100 sd"))
+}, error = function(err) {
+  message(err)
+})
 ```
 
 
