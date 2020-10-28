@@ -15,7 +15,8 @@ matrix:
         gcc$(VER) -std=gnu99\nCXX=$(CCACHE) g++$(VER)\nC11=$(CCACHE) g++$(VER)\nC14=$(CCACHE)
         g++$(VER)\nFC=$(CCACHE) gfortran$(VER)\nF77=$(CCACHE) gfortran$(VER)' > $HOME/.R/Makevars
   #osx libproj has a bug
-  - os: osx
+  - r: release
+    os: osx
     env:
       - BADGE=osx
       - LD_LIBRARY_PATH=" /opt/local/lib:$LD_LIBRARY_PATH"
@@ -34,13 +35,14 @@ matrix:
     install:
       - choco install -y r --version 3.6.3
       - choco install -y rtools --version 3.5.0.4
+      # - choco install -y miktex
       - "url=$(curl https://miktex.org/download | sed -n 's/.*href=.\\(.*x64.exe\\).*/https:\\/\\/miktex.org\\1/p' | head -1)"
-      - if ! [ -f $HOME/AppData/Local/Temp/chocolatey/miktex.exe ]; then
-        curl -Lo $HOME/AppData/Local/Temp/chocolatey/miktex.exe $url;
+      - if ! [ -f $HOME/AppData/Local/Temp/miktex.exe ]; then
+        curl -Lo $HOME/AppData/Local/Temp/miktex.exe $url;
         curl -Lo oledlg.dll https://github.com/caiohamamura/flightplanning-R/releases/download/v0.0.0/oledlg.dll;
         fi
-      - $HOME/AppData/Local/Temp/chocolatey/miktex.exe --unattended --auto-install=yes
-      - "export PATH=/c/Program\\ Files/MiKTeX\\ 2.9/miktex/bin/x64:$PATH"
+      - $HOME/AppData/Local/Temp/miktex.exe --unattended --auto-install=yes
+      - "export PATH=/c/Program\\ Files/MiKTeX/miktex/bin/x64:$PATH"
       - choco install -y pandoc
       - "export PATH=/c/Program\\ Files/R/R-3.6.3/bin/x64:/c/Rtools/bin:/c/Rtools/mingw_64/bin:$PATH"
       - mkdir -p ${HOME}/Documents/R/win-library/3.6
