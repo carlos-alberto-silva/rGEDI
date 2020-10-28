@@ -7,7 +7,8 @@
 #'@param outdir Vector object, output directory for downloading GEDI data, default tempdir()
 #'@param overwrite logical; overwrite file if they already exists in destination, default FALSE
 #'@param buffer_size integer; the size of download chunk in KB to hold in memory before writing to file, default 512.
-#' 
+#'@param timeout integer; connection timeout in seconds.
+#'
 #'@return No return value on success, on failure it will \code{stop()}
 #'@references Credits to Cole Krehbiel. Code adapted from <https://git.earthdata.nasa.gov/projects/LPDUR/repos/daac_data_download_r/browse/DAACDataDownload.R>
 #'@examples
@@ -42,7 +43,7 @@
 #'}
 #'@import curl
 #'@export
-gediDownload<-function(filepath, outdir = NULL, overwrite = FALSE, buffer_size = 512){
+gediDownload<-function(filepath, outdir = NULL, overwrite = FALSE, buffer_size = 512, timeout=10){
   if (is.null(outdir)) {
     outdir == tempdir()
   }
@@ -69,7 +70,8 @@ gediDownload<-function(filepath, outdir = NULL, overwrite = FALSE, buffer_size =
       outdir,
       overwrite,
       buffer_size,
-      netrc
+      netrc,
+      timeout
     ) == 0) {
       message("Finished successfully!")
     } else {
@@ -78,7 +80,7 @@ gediDownload<-function(filepath, outdir = NULL, overwrite = FALSE, buffer_size =
   }
 }
 
-gediDownloadFile = function(url, outdir, overwrite, buffer_size, netrc) {
+gediDownloadFile = function(url, outdir, overwrite, buffer_size, netrc, timeout) {
   filename <- file.path(outdir, basename(url)) # Keep original filename
   if((! overwrite) && file.exists(filename)) {
     message("Skipping this file, already downloaded!")
@@ -95,14 +97,16 @@ gediDownloadFile = function(url, outdir, overwrite, buffer_size, netrc) {
 
   # Connection config
   h = curl::new_handle()
-  curl::handle_setopt(h, netrc=1, netrc_file=netrc, resume_from=resume_from)
+  curl::handle_setopt(h, netrc=1, netrc_file=netrc, resume_from=resume_from, connecttimeout=timeout)
 
   tryCatch({
     fileHandle=file(resume, open="ab", raw = T)
+    message("Connecting...")
     conn = tryCatch(curl::curl(url, handle=h, open="rb"), error = function(e) {
           file.remove(netrc)
           stop(e)
         })
+    message("Connected successfully, downloading...")
     headers=rawToChar(curl::handle_data(h)$headers)
     total_size=as.numeric(gsub("[^\u00e7]*Content-Length: ([0-9]+)[^\u00e7]*","\\1",x=headers, perl = T))
     while(TRUE) {
