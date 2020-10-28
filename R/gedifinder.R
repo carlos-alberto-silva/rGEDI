@@ -33,8 +33,8 @@
 #'
 #'# Extracting the path to GEDI data for the specified boundary box coordinates
 #'gedi02b_list<-gedifinder(product="GEDI02_B",
-#'                                 ul_lat, 
-#'                                 ul_lon, 
+#'                                 ul_lat,
+#'                                 ul_lon,
 #'                                 lr_lat,
 #'                                 lr_lon,
 #'                                 version="001",
@@ -59,15 +59,15 @@ gedifinder<-function(product, ul_lat, ul_lon, lr_lat, lr_lon,version="001",dater
   out<-simplify2array(results$data)
 
   if (!is.null(daterange)){
-    dates<-as.Date(gsub("\\.","-",sapply(strsplit(out,"/"), "[[", 6)))
+    dates<-as.Date(gsub(".*(\\d{4})\\.(\\d{2})\\.(\\d{2}).*", "\\1-\\2-\\3",out))
     out_sub<-out[dates >= as.Date(daterange[1]) & dates <= as.Date(daterange[2])]
 
     if(length(out_sub)<1) {
       stop(paste("There are not GEDI data avalaible between",daterange[1],"and",daterange[2]))
     } else {
       return(out_sub)
-     }
-      } else {
-        return(out)
-     }
+    }
+  } else {
+    return(out)
+  }
 }
