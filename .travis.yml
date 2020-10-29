@@ -31,6 +31,8 @@ matrix:
       - if [ "$TRAVIS_OS_NAME" = "osx" ]; then export PATH="$(brew --prefix llvm)/bin:$PATH";
         fi
   - os: windows
+    env:
+      - BADGE=windows
     language: bash
     install:
       - choco install -y r --version 3.6.3
@@ -100,7 +102,7 @@ deploy:
   api_key:
     secure: FOoSwELB+ByvglrBJplIUGH9aI7/NCI5J+ga0wY35cZFZHBe4dNuUeE5gz6UfxCHDdoJN2+7gjjiLLVlKo+pK/Jx2Zxxep6U+R7Q/s1fbVCRbJaWV8hKEyg+Nk0VnzSD0K5xp0V2Ud3dbeGcueVu5ICyw53CEEotF4DoYqfzZPPV5oyn3X6aRrTE1a5XpPj6JutxSgLK2syQI+7bc5xwzLq7asO9zA3dOsDjk5IiVqCoTo4l8CxhXoKROBbl5uznZcs4D7Bc7Q4pp0OKgv+eWQpx3K9UWP8cheKXjMGyyglaTmVXXZYYKh+NOvnqEHclqT1MQTCzOIx6hxPKbDeUtE0/xWgPbfARL99LtO+bcHa1+nQsTvXkVIRjM785dbS2a4jcOR5CT41f3W5JyGxyp6dpXUm+4r0Z1z4i1y3VJXCEvQKlIqVnVuaxef0wdcfg73kFv8EPmLP6+nYigT9vaDyR7iN0bW3cfJ8Vfyo+ZDuX6uDB705fPiUD5Cs6arfRBbWkBePUmfd7C4bhm+zACJR60kQnzTSRHVYj7nARoSG4uzs161q+SWcqYx21dOjxYgQXiPVJhFsSja1N/A347P6uN6SVzf7UM+ofQUR8qNdMcFY23OIPBhu2JD50HisI8ZTppnJ14inA3P6SztfjglTKTuIYZyhrNDDlHD2FaUw=
   file_glob: true
-  file: ${PKGNAME}_${PKGVERSION}*
+  file: ${PKGNAME}_${PKGVERSION}_${TRAVIS_OS_NAME}*
   overwrite: true
   skip_cleanup: true
   on:
