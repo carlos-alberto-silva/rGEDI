@@ -33,10 +33,14 @@ matrix:
   - os: windows
     env:
       - BADGE=windows
+      - TRAVIS_R_VERSION=4.0.3
     language: bash
     install:
-      - choco install -y r --version 3.6.3
-      - choco install -y rtools --version 3.5.0.4
+      - R_MAJOR=${TRAVIS_R_VERSION:0:(-2)}
+      - echo ${R_MAJOR}
+      - choco install -y r --version ${TRAVIS_R_VERSION}
+      - choco install -y rtools --version 4.0.0.20200526
+      - choco install -y ccache
       # - choco install -y miktex
       - "url=$(curl https://miktex.org/download | sed -n 's/.*href=.\\(.*x64.exe\\).*/https:\\/\\/miktex.org\\1/p' | head -1)"
       - if ! [ -f $HOME/AppData/Local/Temp/miktex.exe ]; then
@@ -46,9 +50,11 @@ matrix:
       - $HOME/AppData/Local/Temp/miktex.exe --unattended --auto-install=yes
       - "export PATH=/c/Program\\ Files/MiKTeX/miktex/bin/x64:$PATH"
       - choco install -y pandoc
-      - "export PATH=/c/Program\\ Files/R/R-3.6.3/bin/x64:/c/Rtools/bin:/c/Rtools/mingw_64/bin:$PATH"
-      - mkdir -p ${HOME}/Documents/R/win-library/3.6
-      - export R_LIBS_USER=${HOME}/Documents/R/win-library/3.6
+      - rm /c/rtools40/usr/bin/date.exe
+      - "export PATH=/c/Program\\ Files/R/R-${TRAVIS_R_VERSION}/bin/x64:/c/rtools40/usr/bin:/c/rtools40/mingw64/bin:$PATH"
+      - "export LD_LIBRARY_PATH=/c/Program\\ Files/R/R-${TRAVIS_R_VERSION}/bin/x64:$LD_LIBRARY_PATH"
+      - mkdir -p ${HOME}/Documents/R/win-library/${R_MAJOR}
+      - export R_LIBS_USER=${HOME}/Documents/R/win-library/${R_MAJOR}
       - echo 'options(repos = c(CRAN = "https://cloud.r-project.org"))' > .Rprofile
       - Rscript -e 'install.packages("devtools")'
       - Rscript -e 'install.packages(c("remotes"));if (!all(c("remotes") %in% installed.packages())) { q(status = 1, save = "no")}'
@@ -95,14 +101,28 @@ branches:
   - master
   - /^v[\d\.]*$/
 before_deploy:
-- 'export PKGVERSION=$(sed -n ''/^Version:/s/Version: \(.*\)/\1/p'' DESCRIPTION)'
-- echo "Upload file glob is $(echo $PKGNAME)_${PKGVERSION}*"
+  - 'export PKGVERSION=$(sed -n ''/^Version:/s/Version: \(.*\)/\1/p'' DESCRIPTION)'
+  - 'export PKGNAME=$(sed -n ''s/Package: //p'' DESCRIPTION)'
+  - ls
+  - theGlob=${PKGNAME}_${PKGVERSION}*
+  - for file in $(ls ${theGlob}); do
+      if [ "$file" != "${PKGNAME}_${PKGVERSION}.tar.gz" ]; then
+        echo "Will be moved!";
+        EXTENSION=${file##*.};
+        newname="${PKGNAME}_${PKGVERSION}_${TRAVIS_CPU_ARCH}_${TRAVIS_OS_NAME}.${EXTENSION}";
+        if [ "$EXTENSION" = "gz" ]; then
+          newname="${PKGNAME}_${PKGVERSION}_${TRAVIS_CPU_ARCH}_${TRAVIS_OS_NAME}.tar.gz";
+        fi;
+        echo $file; echo $newname;
+        mv -- $file ${newname};
+      fi;
+    done
 deploy:
   provider: releases
   api_key:
     secure: FOoSwELB+ByvglrBJplIUGH9aI7/NCI5J+ga0wY35cZFZHBe4dNuUeE5gz6UfxCHDdoJN2+7gjjiLLVlKo+pK/Jx2Zxxep6U+R7Q/s1fbVCRbJaWV8hKEyg+Nk0VnzSD0K5xp0V2Ud3dbeGcueVu5ICyw53CEEotF4DoYqfzZPPV5oyn3X6aRrTE1a5XpPj6JutxSgLK2syQI+7bc5xwzLq7asO9zA3dOsDjk5IiVqCoTo4l8CxhXoKROBbl5uznZcs4D7Bc7Q4pp0OKgv+eWQpx3K9UWP8cheKXjMGyyglaTmVXXZYYKh+NOvnqEHclqT1MQTCzOIx6hxPKbDeUtE0/xWgPbfARL99LtO+bcHa1+nQsTvXkVIRjM785dbS2a4jcOR5CT41f3W5JyGxyp6dpXUm+4r0Z1z4i1y3VJXCEvQKlIqVnVuaxef0wdcfg73kFv8EPmLP6+nYigT9vaDyR7iN0bW3cfJ8Vfyo+ZDuX6uDB705fPiUD5Cs6arfRBbWkBePUmfd7C4bhm+zACJR60kQnzTSRHVYj7nARoSG4uzs161q+SWcqYx21dOjxYgQXiPVJhFsSja1N/A347P6uN6SVzf7UM+ofQUR8qNdMcFY23OIPBhu2JD50HisI8ZTppnJ14inA3P6SztfjglTKTuIYZyhrNDDlHD2FaUw=
   file_glob: true
-  file: ${PKGNAME}_${PKGVERSION}_${TRAVIS_OS_NAME}*
+  file: ${theGlob}
   overwrite: true
   skip_cleanup: true
   on:
