@@ -1,6 +1,7 @@
 ## Process this file with autoconf to produce a configure script.
 m4_include([inst/m4/gsl.m4])
 m4_include([inst/m4/m4_ax_lib_gdal.m4])
+m4_include([inst/m4/zlib.m4])
 
 
 # The version set here will propagate to other files from here
