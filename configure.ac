@@ -7,6 +7,10 @@ m4_include([inst/m4/m4_ax_lib_gdal.m4])
 AC_INIT([gedisimulator], 0.0.1)
 
 # Checks for common programs using default macros
+CC=`"${R_HOME}/bin/R" CMD config CC`
+CFLAGS=`"${R_HOME}/bin/R" CMD config CFLAGS`
+CPPFLAGS=`"${R_HOME}/bin/R" CMD config CPPFLAGS`
+LDFLAGS=`"${R_HOME}/bin/R" CMD config LDFLAGS`
 AC_PROG_CC
 
 
