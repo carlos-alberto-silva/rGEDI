@@ -2062,6 +2062,10 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
 # Checks for common programs using default macros
+CC=`"${R_HOME}/bin/R" CMD config CC`
+CFLAGS=`"${R_HOME}/bin/R" CMD config CFLAGS`
+CPPFLAGS=`"${R_HOME}/bin/R" CMD config CPPFLAGS`
+LDFLAGS=`"${R_HOME}/bin/R" CMD config LDFLAGS`
 ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
 ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -4112,7 +4116,6 @@ then
         LDFLAGS="$LDFLAGS -L${ZLIB_HOME}/lib"
         CPPFLAGS="$CPPFLAGS -I${ZLIB_HOME}/include"
   fi
-
   ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
 ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -4192,7 +4195,7 @@ $as_echo "#define HAVE_LIBZ 1" >>confdefs.h
     #
     # If either header or library was not found, action-if-not-found
     #
-    as_fn_error $? "could not find libz:
+    as_fn_error $? "could not find zlib:
                          Debian: sudo apt install zlib1g-dev
                          RPM-based: sudo dnf install zlib-devel
                          MacOS: brew install zlib" "$LINENO" 5
