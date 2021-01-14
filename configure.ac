@@ -86,7 +86,7 @@ AC_CHECK_LIB( sz, SZ_BufftoBuffCompress,
 ## LIBZ
 ##################
 AX_CHECK_ZLIB(,
-	      AC_MSG_ERROR(could not find libz:
+	      AC_MSG_ERROR(could not find zlib:
                          Debian: sudo apt install zlib1g-dev
                          RPM-based: sudo dnf install zlib-devel
                          MacOS: brew install zlib))
