@@ -33,6 +33,7 @@ Imports:
   jsonlite,
   lazyeval,
   raster,
+  rgdal,
   RColorBrewer,
   sp,
   stats
