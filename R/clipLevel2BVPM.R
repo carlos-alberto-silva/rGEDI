@@ -44,8 +44,9 @@
 #'# Clipping level2BVPM by extent boundary box
 #'level2b_clip <- clipLevel2BVPM(level2BVPM,xmin, xmax, ymin, ymax)
 #'
-#'\donttest{
-#'library(leaflet)
+#'hasLeaflet = require(leaflet)
+#'
+#'if (hasLeaflet) {
 #'leaflet() %>%
 #'  addCircleMarkers(level2b_clip$longitude_bin0,
 #'                   level2b_clip$latitude_bin0,
@@ -121,8 +122,9 @@ clipLevel2BVPM = function(level2BVPM,xmin, xmax, ymin, ymax){
 #'# Clipping level2BVPM by geometry
 #'level2b_clip_geometry <- clipLevel2BVPMGeometry(level2BVPM,polygon_spdf,split_by="id")
 #'
-#'\donttest{
-#'library(leaflet)
+#'hasLeaflet = require(leaflet)
+#'
+#'if (hasLeaflet) {
 #'leaflet() %>%
 #'  addCircleMarkers(level2b_clip_geometry$longitude_bin0,
 #'                   level2b_clip_geometry$latitude_bin0,

@@ -105,7 +105,9 @@ clipLevel2AM = function(level2AM,xmin, xmax, ymin, ymax){
 #'# Clipping GEDI data by Geometry
 #'level2AM_clip = clipLevel2AMGeometry(level2AM, polygon_spdf, split_by="id")
 #'
-#'library(leaflet)
+#'hasLeaflet = require(leaflet)
+#'
+#'if (hasLeaflet) {
 #'leaflet() %>%
 #'  addCircleMarkers(level2AM_clip$lat_lowestmode,
 #'                   level2AM_clip$lon_lowestmode,
@@ -116,6 +118,7 @@ clipLevel2AM = function(level2AM,xmin, xmax, ymin, ymax){
 #'  addPolygons(data=polygon_spdf,weight=1,col = 'white',
 #'              opacity = 1, fillOpacity = 0) %>%
 #'  addProviderTiles(providers$Esri.WorldImagery)
+#' }
 #'
 #'close(level2a)
 #'@export

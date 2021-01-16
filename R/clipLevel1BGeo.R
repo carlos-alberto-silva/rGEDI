@@ -41,8 +41,10 @@
 #'# Clipping GEDI Full Waveform Geolocations by boundary box extent
 #'level1bGeo_clip <- clipLevel1BGeo(level1bGeo,xmin, xmax, ymin, ymax)
 #'
-#'library(leaflet)
-#'leaflet() %>%
+#'hasLeaflet = require(leaflet)
+#'
+#'if (hasLeaflet){
+#' leaflet() %>%
 #'  addCircleMarkers(level1bGeo_clip$longitude_bin0,
 #'                   level1bGeo_clip$latitude_bin0,
 #'                   radius = 1,
@@ -50,6 +52,7 @@
 #'                   color = "red")  %>%
 #'  addScaleBar(options = list(imperial = FALSE)) %>%
 #'  addProviderTiles(providers$Esri.WorldImagery)
+#' }
 #'
 #' close(level1b)
 #'@export
@@ -118,7 +121,9 @@ clipLevel1BGeo = function(level1BGeo,xmin, xmax, ymin, ymax){
 #'# Clipping GEDI Full Waveform Geolocations by Geometry
 #'level1bGeo_clip = clipLevel1BGeoGeometry(level1bGeo, polygon_spdf, split_by="id")
 #'
-#'library(leaflet)
+#'hasLeaflet = require(leaflet)
+#'
+#'if (hasLeaflet) {
 #'leaflet() %>%
 #'  addCircleMarkers(level1bGeo_clip$longitude_bin0,
 #'                   level1bGeo_clip$latitude_bin0,
@@ -129,6 +134,7 @@ clipLevel1BGeo = function(level1BGeo,xmin, xmax, ymin, ymax){
 #'  addPolygons(data=polygon_spdf,weight=1,col = 'white',
 #'              opacity = 1, fillOpacity = 0) %>%
 #'  addProviderTiles(providers$Esri.WorldImagery)
+#' }
 #'
 #' close(level1b)
 #'@export
