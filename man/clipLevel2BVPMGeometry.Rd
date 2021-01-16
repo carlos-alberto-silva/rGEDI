@@ -49,8 +49,9 @@ polygon_spdf<-shapefile(polygon_filepath)
 # Clipping level2BVPM by geometry
 level2b_clip_geometry <- clipLevel2BVPMGeometry(level2BVPM,polygon_spdf,split_by="id")
 
-\donttest{
-library(leaflet)
+hasLeaflet = require(leaflet)
+
+if (hasLeaflet) {
 leaflet() \%>\%
  addCircleMarkers(level2b_clip_geometry$longitude_bin0,
                   level2b_clip_geometry$latitude_bin0,

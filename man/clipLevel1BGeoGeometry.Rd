@@ -49,7 +49,9 @@ polygon_spdf<-shapefile(polygon_filepath)
 # Clipping GEDI Full Waveform Geolocations by Geometry
 level1bGeo_clip = clipLevel1BGeoGeometry(level1bGeo, polygon_spdf, split_by="id")
 
-library(leaflet)
+hasLeaflet = require(leaflet)
+
+if (hasLeaflet) {
 leaflet() \%>\%
  addCircleMarkers(level1bGeo_clip$longitude_bin0,
                   level1bGeo_clip$latitude_bin0,
@@ -60,6 +62,7 @@ leaflet() \%>\%
  addPolygons(data=polygon_spdf,weight=1,col = 'white',
              opacity = 1, fillOpacity = 0) \%>\%
  addProviderTiles(providers$Esri.WorldImagery)
+}
 
 close(level1b)
 }

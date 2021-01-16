@@ -53,7 +53,7 @@ SystemRequirements:
   GNU Scientific Library (>= 2.1),
   HDF5 (>= 1.8.13),
   libgeotiff (>= 1.4.0),
-  szip (>= 2.1)
+  szip (>= 2.1),
   zlib (>= 1.2)
 NeedsCompilation: yes
 RoxygenNote: 7.1.0

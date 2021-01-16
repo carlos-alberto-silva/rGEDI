@@ -50,7 +50,9 @@ ymax = -13.71244
 # Clipping GEDI Full Waveform Geolocations by boundary box extent
 level1bGeo_clip <- clipLevel1BGeo(level1bGeo,xmin, xmax, ymin, ymax)
 
-library(leaflet)
+hasLeaflet = require(leaflet)
+
+if (hasLeaflet){
 leaflet() \%>\%
  addCircleMarkers(level1bGeo_clip$longitude_bin0,
                   level1bGeo_clip$latitude_bin0,
@@ -59,6 +61,7 @@ leaflet() \%>\%
                   color = "red")  \%>\%
  addScaleBar(options = list(imperial = FALSE)) \%>\%
  addProviderTiles(providers$Esri.WorldImagery)
+}
 
 close(level1b)
 }

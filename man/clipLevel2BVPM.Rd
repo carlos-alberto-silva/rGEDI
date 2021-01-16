@@ -51,8 +51,9 @@ ymax = -13.71244
 # Clipping level2BVPM by extent boundary box
 level2b_clip <- clipLevel2BVPM(level2BVPM,xmin, xmax, ymin, ymax)
 
-\donttest{
-library(leaflet)
+hasLeaflet = require(leaflet)
+
+if (hasLeaflet) {
 leaflet() \%>\%
  addCircleMarkers(level2b_clip$longitude_bin0,
                   level2b_clip$latitude_bin0,

@@ -4,7 +4,13 @@
 \alias{gediDownload}
 \title{Download GEDI data}
 \usage{
-gediDownload(filepath, outdir = NULL, overwrite = FALSE, buffer_size = 512)
+gediDownload(
+  filepath,
+  outdir = NULL,
+  overwrite = FALSE,
+  buffer_size = 512,
+  timeout = 10
+)
 }
 \arguments{
 \item{filepath}{Vector object; path to the GEDI data}
@@ -14,6 +20,8 @@ gediDownload(filepath, outdir = NULL, overwrite = FALSE, buffer_size = 512)
 \item{overwrite}{logical; overwrite file if they already exists in destination, default FALSE}
 
 \item{buffer_size}{integer; the size of download chunk in KB to hold in memory before writing to file, default 512.}
+
+\item{timeout}{integer; connection timeout in seconds.}
 }
 \value{
 No return value on success, on failure it will \code{stop()}
