@@ -34,6 +34,7 @@ Imports:
   lazyeval,
   raster,
   rgdal,
+  rgeos,
   RColorBrewer,
   sp,
   stats
@@ -57,7 +58,6 @@ SystemRequirements:
   zlib (>= 1.2)
 NeedsCompilation: yes
 RoxygenNote: 7.1.0
-VignetteBuilder: knitr
 BugReports: https://groups.yahoo.com/neo/groups/rGEDI
 URL: https://github.com/carlos-alberto-silva/rGEDI
 Copyright: inst/COPYRIGHTS
