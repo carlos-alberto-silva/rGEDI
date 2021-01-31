@@ -59,7 +59,7 @@ plotPAIProfile<-function(level2BPAIProfile, beam="BEAM0101", elev=TRUE){
   level2BPAIProfile_sub$height_bin0[level2BPAIProfile_sub$height_bin0<0]<-0
 
   n0<-nrow(level2BPAIProfile_sub)
-  dft<-data.table::melt(level2BPAIProfile_sub[,c(2,6,8,9:38)], id.vars=c("shot_number","elev_lowestmode", "height_bin0"), variable.name="pai", value.name="value")
+  dft<-data.table::melt(level2BPAIProfile_sub[,c(2, 9, 11, 12:41)], id.vars=c("shot_number","elev_lowestmode", "height_bin0"), variable.name="pai", value.name="value")
   dft$rowids<-rep(1:n0,30)
   df <- as.data.frame(lapply(dft, rep, rep(5,nrow(dft))))
   n<-nrow(df)
