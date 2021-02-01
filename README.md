@@ -595,7 +595,7 @@ The Brazilian National Council for Scientific and Technological Development (CNP
 (carlos_engflorestal@outlook.com).
 
 # Reporting Issues 
-Please report any issue reagardling the rGEDI package herein https://groups.yahoo.com/neo/groups/rGEDI
+Please report any issue regarding the rGEDI package herein https://groups.yahoo.com/neo/groups/rGEDI
 
 # Citing rGEDI
 Silva,C.A; Hamamura,C.; Valbuena, R.; Hancock,S.; Cardil,A.; Broadbent, E. N.; Almeida,D.R.A.; Silva Junior, C.H.L; Klauberg, C. rGEDI: NASA's Global Ecosystem Dynamics Investigation (GEDI) Data Visualization and Processing.
