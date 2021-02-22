@@ -74,7 +74,7 @@ S ReadBlock(GDALRasterBand *band, int iXBlock, int iYBlock)
 }
 
 template <typename T>
-int WriteBlock(GDALRasterBand *band, int iXBlock, int iYBlock, T buffer)
+void WriteBlock(GDALRasterBand *band, int iXBlock, int iYBlock, T buffer)
 {
   GDALDataType dtype = band->GetRasterDataType();
   CPLErr res = CE_None;
@@ -123,28 +123,28 @@ int WriteBlock(GDALRasterBand *band, int iXBlock, int iYBlock, T buffer)
 
   if (res == CE_Failure)
     Rcpp::stop(CPLGetLastErrorMsg());
-  return res;
 }
-int GetBlockXSize(GDALRasterBand *band)
+
+IntegerVector GetBlockXSize(GDALRasterBand *band)
 {
-  int xsize;
-  band->GetBlockSize(&xsize, NULL);
+  IntegerVector xsize(1);
+  band->GetBlockSize(xsize.begin(), NULL);
   return xsize;
 }
 
-int GetBlockYSize(GDALRasterBand *band)
+IntegerVector GetBlockYSize(GDALRasterBand *band)
 {
-  int ysize;
-  band->GetBlockSize(NULL, &ysize);
+  IntegerVector ysize(1);
+  band->GetBlockSize(NULL, ysize.begin());
   return ysize;
 }
 
-int RGDALClose(GDALDataset *ds)
+void RGDALClose(GDALDataset *ds)
 {
   Rcout << "Closing ds\n";
-  GDALClose(GDALDataset::ToHandle(ds));
+  GDALDatasetH handle = GDALDataset::ToHandle(ds);
+  GDALClose(handle);
   Rcout << "Closed!\n";
-  return 0;
 }
 
 RCPP_MODULE(gdal_module)
