@@ -5,6 +5,22 @@ LIBCLIDAR_ROOT = libclidar
 CMPFIT_ROOT = cmpfit-1.2
 HDF5_VERSION = 1.8.16
 HDF5_LIB = ../windows/hdf5-${HDF5_VERSION}
+GDAL_MAJOR = 3
+GDAL_VERSION = 3.2.1
+GDAL_BASE = ../windows/gdal$(GDAL_MAJOR)-$(GDAL_VERSION)
+GDAL_INC = $(GDAL_BASE)/include/gdal-$(GDAL_VERSION)
+GDAL_LIB = $(GDAL_BASE)/lib$(R_ARCH)
+
+# Copied from rgdal
+GDAL_LIBS = -lgdal -lsqlite3 -lspatialite -lproj -lgeos_c -lgeos  \
+	-ljson-c -lnetcdf -lmariadbclient -lpq -lpgport -lpgcommon \
+	-lwebp -lcurl -lssh2 -lssl \
+	-lhdf5_hl -lhdf5 -lexpat -lfreexl -lcfitsio \
+	-lmfhdf -lhdf -lxdr -lpcre \
+	-lopenjp2 -ljasper -lpng -ljpeg -ltiff -lgeotiff -lgif -lxml2 -llzma -lz \
+	-lodbc32 -lodbccp32 -liconv -lpsapi -lwldap32 -lsecur32 -lgdi32 -lnormaliz \
+	-lcrypto -lcrypt32 -lws2_32 -lshlwapi
+
 ifdef LIB_GSL
 	GSL_INC = ${LIB_GSL}/include
 	GSL_LIB = ${LIB_GSL}/lib
@@ -21,14 +37,15 @@ PKG_CFLAGS += -DDLLEXPORT -D_USE_MATH_DEFINES -D_WIN32 \
 
 ARCH=$(PROCESSOR_ARCHITECTURE)
 
-PKG_CPPFLAGS += -Igedisimulator -I$(HANCOCKTOOLS_ROOT) -I$(CMPFIT_ROOT) \
+PKG_CPPFLAGS += -I$(GDAL_INC) -Igedisimulator -I$(HANCOCKTOOLS_ROOT) -I$(CMPFIT_ROOT) \
 -I${LIBCLIDAR_ROOT} -I. -I${HDF5_LIB}/include \
 -I${GSL_INC}
 
 PKG_LIBS += \
+  -L${GDAL_LIB} \
 	-L${HDF5_LIB}/lib-4.9.3${R_ARCH} \
 	-L${GSL_LIB} \
-	-lhdf5 -lhdf5_hl -lz -lm -lgsl
+	-lhdf5 -lhdf5_hl -lm -lgsl $(GDAL_LIBS)
 
 src = $(LIBCLIDAR_ROOT)/libLasProcess.c $(LIBCLIDAR_ROOT)/libLasRead.c \
 	$(LIBCLIDAR_ROOT)/gaussFit.c $(LIBCLIDAR_ROOT)/libLidVoxel.c \
@@ -41,6 +58,7 @@ src = $(LIBCLIDAR_ROOT)/libLasProcess.c $(LIBCLIDAR_ROOT)/libLasRead.c \
 	functionWrappers.c
 
 OBJECTS = $(src:.c=.o)
+OBJECTS += RcppExports.o rasterizeHDF.o
 
 all: $(SHLIB)
 $(SHLIB): $(OBJECTS)
@@ -49,6 +67,8 @@ $(src): winlibs deps
 
 winlibs:
 	"$(R_HOME)/bin/Rscript" "../tools/winlibs.R" $(HDF5_VERSION)
+	cp -r $(GDAL_BASE)/share/gdal ../inst/
+	cp -r $(GDAL_BASE)/share/proj ../inst/
 
 deps:
 	"$(R_HOME)/bin/Rscript" "../tools/deps.R"

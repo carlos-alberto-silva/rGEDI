@@ -36,8 +36,10 @@ Imports:
   rgdal,
   rgeos,
   RColorBrewer,
+  Rcpp,
   sp,
   stats
+LinkingTo: Rcpp
 Suggests:
   lattice,
   leaflet,
@@ -55,5 +57,7 @@ SystemRequirements:
 NeedsCompilation: yes
 RoxygenNote: 7.1.1
 BugReports: https://groups.yahoo.com/neo/groups/rGEDI
-URL: https://github.com/carlos-alberto-silva/rGEDI
+URL: 
+  https://github.com/carlos-alberto-silva/rGEDI,
+  http://rgedi.r-forge.r-project.org/
 Copyright: inst/COPYRIGHTS
