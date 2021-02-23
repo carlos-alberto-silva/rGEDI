@@ -30,7 +30,7 @@ public:
     return result;
   }
 
-  template <typename S, typename T>
+  template <typename T, typename S>
   S ReadBlock(int iXBlock, int iYBlock)
   {
     CPLErr res = CE_None;
@@ -48,8 +48,7 @@ public:
     {
       std::vector<T> buffer(nXBlockSize * nYBlockSize);
       res = band->ReadBlock(iXBlock, iYBlock, buffer.data());
-      S out(buffer.begin(), buffer.end()));
-      output = out;
+      output = Rcpp::wrap(buffer.begin(), buffer.end());
     }
 
     if (res == CE_Failure)
