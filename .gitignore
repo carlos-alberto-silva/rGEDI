@@ -16,3 +16,5 @@ rGEDI.Rcheck
 rGEDI*.tar.gz
 Meta
 doc
+inst/gdal
+inst/proj
