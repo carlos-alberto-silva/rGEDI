@@ -101,10 +101,6 @@ public:
     if (res == CE_Failure)
       Rcpp::stop(CPLGetLastErrorMsg());
 
-    res = band->FlushBlock(iXBlock, iYBlock, 1);
-
-    if (res == CE_Failure)
-      Rcpp::stop(CPLGetLastErrorMsg());
   }
 };
 
