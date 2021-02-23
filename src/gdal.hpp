@@ -113,6 +113,11 @@ public:
   GDALDatasetR(GDALDataset* _ds) {
     ds = _ds;
   }
+
+  ~GDALDatasetR() {
+    GDALClose(GDALDataset::ToHandle(ds));
+    ds = NULL;
+  }
   
   GDALRasterBandR* GetRasterBand(int nband)
   {
@@ -128,11 +133,6 @@ public:
   int GetRasterYSize()
   {
     return ds->GetRasterYSize();
-  }
-
-  void Close()
-  {
-    GDALClose(GDALDataset::ToHandle(ds));
   }
 };
 
@@ -181,14 +181,14 @@ GDALDatasetR* create_dataset(const char *output, int nbands, int datatype, const
   return outDs;
 }
 
+
 RCPP_MODULE(gdal_module)
 {
 
   class_<GDALDatasetR>("CPP_GDALDataset")
       .method("GetRasterBand", &GDALDatasetR::GetRasterBand)
       .method("GetRasterXSize", &GDALDatasetR::GetRasterXSize)
-      .method("GetRasterYSize", &GDALDatasetR::GetRasterYSize)
-      .method("Close", &GDALDatasetR::Close);
+      .method("GetRasterYSize", &GDALDatasetR::GetRasterYSize);
 
   class_<GDALRasterBandR>("CPP_GDALRasterBand")
       .method("ReadBlock1", &GDALRasterBandR::ReadBlock<GByte, RawVector>)
