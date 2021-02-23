@@ -3,8 +3,6 @@
 
 using namespace Rcpp;
 
-static GDALDataset *create_dataset(const char *output, int nbands, int datatype, const char *projection, double lat_min, double lat_max, double lon_min, double lon_max, std::vector<double> res, double nodata, CharacterVector co);
-
 class GDALRasterBandR
 {
 private:
@@ -116,11 +114,10 @@ private:
   GDALDataset *ds = NULL;
 
 public:
-  GDALDatasetR(const char *output, int nbands, int datatype, const char *projection, double lat_min, double lat_max, double lon_min, double lon_max, std::vector<double> res, double nodata, CharacterVector co)
-  {
-    ds = create_dataset(output, nbands, datatype, projection, lat_min, lat_max, lon_min, lon_max, res, nodata, co);
-  };
-
+  GDALDatasetR(GDALDataset* _ds) {
+    ds = _ds;
+  }
+  
   GDALRasterBandR* GetRasterBand(int nband)
   {
     GDALRasterBandR* band = new GDALRasterBandR(ds->GetRasterBand(nband));
@@ -143,7 +140,7 @@ public:
   }
 };
 
-static GDALDataset *create_dataset(const char *output, int nbands, int datatype, const char *projection, double lat_min, double lat_max, double lon_min, double lon_max, std::vector<double> res, double nodata, CharacterVector co)
+GDALDatasetR* create_dataset(const char *output, int nbands, int datatype, const char *projection, double lat_min, double lat_max, double lon_min, double lon_max, std::vector<double> res, double nodata, CharacterVector co)
 {
   CPLErr err = CE_None;
   int width = (int)ceil((lon_max - lon_min) / res[0]);
@@ -183,7 +180,9 @@ static GDALDataset *create_dataset(const char *output, int nbands, int datatype,
   if (err == CE_Failure)
     Rcpp::stop(CPLGetLastErrorMsg());
 
-  return ds;
+  GDALDatasetR* outDs = new GDALDatasetR(ds);
+
+  return outDs;
 }
 
 RCPP_MODULE(gdal_module)
