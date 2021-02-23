@@ -1,11 +1,12 @@
+.RGEDI_CACHE <- new.env(FALSE, parent=globalenv())
+
 .onUnload <- function (libpath) {
-  library.dynam.unload("rGEDI", libpath)
   Sys.setenv("PROJ_LIB"=get("old.PROJ_LIB", envir=.RGEDI_CACHE))
+  library.dynam.unload("rGEDI", libpath)
   invisible()
 }
 
 .onLoad <- function(libname, pkgname) {
-  .RGEDI_CACHE <- new.env(FALSE, parent=globalenv())
   assign("old.PROJ_LIB", Sys.getenv("PROJ_LIB"), envir=.RGEDI_CACHE)
 }
 
