@@ -2,12 +2,13 @@
 % Please edit documentation in R/zzz.R
 \name{GDALRasterBand}
 \alias{GDALRasterBand}
-\title{R6 Class GDALRasterBand wrapping}
+\title{R6 Class GDALRasterBand wrapping
+\loadmathjax}
 \description{
 Wrapping class for GDALRasterBand C++ API exporting ReadBlock, WriteBlock for better IO speed.
 }
 \note{
-This constructor must not be called at all, this is automatically called from GDALDataset\$GetRasterBand function.
+This constructor must not be called at all, this is automatically called from GDALDataset$GetRasterBand function.
 }
 \section{Methods}{
 \subsection{Public methods}{
@@ -52,18 +53,18 @@ Efficiently reads a raster block
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{iXBlock}}{Integer. The i-th column block to access. The `iXBlock` will be offset $ BLOCKXSIZE \times iXBlock $ from the origin.}
+\item{\code{iXBlock}}{Integer. The i-th column block to access. The `iXBlock` will be offset \mjeqn{ BLOCKXSIZE \times iXBlock }{BLOCKXSIZE x iXBlock} from the origin.}
 
-\item{\code{iYBlock}}{Integer. The i-th row block to access. The `iYBlock` will be offset $ BLOCKYSIZE \times iYBlock $ from the origin.}
+\item{\code{iYBlock}}{Integer. The i-th row block to access. The `iYBlock` will be offset \mjeqn{ BLOCKYSIZE \times iYBlock }{BLOCKYSIZE x iYBlock} from the origin.}
 }
 \if{html}{\out{</div>}}
 }
 \subsection{Details}{
-The returned Vector will be single dimensional with the length $ BLOCKXSIZE \times BLOCKYSIZE $. If you use matrix(, ncol=BLOCKXSIZE) the matrix returned will actually be transposed. You should either transpose it or you can calculate the indices using $ y \cdot xsize + x $
+The returned Vector will be single dimensional with the length \mjeqn{ BLOCKXSIZE \times BLOCKYSIZE }{BLOCKXSIZE x BLOCKYSIZE}. If you use matrix(, ncol=BLOCKXSIZE) the matrix returned will actually be transposed. You should either transpose it or you can calculate the indices using \mjeqn{ y \cdot xsize + x }{y*xsize + x}
 }
 
 \subsection{Returns}{
-RawVector for GDALDataType\$GDT_Byte, IntegerVector for int types and NumericVector for floating point types.
+RawVector for GDALDataType$GDT_Byte, IntegerVector for int types and NumericVector for floating point types.
 }
 }
 \if{html}{\out{<hr>}}
@@ -78,16 +79,16 @@ Efficiently writes a raster block
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{iXBlock}}{Integer. The i-th column block to write. The `iXBlock` will be offset $ BLOCKXSIZE \times iXBlock $ from the origin.}
+\item{\code{iXBlock}}{Integer. The i-th column block to write. The `iXBlock` will be offset \mjeqn{ BLOCKXSIZE \times iXBlock }{BLOCKXSIZE x iXBlock} from the origin.}
 
-\item{\code{iYBlock}}{Integer. The i-th row block to write. The `iYBlock` will be offset $ BLOCKYSIZE \times iYBlock $ from the origin.}
+\item{\code{iYBlock}}{Integer. The i-th row block to write. The `iYBlock` will be offset \mjeqn{ BLOCKYSIZE \times iYBlock }{BLOCKYSIZE x iYBlock} from the origin.}
 
-\item{\code{buffer}}{RawVector/IntegerVector/NumericVector depending on the GDALDataType. This should be a 1D vector with size equal to raster $ BLOCKXSIZE \times BLOCKYSIZE $.}
+\item{\code{buffer}}{RawVector/IntegerVector/NumericVector depending on the GDALDataType. This should be a 1D vector with size equal to raster \mjeqn{ BLOCKXSIZE \times BLOCKYSIZE }{BLOCKXSIZE x BLOCKYSIZE}.}
 }
 \if{html}{\out{</div>}}
 }
 \subsection{Details}{
-The returned Vector will be single dimensional with the length $ BLOCKXSIZE \times BLOCKYSIZE $. If you use matrix(, ncol=BLOCKXSIZE) the matrix returned will actually be transposed. You should either transpose it or you can calculate the indices using $ y \cdot xsize + x $
+The returned Vector will be single dimensional with the length \mjeqn{ BLOCKXSIZE \times BLOCKYSIZE }{BLOCKXSIZE x BLOCKYSIZE}. If you use matrix(, ncol=BLOCKXSIZE) the matrix returned will actually be transposed. You should either transpose it or you can calculate the indices using \mjeqn{ y \cdot xsize + x }{ y*xsize + x }.
 }
 
 \subsection{Returns}{

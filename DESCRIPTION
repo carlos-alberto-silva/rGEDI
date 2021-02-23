@@ -31,6 +31,7 @@ Imports:
   hdf5r,
   jsonlite,
   lazyeval,
+  mathjaxr,
   raster,
   rgdal,
   rgeos,
@@ -55,7 +56,7 @@ SystemRequirements:
   zlib (>= 1.2)
 NeedsCompilation: yes
 RoxygenNote: 7.1.1
-Roxygen: list(markdown = TRUE)
+RdMacros: mathjaxr 
 BugReports: https://github.com/carlos-alberto-silva/rGEDI/issues
 URL: 
   https://github.com/carlos-alberto-silva/rGEDI,

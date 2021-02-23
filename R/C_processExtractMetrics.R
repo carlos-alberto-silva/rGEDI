@@ -167,13 +167,13 @@
 #'\item \emph{Half covers} Used for "gaussHalfCov", "maxHalfCov" and "inflHalfCov".
 #' Sum energy beneath estimated ground position.
 #' Double that is the ground energy.
-#' Calculate canopy cover, correcting for rho_v and rho_g.
+#'\loadmathjax
+#' Calculate canopy cover, correcting for \mjeqn{\rho_v}{rho_v} and \mjeqn{\rho_g}{rho_g}.
+#'
+#'\mjeqn{cover = \frac{E_{can}}{E_{can} + E_g*\frac{\rho_v}{\rho_g}}}{cover = (E_can/(E_can + E_g * (rho_v/rho_g)))}
 #'
 #'
-#'\eqn{cover = \frac{E_{can}}{E_{can} + E_g*\frac{rho_v}{rho_g}}}
-#'
-#'
-#' Where Ecan is the canopy energy, Eg is the ground energy, rho_v is the vegetation reflectance and rho_g is the ground reflectance.
+#' Where \mjeqn{E_{can}}{E_can} is the canopy energy, \mjeqn{E_g}{E_g} is the ground energy, \mjeqn{\rho_v}{rho_v} is the vegetation reflectance and \mjeqn{\rho_g}{rho_g} is the ground reflectance.
 #'
 #'\item \emph{Edge extents} These are described in: Lefsky, Michael A., Michael Keller, Yong Pang, Plinio B. De Camargo, and Maria O. Hunter.
 #' "Revised method for forest canopy height estimation from Geoscience Laser Altimeter System waveforms." Journal of Applied Remote Sensing 1, no. 1 (2007): 013537-013537.

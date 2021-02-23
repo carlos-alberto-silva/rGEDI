@@ -52,7 +52,7 @@ Create a new raster file based on specified data. It will output a *.tif file.
 
 \item{\code{res}}{Numeric. The resolution of the output raster}
 
-\item{\code{datatype}}{GDALDataType. The GDALDataType to use for the raster, use (GDALDataType\$) to find the options. Default GDALDataType\$GDT_Float64}
+\item{\code{datatype}}{GDALDataType. The GDALDataType to use for the raster, use (GDALDataType$) to find the options. Default GDALDataType$GDT_Float64}
 
 \item{\code{nbands}}{Integer. Number of bands. Default 1.}
 
