@@ -5,11 +5,14 @@ Rcpp::loadModule("gdal_module", TRUE)
   invisible()
 }
 
-.onAttach <- function(libname, pkgname) {
-  #Setup copied from rgdal package
+.onLoad <- function(libname, pkgname) {
   .RGEDI_CACHE <- new.env(FALSE, parent=globalenv())
   assign("old.PROJ_LIB", Sys.getenv("PROJ_LIB"), envir=.RGEDI_CACHE)
-  Sys.setenv("PROJ_LIB"=system.file("proj", package = "rGEDI")[1])
+}
+
+.onAttach <- function(libname, pkgname) {
+  #Setup copied from rgdal package
+  Sys.setenv("PROJ_LIB"=system.file("proj", package = pkgname)[1])
 }
 
 #' @export
