@@ -5,15 +5,17 @@ LIBCLIDAR_ROOT = libclidar
 CMPFIT_ROOT = cmpfit-1.2
 
 
-PKG_CFLAGS=@HDF5_CPPFLAGS@ \
+PKG_CPPFLAGS=@HDF5_CPPFLAGS@ \
 	   @GSL_CFLAGS@ \
+           @GDAL_CFLAGS@ \
 	   -DDLLEXPORT -D__STDC_FORMAT_MACROS \
 	   -DUSEPHOTON -DWITHOUT_GDAL\
 	   -I$(GEDIRAT_ROOT) -I$(HANCOCKTOOLS_ROOT) -I$(CMPFIT_ROOT) \
 	   -I${LIBCLIDAR_ROOT} -I.
 
 PKG_LIBS=@HDF5_LDFLAGS@ @HDF5_LIBS@\
-         @GSL_LIBS@
+         @GSL_LIBS@ \
+         @GDAL_LDFLAGS@
 
 
 src = $(LIBCLIDAR_ROOT)/libLasProcess.c $(LIBCLIDAR_ROOT)/libLasRead.c \
@@ -26,7 +28,7 @@ src = $(LIBCLIDAR_ROOT)/libLasProcess.c $(LIBCLIDAR_ROOT)/libLasRead.c \
 	argParse.c registerDynamicSymbol.c \
 	functionWrappers.c
 
-OBJECTS = $(src:.c=.o)
+OBJECTS = $(src:.c=.o) rasterizeHDF.o RcppExport.o
 
 all: $(SHLIB)
 $(SHLIB): $(OBJECTS)
