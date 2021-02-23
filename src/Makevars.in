@@ -28,7 +28,7 @@ src = $(LIBCLIDAR_ROOT)/libLasProcess.c $(LIBCLIDAR_ROOT)/libLasRead.c \
 	argParse.c registerDynamicSymbol.c \
 	functionWrappers.c
 
-OBJECTS = $(src:.c=.o) rasterizeHDF.o RcppExport.o
+OBJECTS = $(src:.c=.o) rasterizeHDF.o RcppExports.o
 
 all: $(SHLIB)
 $(SHLIB): $(OBJECTS)
