@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 /******************************************************************************
- * $Id: pdfcomposition.xsd ffbace5585dfdfd2fcaef32f735eb2a707c33427 2020-08-24 09:20:19 +0100 Robin Wilson $
+ * $Id: pdfcomposition.xsd 5a04126b888092d810db40222dce30479b5ff901 2019-04-09 18:05:52 +0200 Even Rouault $
  *
  * Project:  GDAL/OGR
  * Purpose:  XML Schema for GDAL PDF driver composition files.
@@ -521,9 +521,6 @@
             - another one, when the georeferencingId attribute is defined, and
               reference a georeferenced area. In that case, the vector georeferenced
               coordinates will be used to correctly place it in the georeferenced area.
-
-            Note: OGR Feature Style strings containing a LABEL tool will not work with
-            this element, to display labels use a VectorLabel element instead.
         </xs:documentation></xs:annotation>
         <xs:sequence>
             <xs:element name="Blending" type="BlendingType" minOccurs="0"/>
