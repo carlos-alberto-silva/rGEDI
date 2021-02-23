@@ -48,6 +48,10 @@ AC_CHECK_LIB( sz, SZ_BufftoBuffCompress,
                          MacOS: brew install szip))
 
 
+#################
+## GDAL
+#################
+AX_LIB_GDAL2()
 
 
 ##################

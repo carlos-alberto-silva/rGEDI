@@ -620,6 +620,12 @@ ac_includes_default="\
 
 ac_subst_vars='LTLIBOBJS
 LIBOBJS
+GDAL_OGR_ENABLED
+GDAL_DEP_LDFLAGS
+GDAL_LDFLAGS
+GDAL_CFLAGS
+GDAL_VERSION
+GDAL_CONFIG
 HDF5_TYPE
 HDF5_FLIBS
 HDF5_FFLAGS
@@ -693,6 +699,7 @@ with_gsl_prefix
 with_gsl_exec_prefix
 enable_gsltest
 with_hdf5
+with_gdal
 with_zlib
 '
       ac_precious_vars='build_alias
@@ -1332,6 +1339,7 @@ Optional Packages:
   --with-gsl-prefix=PFX   Prefix where GSL is installed (optional)
   --with-gsl-exec-prefix=PFX Exec prefix where GSL is installed (optional)
   --with-hdf5=yes/no/PATH location of h5cc or h5pcc for HDF5 configuration
+  --with-gdal=[ARG]       Specify full path to gdal-config script
   --with-zlib=DIR         root directory path of zlib installation [defaults to
                           /usr/local or /usr if not found in /usr/local]
   --without-zlib          to disable zlib usage completely
@@ -4015,6 +4023,208 @@ else
                          RPM-based: sudo dnf install szip
                          MacOS: brew install szip" "$LINENO" 5
 fi
+
+
+
+#################
+## GDAL
+#################
+
+
+# Check whether --with-gdal was given.
+if test "${with_gdal+set}" = set; then :
+  withval=$with_gdal; ac_gdal_config_path=$withval
+else
+  gdal_config_system=check
+fi
+
+
+        if test "x$gdal_config_system" = xcheck; then :
+  # Extract the first word of "gdal-config", so it can be a program name with args.
+set dummy gdal-config; ac_word=$2
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+$as_echo_n "checking for $ac_word... " >&6; }
+if ${ac_cv_path_GDAL_CONFIG+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  case $GDAL_CONFIG in
+  [\\/]* | ?:[\\/]*)
+  ac_cv_path_GDAL_CONFIG="$GDAL_CONFIG" # Let the user override the test with a path.
+  ;;
+  *)
+  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if as_fn_executable_p "$as_dir/$ac_word$ac_exec_ext"; then
+    ac_cv_path_GDAL_CONFIG="$as_dir/$ac_word$ac_exec_ext"
+    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+  ;;
+esac
+fi
+GDAL_CONFIG=$ac_cv_path_GDAL_CONFIG
+if test -n "$GDAL_CONFIG"; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $GDAL_CONFIG" >&5
+$as_echo "$GDAL_CONFIG" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+fi
+
+
+else
+  # Extract the first word of "gdal-config", so it can be a program name with args.
+set dummy gdal-config; ac_word=$2
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+$as_echo_n "checking for $ac_word... " >&6; }
+if ${ac_cv_path_GDAL_CONFIG+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  case $GDAL_CONFIG in
+  [\\/]* | ?:[\\/]*)
+  ac_cv_path_GDAL_CONFIG="$GDAL_CONFIG" # Let the user override the test with a path.
+  ;;
+  *)
+  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in `dirname $ac_gdal_config_path 2> /dev/null`
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if as_fn_executable_p "$as_dir/$ac_word$ac_exec_ext"; then
+    ac_cv_path_GDAL_CONFIG="$as_dir/$ac_word$ac_exec_ext"
+    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+  test -z "$ac_cv_path_GDAL_CONFIG" && ac_cv_path_GDAL_CONFIG="no"
+  ;;
+esac
+fi
+GDAL_CONFIG=$ac_cv_path_GDAL_CONFIG
+if test -n "$GDAL_CONFIG"; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $GDAL_CONFIG" >&5
+$as_echo "$GDAL_CONFIG" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+fi
+
+
+
+fi
+
+    if test ! -x "$GDAL_CONFIG"; then
+        { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: gdal-config does not exist or it is not an executable file" >&5
+$as_echo "$as_me: WARNING: gdal-config does not exist or it is not an executable file" >&2;}
+            GDAL_CONFIG="no"
+            found_gdal="no"
+    fi
+
+    GDAL_VERSION=""
+    GDAL_CFLAGS=""
+    GDAL_LDFLAGS=""
+    GDAL_DEP_LDFLAGS=""
+    GDAL_OGR_ENABLED=""
+
+
+
+    if test "$GDAL_CONFIG" != "no"; then
+        { $as_echo "$as_me:${as_lineno-$LINENO}: checking for GDAL library" >&5
+$as_echo_n "checking for GDAL library... " >&6; }
+
+        GDAL_VERSION="`$GDAL_CONFIG --version`"
+        GDAL_CFLAGS="`$GDAL_CONFIG --cflags`"
+        GDAL_LDFLAGS="`$GDAL_CONFIG --libs`"
+        GDAL_DEP_LDFLAGS="`$GDAL_CONFIG --dep-libs`"
+
+
+$as_echo "#define HAVE_GDAL 1" >>confdefs.h
+
+
+        found_gdal="yes"
+    else
+        found_gdal="no"
+    fi
+
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: $found_gdal" >&5
+$as_echo "$found_gdal" >&6; }
+
+    if test "$found_gdal" = "yes"; then
+        { $as_echo "$as_me:${as_lineno-$LINENO}: checking for OGR support in GDAL library" >&5
+$as_echo_n "checking for OGR support in GDAL library... " >&6; }
+
+        GDAL_OGR_ENABLED="`$GDAL_CONFIG --ogr-enabled`"
+
+$as_echo "#define HAVE_GDAL_OGR 1" >>confdefs.h
+
+
+        { $as_echo "$as_me:${as_lineno-$LINENO}: result: $GDAL_OGR_ENABLED" >&5
+$as_echo "$GDAL_OGR_ENABLED" >&6; }
+    fi
+
+
+    gdal_version_req=
+    if test "$found_gdal" = "yes" -a -n "$gdal_version_req"; then
+
+        { $as_echo "$as_me:${as_lineno-$LINENO}: checking if GDAL version is >= $gdal_version_req" >&5
+$as_echo_n "checking if GDAL version is >= $gdal_version_req... " >&6; }
+
+                        gdal_version_req_major=`expr $gdal_version_req : '\([0-9]*\)'`
+        gdal_version_req_minor=`expr $gdal_version_req : '[0-9]*\.\([0-9]*\)'`
+        gdal_version_req_micro=`expr $gdal_version_req : '[0-9]*\.[0-9]*\.\([0-9]*\)'`
+        if test "x$gdal_version_req_micro" = "x"; then
+            gdal_version_req_micro="0"
+        fi
+
+        gdal_version_req_number=`expr $gdal_version_req_major \* 1000000 \
+                                   \+ $gdal_version_req_minor \* 1000 \
+                                   \+ $gdal_version_req_micro`
+
+                        gdal_version_major=`expr $GDAL_VERSION : '\([0-9]*\)'`
+        gdal_version_minor=`expr $GDAL_VERSION : '[0-9]*\.\([0-9]*\)'`
+        gdal_version_micro=`expr $GDAL_VERSION : '[0-9]*\.[0-9]*\.\([0-9]*\)'`
+        if test "x$gdal_version_micro" = "x"; then
+            gdal_version_micro="0"
+        fi
+
+        gdal_version_number=`expr $gdal_version_major \* 1000000 \
+                                   \+ $gdal_version_minor \* 1000 \
+                                   \+ $gdal_version_micro`
+
+        gdal_version_check=`expr $gdal_version_number \>\= $gdal_version_req_number`
+        if test "$gdal_version_check" = "1"; then
+            { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+        else
+            { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+            { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: GDAL $GDAL_VERSION found, but required version is $gdal_version_req" >&5
+$as_echo "$as_me: WARNING: GDAL $GDAL_VERSION found, but required version is $gdal_version_req" >&2;}
+        fi
+    fi
+
+    if test "$found_gdal" = "no"; then
+        as_fn_error $? "GDAL was not found:
+	Debian: sudo apt install libgdal-dev
+	Fedora: sudo yum install gdal-devel
+	MacOS: sudo brew install gdal" "$LINENO" 5
+    fi
+
+
+
+
 
 
 
