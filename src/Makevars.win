@@ -74,6 +74,8 @@ $(src): winlibs deps
 
 winlibs:
 	"$(R_HOME)/bin/Rscript" "../tools/winlibs.R" $(HDF5_VERSION) $(GDAL_VERSION)
+	cp -r $(GDAL_BASE)/share/gdal ../inst/
+	cp -r $(GDAL_BASE)/share/proj ../inst/
 
 deps:
 	"$(R_HOME)/bin/Rscript" "../tools/deps.R"
