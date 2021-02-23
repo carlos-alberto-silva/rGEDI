@@ -59,7 +59,7 @@ GDALDataset <- R6::R6Class("GDALDataset",
                     #' @param lr_lat Numeric. The lower right latitude.
                     #' @param lr_lon Numeric. The lower right longitude.
                     #' @param res Numeric. The resolution of the output raster
-                    #' @param datatype GDALDataType. The GDALDataType to use for the raster, use (GDALDataType\$) to find the options. Default GDALDataType\$GDT_Float64
+                    #' @param datatype GDALDataType. The GDALDataType to use for the raster, use (GDALDataType$) to find the options. Default GDALDataType$GDT_Float64
                     #' @param nbands Integer. Number of bands. Default 1.
                     #' @param projstring The projection string, either proj or WKT is accepted. 
                     #' @param nodata Numeric. The no data value for the raster. Default 0.
@@ -98,6 +98,7 @@ GDALDataset <- R6::R6Class("GDALDataset",
 }
 
 #' R6 Class GDALRasterBand wrapping
+#' \loadmathjax 
 #' 
 #' @description 
 #' Wrapping class for GDALRasterBand C++ API exporting ReadBlock, WriteBlock for better IO speed.
@@ -114,7 +115,7 @@ GDALRasterBand <- R6::R6Class("GDALRasterBand",
                     #' @param datatype The GDALDataType for this band
                     #' @return An object of GDALRasterBand R6 class
                     #' 
-                    #' @note This constructor must not be called at all, this is automatically called from GDALDataset\$GetRasterBand function.
+                    #' @note This constructor must not be called at all, this is automatically called from GDALDataset$GetRasterBand function.
                     initialize = function(band, datatype) {
                       private$band = band
                       private$datatype = datatype
@@ -122,12 +123,12 @@ GDALRasterBand <- R6::R6Class("GDALRasterBand",
                     #' @description
                     #' Efficiently reads a raster block
                     #' 
-                    #' @param iXBlock Integer. The i-th column block to access. The `iXBlock` will be offset $ BLOCKXSIZE \times iXBlock $ from the origin.
-                    #' @param iYBlock Integer. The i-th row block to access. The `iYBlock` will be offset $ BLOCKYSIZE \times iYBlock $ from the origin.
+                    #' @param iXBlock Integer. The i-th column block to access. The `iXBlock` will be offset \mjeqn{ BLOCKXSIZE \times iXBlock }{BLOCKXSIZE x iXBlock} from the origin.
+                    #' @param iYBlock Integer. The i-th row block to access. The `iYBlock` will be offset \mjeqn{ BLOCKYSIZE \times iYBlock }{BLOCKYSIZE x iYBlock} from the origin.
                     #' 
-                    #' @return RawVector for GDALDataType\$GDT_Byte, IntegerVector for int types and NumericVector for floating point types.
+                    #' @return RawVector for GDALDataType$GDT_Byte, IntegerVector for int types and NumericVector for floating point types.
                     #' @details 
-                    #' The returned Vector will be single dimensional with the length $ BLOCKXSIZE \times BLOCKYSIZE $. If you use matrix(, ncol=BLOCKXSIZE) the matrix returned will actually be transposed. You should either transpose it or you can calculate the indices using $ y \cdot xsize + x $
+                    #' The returned Vector will be single dimensional with the length \mjeqn{ BLOCKXSIZE \times BLOCKYSIZE }{BLOCKXSIZE x BLOCKYSIZE}. If you use matrix(, ncol=BLOCKXSIZE) the matrix returned will actually be transposed. You should either transpose it or you can calculate the indices using \mjeqn{ y \cdot xsize + x }{y*xsize + x}
                     ReadBlock = function(iXBlock, iYBlock) {
                       funcs = list(
                         private$band$ReadBlock1,
@@ -143,13 +144,13 @@ GDALRasterBand <- R6::R6Class("GDALRasterBand",
                     #' @description
                     #' Efficiently writes a raster block
                     #' 
-                    #' @param iXBlock Integer. The i-th column block to write. The `iXBlock` will be offset $ BLOCKXSIZE \times iXBlock $ from the origin.
-                    #' @param iYBlock Integer. The i-th row block to write. The `iYBlock` will be offset $ BLOCKYSIZE \times iYBlock $ from the origin.
-                    #' @param buffer RawVector/IntegerVector/NumericVector depending on the GDALDataType. This should be a 1D vector with size equal to raster $ BLOCKXSIZE \times BLOCKYSIZE $.
+                    #' @param iXBlock Integer. The i-th column block to write. The `iXBlock` will be offset \mjeqn{ BLOCKXSIZE \times iXBlock }{BLOCKXSIZE x iXBlock} from the origin.
+                    #' @param iYBlock Integer. The i-th row block to write. The `iYBlock` will be offset \mjeqn{ BLOCKYSIZE \times iYBlock }{BLOCKYSIZE x iYBlock} from the origin.
+                    #' @param buffer RawVector/IntegerVector/NumericVector depending on the GDALDataType. This should be a 1D vector with size equal to raster \mjeqn{ BLOCKXSIZE \times BLOCKYSIZE }{BLOCKXSIZE x BLOCKYSIZE}.
                     #'
                     #' @return Nothing
-                    #' @details 
-                    #' The returned Vector will be single dimensional with the length $ BLOCKXSIZE \times BLOCKYSIZE $. If you use matrix(, ncol=BLOCKXSIZE) the matrix returned will actually be transposed. You should either transpose it or you can calculate the indices using $ y \cdot xsize + x $
+                    #' @details
+                    #' The returned Vector will be single dimensional with the length \mjeqn{ BLOCKXSIZE \times BLOCKYSIZE }{BLOCKXSIZE x BLOCKYSIZE}. If you use matrix(, ncol=BLOCKXSIZE) the matrix returned will actually be transposed. You should either transpose it or you can calculate the indices using \mjeqn{ y \cdot xsize + x }{ y*xsize + x }.
                     WriteBlock = function(iXBlock, iYBlock, buffer) {
                       funcs = list(
                         private$band$WriteBlock1,
