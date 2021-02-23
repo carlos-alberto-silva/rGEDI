@@ -3,12 +3,12 @@
 
 using namespace Rcpp;
 
-GDALDataset *create_dataset(const char *output, int nbands, int datatype, const char *projection, double lat_min, double lat_max, double lon_min, double lon_max, std::vector<double> res, double nodata, CharacterVector co);
+static GDALDataset *create_dataset(const char *output, int nbands, int datatype, const char *projection, double lat_min, double lat_max, double lon_min, double lon_max, std::vector<double> res, double nodata, CharacterVector co);
 
 class GDALRasterBandR
 {
 private:
-  GDALRasterBand *band = NULL;
+  GDALRasterBand *band;
 
 public:
   GDALRasterBandR(GDALRasterBand *the_band)
@@ -16,17 +16,17 @@ public:
     band = the_band;
   }
 
-  int GetBlockXSize()
+  IntegerVector GetBlockXSize()
   {
-    int result = 0;
-    band->GetBlockSize(&result, NULL);
+    IntegerVector result(1);
+    band->GetBlockSize(result.begin(), NULL);
     return result;
   }
 
-  int GetBlockYSize()
+  IntegerVector GetBlockYSize()
   {
-    int result = 0;
-    band->GetBlockSize(NULL, &result);
+    IntegerVector result(1);
+    band->GetBlockSize(NULL, result.begin());
     return result;
   }
 
@@ -121,9 +121,10 @@ public:
     ds = create_dataset(output, nbands, datatype, projection, lat_min, lat_max, lon_min, lon_max, res, nodata, co);
   };
 
-  GDALRasterBandR GetRasterBand(int nband)
+  GDALRasterBandR* GetRasterBand(int nband)
   {
-    return GDALRasterBandR(ds->GetRasterBand(nband));
+    GDALRasterBandR* band = new GDALRasterBandR(ds->GetRasterBand(nband));
+    return band;
   }
 
   int GetRasterXSize()
@@ -142,7 +143,7 @@ public:
   }
 };
 
-GDALDataset *create_dataset(const char *output, int nbands, int datatype, const char *projection, double lat_min, double lat_max, double lon_min, double lon_max, std::vector<double> res, double nodata, CharacterVector co)
+static GDALDataset *create_dataset(const char *output, int nbands, int datatype, const char *projection, double lat_min, double lat_max, double lon_min, double lon_max, std::vector<double> res, double nodata, CharacterVector co)
 {
   CPLErr err = CE_None;
   int width = (int)ceil((lon_max - lon_min) / res[0]);
@@ -183,107 +184,6 @@ GDALDataset *create_dataset(const char *output, int nbands, int datatype, const 
     Rcpp::stop(CPLGetLastErrorMsg());
 
   return ds;
-}
-
-template <typename T, typename S>
-S ReadBlock(GDALRasterBand *band, int iXBlock, int iYBlock)
-{
-  CPLErr res = CE_None;
-  S output = NULL;
-
-  int nXBlockSize, nYBlockSize;
-  band->GetBlockSize(&nXBlockSize, &nYBlockSize);
-  if (std::is_same<T, GInt32>::value || std::is_same<T, double>::value)
-  {
-    S vec(nXBlockSize * nYBlockSize);
-    res = band->ReadBlock(iXBlock, iYBlock, vec.begin());
-    output = vec;
-  }
-  else
-  {
-    std::vector<T> buffer(nXBlockSize * nYBlockSize);
-    res = band->ReadBlock(iXBlock, iYBlock, buffer.data());
-    output = Rcpp::wrap(buffer.begin(), buffer.end());
-  }
-
-  if (res == CE_Failure)
-    Rcpp::stop(CPLGetLastErrorMsg());
-
-  return output;
-}
-
-template <typename T>
-void WriteBlock(GDALRasterBand *band, int iXBlock, int iYBlock, T buffer)
-{
-  GDALDataType dtype = band->GetRasterDataType();
-  CPLErr res = CE_None;
-
-  switch (dtype)
-  {
-  case GDALDataType::GDT_UInt16:
-  {
-    std::vector<GUInt16> vec(buffer.begin(), buffer.end());
-    res = band->WriteBlock(iXBlock, iYBlock, vec.data());
-    break;
-  }
-
-  case GDALDataType::GDT_Int16:
-  {
-    std::vector<GInt16> vec(buffer.begin(), buffer.end());
-    res = band->WriteBlock(iXBlock, iYBlock, vec.data());
-    break;
-  }
-
-  case GDALDataType::GDT_UInt32:
-  {
-    std::vector<GUInt32> vec(buffer.begin(), buffer.end());
-    res = band->WriteBlock(iXBlock, iYBlock, vec.data());
-    break;
-  }
-
-  case GDALDataType::GDT_Float32:
-  {
-    std::vector<float> vec(buffer.begin(), buffer.end());
-    res = band->WriteBlock(iXBlock, iYBlock, vec.data());
-    break;
-  }
-
-  default:
-  {
-    res = band->WriteBlock(iXBlock, iYBlock, buffer.begin());
-    break;
-  }
-  }
-
-  if (res == CE_Failure)
-    Rcpp::stop(CPLGetLastErrorMsg());
-
-  res = band->FlushBlock(iXBlock, iYBlock, 1);
-
-  if (res == CE_Failure)
-    Rcpp::stop(CPLGetLastErrorMsg());
-}
-
-IntegerVector GetBlockXSize(GDALRasterBand *band)
-{
-  IntegerVector xsize(1);
-  band->GetBlockSize(xsize.begin(), NULL);
-  return xsize;
-}
-
-IntegerVector GetBlockYSize(GDALRasterBand *band)
-{
-  IntegerVector ysize(1);
-  band->GetBlockSize(NULL, ysize.begin());
-  return ysize;
-}
-
-void RGDALClose(GDALDataset *ds)
-{
-  Rcout << "Closing ds\n";
-  GDALDatasetH handle = GDALDataset::ToHandle(ds);
-  GDALClose(handle);
-  Rcout << "Closed!\n";
 }
 
 RCPP_MODULE(gdal_module)
