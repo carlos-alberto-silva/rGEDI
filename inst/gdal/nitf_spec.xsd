@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!--
 /******************************************************************************
- * $Id: nitf_spec.xsd 220fb188536106a9992284cd5629363c064f624e 2020-10-13 17:23:11 -0400 matthew-baran $
+ * $Id: nitf_spec.xsd 7efb66b70139062bce1243d9a9344f8cd228ef3a 2019-06-19 17:11:32 +0200 Even Rouault $
  *
  * Project:  NITF Library
  * Purpose:  Schema of description of NITF TREs
@@ -107,7 +107,7 @@
         <xs:attribute name="cond">
             <xs:simpleType>
                 <xs:restriction base="xs:string">
-                    <xs:pattern value=".+([!]?=|:).*"/>
+                    <xs:pattern value=".+[!]?=.*"/>
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
@@ -130,9 +130,6 @@
                     <xs:enumeration value="string"/>
                     <xs:enumeration value="integer"/>
                     <xs:enumeration value="real"/>
-                    <xs:enumeration value="IEEE754_Float32_BigEndian"/>
-                    <xs:enumeration value="UnsignedInt_BigEndian"/>
-                    <xs:enumeration value="bitmask"/>
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>

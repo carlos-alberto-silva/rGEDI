@@ -7,9 +7,16 @@ HDF5_VERSION = 1.8.16
 HDF5_LIB = ../windows/hdf5-${HDF5_VERSION}
 GDAL_MAJOR = 3
 GDAL_VERSION = 3.2.1
-GDAL_BASE = ../windows/gdal$(GDAL_MAJOR)-$(GDAL_VERSION)
-GDAL_INC = $(GDAL_BASE)/include/gdal-$(GDAL_VERSION)
-GDAL_LIB = $(GDAL_BASE)/lib$(R_ARCH)
+ifdef GDAL_HOME
+	GDAL_BASE = $(GDAL_HOME)
+	GDAL_INC = $(GDAL_BASE)/include
+	GDAL_LIB = $(GDAL_BASE)/lib
+else
+	GDAL_BASE = ../windows/gdal$(GDAL_MAJOR)-$(GDAL_VERSION)
+	GDAL_INC = $(GDAL_BASE)/include/gdal-$(GDAL_VERSION)
+	GDAL_LIB = $(GDAL_BASE)/lib$(R_ARCH)
+endif
+
 
 # Copied from rgdal
 GDAL_LIBS = -lgdal -lsqlite3 -lspatialite -lproj -lgeos_c -lgeos  \
@@ -31,7 +38,7 @@ else
 endif
 
 
-PKG_CFLAGS += -DDLLEXPORT -D_USE_MATH_DEFINES -D_WIN32 \
+PKG_CFLAGS += -I$(GDAL_INC) -DDLLEXPORT -D_USE_MATH_DEFINES -D_WIN32 \
 	-DWIN32 -DH5_BUILT_AS_DYNAMIC_LIB -DDLL_EXPORTS \
 	-DUSEPHOTON -DWITHOUT_GDAL -D__USE_MINGW_ANSI_STDIO
 
@@ -58,7 +65,7 @@ src = $(LIBCLIDAR_ROOT)/libLasProcess.c $(LIBCLIDAR_ROOT)/libLasRead.c \
 	functionWrappers.c
 
 OBJECTS = $(src:.c=.o)
-OBJECTS += RcppExports.o rasterizeHDF.o
+OBJECTS += rasterizeHDF.o RcppExports.o
 
 all: $(SHLIB)
 $(SHLIB): $(OBJECTS)
@@ -66,7 +73,7 @@ $(OBJECTS): $(src)
 $(src): winlibs deps
 
 winlibs:
-	"$(R_HOME)/bin/Rscript" "../tools/winlibs.R" $(HDF5_VERSION)
+	"$(R_HOME)/bin/Rscript" "../tools/winlibs.R" $(HDF5_VERSION) $(GDAL_VERSION)
 	cp -r $(GDAL_BASE)/share/gdal ../inst/
 	cp -r $(GDAL_BASE)/share/proj ../inst/
 

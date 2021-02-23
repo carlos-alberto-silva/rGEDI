@@ -4,7 +4,14 @@
   invisible()
 }
 
-#' @export 
+.onAttach <- function(libname, pkgname) {
+  #Setup copied from rgdal package
+  .RGEDI_CACHE <- new.env(FALSE, parent=globalenv())
+  assign("old.PROJ_LIB", Sys.getenv("PROJ_LIB"), envir=.RGEDI_CACHE)
+  Sys.setenv("PROJ_LIB"=system.file("proj", package = "rGEDI")[1])
+}
+
+#' @export
 GDALDataType = list(
   GDT_Byte = 1,
   GDT_UInt16 = 2,
@@ -14,12 +21,6 @@ GDALDataType = list(
   GDT_Float32 = 6,
   GDT_Float64 = 7
 )
-
-#Setup copied from rgdal package
-.RGEDI_CACHE <- new.env(FALSE, parent=globalenv())
-assign("old.PROJ_LIB", Sys.getenv("PROJ_LIB"), envir=.RGEDI_CACHE)
-prj = system.file("proj", package = "rGEDI")[1]
-Sys.setenv("PROJ_LIB"=prj)
 
 #' @export CPP_GDALDataset CPP_GDALRasterBand create_dataset
 Rcpp::loadModule("gdal_module", TRUE)
@@ -40,7 +41,7 @@ GDALDataset <- R6::R6Class("GDALDataset",
                       private$ds$Close()
                     },
                     GetRasterBand = function(x) {
-                      band = GDALRasterBand$new(private$ds$GetRasterBand(x), private$datatype)
+                      GDALRasterBand$new(private$ds$GetRasterBand(x), private$datatype)
                     },
                     GetRasterXSize = function() private$ds$GetRasterXSize(),
                     GetRasterYSize = function() private$ds$GetRasterYSize()
@@ -92,12 +93,3 @@ GDALRasterBand <- R6::R6Class("GDALRasterBand",
                     }
                   )
 )
-
-
-# library(rGEDI)
-# ds = GDALDataset$new("C:/Users/caioh/Desktop/teste1.tif", 100, 100, 2)
-# band = ds[[2]]
-# band$GetBlockXSize()
-# band$GetBlockYSize()
-# band$ReadBlock(0,0)
-# rm(ds)
