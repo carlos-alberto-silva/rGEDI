@@ -9,6 +9,7 @@ windows
 *.obj
 **.vscode
 src/build
+NAMESPACE
 rGEDI.Rcheck
 *.log
 rGEDI*.tar.gz
