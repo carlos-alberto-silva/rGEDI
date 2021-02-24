@@ -25,6 +25,7 @@ Imports:
   bit64,
   curl,
   data.table,
+  e1071,
   fs,
   getPass,
   ggplot2,

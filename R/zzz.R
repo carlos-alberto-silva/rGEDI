@@ -162,6 +162,12 @@ GDALRasterBand <- R6::R6Class("GDALRasterBand",
                         private$band$WriteBlock7
                       )
                       funcs[[private$datatype]](iXBlock, iYBlock, buffer)
+                    },
+                    GetBlockXSize = function() {
+                      private$band$GetBlockXSize()
+                    },
+                    GetBlockYSize = function() {
+                      private$band$GetBlockYSize()
                     }
                   )
 )
