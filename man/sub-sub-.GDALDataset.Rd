@@ -7,6 +7,8 @@
 \method{[[}{GDALDataset}(x, slice)
 }
 \arguments{
+\item{x}{GDALDatset. Automatically obtained from GDALDataset[[]] call.}
+
 \item{slice}{Integer. The index for the band to access.}
 }
 \value{
