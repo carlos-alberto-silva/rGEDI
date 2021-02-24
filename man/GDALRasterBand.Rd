@@ -5,7 +5,7 @@
 \title{R6 Class GDALRasterBand wrapping
 \loadmathjax}
 \description{
-Wrapping class for GDALRasterBand C++ API exporting ReadBlock, WriteBlock for better IO speed.
+Wrapping class for GDALRasterBand C++ API exporting GetBlockXSize, GetBlockYSize, ReadBlock, WriteBlock for better IO speed.
 }
 \note{
 This constructor must not be called at all, this is automatically called from GDALDataset$GetRasterBand function.
@@ -101,19 +101,27 @@ Nothing
 \if{html}{\out{<a id="method-GetBlockXSize"></a>}}
 \if{latex}{\out{\hypertarget{method-GetBlockXSize}{}}}
 \subsection{Method \code{GetBlockXSize()}}{
+Get the block width
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{GDALRasterBand$GetBlockXSize()}\if{html}{\out{</div>}}
 }
 
+\subsection{Returns}{
+An integer indicating block width
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-GetBlockYSize"></a>}}
 \if{latex}{\out{\hypertarget{method-GetBlockYSize}{}}}
 \subsection{Method \code{GetBlockYSize()}}{
+Get the block height
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{GDALRasterBand$GetBlockYSize()}\if{html}{\out{</div>}}
 }
 
+\subsection{Returns}{
+An integer indicating block height
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-clone"></a>}}

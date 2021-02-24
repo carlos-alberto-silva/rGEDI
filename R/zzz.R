@@ -1,8 +1,8 @@
 .RGEDI_CACHE <- new.env(FALSE, parent=globalenv())
 
 .onUnload <- function (libpath) {
-  Sys.setenv("PROJ_LIB"=get("old.PROJ_LIB", envir=.RGEDI_CACHE))
   library.dynam.unload("rGEDI", libpath)
+  Sys.setenv("PROJ_LIB"=get("old.PROJ_LIB", envir=.RGEDI_CACHE))
   invisible()
 }
 
@@ -102,7 +102,7 @@ GDALDataset <- R6::R6Class("GDALDataset",
 #' \loadmathjax 
 #' 
 #' @description 
-#' Wrapping class for GDALRasterBand C++ API exporting ReadBlock, WriteBlock for better IO speed.
+#' Wrapping class for GDALRasterBand C++ API exporting GetBlockXSize, GetBlockYSize, ReadBlock, WriteBlock for better IO speed.
 #' @export
 GDALRasterBand <- R6::R6Class("GDALRasterBand",
                     private=list(
@@ -164,9 +164,15 @@ GDALRasterBand <- R6::R6Class("GDALRasterBand",
                       )
                       funcs[[private$datatype]](iXBlock, iYBlock, buffer)
                     },
+                    #' @description
+                    #' Get the block width
+                    #' @return An integer indicating block width
                     GetBlockXSize = function() {
                       private$band$GetBlockXSize()
                     },
+                    #' @description
+                    #' Get the block height
+                    #' @return An integer indicating block height
                     GetBlockYSize = function() {
                       private$band$GetBlockYSize()
                     }
