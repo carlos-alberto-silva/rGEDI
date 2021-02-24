@@ -16,6 +16,8 @@ This constructor must not be called at all, this is automatically called from GD
 \item \href{#method-new}{\code{GDALRasterBand$new()}}
 \item \href{#method-ReadBlock}{\code{GDALRasterBand$ReadBlock()}}
 \item \href{#method-WriteBlock}{\code{GDALRasterBand$WriteBlock()}}
+\item \href{#method-GetBlockXSize}{\code{GDALRasterBand$GetBlockXSize()}}
+\item \href{#method-GetBlockYSize}{\code{GDALRasterBand$GetBlockYSize()}}
 \item \href{#method-clone}{\code{GDALRasterBand$clone()}}
 }
 }
@@ -94,6 +96,24 @@ The returned Vector will be single dimensional with the length \mjeqn{ BLOCKXSIZ
 \subsection{Returns}{
 Nothing
 }
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-GetBlockXSize"></a>}}
+\if{latex}{\out{\hypertarget{method-GetBlockXSize}{}}}
+\subsection{Method \code{GetBlockXSize()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{GDALRasterBand$GetBlockXSize()}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-GetBlockYSize"></a>}}
+\if{latex}{\out{\hypertarget{method-GetBlockYSize}{}}}
+\subsection{Method \code{GetBlockYSize()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{GDALRasterBand$GetBlockYSize()}\if{html}{\out{</div>}}
+}
+
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-clone"></a>}}

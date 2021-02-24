@@ -30,7 +30,7 @@ Total Gap Probability (theta), and Total canopy cover.
 \details{
 These are the biophysical variables and additional information extracted by default:
 \itemize{
-\item \emph{beam} Beam identifie
+\item \emph{beam} Beam identifier
 \item \emph{shot_number} Shot number
 \item \emph{algorithmrun_flag} The L2B algorithm is run if this flag is set to 1 indicating data have sufficient waveform fidelity for L2B to run
 \item \emph{l2b_quality_flag} L2B quality flag
@@ -39,6 +39,8 @@ These are the biophysical variables and additional information extracted by defa
 \item \emph{solar_elevation} Solar elevation
 \item \emph{latitude_lastbin} Latitude of last bin of the pgap_theta_z, interpolated from L1B waveform coordinate
 \item \emph{latitude_bin0} Latitude of first bin of the pgap_theta_z, interpolated from L1B waveform coordinate
+\item \emph{longitude_lastbin} Longitude of last bin of the pgap_theta_z, interpolated from L1B waveform coordinate
+\item \emph{longitude_bin0} Longitude of first bin of the pgap_theta_z, interpolated from L1B waveform coordinate
 \item \emph{elev_highestreturn} Elevation of highest detected return relative to reference ellipsoid
 \item \emph{elev_lowestmode} Elevation of center of lowest mode relative to reference ellipsoid
 \item \emph{rh100} RH100 slice
@@ -49,7 +51,52 @@ These are the biophysical variables and additional information extracted by defa
 \item \emph{cover} Total canopy cover
 }
 
-Every other columns in the GEDI2B product are also available, you can specify each column by using the \code{cols} parameter.
+A special column `pavd` is available, which is the sum of the pavd_z.
+
+The following columns are also available:
+\itemize{
+\item \emph{channel} Channel number (0-7)
+\item \emph{master_frac} Master time, fractional part. master_int+master_frac is equivalent to /BEAMXXXX/geolocation/delta_time and /BEAMXXXX/geophys_corr/delta_time.
+\item \emph{master_int} Master time, integer part. Seconds since master_time_epoch. master_int+master_frac is equivalent to /BEAMXXXX/geolocation/delta_time and /BEAMXXXX/geophys_corr/delta_time.
+\item \emph{num_detectedmodes} Number of detected modes in rxwaveform
+\item \emph{pgap_theta_error} Error of the estimated Pgap(theta) for the selected L2A algorithm
+\item \emph{l2a_quality_flag} Flag simplifying selection of most useful data
+\item \emph{rg} Integral of the ground component in the RX waveform for the selected L2A processing version
+\item \emph{rhog} Volumetric scattering coefficient of the ground (reflectance x phase function)
+\item \emph{rhog_error} Error term in Rho (ground)
+\item \emph{rhov} Volumetric scattering coefficient of the canopy (reflectance x phase function)
+\item \emph{rhov_error} Error term in Rho (canopy)
+\item \emph{rossg} Mean projection of unit leaf area on a plane perpendicular to the direction of the laser beam at view zenith angle theta
+\item \emph{rv} Integral of the vegetation component in the RX waveform for the selected L2A processing version
+\item \emph{selected_l2a_algorithm} 	ID of algorithm selected as identifying the lowest non-noise mode
+\item \emph{selected_rg_algorithm} 	0 = L2B algorithm not run; 1 = algorithm 1 (successful); 2 = algorithm 1 (partial success - valid tx_eg parameters were unavailable); 3 = algorithm 2
+\item \emph{stale_return_flag} Indicates that a "stale" cue point from the coarse search algorithm is being used.
+\item \emph{surface_flag} Indicates elev_lowestmode is within 300m of DEM or MSS
+\item \emph{degrade_flag} Greater than zero if the shot occurs during a degrade period, zero otherwise.
+\item \emph{digital_elevation_model} Digital elevation model height above the WGS84 ellipsoid. Interpolated at latitude_bin0 and longitude_bin0 from the TandemX 90m product.
+\item \emph{elevation_bin0} Elevation of first bin of the pgap_theta_z, interpolated from L1B waveform coordinate
+\item \emph{elevation_bin0_error} Error in elevation of first bin of the pgap_theta_z, interpolated from L1B waveform coordinate
+\item \emph{elevation_lastbin} Elevation of last bin of the pgap_theta_z, interpolated from L1B waveform coordinate
+\item \emph{elevation_lastbin_error} Error in elevation of last bin of the pgap_theta_z, interpolated from L1B waveform coordinate
+\item \emph{height_bin0} Height of the first bin of the pgap_theta_z, relative to the ground.
+\item \emph{height_lastbin} Height of the last bin of the pgap_theta_z, relative to the ground.
+\item \emph{lat_highestreturn} Latitude of highest detected return
+\item \emph{lat_lowestmode} Latitude of center of lowest mode
+\item \emph{latitude_bin0_error} Error in latitude of first bin of the pgap_theta_z, interpolated from L1B waveform coordinate
+\item \emph{latitude_lastbin_error} Error in latitude of last bin of the pgap_theta_z, interpolated from L1B waveform coordinate
+\item \emph{local_beam_azimuth} Azimuth of the unit pointing vector for the laser in the local ENU frame. The angle is measured from North and positive towards East.
+\item \emph{local_beam_elevation} Elevation of the unit pointing vector for the laser in the local ENU frame. The angle is measured from East-North plane and positive towards Up.
+\item \emph{lon_highestreturn} Longitude of highest detected return
+\item \emph{lon_lowestmode} Longitude of center of lowest mode
+\item \emph{longitude_bin0_error} Error in longitude of first bin of the pgap_theta_z, interpolated from L1B waveform coordinate
+\item \emph{longitude_lastbin_error} Error in longitude of last bin of the pgap_theta_z, interpolated from L1B waveform coordinate
+\item \emph{solar_azimuth} The azimuth of the sun position vector from the laser bounce point position in the local ENU frame. The angle is measured from North and is positive towards East.
+\item \emph{landsat_treecover} Tree cover in the year 2010, defined as canopy closure for all vegetation taller than 5m in height (Hansen et al.). Encoded as a percentage per output grid cell.
+\item \emph{modis_nonvegetated} Percent non-vegetated from MODIS data. Interpolated at latitude_bin0 and longitude_bin0. doi:10.5067/MODIS/MOD44B.006
+\item \emph{modis_nonvegetated_sd} Percent non-vegetated standard deviation from MODIS data. Interpolated at latitude_bin0 and longitude_bin0. doi:10.5067/MODIS/MOD44B.006
+\item \emph{modis_treecover} Percent tree cover from MODIS data. Interpolated at latitude_bin0 and longitude_bin0. doi:10.5067/MODIS/MOD44B.006
+\item \emph{modis_treecover_sd} Percent tree cover standard deviation from MODIS data. Interpolated at latitude_bin0 and longitude_bin0. doi:10.5067/MODIS/MOD44B.006
+}
 }
 \examples{
 # Specifying the path to GEDI level2B data (zip file)
