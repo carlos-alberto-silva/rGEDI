@@ -90,6 +90,7 @@ GDALDataset <- R6::R6Class("GDALDataset",
 #' GDALDataset [[]] accessor
 #' @description
 #' This function gives access to the GDALRasterBand using [[i]], where i is the band index to return.
+#' @param x GDALDatset. Automatically obtained from GDALDataset[[]] call.
 #' @param slice Integer. The index for the band to access.
 #' @return An object of GDALRasterBand R6 class.
 #' @export
