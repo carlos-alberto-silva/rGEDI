@@ -32,7 +32,7 @@ public:
   S ReadBlock(int iXBlock, int iYBlock)
   {
     CPLErr res = CE_None;
-    S output = NULL;
+    S output;
 
     int nXBlockSize, nYBlockSize;
     band->GetBlockSize(&nXBlockSize, &nYBlockSize);
