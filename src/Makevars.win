@@ -3,7 +3,7 @@ HANCOCKTOOLS_ROOT = tools
 GEDIRAT_ROOT = gedisimulator
 LIBCLIDAR_ROOT = libclidar
 CMPFIT_ROOT = cmpfit-1.2
-HDF5_VERSION = 1.8.16
+HDF5_VERSION = 1.10.5
 HDF5_LIB = ../windows/hdf5-${HDF5_VERSION}
 GDAL_MAJOR = 3
 GDAL_VERSION = 3.2.1
@@ -61,8 +61,8 @@ src = $(LIBCLIDAR_ROOT)/libLasProcess.c $(LIBCLIDAR_ROOT)/libLasRead.c \
 	$(LIBCLIDAR_ROOT)/libOctree.c $(GEDIRAT_ROOT)/gediNoise.c \
 	$(CMPFIT_ROOT)/mpfit.c  $(HANCOCKTOOLS_ROOT)/tools.c \
 	gediMetrics.c gediSimulator.c \
-	argParse.c  \
-	functionWrappers.c #registerDynamicSymbol.c
+	argParse.c registerDynamicSymbol.c \
+	functionWrappers.c
 
 OBJECTS = $(src:.c=.o)
 OBJECTS += rasterizeHDF.o RcppExports.o
