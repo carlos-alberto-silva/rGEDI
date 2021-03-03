@@ -146,7 +146,7 @@
 #'}
 #'
 #' @import hdf5r
-#' @useDynLib rGEDI
+#' @useDynLib rGEDI, .registration=TRUE
 #' @export
 gediWFSimulator = function(
   input,

@@ -40,7 +40,7 @@ endif
 
 PKG_CFLAGS += -I$(GDAL_INC) -DDLLEXPORT -D_USE_MATH_DEFINES -D_WIN32 \
 	-DWIN32 -DH5_BUILT_AS_DYNAMIC_LIB -DDLL_EXPORTS \
-	-DUSEPHOTON -DWITHOUT_GDAL -D__USE_MINGW_ANSI_STDIO
+	-DUSEPHOTON -D__USE_MINGW_ANSI_STDIO
 
 ARCH=$(PROCESSOR_ARCHITECTURE)
 
@@ -61,8 +61,8 @@ src = $(LIBCLIDAR_ROOT)/libLasProcess.c $(LIBCLIDAR_ROOT)/libLasRead.c \
 	$(LIBCLIDAR_ROOT)/libOctree.c $(GEDIRAT_ROOT)/gediNoise.c \
 	$(CMPFIT_ROOT)/mpfit.c  $(HANCOCKTOOLS_ROOT)/tools.c \
 	gediMetrics.c gediSimulator.c \
-	argParse.c registerDynamicSymbol.c \
-	functionWrappers.c
+	argParse.c functionWrappers.c \
+	registerDynamicSymbol.c
 
 OBJECTS = $(src:.c=.o)
 OBJECTS += rasterizeHDF.o RcppExports.o

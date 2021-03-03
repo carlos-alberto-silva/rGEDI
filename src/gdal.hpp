@@ -190,6 +190,12 @@ void GDALDatasetFinalizer(GDALDatasetR* ds)
   ds->Close();
 }
 
+void rgdal_exit() {
+  OGRCleanupAll();
+  OSRCleanup();
+  GDALDestroyDriverManager();
+}
+
 RCPP_MODULE(gdal_module)
 {
 
@@ -218,4 +224,5 @@ RCPP_MODULE(gdal_module)
       .method("GetBlockYSize", &GDALRasterBandR::GetBlockYSize);
 
   function("create_dataset", &create_dataset);
+  function("rgdal_exit", &rgdal_exit);
 }

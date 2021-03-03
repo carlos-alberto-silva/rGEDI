@@ -167,13 +167,12 @@
 #'\item \emph{Half covers} Used for "gaussHalfCov", "maxHalfCov" and "inflHalfCov".
 #' Sum energy beneath estimated ground position.
 #' Double that is the ground energy.
-#'\loadmathjax
-#' Calculate canopy cover, correcting for \mjeqn{\rho_v}{rho_v} and \mjeqn{\rho_g}{rho_g}.
+#' Calculate canopy cover, correcting for \eqn{\rho_v}{rho_v} and \eqn{\rho_g}{rho_g}.
 #'
-#'\mjeqn{cover = \frac{E_{can}}{E_{can} + E_g*\frac{\rho_v}{\rho_g}}}{cover = (E_can/(E_can + E_g * (rho_v/rho_g)))}
+#'\eqn{cover = \frac{E_{can}}{E_{can} + E_g*\frac{\rho_v}{\rho_g}}}{cover = (E_can/(E_can + E_g * (rho_v/rho_g)))}
 #'
 #'
-#' Where \mjeqn{E_{can}}{E_can} is the canopy energy, \mjeqn{E_g}{E_g} is the ground energy, \mjeqn{\rho_v}{rho_v} is the vegetation reflectance and \mjeqn{\rho_g}{rho_g} is the ground reflectance.
+#' Where \eqn{E_{can}}{E_can} is the canopy energy, \eqn{E_g}{E_g} is the ground energy, \eqn{\rho_v}{rho_v} is the vegetation reflectance and \eqn{\rho_g}{rho_g} is the ground reflectance.
 #'
 #'\item \emph{Edge extents} These are described in: Lefsky, Michael A., Michael Keller, Yong Pang, Plinio B. De Camargo, and Maria O. Hunter.
 #' "Revised method for forest canopy height estimation from Geoscience Laser Altimeter System waveforms." Journal of Applied Remote Sensing 1, no. 1 (2007): 013537-013537.
@@ -195,7 +194,7 @@
 #'libsAvailable = require(lidR) && require(plot3D)
 #'if (libsAvailable) {
 #'outdir = tempdir()
-#' 
+#'
 #'# Specifying the path to ALS data (zip)
 #'alsfile_Amazon_zip <- system.file("extdata", "Amazon.zip", package="rGEDI")
 #'alsfile_Savanna_zip <- system.file("extdata", "Savanna.zip", package="rGEDI")
@@ -255,7 +254,7 @@
 #'head(metrics_noise)
 #'
 #'}
-#' @useDynLib rGEDI
+#' @useDynLib rGEDI, .registration=TRUE
 #' @import methods
 #' @export
 gediWFMetrics = function(

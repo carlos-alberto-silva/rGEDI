@@ -32,7 +32,7 @@ level2bRasterizeStats(
 
 \item{lr_lon}{Numeric. Lower right longitude for the bounding box}
 
-\item{res}{Numeric. Resolution for the output raster in coordinates decimal degrees}
+\item{res}{NumericVector. Resolution lon lat for the output raster in coordinates decimal degrees}
 
 \item{creation_options}{CharacterVector. The GDAL creation options for the tif file. Default c("COMPRESS=PACKBITS", "BIGTIFF=IF_SAFER", "TILED=YES", "BLOCKXSIZE=512", "BLOCKYSIZE=512") will create BIGTIFF if needed, with PACKBITS compression and tiled by 512x512 pixels.}
 }
@@ -41,4 +41,62 @@ Nothing. It outputs multiple raster tif files to the out_root specified path.
 }
 \description{
 This function will read multiple Level2B H5 files and aggregate into multiple rasters: count, and 1st, 2nd, 3rd and 4th moments (count, m1, m2, m3 and m4) for each metric selected, from which we can calculate statistics such as Mean, SD, Skewness and Kurtosis.
+}
+\details{
+This function will create five different aggregate statistics (count, m1, m2, m3 and m4). m1 to m4 are the central moments. One can calculate mean, standard deviation, skewness and kurtosis with the following formulas according to Terriberry (2007) and \insertCite{Joanes1998;textual}{rGEDI}:
+
+\deqn{ \bar{x} = m_1 }{mean = m1}
+
+\deqn{ s = \sqrt{\frac{m_2}{count - 1}} }{sd = sqrt(m2/(count - 1))}
+
+\deqn{ g_1 = \frac{\sqrt{count} \cdot m_3}{m_2^{1.5}} }{ g1 = (sqrt(count) * m3) / (m2^1.5)}
+
+\deqn{ g_2 = \frac{count \cdot m_4}{m_2^2} - 3 }{g2 = (count * m4) / (m2 * m2) - 3.0}
+
+\deqn{ skewness = \frac{\sqrt{count(count - 1)}}{n-2} g_1 }{skewness = sqrt((count * (count - 1))) * g1 / (count - 2)}
+
+\deqn{ kurtosis = \frac{count - 1}{(count - 2)(count - 3)}[(count + 1)g_2 + 6] }{kurtosis = ((count - 1) / ((count - 2) * (count - 3))) * ((count + 1) * g2 + 6)}
+}
+\examples{
+# Specifying the path to GEDI level2B data (zip file)
+outdir = tempdir()
+level2B_fp_zip <- system.file("extdata",
+                   "GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub.zip",
+                   package="rGEDI")
+
+# Unzipping GEDI level2A data
+level2Bpath <- unzip(level2B_fp_zip,exdir = outdir)
+
+# Reading GEDI level2B data (h5 file)
+level2b<-readLevel2B(level2Bpath=level2Bpath)
+
+ul_lat = -13.72016
+ul_lon = -44.14000
+lr_lat = -13.74998
+lr_lon = -44.11009
+
+res = 100 # meters
+lat_to_met_factor = 1 / 110540
+lon_to_met_factor = 1 / 111320
+xres = lon_to_met_factor * res
+yres = lat_to_met_factor * res
+
+rast = level2bRasterizeStats(
+  outdir,
+  metrics = c("rh100"),
+  out_root = file.path(outdir, "output"),
+  ul_lat = -13.72016,
+  ul_lon = -44.14000,
+  lr_lat = -13.74998,
+  lr_lon = -44.11009,
+  res = c(xres, yres)
+  )
+
+close(level2b)
+
+}
+\references{
+\insertAllCited{}
+
+Terriberry, Timothy B. (2007), Computing Higher-Order Moments Online, archived from the original on 23 April 2014, retrieved 5 May 2008
 }
