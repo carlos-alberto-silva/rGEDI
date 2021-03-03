@@ -1,8 +1,8 @@
 #' Aggregate selected metrics into raster tif cells
-#' 
-#' @description 
+#'
+#' @description
 #' This function will read multiple Level2B H5 files and aggregate into multiple rasters: count, and 1st, 2nd, 3rd and 4th moments (count, m1, m2, m3 and m4) for each metric selected, from which we can calculate statistics such as Mean, SD, Skewness and Kurtosis.
-#' 
+#'
 #' @param l2bDir CharacterVector. The directory paths where the H5 GEDI files are stored;
 #' @param metrics CharacterVector. A vector of metrics available from Level2B, as in the getLevel2BVPM documentation
 #' @param out_root Character. The root name for the raster output files, the pattern is {out_root}_{metric}_{count/m1/m2/m3/m4}.tif. This should include the full path for the file.
@@ -10,18 +10,75 @@
 #' @param ul_lon Numeric. Upper left longitude for the bounding box
 #' @param lr_lat Numeric. Lower right latitude for the bounding box
 #' @param lr_lon Numeric. Lower right longitude for the bounding box
-#' @param res Numeric. Resolution for the output raster in coordinates decimal degrees 
+#' @param res NumericVector. Resolution lon lat for the output raster in coordinates decimal degrees
 #' @param creation_options CharacterVector. The GDAL creation options for the tif file. Default c("COMPRESS=PACKBITS", "BIGTIFF=IF_SAFER", "TILED=YES", "BLOCKXSIZE=512", "BLOCKYSIZE=512") will create BIGTIFF if needed, with PACKBITS compression and tiled by 512x512 pixels.
+#'
+#' @details 
+#' This function will create five different aggregate statistics (count, m1, m2, m3 and m4). m1 to m4 are the central moments. One can calculate mean, standard deviation, skewness and kurtosis with the following formulas according to Terriberry (2007) and \insertCite{Joanes1998;textual}{rGEDI}:
+#'
+#' \deqn{ \bar{x} = m_1 }{mean = m1}
+#' 
+#' \deqn{ s = \sqrt{\frac{m_2}{count - 1}} }{sd = sqrt(m2/(count - 1))}
+#' 
+#' \deqn{ g_1 = \frac{\sqrt{count} \cdot m_3}{m_2^{1.5}} }{ g1 = (sqrt(count) * m3) / (m2^1.5)}
+#' 
+#' \deqn{ g_2 = \frac{count \cdot m_4}{m_2^2} - 3 }{g2 = (count * m4) / (m2 * m2) - 3.0}
+#' 
+#' \deqn{ skewness = \frac{\sqrt{count(count - 1)}}{n-2} g_1 }{skewness = sqrt((count * (count - 1))) * g1 / (count - 2)}
+#' 
+#' \deqn{ kurtosis = \frac{count - 1}{(count - 2)(count - 3)}[(count + 1)g_2 + 6] }{kurtosis = ((count - 1) / ((count - 2) * (count - 3))) * ((count + 1) * g2 + 6)}
+#' 
+#' @references
+#' \insertAllCited{}
+#' 
+#' Terriberry, Timothy B. (2007), Computing Higher-Order Moments Online, archived from the original on 23 April 2014, retrieved 5 May 2008
 #' 
 #' @return Nothing. It outputs multiple raster tif files to the out_root specified path.
+#'
+#' @examples
+#' # Specifying the path to GEDI level2B data (zip file)
+#' outdir = tempdir()
+#' level2B_fp_zip <- system.file("extdata",
+#'                    "GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub.zip",
+#'                    package="rGEDI")
+#'
+#' # Unzipping GEDI level2A data
+#' level2Bpath <- unzip(level2B_fp_zip,exdir = outdir)
+#'
+#' # Reading GEDI level2B data (h5 file)
+#' level2b<-readLevel2B(level2Bpath=level2Bpath)
+#'
+#' ul_lat = -13.72016
+#' ul_lon = -44.14000
+#' lr_lat = -13.74998
+#' lr_lon = -44.11009
+#'
+#' res = 100 # meters
+#' lat_to_met_factor = 1 / 110540
+#' lon_to_met_factor = 1 / 111320
+#' xres = lon_to_met_factor * res
+#' yres = lat_to_met_factor * res
+#'
+#' rast = level2bRasterizeStats(
+#'   outdir,
+#'   metrics = c("rh100"),
+#'   out_root = file.path(outdir, "output"),
+#'   ul_lat = -13.72016,
+#'   ul_lon = -44.14000,
+#'   lr_lat = -13.74998,
+#'   lr_lon = -44.11009,
+#'   res = c(xres, yres)
+#'   )
+#'
+#' close(level2b)
 #'
 #' @import e1071
 #' @import data.table
 #' @export
-level2bRasterizeStats = function(l2bDir, 
-    metrics, out_root, ul_lat, ul_lon, lr_lat, lr_lon, 
+level2bRasterizeStats = function(l2bDir,
+    metrics, out_root, ul_lat, ul_lon, lr_lat, lr_lon,
     res, creation_options = c("COMPRESS=PACKBITS",
-        "BIGTIFF=IF_SAFER", 
+        "BIGTIFF=IF_SAFER",
         "TILED=YES",
         "BLOCKXSIZE=512",
         "BLOCKYSIZE=512"
@@ -29,12 +86,12 @@ level2bRasterizeStats = function(l2bDir,
     ) {
         x_blocks =
         y_blocks =
-        l2b_quality_flag = 
-        ..cols_without_quality = 
-        x_ind = 
-        longitude_bin0 = 
-        y_ind = 
-        latitude_bin0 = 
+        l2b_quality_flag =
+        cols_without_quality =
+        x_ind =
+        longitude_bin0 =
+        y_ind =
+        latitude_bin0 =
         inds = NULL
   projstring = 'GEOGCS["WGS 84",
     DATUM["WGS_1984",
@@ -53,10 +110,8 @@ level2bRasterizeStats = function(l2bDir,
   lon_min = ul_lon
   lat_max = ul_lat
   lon_max = lr_lon
-  lat_to_met_factor = 1 / 110540
-  lon_to_met_factor = 1 / 111320
-  xres = lon_to_met_factor * res
-  yres = lat_to_met_factor * res
+  xres = res[1]
+  yres = res[2]
 
 
   cols.coord = c("latitude_bin0", "longitude_bin0", "l2b_quality_flag")
@@ -76,14 +131,14 @@ level2bRasterizeStats = function(l2bDir,
     m4_path = sprintf("%s_%s_%s.tif", out_root, metric, "m4")
 
     count_rast = GDALDataset$new(
-    rast_path = count_path,
+    raster_path = count_path,
     nbands = 1,
     datatype = GDALDataType$GDT_Int32,
     projstring = projstring,
-    lr_lat = -51.6,
-    ul_lat = 51.6,
-    ul_lon = -180,
-    lr_lon = 180,
+    lr_lat = lr_lat,
+    ul_lat = ul_lat,
+    ul_lon = ul_lon,
+    lr_lon = lr_lon,
     res = c(xres, - yres),
     nodata = 0,
     co = creation_options)
@@ -92,42 +147,42 @@ level2bRasterizeStats = function(l2bDir,
     ysize = count_rast$GetRasterYSize()
 
     m1_rast = GDALDataset$new(
-    rast_path = m1_path,
+    raster_path = m1_path,
     nbands = 1,
     datatype = GDALDataType$GDT_Float32,
     projstring = projstring,
-    lr_lat = -51.6,
-    ul_lat = 51.6,
-    ul_lon = -180,
-    lr_lon = 180,
+    lr_lat = lr_lat,
+    ul_lat = ul_lat,
+    ul_lon = ul_lon,
+    lr_lon = lr_lon,
     res = c(xres, - yres),
-    nodata = 0,
+    nodata = -9999,
     co = creation_options)
 
     m2_rast = GDALDataset$new(
-    rast_path = m2_path,
+    raster_path = m2_path,
     nbands = 1,
     datatype = GDALDataType$GDT_Float32,
     projstring = projstring,
-    lr_lat = -51.6,
-    ul_lat = 51.6,
-    ul_lon = -180,
-    lr_lon = 180,
+    lr_lat = lr_lat,
+    ul_lat = ul_lat,
+    ul_lon = ul_lon,
+    lr_lon = lr_lon,
     res = c(xres, - yres),
-    nodata = 0,
+    nodata = -9999,
     co = creation_options)
 
     m3_rast = GDALDataset$new(
-    rast_path = m3_path,
+    raster_path = m3_path,
     nbands = 1,
     datatype = GDALDataType$GDT_Float32,
     projstring = projstring,
-    lr_lat = -51.6,
-    ul_lat = 51.6,
-    ul_lon = -180,
-    lr_lon = 180,
+    lr_lat = lr_lat,
+    ul_lat = ul_lat,
+    ul_lon = ul_lon,
+    lr_lon = lr_lon,
     res = c(xres, - yres),
-    nodata = 0,
+    nodata = -9999,
     co = creation_options)
 
     m4_rast = GDALDataset$new(
@@ -135,12 +190,12 @@ level2bRasterizeStats = function(l2bDir,
     nbands = 1,
     datatype = GDALDataType$GDT_Float32,
     projstring = projstring,
-    lr_lat = -51.6,
-    ul_lat = 51.6,
-    ul_lon = -180,
-    lr_lon = 180,
+    lr_lat = lr_lat,
+    ul_lat = ul_lat,
+    ul_lon = ul_lon,
+    lr_lon = lr_lon,
     res = c(xres, - yres),
-    nodata = 0,
+    nodata = -9999,
     co = creation_options)
 
 
@@ -166,13 +221,13 @@ level2bRasterizeStats = function(l2bDir,
 
 
       vals[, x_ind := as.integer(vals[, floor((longitude_bin0 - lon_min) / xres)])]
-      vals[, y_ind := as.integer(vals[, floor((latitude_bin0 - lat_min) / -yres)])]
+      vals[, y_ind := as.integer(vals[, 1+floor((latitude_bin0 - lat_min) / yres)])]
 
       blocks = vals[, lapply(.SD, function(x) as.integer(floor(x / block_x_size))), .SDcols = c("x_ind", "y_ind")]
       colnames(blocks) = c("x_blocks", "y_blocks")
       vals = cbind(vals, blocks)
       df_unique = unique(blocks)
-      df_unique = df_unique[x_blocks >= 0 & x_blocks < floor(xsize / 1024) & y_blocks >= 0 & y_blocks < floor(ysize / 1024)]
+      df_unique = df_unique[x_blocks >= 0 & x_blocks <= floor(xsize / block_x_size) & y_blocks >= 0 & y_blocks <= floor(ysize / block_y_size)]
       total_rows = nrow(df_unique)
       # ii = 1
       for (ii in 1:total_rows) {
@@ -211,4 +266,5 @@ level2bRasterizeStats = function(l2bDir,
       close(l2b)
     }
   }
+  gc()
 }
