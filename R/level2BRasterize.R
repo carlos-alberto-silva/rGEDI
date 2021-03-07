@@ -1,3 +1,66 @@
+def_co = c("COMPRESS=DEFLATE",
+        "BIGTIFF=IF_SAFER",
+        "TILED=YES",
+        "BLOCKXSIZE=512",
+        "BLOCKYSIZE=512"
+        )
+
+default_finalizer = list(
+  sd = "sqrt(M2/(n - 1))",
+  skew = "sqrt((n * (n - 1))) * ((sqrt(n) * M3) / (M2^1.5)) / (n - 2)",
+  kur = "((n - 1) / ((n - 2) * (n - 3))) * ((n + 1) * ((n * M4) / (M2^2) - 3.0) + 6)"
+)
+
+default_agg_function = function(x) {
+  n = length(x)
+
+  data.table(
+    n = n,
+    M1 = mean(x),
+    M2 = e1071::moment(x, order = 2, center = TRUE) * n,
+    M3 = e1071::moment(x, order = 3, center = TRUE) * n,
+    M4 = e1071::moment(x, order = 4, center = TRUE) * n,
+    min = min(x),
+    max = max(x)
+  )
+}
+
+default_agg_join = function(x1, x2) {
+  combined = data.table()
+  x1$n[is.na(x1$n)] = 0
+  x1$M1[is.na(x1$M1)] = 0
+  x1$M2[is.na(x1$M2)] = 0
+  x1$M3[is.na(x1$M3)] = 0
+  x1$M4[is.na(x1$M4)] = 0
+  x1$max[is.na(x1$max)] = -Inf
+  x1$min[is.na(x1$min)] = Inf
+
+  combined$n = x1$n + x2$n
+
+  delta = x2$M1 - x1$M1
+  delta2 = delta * delta
+  delta3 = delta * delta2
+  delta4 = delta2 * delta2
+
+  combined$M1 = (x1$n * x1$M1 + x2$n * x2$M1) / combined$n
+
+  combined$M2 = x1$M2 + x2$M2 +
+    delta2 * x1$n * x2$n / combined$n
+
+  combined$M3 = x1$M3 + x2$M3 +
+    delta3 * x1$n * x2$n * (x1$n - x2$n) / (combined$n * combined$n)
+  combined$M3 = combined$M3 + 3.0 * delta * (x1$n * x2$M2 - x2$n * x1$M2) / combined$n
+
+  combined$M4 = x1$M4 + x2$M4 + delta4 * x1$n * x2$n * (x1$n * x1$n - x1$n * x2$n + x2$n * x2$n) /
+    (combined$n * combined$n * combined$n)
+  combined$M4 = combined$M4 + 6.0 * delta2 * (x1$n * x1$n * x2$M2 + x2$n * x2$n * x1$M2) / (combined$n * combined$n) +
+    4.0 * delta * (x1$n * x2$M3 - x2$n * x1$M3) / combined$n
+
+  combined$min = pmin(x1$min, x2$min, na.rm=F)
+  combined$max = pmax(x1$max, x2$max, na.rm=F)
+  return(combined)
+}
+
 #' Aggregate selected metrics into raster tif cells
 #'
 #' @description
@@ -11,28 +74,31 @@
 #' @param lr_lat Numeric. Lower right latitude for the bounding box
 #' @param lr_lon Numeric. Lower right longitude for the bounding box
 #' @param res NumericVector. Resolution lon lat for the output raster in coordinates decimal degrees
-#' @param creation_options CharacterVector. The GDAL creation options for the tif file. Default c("COMPRESS=PACKBITS", "BIGTIFF=IF_SAFER", "TILED=YES", "BLOCKXSIZE=512", "BLOCKYSIZE=512") will create BIGTIFF if needed, with PACKBITS compression and tiled by 512x512 pixels.
+#' @param creation_options CharacterVector. The GDAL creation options for the tif file. Default c("COMPRESS=PACKBITS", "BIGTIFF=IF_SAFER", "TILED=YES", "BLOCKXSIZE=512", "BLOCKYSIZE=512") will create BIGTIFF if needed, with DEFLATE compression and tiled by 512x512 pixels.
+#' @param agg_function Function. An aggregate function which should return a data.table with the aggregate statistics
+#' @param agg_join Function. A function to merge two different agg objects.
+#' @param finalizer List<name, formula>. A list with the final raster names and the formula which uses the base statistics.
 #'
-#' @details 
+#' @details
 #' This function will create five different aggregate statistics (count, m1, m2, m3 and m4). m1 to m4 are the central moments. One can calculate mean, standard deviation, skewness and kurtosis with the following formulas according to Terriberry (2007) and \insertCite{Joanes1998;textual}{rGEDI}:
 #'
 #' \deqn{ \bar{x} = m_1 }{mean = m1}
-#' 
+#'
 #' \deqn{ s = \sqrt{\frac{m_2}{count - 1}} }{sd = sqrt(m2/(count - 1))}
-#' 
+#'
 #' \deqn{ g_1 = \frac{\sqrt{count} \cdot m_3}{m_2^{1.5}} }{ g1 = (sqrt(count) * m3) / (m2^1.5)}
-#' 
+#'
 #' \deqn{ g_2 = \frac{count \cdot m_4}{m_2^2} - 3 }{g2 = (count * m4) / (m2 * m2) - 3.0}
-#' 
+#'
 #' \deqn{ skewness = \frac{\sqrt{count(count - 1)}}{n-2} g_1 }{skewness = sqrt((count * (count - 1))) * g1 / (count - 2)}
-#' 
+#'
 #' \deqn{ kurtosis = \frac{count - 1}{(count - 2)(count - 3)}[(count + 1)g_2 + 6] }{kurtosis = ((count - 1) / ((count - 2) * (count - 3))) * ((count + 1) * g2 + 6)}
-#' 
+#'
 #' @references
 #' \insertAllCited{}
-#' 
+#'
 #' Terriberry, Timothy B. (2007), Computing Higher-Order Moments Online, archived from the original on 23 April 2014, retrieved 5 May 2008
-#' 
+#'
 #' @return Nothing. It outputs multiple raster tif files to the out_root specified path.
 #'
 #' @examples
@@ -77,14 +143,9 @@
 #' @export
 level2bRasterizeStats = function(l2bDir,
     metrics, out_root, ul_lat, ul_lon, lr_lat, lr_lon,
-    res, creation_options = c("COMPRESS=PACKBITS",
-        "BIGTIFF=IF_SAFER",
-        "TILED=YES",
-        "BLOCKXSIZE=512",
-        "BLOCKYSIZE=512"
-        )
+    res, creation_options = def_co, agg_function = default_agg_function, agg_join = default_agg_join, finalizer=default_finalizer
     ) {
-        x_blocks =
+  x_blocks =
         y_blocks =
         l2b_quality_flag =
         cols_without_quality =
@@ -118,95 +179,46 @@ level2bRasterizeStats = function(l2bDir,
 
   metricCounter = 0
   nMetrics = length(metrics)
+
+  stats = names(agg_function(1))
+  classes = lapply(agg_function(1), class)
   # metric = metrics[1]
   for (metric in metrics) {
     metricCounter = metricCounter + 1
     message(sprintf("Metric %s (%d/%d)", metric, metricCounter, nMetrics), appendLF = T)
     cols = c(cols.coord, metric)
 
-    count_path = sprintf("%s_%s_%s.tif", out_root, metric, "count")
-    m1_path = sprintf("%s_%s_%s.tif", out_root, metric, "m1")
-    m2_path = sprintf("%s_%s_%s.tif", out_root, metric, "m2")
-    m3_path = sprintf("%s_%s_%s.tif", out_root, metric, "m3")
-    m4_path = sprintf("%s_%s_%s.tif", out_root, metric, "m4")
-
-    count_rast = GDALDataset$new(
-    raster_path = count_path,
-    nbands = 1,
-    datatype = GDALDataType$GDT_Int32,
-    projstring = projstring,
-    lr_lat = lr_lat,
-    ul_lat = ul_lat,
-    ul_lon = ul_lon,
-    lr_lon = lr_lon,
-    res = c(xres, - yres),
-    nodata = 0,
-    co = creation_options)
-
-    xsize = count_rast$GetRasterXSize()
-    ysize = count_rast$GetRasterYSize()
-
-    m1_rast = GDALDataset$new(
-    raster_path = m1_path,
-    nbands = 1,
-    datatype = GDALDataType$GDT_Float32,
-    projstring = projstring,
-    lr_lat = lr_lat,
-    ul_lat = ul_lat,
-    ul_lon = ul_lon,
-    lr_lon = lr_lon,
-    res = c(xres, - yres),
-    nodata = -9999,
-    co = creation_options)
-
-    m2_rast = GDALDataset$new(
-    raster_path = m2_path,
-    nbands = 1,
-    datatype = GDALDataType$GDT_Float32,
-    projstring = projstring,
-    lr_lat = lr_lat,
-    ul_lat = ul_lat,
-    ul_lon = ul_lon,
-    lr_lon = lr_lon,
-    res = c(xres, - yres),
-    nodata = -9999,
-    co = creation_options)
-
-    m3_rast = GDALDataset$new(
-    raster_path = m3_path,
-    nbands = 1,
-    datatype = GDALDataType$GDT_Float32,
-    projstring = projstring,
-    lr_lat = lr_lat,
-    ul_lat = ul_lat,
-    ul_lon = ul_lon,
-    lr_lon = lr_lon,
-    res = c(xres, - yres),
-    nodata = -9999,
-    co = creation_options)
-
-    m4_rast = GDALDataset$new(
-    raster_path = m4_path,
-    nbands = 1,
-    datatype = GDALDataType$GDT_Float32,
-    projstring = projstring,
-    lr_lat = lr_lat,
-    ul_lat = ul_lat,
-    ul_lon = ul_lon,
-    lr_lon = lr_lon,
-    res = c(xres, - yres),
-    nodata = -9999,
-    co = creation_options)
+    rast_paths = sprintf("%s_%s_%s.tif", out_root, metric, stats)
+    rasts = list()
+    for (stat_ind in 1:length(stats)) {
+      datatype = GDALDataType$GDT_Float64
+      nodata = -9999.0
+      if (classes[[stat_ind]] == "integer") {
+        datatype = GDALDataType$GDT_Int32
+        nodata = 0
+      }
+      rasts[[stats[[stat_ind]]]] = createDataset(
+        raster_path = rast_paths[[stat_ind]],
+        nbands = 1,
+        datatype = datatype,
+        projstring = projstring,
+        lr_lat = lr_lat,
+        ul_lat = ul_lat,
+        ul_lon = ul_lon,
+        lr_lon = lr_lon,
+        res = c(xres, yres),
+        nodata = nodata,
+        co = creation_options)
+    }
 
 
-    n_band = count_rast[[1]]
-    m1_band = m1_rast[[1]]
-    m2_band = m2_rast[[1]]
-    m3_band = m3_rast[[1]]
-    m4_band = m4_rast[[1]]
+    xsize = rasts[[1]]$GetRasterXSize()
+    ysize = rasts[[1]]$GetRasterYSize()
 
-    block_x_size = n_band$GetBlockXSize()
-    block_y_size = n_band$GetBlockYSize()
+    bands  = lapply(rasts, function(x) x[[1]])
+
+    block_x_size = bands[[1]]$GetBlockXSize()
+    block_y_size = bands[[1]]$GetBlockYSize()
 
     file_index = 0
     # l2b_path = l2b_list[1]
@@ -220,8 +232,8 @@ level2bRasterizeStats = function(l2bDir,
       vals = vals[l2b_quality_flag == 1, ..cols_without_quality]
 
 
-      vals[, x_ind := as.integer(vals[, floor((longitude_bin0 - lon_min) / xres)])]
-      vals[, y_ind := as.integer(vals[, 1+floor((latitude_bin0 - lat_min) / yres)])]
+      vals[, x_ind := as.integer(vals[, floor((longitude_bin0 - ul_lon) / xres)])]
+      vals[, y_ind := as.integer(vals[, floor((latitude_bin0 - ul_lat) / yres)])]
 
       blocks = vals[, lapply(.SD, function(x) as.integer(floor(x / block_x_size))), .SDcols = c("x_ind", "y_ind")]
       colnames(blocks) = c("x_blocks", "y_blocks")
@@ -231,40 +243,99 @@ level2bRasterizeStats = function(l2bDir,
       total_rows = nrow(df_unique)
       # ii = 1
       for (ii in 1:total_rows) {
-        message(sprintf("\rProcessing blocks...%2f", (100.0*ii)/total_rows), appendLF = F)
+        message(sprintf("\rProcessing blocks...%2f", (100.0 * ii) / total_rows), appendLF = F)
         row = df_unique[ii,]
         x_block = row$x_blocks
         y_block = row$y_blocks
         this_vals = vals[x_blocks == x_block & y_blocks == y_block]
-        agg1 = data.table::data.table(
-        n = n_band$ReadBlock(x_block, y_block),
-        M1 = m1_band$ReadBlock(x_block, y_block),
-        M2 = m2_band$ReadBlock(x_block, y_block),
-        M3 = m3_band$ReadBlock(x_block, y_block),
-        M4 = m4_band$ReadBlock(x_block, y_block)
-      )
+        agg1 = data.table::as.data.table(
+        lapply(bands, function(x)x[[x_block, y_block]]))
+
 
         this_vals[, x_ind := x_ind - x_block * block_x_size]
         this_vals[, y_ind := y_ind - y_block * block_y_size]
-        this_vals[, inds := x_ind + y_ind * block_x_size]
+        this_vals[, inds := 1 + x_ind + y_ind * block_x_size]
 
-        agg2 = this_vals[, list(
-        n = length(eval(as.name(metric))),
-        M1 = mean(eval(as.name(metric))),
-        M2 = e1071::moment(eval(as.name(metric)), order = 2, center = TRUE) * length(eval(as.name(metric))),
-        M3 = e1071::moment(eval(as.name(metric)), order = 3, center = TRUE) * length(eval(as.name(metric))),
-        M4 = e1071::moment(eval(as.name(metric)), order = 4, center = TRUE) * length(eval(as.name(metric)))
-      ), by = list(inds)]
-        agg1[agg2$inds] = combine_stats(agg1[agg2$inds], agg2)
+        agg2 = this_vals[,agg_function(eval(as.name(metric))), by = list(inds)]
+        agg1[agg2$inds] = agg_join(agg1[agg2$inds], agg2)
 
-        n_band$WriteBlock(x_block, y_block, agg1$n)
-        m1_band$WriteBlock(x_block, y_block, agg1$M1)
-        m2_band$WriteBlock(x_block, y_block, agg1$M2)
-        m3_band$WriteBlock(x_block, y_block, agg1$M3)
-        m4_band$WriteBlock(x_block, y_block, agg1$M4)
+        lapply(stats, function(x) bands[[x]][[x_block, y_block]] = agg1[[x]])
+
       }
+      finalize_rasts = lapply(names(finalizer), function(x) {
+        rast = createDataset(
+          raster_path = sprintf("%s_%s_%s.tif", out_root, metric, x),
+          nbands = 1,
+          datatype = GDALDataType$GDT_Float64,
+          projstring = projstring,
+          lr_lat = lr_lat,
+          ul_lat = ul_lat,
+          ul_lon = ul_lon,
+          lr_lon = lr_lon,
+          res = c(xres, yres),
+          nodata = -9999.0,
+          co = creation_options)
+
+        band = rast[[1]]
+        formula = finalizer[[x]]
+        formulaCalculate(formula, bands, band)
+        rast$Close()
+      })
+
       close(l2b)
     }
+
+    lapply(rasts, function(x) x$Close())
   }
-  gc()
+}
+
+calculateRasterStats = function(out_root, count, m1, m2, m3, m4, co) {
+  sd_path = sprintf("%s_%s.tif", out_root, "sd")
+  skew_path = sprintf("%s_%s.tif", out_root, "skew")
+  kur_path = sprintf("%s_%s.tif", out_root, "kur")
+
+  sd_rast = createDataset(
+    raster_path = sd_path,
+    nbands = 1,
+    datatype = GDALDataType$GDT_Float32,
+    projstring = projstring,
+    lr_lat = lr_lat,
+    ul_lat = ul_lat,
+    ul_lon = ul_lon,
+    lr_lon = lr_lon,
+    res = c(xres, yres),
+    nodata = -9999,
+    co = creation_options)
+
+  skew_rast = createDataset(
+    raster_path = skew_path,
+    nbands = 1,
+    datatype = GDALDataType$GDT_Float32,
+    projstring = projstring,
+    lr_lat = lr_lat,
+    ul_lat = ul_lat,
+    ul_lon = ul_lon,
+    lr_lon = lr_lon,
+    res = c(xres, yres),
+    nodata = -9999,
+    co = creation_options)
+
+  kur_rast = createDataset(
+    raster_path = kur_path,
+    nbands = 1,
+    datatype = GDALDataType$GDT_Float32,
+    projstring = projstring,
+    lr_lat = lr_lat,
+    ul_lat = ul_lat,
+    ul_lon = ul_lon,
+    lr_lon = lr_lon,
+    res = c(xres, yres),
+    nodata = -9999,
+    co = creation_options)
+
+  sd_band = sd_rast[[1]]
+  skew_band = skew_rast[[1]]
+  kur_band = kur_rast[[1]]
+
+
 }

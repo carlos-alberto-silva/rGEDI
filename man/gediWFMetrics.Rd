@@ -284,7 +284,6 @@ The centre of gravity between the lowest two inflection points is taken as the g
 \item \emph{Half covers} Used for "gaussHalfCov", "maxHalfCov" and "inflHalfCov".
 Sum energy beneath estimated ground position.
 Double that is the ground energy.
-\loadmathjax
 Calculate canopy cover, correcting for \eqn{\rho_v}{rho_v} and \eqn{\rho_g}{rho_g}.
 
 \eqn{cover = \frac{E_{can}}{E_{can} + E_g*\frac{\rho_v}{\rho_g}}}{cover = (E_can/(E_can + E_g * (rho_v/rho_g)))}

@@ -28,6 +28,25 @@ public:
     return result;
   }
 
+  int GetRasterDataType() {
+    return (int)band->GetRasterDataType();
+  }
+
+  int GetXSize()
+  {
+    return band->GetXSize();
+  }
+
+  int GetYSize()
+  {
+    return band->GetYSize();
+  }
+
+  double GetNoDataValue()
+  {
+    return band->GetNoDataValue();
+  }
+
   template <typename T, typename S>
   S ReadBlock(int iXBlock, int iYBlock)
   {
@@ -100,7 +119,6 @@ public:
 
     if (res == CE_Failure)
       Rcpp::stop(CPLGetLastErrorMsg());
-
   }
 };
 
@@ -108,19 +126,22 @@ class GDALDatasetR
 {
 private:
   GDALDataset *ds = NULL;
+  bool closed = false;
 
 public:
-  GDALDatasetR(GDALDataset* _ds) {
+  GDALDatasetR(GDALDataset *_ds)
+  {
     ds = _ds;
   }
 
-  virtual ~GDALDatasetR() {
+  virtual ~GDALDatasetR()
+  {
     ds = NULL;
   }
-  
-  GDALRasterBandR* GetRasterBand(int nband)
+
+  GDALRasterBandR *GetRasterBand(int nband)
   {
-    GDALRasterBandR* band = new GDALRasterBandR(ds->GetRasterBand(nband));
+    GDALRasterBandR *band = new GDALRasterBandR(ds->GetRasterBand(nband));
     return band;
   }
 
@@ -136,17 +157,20 @@ public:
 
   void Close()
   {
-    GDALClose(GDALDataset::ToHandle(ds));
+    if (!closed)
+    {
+      GDALClose(GDALDataset::ToHandle(ds));
+      closed = true;
+    }
   }
 };
 
-GDALDatasetR* create_dataset(const char *output, int nbands, int datatype, const char *projection, double lat_min, double lat_max, double lon_min, double lon_max, std::vector<double> res, double nodata, CharacterVector co)
+GDALDatasetR *create_dataset(const char *output, int nbands, int datatype, const char *projection, double lat_min, double lat_max, double lon_min, double lon_max, std::vector<double> res, double nodata, CharacterVector co)
 {
   CPLErr err = CE_None;
   int width = (int)ceil((lon_max - lon_min) / res[0]);
   int height = (int)ceil((lat_min - lat_max) / res[1]);
 
-  GDALAllRegister();
   GDALDriverManager *driverMan = GetGDALDriverManager();
   GDALDriver *tiffDriver = driverMan->GetDriverByName("GTiff");
   if (tiffDriver == NULL)
@@ -180,20 +204,33 @@ GDALDatasetR* create_dataset(const char *output, int nbands, int datatype, const
   if (err == CE_Failure)
     Rcpp::stop(CPLGetLastErrorMsg());
 
-  GDALDatasetR* outDs = new GDALDatasetR(ds);
+  GDALDatasetR *outDs = new GDALDatasetR(ds);
 
   return outDs;
 }
 
-void GDALDatasetFinalizer(GDALDatasetR* ds) 
+void GDALDatasetFinalizer(GDALDatasetR *ds)
 {
   ds->Close();
 }
 
-void rgdal_exit() {
-  OGRCleanupAll();
-  OSRCleanup();
-  GDALDestroyDriverManager();
+void InitializeGDAL()
+{
+  GDALAllRegister();
+  CPLSetErrorHandler(CPLQuietErrorHandler);
+}
+
+GDALDatasetR *RGDALOpen(const char *filename, bool readonly)
+{
+  GDALAccess accessMode = readonly ? GDALAccess::GA_ReadOnly : GDALAccess::GA_Update;
+  GDALDataset *ds = (GDALDataset *)GDALOpen(filename, accessMode);
+  if (ds == NULL)
+  {
+    Rcpp::stop(CPLGetLastErrorMsg());
+  }
+  GDALDatasetR *outDs = new GDALDatasetR(ds);
+
+  return outDs;
 }
 
 RCPP_MODULE(gdal_module)
@@ -203,6 +240,7 @@ RCPP_MODULE(gdal_module)
       .method("GetRasterBand", &GDALDatasetR::GetRasterBand)
       .method("GetRasterXSize", &GDALDatasetR::GetRasterXSize)
       .method("GetRasterYSize", &GDALDatasetR::GetRasterYSize)
+      .method("Close", &GDALDatasetR::Close)
       .finalizer(&GDALDatasetFinalizer);
 
   class_<GDALRasterBandR>("CPP_GDALRasterBand")
@@ -221,8 +259,14 @@ RCPP_MODULE(gdal_module)
       .method("WriteBlock6", &GDALRasterBandR::WriteBlock<NumericVector>)
       .method("WriteBlock7", &GDALRasterBandR::WriteBlock<NumericVector>)
       .method("GetBlockXSize", &GDALRasterBandR::GetBlockXSize)
-      .method("GetBlockYSize", &GDALRasterBandR::GetBlockYSize);
+      .method("GetBlockYSize", &GDALRasterBandR::GetBlockYSize)
+      .method("GetNoDataValue", &GDALRasterBandR::GetNoDataValue)
+      .method("GetXSize", &GDALRasterBandR::GetXSize)
+      .method("GetYSize", &GDALRasterBandR::GetYSize)
+      .method("GetRasterDataType", &GDALRasterBandR::GetRasterDataType);
 
   function("create_dataset", &create_dataset);
-  function("rgdal_exit", &rgdal_exit);
+  function("RGDALOpen", &RGDALOpen);
+
+  function("InitializeGDAL", &InitializeGDAL);
 }

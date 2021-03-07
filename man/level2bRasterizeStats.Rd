@@ -13,8 +13,10 @@ level2bRasterizeStats(
   lr_lat,
   lr_lon,
   res,
-  creation_options = c("COMPRESS=PACKBITS", "BIGTIFF=IF_SAFER", "TILED=YES",
-    "BLOCKXSIZE=512", "BLOCKYSIZE=512")
+  creation_options = def_co,
+  agg_function = default_agg_function,
+  agg_join = default_agg_join,
+  finalizer = default_finalizer
 )
 }
 \arguments{
@@ -34,7 +36,13 @@ level2bRasterizeStats(
 
 \item{res}{NumericVector. Resolution lon lat for the output raster in coordinates decimal degrees}
 
-\item{creation_options}{CharacterVector. The GDAL creation options for the tif file. Default c("COMPRESS=PACKBITS", "BIGTIFF=IF_SAFER", "TILED=YES", "BLOCKXSIZE=512", "BLOCKYSIZE=512") will create BIGTIFF if needed, with PACKBITS compression and tiled by 512x512 pixels.}
+\item{creation_options}{CharacterVector. The GDAL creation options for the tif file. Default c("COMPRESS=PACKBITS", "BIGTIFF=IF_SAFER", "TILED=YES", "BLOCKXSIZE=512", "BLOCKYSIZE=512") will create BIGTIFF if needed, with DEFLATE compression and tiled by 512x512 pixels.}
+
+\item{agg_function}{Function. An aggregate function which should return a data.table with the aggregate statistics}
+
+\item{agg_join}{Function. A function to merge two different agg objects.}
+
+\item{finalizer}{List<name, formula>. A list with the final raster names and the formula which uses the base statistics.}
 }
 \value{
 Nothing. It outputs multiple raster tif files to the out_root specified path.
