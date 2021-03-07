@@ -13,5 +13,6 @@
 #'@docType package
 #'@name rGEDI-package
 #'@importFrom Rdpack reprompt
+#'@import rgdal
 NULL
 

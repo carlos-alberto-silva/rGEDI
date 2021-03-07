@@ -17,6 +17,10 @@ This constructor must not be called at all, this is automatically called from GD
 \item \href{#method-WriteBlock}{\code{GDALRasterBand$WriteBlock()}}
 \item \href{#method-GetBlockXSize}{\code{GDALRasterBand$GetBlockXSize()}}
 \item \href{#method-GetBlockYSize}{\code{GDALRasterBand$GetBlockYSize()}}
+\item \href{#method-GetXSize}{\code{GDALRasterBand$GetXSize()}}
+\item \href{#method-GetYSize}{\code{GDALRasterBand$GetYSize()}}
+\item \href{#method-GetNoDataValue}{\code{GDALRasterBand$GetNoDataValue()}}
+\item \href{#method-GetRasterDataType}{\code{GDALRasterBand$GetRasterDataType()}}
 \item \href{#method-clone}{\code{GDALRasterBand$clone()}}
 }
 }
@@ -26,7 +30,7 @@ This constructor must not be called at all, this is automatically called from GD
 \subsection{Method \code{new()}}{
 Creates a new GDALRasterBand
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{GDALRasterBand$new(band, datatype)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{GDALRasterBand$new(band)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -120,6 +124,58 @@ Get the block height
 
 \subsection{Returns}{
 An integer indicating block height
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-GetXSize"></a>}}
+\if{latex}{\out{\hypertarget{method-GetXSize}{}}}
+\subsection{Method \code{GetXSize()}}{
+Get the band width
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{GDALRasterBand$GetXSize()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+An integer indicating band width
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-GetYSize"></a>}}
+\if{latex}{\out{\hypertarget{method-GetYSize}{}}}
+\subsection{Method \code{GetYSize()}}{
+Get the band height
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{GDALRasterBand$GetYSize()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+An integer indicating band height
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-GetNoDataValue"></a>}}
+\if{latex}{\out{\hypertarget{method-GetNoDataValue}{}}}
+\subsection{Method \code{GetNoDataValue()}}{
+Get band no data value
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{GDALRasterBand$GetNoDataValue()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+Numeric indicating no data value
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-GetRasterDataType"></a>}}
+\if{latex}{\out{\hypertarget{method-GetRasterDataType}{}}}
+\subsection{Method \code{GetRasterDataType()}}{
+Get band datatype
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{GDALRasterBand$GetRasterDataType()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+Numeric indicating the datatype
 }
 }
 \if{html}{\out{<hr>}}
