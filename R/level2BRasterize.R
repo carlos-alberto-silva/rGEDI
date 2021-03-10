@@ -80,20 +80,100 @@ default_agg_join = function(x1, x2) {
 #' @param finalizer List<name, formula>. A list with the final raster names and the formula which uses the base statistics.
 #'
 #' @details
-#' This function will create five different aggregate statistics (count, m1, m2, m3 and m4). m1 to m4 are the central moments. One can calculate mean, standard deviation, skewness and kurtosis with the following formulas according to Terriberry (2007) and \insertCite{Joanes1998;textual}{rGEDI}:
+#' This function will create seven different aggregate statistics 
+#' (n, m1, m2, m3, m4, min, max). m1 to m4 are the central moments. 
+#' One can calculate mean, standard deviation, skewness and kurtosis 
+#' with the following formulas according to Terriberry (2007) and 
+#' \insertCite{Joanes1998;textual}{rGEDI}:
 #'
 #' \deqn{ \bar{x} = m_1 }{mean = m1}
 #'
-#' \deqn{ s = \sqrt{\frac{m_2}{count - 1}} }{sd = sqrt(m2/(count - 1))}
+#' \deqn{ s = \sqrt{\frac{m_2}{n - 1}} }{sd = sqrt(m2/(n - 1))}
 #'
-#' \deqn{ g_1 = \frac{\sqrt{count} \cdot m_3}{m_2^{1.5}} }{ g1 = (sqrt(count) * m3) / (m2^1.5)}
+#' \deqn{ g_1 = \frac{\sqrt{n} \cdot m_3}{m_2^{1.5}} }{ g1 = (sqrt(n) * m3) / (m2^1.5)}
 #'
-#' \deqn{ g_2 = \frac{count \cdot m_4}{m_2^2} - 3 }{g2 = (count * m4) / (m2 * m2) - 3.0}
+#' \deqn{ g_2 = \frac{n \cdot m_4}{m_2^2} - 3 }{g2 = (n * m4) / (m2 * m2) - 3.0}
 #'
-#' \deqn{ skewness = \frac{\sqrt{count(count - 1)}}{n-2} g_1 }{skewness = sqrt((count * (count - 1))) * g1 / (count - 2)}
+#' \deqn{ skewness = \frac{\sqrt{n(n - 1)}}{n-2} g_1 }{skewness = sqrt((n * (n - 1))) * g1 / (n - 2)}
 #'
-#' \deqn{ kurtosis = \frac{count - 1}{(count - 2)(count - 3)}[(count + 1)g_2 + 6] }{kurtosis = ((count - 1) / ((count - 2) * (count - 3))) * ((count + 1) * g2 + 6)}
+#' \deqn{ kurtosis = \frac{n - 1}{(n - 2)(n - 3)}[(n + 1)g_2 + 6] }{kurtosis = ((n - 1) / ((n - 2) * (n - 3))) * ((n + 1) * g2 + 6)}
+#' 
+#' The `agg_function` should return a data.table with the 
+#' aggregate function to perform over the data. 
+#' The default function is:
 #'
+#' ```{r}
+#'  function(x) {
+#'  n = length(x)
+#'
+#'  data.table(
+#'    n = n,
+#'    M1 = mean(x),
+#'    M2 = e1071::moment(x, order = 2, center = TRUE) * n,
+#'    M3 = e1071::moment(x, order = 3, center = TRUE) * n,
+#'    M4 = e1071::moment(x, order = 4, center = TRUE) * n,
+#'    min = min(x),
+#'    max = max(x)
+#'  )
+#' ```
+#'  
+#' The `agg_join` is a function to merge two data.table aggregates 
+#' from the `agg_function`. Since the h5 files will be aggregated 
+#' one by one, the statistics from the different h5 files should 
+#' have a function to merge. The default function is: 
+#' 
+#' ``` {r}
+#' function(x1, x2) {
+#'     combined = data.table()
+#'     x1$n[is.na(x1$n)] = 0
+#'     x1$M1[is.na(x1$M1)] = 0
+#'     x1$M2[is.na(x1$M2)] = 0
+#'     x1$M3[is.na(x1$M3)] = 0
+#'     x1$M4[is.na(x1$M4)] = 0
+#'     x1$max[is.na(x1$max)] = -Inf
+#'     x1$min[is.na(x1$min)] = Inf
+#'   
+#'     combined$n = x1$n + x2$n
+#'   
+#'     delta = x2$M1 - x1$M1
+#'     delta2 = delta * delta
+#'     delta3 = delta * delta2
+#'     delta4 = delta2 * delta2
+#'   
+#'     combined$M1 = (x1$n * x1$M1 + x2$n * x2$M1) / combined$n
+#'   
+#'     combined$M2 = x1$M2 + x2$M2 +
+#'       delta2 * x1$n * x2$n / combined$n
+#'   
+#'     combined$M3 = x1$M3 + x2$M3 +
+#'       delta3 * x1$n * x2$n * (x1$n - x2$n) / (combined$n * combined$n)
+#'     combined$M3 = combined$M3 + 3.0 * delta * (x1$n * x2$M2 - x2$n * x1$M2) / combined$n
+#'   
+#'     combined$M4 = x1$M4 + x2$M4 + delta4 * x1$n * x2$n * (x1$n * x1$n - x1$n * x2$n + x2$n * x2$n) /
+#'       (combined$n * combined$n * combined$n)
+#'     combined$M4 = combined$M4 + 6.0 * delta2 * (x1$n * x1$n * x2$M2 + x2$n * x2$n * x1$M2) / (combined$n * combined$n) +
+#'       4.0 * delta * (x1$n * x2$M3 - x2$n * x1$M3) / combined$n
+#'   
+#'     combined$min = pmin(x1$min, x2$min, na.rm=F)
+#'     combined$max = pmax(x1$max, x2$max, na.rm=F)
+#'     return(combined)
+#' }
+#' ```
+#' 
+#' The `finalizer` is a list of formulas to generate the final 
+#' rasters based on the intermediate statistics from the previous 
+#' functions. The default `finalizer` will calculate the `sd`,
+#' `skewness` and `kurtosis` based on the `M2`, `M3`, `M4` and `n` 
+#' values. It is defined as:
+#' 
+#' ``` {r}
+#' list(
+#'   sd = "sqrt(M2/(n - 1))",
+#'   skew = "sqrt((n * (n - 1))) * ((sqrt(n) * M3) / (M2^1.5)) / (n - 2)",
+#'   kur = "((n - 1) / ((n - 2) * (n - 3))) * ((n + 1) * ((n * M4) / (M2^2) - 3.0) + 6)"
+#' )
+#' ```
+#' 
 #' @references
 #' \insertAllCited{}
 #'
@@ -103,6 +183,9 @@ default_agg_join = function(x1, x2) {
 #'
 #' @examples
 #' # Specifying the path to GEDI level2B data (zip file)
+#' library(rGEDI)
+#' library(data.table)
+#' 
 #' outdir = tempdir()
 #' level2B_fp_zip <- system.file("extdata",
 #'                    "GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub.zip",
@@ -112,7 +195,7 @@ default_agg_join = function(x1, x2) {
 #' level2Bpath <- unzip(level2B_fp_zip,exdir = outdir)
 #'
 #' # Reading GEDI level2B data (h5 file)
-#' level2b<-readLevel2B(level2Bpath=level2Bpath)
+#' level2b<-readLevel2B(level2Bpath = level2Bpath)
 #'
 #' ul_lat = -13.72016
 #' ul_lon = -44.14000
@@ -125,17 +208,46 @@ default_agg_join = function(x1, x2) {
 #' xres = lon_to_met_factor * res
 #' yres = lat_to_met_factor * res
 #'
-#' rast = level2bRasterizeStats(
+#' agg_function = function(x) data.table(
+#'     min = min(x), 
+#'     max = max(x), 
+#'     sum = sum(x), 
+#'     n = length(x))
+#' 
+#' agg_join = function(agg1, agg2) {
+#' agg1[is.na(agg1)] = 0
+#' data.table(
+#'     min = pmin(agg1$min, agg2$min), 
+#'     max = pmax(agg1$max, agg2$max), 
+#'     sum = agg1$sum + agg2$sum, 
+#'     n = agg1$n + agg2$n
+#' ) 
+#' }
+#' 
+#' finalizer = list(
+#'     mean = "sum/n",
+#'     range = "max-min"
+#' )
+#' 
+#' level2bRasterizeStats(
 #'   outdir,
 #'   metrics = c("rh100"),
 #'   out_root = file.path(outdir, "output"),
-#'   ul_lat = -13.72016,
-#'   ul_lon = -44.14000,
-#'   lr_lat = -13.74998,
-#'   lr_lon = -44.11009,
-#'   res = c(xres, yres)
+#'   ul_lat = ul_lat,
+#'   ul_lon = ul_lon,
+#'   lr_lat = lr_lat,
+#'   lr_lon = lr_lon,
+#'   res = c(xres, -yres),
+#'   creation_options = c("COMPRESS=DEFLATE" ,
+#'     "BIGTIFF=IF_SAFER",
+#'     "TILED=YES",
+#'     "BLOCKXSIZE=512",
+#'     "BLOCKYSIZE=512"),
+#'   agg_function = agg_function,
+#'   agg_join = agg_join,
+#'   finalizer = finalizer
 #'   )
-#'
+#' 
 #' close(level2b)
 #'
 #' @import e1071
@@ -148,7 +260,6 @@ level2bRasterizeStats = function(l2bDir,
   x_blocks =
         y_blocks =
         l2b_quality_flag =
-        cols_without_quality =
         x_ind =
         longitude_bin0 =
         y_ind =
@@ -167,10 +278,6 @@ level2bRasterizeStats = function(l2bDir,
   l2b_list = sapply(l2bDir, function(search_path) list.files(search_path, "GEDI02_B.*h5"))
   total_files = length(l2b_list)
 
-  lat_min = lr_lat
-  lon_min = ul_lon
-  lat_max = ul_lat
-  lon_max = lr_lon
   xres = res[1]
   yres = res[2]
 
@@ -229,7 +336,7 @@ level2bRasterizeStats = function(l2bDir,
 
       vals = getLevel2BVPM(l2b, cols = cols)
       cols_without_quality = c(setdiff(cols, "l2b_quality_flag"))
-      vals = vals[l2b_quality_flag == 1, ..cols_without_quality]
+      vals = vals[l2b_quality_flag == 1, cols_without_quality, with = FALSE]
 
 
       vals[, x_ind := as.integer(vals[, floor((longitude_bin0 - ul_lon) / xres)])]
@@ -243,7 +350,7 @@ level2bRasterizeStats = function(l2bDir,
       total_rows = nrow(df_unique)
       # ii = 1
       for (ii in 1:total_rows) {
-        message(sprintf("\rProcessing blocks...%2f", (100.0 * ii) / total_rows), appendLF = F)
+        message(sprintf("\rProcessing blocks...%.2f%%", (100.0 * ii) / total_rows), appendLF = F)
         row = df_unique[ii,]
         x_block = row$x_blocks
         y_block = row$y_blocks
@@ -262,9 +369,12 @@ level2bRasterizeStats = function(l2bDir,
         lapply(stats, function(x) bands[[x]][[x_block, y_block]] = agg1[[x]])
 
       }
+      message()
       finalize_rasts = lapply(names(finalizer), function(x) {
+        rast_name = sprintf("%s_%s_%s.tif", out_root, metric, x)
+        message(sprintf("Writing raster: %s", rast_name))
         rast = createDataset(
-          raster_path = sprintf("%s_%s_%s.tif", out_root, metric, x),
+          raster_path = rast_name,
           nbands = 1,
           datatype = GDALDataType$GDT_Float64,
           projstring = projstring,
@@ -287,55 +397,4 @@ level2bRasterizeStats = function(l2bDir,
 
     lapply(rasts, function(x) x$Close())
   }
-}
-
-calculateRasterStats = function(out_root, count, m1, m2, m3, m4, co) {
-  sd_path = sprintf("%s_%s.tif", out_root, "sd")
-  skew_path = sprintf("%s_%s.tif", out_root, "skew")
-  kur_path = sprintf("%s_%s.tif", out_root, "kur")
-
-  sd_rast = createDataset(
-    raster_path = sd_path,
-    nbands = 1,
-    datatype = GDALDataType$GDT_Float32,
-    projstring = projstring,
-    lr_lat = lr_lat,
-    ul_lat = ul_lat,
-    ul_lon = ul_lon,
-    lr_lon = lr_lon,
-    res = c(xres, yres),
-    nodata = -9999,
-    co = creation_options)
-
-  skew_rast = createDataset(
-    raster_path = skew_path,
-    nbands = 1,
-    datatype = GDALDataType$GDT_Float32,
-    projstring = projstring,
-    lr_lat = lr_lat,
-    ul_lat = ul_lat,
-    ul_lon = ul_lon,
-    lr_lon = lr_lon,
-    res = c(xres, yres),
-    nodata = -9999,
-    co = creation_options)
-
-  kur_rast = createDataset(
-    raster_path = kur_path,
-    nbands = 1,
-    datatype = GDALDataType$GDT_Float32,
-    projstring = projstring,
-    lr_lat = lr_lat,
-    ul_lat = ul_lat,
-    ul_lon = ul_lon,
-    lr_lon = lr_lon,
-    res = c(xres, yres),
-    nodata = -9999,
-    co = creation_options)
-
-  sd_band = sd_rast[[1]]
-  skew_band = skew_rast[[1]]
-  kur_band = kur_rast[[1]]
-
-
 }

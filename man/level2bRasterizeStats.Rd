@@ -51,22 +51,13 @@ Nothing. It outputs multiple raster tif files to the out_root specified path.
 This function will read multiple Level2B H5 files and aggregate into multiple rasters: count, and 1st, 2nd, 3rd and 4th moments (count, m1, m2, m3 and m4) for each metric selected, from which we can calculate statistics such as Mean, SD, Skewness and Kurtosis.
 }
 \details{
-This function will create five different aggregate statistics (count, m1, m2, m3 and m4). m1 to m4 are the central moments. One can calculate mean, standard deviation, skewness and kurtosis with the following formulas according to Terriberry (2007) and \insertCite{Joanes1998;textual}{rGEDI}:
 
-\deqn{ \bar{x} = m_1 }{mean = m1}
-
-\deqn{ s = \sqrt{\frac{m_2}{count - 1}} }{sd = sqrt(m2/(count - 1))}
-
-\deqn{ g_1 = \frac{\sqrt{count} \cdot m_3}{m_2^{1.5}} }{ g1 = (sqrt(count) * m3) / (m2^1.5)}
-
-\deqn{ g_2 = \frac{count \cdot m_4}{m_2^2} - 3 }{g2 = (count * m4) / (m2 * m2) - 3.0}
-
-\deqn{ skewness = \frac{\sqrt{count(count - 1)}}{n-2} g_1 }{skewness = sqrt((count * (count - 1))) * g1 / (count - 2)}
-
-\deqn{ kurtosis = \frac{count - 1}{(count - 2)(count - 3)}[(count + 1)g_2 + 6] }{kurtosis = ((count - 1) / ((count - 2) * (count - 3))) * ((count + 1) * g2 + 6)}
 }
 \examples{
 # Specifying the path to GEDI level2B data (zip file)
+library(rGEDI)
+library(data.table)
+
 outdir = tempdir()
 level2B_fp_zip <- system.file("extdata",
                    "GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub.zip",
@@ -76,7 +67,7 @@ level2B_fp_zip <- system.file("extdata",
 level2Bpath <- unzip(level2B_fp_zip,exdir = outdir)
 
 # Reading GEDI level2B data (h5 file)
-level2b<-readLevel2B(level2Bpath=level2Bpath)
+level2b<-readLevel2B(level2Bpath = level2Bpath)
 
 ul_lat = -13.72016
 ul_lon = -44.14000
@@ -89,15 +80,44 @@ lon_to_met_factor = 1 / 111320
 xres = lon_to_met_factor * res
 yres = lat_to_met_factor * res
 
-rast = level2bRasterizeStats(
+agg_function = function(x) data.table(
+    min = min(x), 
+    max = max(x), 
+    sum = sum(x), 
+    n = length(x))
+
+agg_join = function(agg1, agg2) {
+agg1[is.na(agg1)] = 0
+data.table(
+    min = pmin(agg1$min, agg2$min), 
+    max = pmax(agg1$max, agg2$max), 
+    sum = agg1$sum + agg2$sum, 
+    n = agg1$n + agg2$n
+) 
+}
+
+finalizer = list(
+    mean = "sum/n",
+    range = "max-min"
+)
+
+level2bRasterizeStats(
   outdir,
   metrics = c("rh100"),
   out_root = file.path(outdir, "output"),
-  ul_lat = -13.72016,
-  ul_lon = -44.14000,
-  lr_lat = -13.74998,
-  lr_lon = -44.11009,
-  res = c(xres, yres)
+  ul_lat = ul_lat,
+  ul_lon = ul_lon,
+  lr_lat = lr_lat,
+  lr_lon = lr_lon,
+  res = c(xres, -yres),
+  creation_options = c("COMPRESS=DEFLATE" ,
+    "BIGTIFF=IF_SAFER",
+    "TILED=YES",
+    "BLOCKXSIZE=512",
+    "BLOCKYSIZE=512"),
+  agg_function = agg_function,
+  agg_join = agg_join,
+  finalizer = finalizer
   )
 
 close(level2b)
