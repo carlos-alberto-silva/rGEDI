@@ -47,3 +47,47 @@ An object from GDALDataset R6 class.
 \description{
 Create a new raster file based on specified data. It will output a *.tif file.
 }
+\examples{
+# Parameters
+raster_path = file.path(tempdir(), "output.tif")
+ul_lat = -15
+ul_lon = -45
+lr_lat = -25
+lr_lon = -35
+res = c(0.01, -0.01)
+datatype = GDALDataType$GDT_Int32
+nbands = 1
+projstring = "EPSG:4326"
+nodata = -1
+co = c("TILED=YES", "BLOCKXSIZE=512", "BLOCKYSIZE=512", "COMPRESSION=LZW")
+
+# Create a new raster dataset
+ds = createDataset(
+raster_path = raster_path, 
+nbands = nbands, 
+datatype = datatype, 
+projstring = projstring, 
+lr_lat = lr_lat, 
+ul_lat = ul_lat, 
+ul_lon = ul_lon, 
+lr_lon = lr_lon, 
+res = res, 
+nodata = nodata, 
+co = co
+)
+
+# Get the GDALRasterBand for ds
+band = ds[[1]]
+
+# Set some dummy values
+band[[0,0]] = 1:(512*512)
+
+# Calculate the square - 10
+formulaCalculate(
+    formula = "x*2 - 10", 
+    data = list(x = band), 
+    updateBand = band
+)
+
+ds$Close()
+}

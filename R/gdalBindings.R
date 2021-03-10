@@ -37,6 +37,50 @@ defaultProjection = 'GEOGCS["WGS 84",
 #' @param nodata Numeric. The no data value for the raster. Default 0.
 #' @param co CharacterVector. A CharacterVector of creation options for GDAL. Default NULL
 #' @return An object from GDALDataset R6 class.
+#' 
+#' @examples 
+#' # Parameters
+#' raster_path = file.path(tempdir(), "output.tif")
+#' ul_lat = -15
+#' ul_lon = -45
+#' lr_lat = -25
+#' lr_lon = -35
+#' res = c(0.01, -0.01)
+#' datatype = GDALDataType$GDT_Int32
+#' nbands = 1
+#' projstring = "EPSG:4326"
+#' nodata = -1
+#' co = c("TILED=YES", "BLOCKXSIZE=512", "BLOCKYSIZE=512", "COMPRESSION=LZW")
+#'
+#' # Create a new raster dataset
+#' ds = createDataset(
+#' raster_path = raster_path, 
+#' nbands = nbands, 
+#' datatype = datatype, 
+#' projstring = projstring, 
+#' lr_lat = lr_lat, 
+#' ul_lat = ul_lat, 
+#' ul_lon = ul_lon, 
+#' lr_lon = lr_lon, 
+#' res = res, 
+#' nodata = nodata, 
+#' co = co
+#' )
+#'
+#' # Get the GDALRasterBand for ds
+#' band = ds[[1]]
+#' 
+#' # Set some dummy values
+#' band[[0,0]] = 1:(512*512)
+#'
+#' # Calculate the square - 10
+#' formulaCalculate(
+#'     formula = "x*2 - 10", 
+#'     data = list(x = band), 
+#'     updateBand = band
+#' )
+#'
+#' ds$Close()
 #' @export
 createDataset = function(raster_path, nbands, datatype, projstring, lr_lat, ul_lat, ul_lon, lr_lon, res, nodata, co = NULL) {
   ds = create_dataset(raster_path, nbands, datatype, projstring, lr_lat, ul_lat, ul_lon, lr_lon, res, nodata, co)
@@ -251,92 +295,58 @@ GDALRasterBand <- R6::R6Class("GDALRasterBand",
   x$ReadBlock(blockX, blockY)
 }
 
-#' GDALRasterBand + operation
-#' @description
-#' This function gives access to the GDALRasterBand using [[i]], where i is the band index to return.
-#' @param x GDALDatset. Automatically obtained from GDALDataset[[]] call.
-#' @param slice Integer. The index for the band to access.
-#' @return An object of GDALRasterBand R6 class.
-#' @export
-'+.GDALRasterBand' = function(first, second) {
-  genericOperator(first, second, "+")
-}
-
-#' GDALRasterBand + operation
-#' @description
-#' This function gives access to the GDALRasterBand using [[i]], where i is the band index to return.
-#' @param first GDALRasterBand. The raster band to process.
-#' @param second Atomic or GDALRasterBand. The other object to operate.
-#' @return An object of GDALRasterBand R6 class.
-#' @export
-'+.GDALRasterBand' = function(first, second) {
-  return(genericOperator(first, second, "+"))
-}
-
-#' GDALRasterBand * operation
-#' @description
-#' This function gives access to the GDALRasterBand using [[i]], where i is the band index to return.
-#' @param first GDALRasterBand. The raster band to process.
-#' @param second Atomic or GDALRasterBand. The other object to operate.
-#' @return An object of GDALRasterBand R6 class.
-#' @export
-'*.GDALRasterBand' = function(first, second) {
-  return(genericOperator(first, second, "*"))
-}
-
-#' GDALRasterBand - operation
-#' @description
-#' This function gives access to the GDALRasterBand using [[i]], where i is the band index to return.
-#' @param first GDALRasterBand. The raster band to process.
-#' @param second Atomic or GDALRasterBand. The other object to operate.
-#' @return An object of GDALRasterBand R6 class.
-#' @export
-'-.GDALRasterBand' = function(first, second) {
-  return(genericOperator(first, second, "-"))
-}
-
-#' GDALRasterBand / operation
-#' @description
-#' This function gives access to the GDALRasterBand using [[i]], where i is the band index to return.
-#' @param first GDALRasterBand. The raster band to process.
-#' @param second Atomic or GDALRasterBand. The other object to operate.
-#' @return An object of GDALRasterBand R6 class.
-#' @export
-'/.GDALRasterBand' = function(first, second) {
-  return(genericOperator(first, second, "/"))
-}
-
-#' GDALRasterBand ^ operation
-#' @description
-#' This function gives access to the GDALRasterBand using [[i]], where i is the band index to return.
-#' @param first GDALRasterBand. The raster band to process.
-#' @param second Atomic or GDALRasterBand. The other object to operate.
-#' @return An object of GDALRasterBand R6 class.
-#' @export
-'^.GDALRasterBand' = function(first, second) {
-  return(genericOperator(first, second, "^"))
-}
-
-
-#' GDALRasterBand \%\% operation
-#' @description
-#' This function gives access to the GDALRasterBand using [[i]], where i is the band index to return.
-#' @param first GDALRasterBand. The raster band to process.
-#' @param second Atomic or GDALRasterBand. The other object to operate.
-#' @return An object of GDALRasterBand R6 class.
-#' @export
-'%%.GDALRasterBand' = function(first, second) {
-  return(genericOperator(first, second, "%%"))
-}
-
 #' Calculate raster values based on a formula
 #'
-#' @param formula Character. A textual formula to apply to the RasterBands
+#' @param formula Character. A textual formula to apply to the RasterBands from `data`
 #' @param data List. A named list with the used variables in the textual formula
 #' @param updateBand GDALRasterBand. The GDALRasterBand which will be updated with the calculated values.
 #'
 #' @return Nothing, it just updates the band of interest.
 #'
+#' @examples 
+#' # Parameters
+#' raster_path = file.path(tempdir(), "output.tif")
+#' ul_lat = -15
+#' ul_lon = -45
+#' lr_lat = -25
+#' lr_lon = -35
+#' res = c(0.01, -0.01)
+#' datatype = GDALDataType$GDT_Int32
+#' nbands = 1
+#' projstring = "EPSG:4326"
+#' nodata = -1
+#' co = c("TILED=YES", "BLOCKXSIZE=512", "BLOCKYSIZE=512", "COMPRESSION=LZW")
+#'
+#' # Create a new raster dataset
+#' ds = createDataset(
+#' raster_path = raster_path, 
+#' nbands = nbands, 
+#' datatype = datatype, 
+#' projstring = projstring, 
+#' lr_lat = lr_lat, 
+#' ul_lat = ul_lat, 
+#' ul_lon = ul_lon, 
+#' lr_lon = lr_lon, 
+#' res = res, 
+#' nodata = nodata, 
+#' co = co
+#' )
+#'
+#' # Get the GDALRasterBand for ds
+#' band = ds[[1]]
+#' 
+#' # Set some dummy values
+#' band[[0,0]] = 1:(512*512)
+#'
+#' # Calculate the square - 10
+#' formulaCalculate(
+#'     formula = "x*2 - 10", 
+#'     data = list(x = band), 
+#'     updateBand = band
+#' )
+#'
+#' ds$Close()
+#' 
 #' @export
 formulaCalculate =  function(formula, data, updateBand) {
   first = data[[1]]
@@ -345,10 +355,24 @@ formulaCalculate =  function(formula, data, updateBand) {
   iters = floor(bandsize1 / blocksize1)
   nodata = first$GetNoDataValue()
   form = as.formula(paste0("~I(",formula,")"))
+  totalBlocks = (iters[1] + 1) * (iters[2] + 1)
+  blockCounter = 0
+  termNames = names(data)
+  thisTerms = termNames[sapply(Vectorize(grep, vectorize.args = c("pattern"))(termNames, form), length) > 0]
+  thisData = data[thisTerms]
 
   for (xblock in 0:iters[1]) {
       for (yblock in 0:iters[2]) {
-        vals = as.data.table(lapply(data, function(x) x[[xblock, yblock]]))
+        blockCounter = blockCounter + 1
+        message(
+          sprintf(
+            "\rCalculating block %d/%d (%.2f%%)           ", 
+            blockCounter, 
+            totalBlocks, 
+            100*blockCounter/totalBlocks
+          ), appendLF = FALSE
+        )
+        vals = as.data.table(lapply(thisData, function(x) x[[xblock, yblock]]))
         mask = !is.na(vals[[1]])
         if (!any(mask)) next
         vals[[1]][mask] = model.frame(form, vals[mask], na.action = na.pass)[[1]]
@@ -356,41 +380,6 @@ formulaCalculate =  function(formula, data, updateBand) {
         updateBand[[xblock, yblock]] = vals[[1]]
       }
   }
+  message()
 }
 
-genericOperator = function(first, second, op = "+") {
-  blocksize1 = c(first$GetBlockXSize(), first$GetBlockYSize())
-  bandsize1 = c(first$GetXSize(), first$GetYSize())
-  iters = floor(bandsize1 / blocksize1)
-  nodata = first$GetNoDataValue()
-  if (is.atomic(second)) {
-    for (xblock in 0:iters[1]) {
-      for (yblock in 0:iters[2]) {
-        vals = first[[xblock, yblock]]
-        mask = vals != nodata
-        eval(parse(text = paste0("vals[mask] = vals[mask] ",op," second")))
-        first[[xblock, yblock]] = vals
-      }
-    }
-    return (first)
-  } else {
-
-    blocksize2 = c(second$GetBlockXSize(), second$GetBlockYSize())
-
-    bandsize2 = c(second$GetXSize(), second$GetYSize())
-
-    stopifnot("Block sizes don't match" = all(blocksize1 == blocksize2))
-    stopifnot("Band sizes don't match" = all(bandsize1 == bandsize2))
-
-    for (xblock in 0:iters[1]) {
-      for (yblock in 0:iters[2]) {
-        vals = first[[xblock, yblock]]
-        vals2 = second[[xblock, yblock]]
-        mask = vals != nodata
-        eval(parse(text = paste0("vals[mask] = vals[mask] ",op," vals2[mask]")))
-        first[[xblock, yblock]] = vals
-      }
-    }
-    return (first)
-  }
-}
