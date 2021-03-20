@@ -48,7 +48,7 @@ plotWFMetrics = function(level1b, level2a, shot_number, rh=c(25, 50, 75), ...) {
   # Avoid NOTEs from checking
   elevation = NULL
   oldpar <- par(no.readonly = TRUE)
-  on.exit(par(oldpar)) 
+  on.exit(par(oldpar))
 
   # Extracting GEDI full waveform for a giving shotnumber
   wf <- getLevel1BWF(level1b, shot_number=shot_number)
@@ -67,13 +67,13 @@ plotWFMetrics = function(level1b, level2a, shot_number, rh=c(25, 50, 75), ...) {
 
   range_energy = range(wf@dt$rxwaveform)
   range_abs_diff = abs(diff(range_energy))
-
   requireNamespace("data.table")
 
+
   range_z = range(rh_z)
-  min_z = min(range_z)
-  max_z = max(range_z)
-  diff_z = abs(diff(range_z))
+  min_z = range_z[1]
+  max_z = range_z[2]
+  diff_z = max_z - min_z
   wf_between = wf@dt[elevation %between% range_z,,]
   energy_offset = min(range_energy)
   energy_no_offset = (wf_between$rxwaveform - energy_offset)
@@ -82,20 +82,23 @@ plotWFMetrics = function(level1b, level2a, shot_number, rh=c(25, 50, 75), ...) {
   range_cumsum = range(cumsum_energy)
   range_abs_diff_cumsum = abs(diff(range_cumsum))
   energy_cum_normalized = ((cumsum_energy)/(range_abs_diff_cumsum/range_abs_diff))+energy_offset
+  max(wf@dt$rxwaveform)
+  max(energy_cum_normalized)
 
-  par(mar = c(5, 4, 4, 4) + 0.3)
+  par(mar = c(5, 4, 4, 0) + 0.3, oma=c(0, 0, 0, 5))
   offset = diff_z*0.2
   ymin = min_z-offset
   ymax = max_z+offset
   wf_interest=wf@dt[wf@dt$elevation >= ymin & wf@dt$elevation <= ymax,]$rxwaveform
   qts=quantile(wf_interest, c(0.05, 1), type=1)
 
-
   z_masked = rev(wf_between$elevation)
 
-
   ticks = seq(min_z, max_z, length=4)
-  ticks_label = format(ticks-min_z, digits = 2)
+  closest_to_ground = which.min(abs(ticks-ground_z))
+  ticks[closest_to_ground] = ground_z
+  ticks_label = format(ticks-ground_z, digits = 2)
+
 
   rh_closest_en = list()
   for (i in 1:length(rh_z)) {
@@ -114,12 +117,13 @@ plotWFMetrics = function(level1b, level2a, shot_number, rh=c(25, 50, 75), ...) {
   }
 
 
-  plot(wf, relative=FALSE, polygon=TRUE, type="l", lwd=2, col="forestgreen",
+  plot(wf, relative=FALSE, polygon=TRUE, type="l", lwd=1, col="forestgreen",
        xlab="Waveform Amplitude", ylab="Elevation (m)", ylim=c(ymin, ymax), xlim=qts+c(0, 0.1*abs(diff(qts))), ...)
   par(new=TRUE)
   plot(energy_cum_normalized, z_masked, lwd=2, axes=F, bty="n", type="l", xlab = "", ylab = "", ylim=c(ymin, ymax), xlim=qts)
   axis(side=4, at = ticks, labels=ticks_label)
-  mtext("Height (m)", side=4, line=2)
+  mtext("Height (m)", side=4, line=2, outer = T)
+
   for (i in 2:(length(rh_z)-1)) {
     mark(energy_cum_normalized[rh_closest_en[[i]]], rh_z[[i]])
     text(energy_cum_normalized[rh_closest_en[[i]]], ymidpoint(rh_z[[i]]), toupper(names(rh_z)[[i]]), pos = 2)
@@ -128,5 +132,9 @@ plotWFMetrics = function(level1b, level2a, shot_number, rh=c(25, 50, 75), ...) {
   abline(rh_z[[length(rh_z)]], 0, lty="dashed")
   text(qts[2]-diff(qts)/2, rh_z[[1]], "RH0", pos=1)
   abline(rh_z[[1]], 0, lty="dashed")
+
+  text(qts[1], ground_z, "GZ (m)", adj=c(0, -1))
+  abline(ground_z, 0, lty="dashed", col="brown")
+
 
 }
