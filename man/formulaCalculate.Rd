@@ -7,7 +7,7 @@
 formulaCalculate(formula, data, updateBand)
 }
 \arguments{
-\item{formula}{Character. A textual formula to apply to the RasterBands from `data`}
+\item{formula}{Formula. A formula to apply to the RasterBands from \code{data}}
 
 \item{data}{List. A named list with the used variables in the textual formula}
 
@@ -56,7 +56,7 @@ band[[0,0]] = 1:(512*512)
 
 # Calculate the square - 10
 formulaCalculate(
-    formula = "x*2 - 10", 
+    formula = ~x*2 - 10, 
     data = list(x = band), 
     updateBand = band
 )

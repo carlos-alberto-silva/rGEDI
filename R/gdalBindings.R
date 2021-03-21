@@ -297,7 +297,7 @@ GDALRasterBand <- R6::R6Class("GDALRasterBand",
 
 #' Calculate raster values based on a formula
 #'
-#' @param formula Character. A textual formula to apply to the RasterBands from `data`
+#' @param formula Formula. A formula to apply to the RasterBands from `data`
 #' @param data List. A named list with the used variables in the textual formula
 #' @param updateBand GDALRasterBand. The GDALRasterBand which will be updated with the calculated values.
 #'
@@ -340,7 +340,7 @@ GDALRasterBand <- R6::R6Class("GDALRasterBand",
 #'
 #' # Calculate the square - 10
 #' formulaCalculate(
-#'     formula = "x*2 - 10", 
+#'     formula = ~x*2 - 10, 
 #'     data = list(x = band), 
 #'     updateBand = band
 #' )
@@ -354,7 +354,7 @@ formulaCalculate =  function(formula, data, updateBand) {
   bandsize1 = c(first$GetXSize(), first$GetYSize())
   iters = floor(bandsize1 / blocksize1)
   nodata = first$GetNoDataValue()
-  form = as.formula(paste0("~I(",formula,")"))
+  form = as.formula(paste0("~I(",as.character(formula)[2],")"))
   totalBlocks = (iters[1] + 1) * (iters[2] + 1)
   blockCounter = 0
   termNames = names(data)

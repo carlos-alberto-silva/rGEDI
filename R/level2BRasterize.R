@@ -6,24 +6,20 @@ def_co = c("COMPRESS=DEFLATE",
         )
 
 default_finalizer = list(
-  sd = "sqrt(M2/(n - 1))",
-  skew = "sqrt((n * (n - 1))) * ((sqrt(n) * M3) / (M2^1.5)) / (n - 2)",
-  kur = "((n - 1) / ((n - 2) * (n - 3))) * ((n + 1) * ((n * M4) / (M2^2) - 3.0) + 6)"
+  sd = ~sqrt(M2/(n - 1)),
+  skew = ~sqrt((n * (n - 1))) * ((sqrt(n) * M3) / (M2^1.5)) / (n - 2),
+  kur = ~((n - 1) / ((n - 2) * (n - 3))) * ((n + 1) * ((n * M4) / (M2^2) - 3.0) + 6)
 )
 
-default_agg_function = function(x) {
-  n = length(x)
-
-  data.table(
-    n = n,
-    M1 = mean(x),
-    M2 = e1071::moment(x, order = 2, center = TRUE) * n,
-    M3 = e1071::moment(x, order = 3, center = TRUE) * n,
-    M4 = e1071::moment(x, order = 4, center = TRUE) * n,
-    min = min(x),
-    max = max(x)
+default_agg_function = ~data.table(
+    n = length(x),
+    M1 = mean(x,na.rm = T),
+    M2 = e1071::moment(x, order = 2, center = TRUE, na.rm = T) * length(x),
+    M3 = e1071::moment(x, order = 3, center = TRUE, na.rm = T) * length(x),
+    M4 = e1071::moment(x, order = 4, center = TRUE, na.rm = T) * length(x),
+    min = min(x, na.rm=T),
+    max = max(x, na.rm=T)
   )
-}
 
 default_agg_join = function(x1, x2) {
   combined = data.table()
@@ -75,15 +71,15 @@ default_agg_join = function(x1, x2) {
 #' @param lr_lon Numeric. Lower right longitude for the bounding box
 #' @param res NumericVector. Resolution lon lat for the output raster in coordinates decimal degrees
 #' @param creation_options CharacterVector. The GDAL creation options for the tif file. Default c("COMPRESS=PACKBITS", "BIGTIFF=IF_SAFER", "TILED=YES", "BLOCKXSIZE=512", "BLOCKYSIZE=512") will create BIGTIFF if needed, with DEFLATE compression and tiled by 512x512 pixels.
-#' @param agg_function Function. An aggregate function which should return a data.table with the aggregate statistics
+#' @param agg_function Formula function-like. An aggregate function which should return a data.table with the aggregate statistics
 #' @param agg_join Function. A function to merge two different agg objects.
 #' @param finalizer List<name, formula>. A list with the final raster names and the formula which uses the base statistics.
 #'
 #' @details
-#' This function will create seven different aggregate statistics 
-#' (n, m1, m2, m3, m4, min, max). m1 to m4 are the central moments. 
-#' One can calculate mean, standard deviation, skewness and kurtosis 
-#' with the following formulas according to Terriberry (2007) and 
+#' This function will create seven different aggregate statistics
+#' (n, m1, m2, m3, m4, min, max). m1 to m4 are the central moments.
+#' One can calculate mean, standard deviation, skewness and kurtosis
+#' with the following formulas according to Terriberry (2007) and
 #' \insertCite{Joanes1998;textual}{rGEDI}:
 #'
 #' \deqn{ \bar{x} = m_1 }{mean = m1}
@@ -97,32 +93,29 @@ default_agg_join = function(x1, x2) {
 #' \deqn{ skewness = \frac{\sqrt{n(n - 1)}}{n-2} g_1 }{skewness = sqrt((n * (n - 1))) * g1 / (n - 2)}
 #'
 #' \deqn{ kurtosis = \frac{n - 1}{(n - 2)(n - 3)}[(n + 1)g_2 + 6] }{kurtosis = ((n - 1) / ((n - 2) * (n - 3))) * ((n + 1) * g2 + 6)}
-#' 
-#' The `agg_function` should return a data.table with the 
-#' aggregate function to perform over the data. 
-#' The default function is:
 #'
-#' ```{r}
-#'  function(x) {
-#'  n = length(x)
+#' The `agg_function` is a formula which return a data.table with the
+#' aggregate function to perform over the data.
+#' The default is:
 #'
-#'  data.table(
-#'    n = n,
-#'    M1 = mean(x),
-#'    M2 = e1071::moment(x, order = 2, center = TRUE) * n,
-#'    M3 = e1071::moment(x, order = 3, center = TRUE) * n,
-#'    M4 = e1071::moment(x, order = 4, center = TRUE) * n,
-#'    min = min(x),
-#'    max = max(x)
-#'  )
+#' ```{r, eval=FALSE}
+#' ~data.table(
+#'     n = length(x),
+#'     M1 = mean(x,na.rm = T),
+#'     M2 = e1071::moment(x, order = 2, center = TRUE, na.rm = T) * length(x),
+#'     M3 = e1071::moment(x, order = 3, center = TRUE, na.rm = T) * length(x),
+#'     M4 = e1071::moment(x, order = 4, center = TRUE, na.rm = T) * length(x),
+#'     min = min(x, na.rm=T),
+#'     max = max(x, na.rm=T)
+#'   )
 #' ```
-#'  
-#' The `agg_join` is a function to merge two data.table aggregates 
-#' from the `agg_function`. Since the h5 files will be aggregated 
-#' one by one, the statistics from the different h5 files should 
-#' have a function to merge. The default function is: 
-#' 
-#' ``` {r}
+#'
+#' The `agg_join` is a function to merge two data.table aggregates
+#' from the `agg_function`. Since the h5 files will be aggregated
+#' one by one, the statistics from the different h5 files should
+#' have a function to merge. The default function is:
+#'
+#' ```{r, eval=FALSE}
 #' function(x1, x2) {
 #'     combined = data.table()
 #'     x1$n[is.na(x1$n)] = 0
@@ -132,48 +125,48 @@ default_agg_join = function(x1, x2) {
 #'     x1$M4[is.na(x1$M4)] = 0
 #'     x1$max[is.na(x1$max)] = -Inf
 #'     x1$min[is.na(x1$min)] = Inf
-#'   
+#'
 #'     combined$n = x1$n + x2$n
-#'   
+#'
 #'     delta = x2$M1 - x1$M1
 #'     delta2 = delta * delta
 #'     delta3 = delta * delta2
 #'     delta4 = delta2 * delta2
-#'   
+#'
 #'     combined$M1 = (x1$n * x1$M1 + x2$n * x2$M1) / combined$n
-#'   
+#'
 #'     combined$M2 = x1$M2 + x2$M2 +
 #'       delta2 * x1$n * x2$n / combined$n
-#'   
+#'
 #'     combined$M3 = x1$M3 + x2$M3 +
 #'       delta3 * x1$n * x2$n * (x1$n - x2$n) / (combined$n * combined$n)
 #'     combined$M3 = combined$M3 + 3.0 * delta * (x1$n * x2$M2 - x2$n * x1$M2) / combined$n
-#'   
+#'
 #'     combined$M4 = x1$M4 + x2$M4 + delta4 * x1$n * x2$n * (x1$n * x1$n - x1$n * x2$n + x2$n * x2$n) /
 #'       (combined$n * combined$n * combined$n)
 #'     combined$M4 = combined$M4 + 6.0 * delta2 * (x1$n * x1$n * x2$M2 + x2$n * x2$n * x1$M2) / (combined$n * combined$n) +
 #'       4.0 * delta * (x1$n * x2$M3 - x2$n * x1$M3) / combined$n
-#'   
+#'
 #'     combined$min = pmin(x1$min, x2$min, na.rm=F)
 #'     combined$max = pmax(x1$max, x2$max, na.rm=F)
 #'     return(combined)
 #' }
 #' ```
-#' 
-#' The `finalizer` is a list of formulas to generate the final 
-#' rasters based on the intermediate statistics from the previous 
+#'
+#' The `finalizer` is a list of formulas to generate the final
+#' rasters based on the intermediate statistics from the previous
 #' functions. The default `finalizer` will calculate the `sd`,
-#' `skewness` and `kurtosis` based on the `M2`, `M3`, `M4` and `n` 
+#' `skewness` and `kurtosis` based on the `M2`, `M3`, `M4` and `n`
 #' values. It is defined as:
-#' 
-#' ``` {r}
+#'
+#' ```{r, eval=FALSE}
 #' list(
-#'   sd = "sqrt(M2/(n - 1))",
-#'   skew = "sqrt((n * (n - 1))) * ((sqrt(n) * M3) / (M2^1.5)) / (n - 2)",
-#'   kur = "((n - 1) / ((n - 2) * (n - 3))) * ((n + 1) * ((n * M4) / (M2^2) - 3.0) + 6)"
+#'   sd = ~sqrt(M2/(n - 1)),
+#'   skew = ~sqrt((n * (n - 1))) * ((sqrt(n) * M3) / (M2^1.5)) / (n - 2),
+#'   kur = ~((n - 1) / ((n - 2) * (n - 3))) * ((n + 1) * ((n * M4) / (M2^2) - 3.0) + 6)
 #' )
 #' ```
-#' 
+#'
 #' @references
 #' \insertAllCited{}
 #'
@@ -185,7 +178,7 @@ default_agg_join = function(x1, x2) {
 #' # Specifying the path to GEDI level2B data (zip file)
 #' library(rGEDI)
 #' library(data.table)
-#' 
+#'
 #' outdir = tempdir()
 #' level2B_fp_zip <- system.file("extdata",
 #'                    "GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub.zip",
@@ -208,29 +201,29 @@ default_agg_join = function(x1, x2) {
 #' xres = lon_to_met_factor * res
 #' yres = lat_to_met_factor * res
 #'
-#' agg_function = function(x) data.table(
-#'     min = min(x), 
-#'     max = max(x), 
-#'     sum = sum(x), 
+#' agg_function = ~data.table(
+#'     min = min(x),
+#'     max = max(x),
+#'     sum = sum(x),
 #'     n = length(x))
-#' 
+#'
 #' agg_join = function(agg1, agg2) {
 #' agg1[is.na(agg1)] = 0
 #' data.table(
-#'     min = pmin(agg1$min, agg2$min), 
-#'     max = pmax(agg1$max, agg2$max), 
-#'     sum = agg1$sum + agg2$sum, 
+#'     min = pmin(agg1$min, agg2$min),
+#'     max = pmax(agg1$max, agg2$max),
+#'     sum = agg1$sum + agg2$sum,
 #'     n = agg1$n + agg2$n
-#' ) 
+#' )
 #' }
-#' 
+#'
 #' finalizer = list(
 #'     mean = "sum/n",
 #'     range = "max-min"
 #' )
-#' 
+#'
 #' level2bRasterizeStats(
-#'   outdir,
+#'   l2bDir = outdir,
 #'   metrics = c("rh100"),
 #'   out_root = file.path(outdir, "output"),
 #'   ul_lat = ul_lat,
@@ -247,7 +240,7 @@ default_agg_join = function(x1, x2) {
 #'   agg_join = agg_join,
 #'   finalizer = finalizer
 #'   )
-#' 
+#'
 #' close(level2b)
 #'
 #' @import e1071
@@ -282,13 +275,18 @@ level2bRasterizeStats = function(l2bDir,
   yres = res[2]
 
 
-  cols.coord = c("latitude_bin0", "longitude_bin0", "l2b_quality_flag")
+  cols.coord = c("latitude_bin0", "longitude_bin0", "latitude_lastbin", "longitude_lastbin", "l2b_quality_flag")
 
   metricCounter = 0
   nMetrics = length(metrics)
 
-  stats = names(agg_function(1))
-  classes = lapply(agg_function(1), class)
+  
+  func = lazyeval::f_interp(agg_function)
+  call = lazyeval::as_call(func)
+  x = 1
+  stats = eval(call)
+  classes = lapply(stats, class)
+  stats = names(stats)
   # metric = metrics[1]
   for (metric in metrics) {
     metricCounter = metricCounter + 1
@@ -335,42 +333,49 @@ level2bRasterizeStats = function(l2bDir,
       l2b = readLevel2B(file.path(l2bDir, l2b_path))
 
       vals = getLevel2BVPM(l2b, cols = cols)
+      vals = clipLevel2BVPM(vals, ul_lon, lr_lon, lr_lat, ul_lat)
+      
       cols_without_quality = c(setdiff(cols, "l2b_quality_flag"))
       vals = vals[l2b_quality_flag == 1, cols_without_quality, with = FALSE]
 
-
       vals[, x_ind := as.integer(vals[, floor((longitude_bin0 - ul_lon) / xres)])]
       vals[, y_ind := as.integer(vals[, floor((latitude_bin0 - ul_lat) / yres)])]
+      vals[, inds := 1 + x_ind + y_ind * block_x_size]
+      names(vals) = gsub(metric, "x", names(vals))
+      aggs = vals[,eval(call), by = list(inds, x_ind, y_ind)]
+      aggs[, 
+        c("x_block", "y_block") := lapply(.SD, function(x) as.integer(floor(x / block_x_size))), 
+        .SDcols = c("x_ind", "y_ind")
+      ]
+      aggs[, `:=`(block_xind = x_ind - x_block * block_x_size,
+                  block_yind = y_ind - y_block * block_y_size)]
+      aggs[, block_inds := 1 + block_xind + block_yind * block_x_size]
 
-      blocks = vals[, lapply(.SD, function(x) as.integer(floor(x / block_x_size))), .SDcols = c("x_ind", "y_ind")]
-      colnames(blocks) = c("x_blocks", "y_blocks")
-      vals = cbind(vals, blocks)
-      df_unique = unique(blocks)
-      df_unique = df_unique[x_blocks >= 0 & x_blocks <= floor(xsize / block_x_size) & y_blocks >= 0 & y_blocks <= floor(ysize / block_y_size)]
-      total_rows = nrow(df_unique)
+      blocks = aggs[,list(vals=list(.SD)) , by=list(x_block, y_block), .SDcols=c(stats, "block_inds")]
+
+      thisEnv = new.env()
+      assign("ii", 0, thisEnv)
+      total_rows = nrow(blocks)
       # ii = 1
-      for (ii in 1:total_rows) {
+      invisible(apply(blocks, 1, function(row) {
+        ii = get("ii", thisEnv) + 1
+        assign("ii", ii, thisEnv)
+        
         message(sprintf("\rProcessing blocks...%.2f%%", (100.0 * ii) / total_rows), appendLF = F)
-        row = df_unique[ii,]
-        x_block = row$x_blocks
-        y_block = row$y_blocks
-        this_vals = vals[x_blocks == x_block & y_blocks == y_block]
         agg1 = data.table::as.data.table(
-        lapply(bands, function(x)x[[x_block, y_block]]))
-
-
-        this_vals[, x_ind := x_ind - x_block * block_x_size]
-        this_vals[, y_ind := y_ind - y_block * block_y_size]
-        this_vals[, inds := 1 + x_ind + y_ind * block_x_size]
-
-        agg2 = this_vals[,agg_function(eval(as.name(metric))), by = list(inds)]
-        agg1[agg2$inds] = agg_join(agg1[agg2$inds], agg2)
-
-        lapply(stats, function(x) bands[[x]][[x_block, y_block]] = agg1[[x]])
-
-      }
+          lapply(bands, function(x)x[[row$x_block, row$y_block]])
+        )
+        
+        agg1[row$vals$block_inds] = agg_join(agg1[row$vals$block_inds], row$vals[,1:(ncol(row$vals)-1)])
+        lapply(stats, function(x) bands[[x]][[row$x_block, row$y_block]] = agg1[[x]])
+      }))
       message()
-      finalize_rasts = lapply(names(finalizer), function(x) {
+      rm(list = ls(envir=thisEnv), envir= thisEnv)
+      rm(thisEnv)
+
+      close(l2b)
+    }
+    finalize_rasts = lapply(names(finalizer), function(x) {
         rast_name = sprintf("%s_%s_%s.tif", out_root, metric, x)
         message(sprintf("Writing raster: %s", rast_name))
         rast = createDataset(
@@ -391,9 +396,6 @@ level2bRasterizeStats = function(l2bDir,
         formulaCalculate(formula, bands, band)
         rast$Close()
       })
-
-      close(l2b)
-    }
 
     lapply(rasts, function(x) x$Close())
   }

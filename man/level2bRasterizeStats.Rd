@@ -24,7 +24,7 @@ level2bRasterizeStats(
 
 \item{metrics}{CharacterVector. A vector of metrics available from Level2B, as in the getLevel2BVPM documentation}
 
-\item{out_root}{Character. The root name for the raster output files, the pattern is {out_root}_{metric}_{count/m1/m2/m3/m4}.tif. This should include the full path for the file.}
+\item{out_root}{Character. The root name for the raster output files, the pattern is {out_root}\emph{{metric}}{count/m1/m2/m3/m4}.tif. This should include the full path for the file.}
 
 \item{ul_lat}{Numeric. Upper left latitude for the bounding box}
 
@@ -38,7 +38,7 @@ level2bRasterizeStats(
 
 \item{creation_options}{CharacterVector. The GDAL creation options for the tif file. Default c("COMPRESS=PACKBITS", "BIGTIFF=IF_SAFER", "TILED=YES", "BLOCKXSIZE=512", "BLOCKYSIZE=512") will create BIGTIFF if needed, with DEFLATE compression and tiled by 512x512 pixels.}
 
-\item{agg_function}{Function. An aggregate function which should return a data.table with the aggregate statistics}
+\item{agg_function}{Formula function-like. An aggregate function which should return a data.table with the aggregate statistics}
 
 \item{agg_join}{Function. A function to merge two different agg objects.}
 
@@ -51,7 +51,87 @@ Nothing. It outputs multiple raster tif files to the out_root specified path.
 This function will read multiple Level2B H5 files and aggregate into multiple rasters: count, and 1st, 2nd, 3rd and 4th moments (count, m1, m2, m3 and m4) for each metric selected, from which we can calculate statistics such as Mean, SD, Skewness and Kurtosis.
 }
 \details{
+This function will create seven different aggregate statistics
+(n, m1, m2, m3, m4, min, max). m1 to m4 are the central moments.
+One can calculate mean, standard deviation, skewness and kurtosis
+with the following formulas according to Terriberry (2007) and
+\insertCite{Joanes1998;textual}{rGEDI}:
 
+\deqn{ \bar{x} = m_1 }{mean = m1}
+
+\deqn{ s = \sqrt{\frac{m_2}{n - 1}} }{sd = sqrt(m2/(n - 1))}
+
+\deqn{ g_1 = \frac{\sqrt{n} \cdot m_3}{m_2^{1.5}} }{ g1 = (sqrt(n) * m3) / (m2^1.5)}
+
+\deqn{ g_2 = \frac{n \cdot m_4}{m_2^2} - 3 }{g2 = (n * m4) / (m2 * m2) - 3.0}
+
+\deqn{ skewness = \frac{\sqrt{n(n - 1)}}{n-2} g_1 }{skewness = sqrt((n * (n - 1))) * g1 / (n - 2)}
+
+\deqn{ kurtosis = \frac{n - 1}{(n - 2)(n - 3)}[(n + 1)g_2 + 6] }{kurtosis = ((n - 1) / ((n - 2) * (n - 3))) * ((n + 1) * g2 + 6)}
+
+The \code{agg_function} is a formula which return a data.table with the
+aggregate function to perform over the data.
+The default is:\if{html}{\out{<div class="r">}}\preformatted{~data.table(
+    n = length(x),
+    M1 = mean(x,na.rm = T),
+    M2 = e1071::moment(x, order = 2, center = TRUE, na.rm = T) * length(x),
+    M3 = e1071::moment(x, order = 3, center = TRUE, na.rm = T) * length(x),
+    M4 = e1071::moment(x, order = 4, center = TRUE, na.rm = T) * length(x),
+    min = min(x, na.rm=T),
+    max = max(x, na.rm=T)
+  )
+}\if{html}{\out{</div>}}
+
+The \code{agg_join} is a function to merge two data.table aggregates
+from the \code{agg_function}. Since the h5 files will be aggregated
+one by one, the statistics from the different h5 files should
+have a function to merge. The default function is:\if{html}{\out{<div class="r">}}\preformatted{function(x1, x2) \{
+    combined = data.table()
+    x1$n[is.na(x1$n)] = 0
+    x1$M1[is.na(x1$M1)] = 0
+    x1$M2[is.na(x1$M2)] = 0
+    x1$M3[is.na(x1$M3)] = 0
+    x1$M4[is.na(x1$M4)] = 0
+    x1$max[is.na(x1$max)] = -Inf
+    x1$min[is.na(x1$min)] = Inf
+
+    combined$n = x1$n + x2$n
+
+    delta = x2$M1 - x1$M1
+    delta2 = delta * delta
+    delta3 = delta * delta2
+    delta4 = delta2 * delta2
+
+    combined$M1 = (x1$n * x1$M1 + x2$n * x2$M1) / combined$n
+
+    combined$M2 = x1$M2 + x2$M2 +
+      delta2 * x1$n * x2$n / combined$n
+
+    combined$M3 = x1$M3 + x2$M3 +
+      delta3 * x1$n * x2$n * (x1$n - x2$n) / (combined$n * combined$n)
+    combined$M3 = combined$M3 + 3.0 * delta * (x1$n * x2$M2 - x2$n * x1$M2) / combined$n
+
+    combined$M4 = x1$M4 + x2$M4 + delta4 * x1$n * x2$n * (x1$n * x1$n - x1$n * x2$n + x2$n * x2$n) /
+      (combined$n * combined$n * combined$n)
+    combined$M4 = combined$M4 + 6.0 * delta2 * (x1$n * x1$n * x2$M2 + x2$n * x2$n * x1$M2) / (combined$n * combined$n) +
+      4.0 * delta * (x1$n * x2$M3 - x2$n * x1$M3) / combined$n
+
+    combined$min = pmin(x1$min, x2$min, na.rm=F)
+    combined$max = pmax(x1$max, x2$max, na.rm=F)
+    return(combined)
+\}
+}\if{html}{\out{</div>}}
+
+The \code{finalizer} is a list of formulas to generate the final
+rasters based on the intermediate statistics from the previous
+functions. The default \code{finalizer} will calculate the \code{sd},
+\code{skewness} and \code{kurtosis} based on the \code{M2}, \code{M3}, \code{M4} and \code{n}
+values. It is defined as:\if{html}{\out{<div class="r">}}\preformatted{list(
+  sd = ~sqrt(M2/(n - 1)),
+  skew = ~sqrt((n * (n - 1))) * ((sqrt(n) * M3) / (M2^1.5)) / (n - 2),
+  kur = ~((n - 1) / ((n - 2) * (n - 3))) * ((n + 1) * ((n * M4) / (M2^2) - 3.0) + 6)
+)
+}\if{html}{\out{</div>}}
 }
 \examples{
 # Specifying the path to GEDI level2B data (zip file)
@@ -80,20 +160,20 @@ lon_to_met_factor = 1 / 111320
 xres = lon_to_met_factor * res
 yres = lat_to_met_factor * res
 
-agg_function = function(x) data.table(
-    min = min(x), 
-    max = max(x), 
-    sum = sum(x), 
+agg_function = ~data.table(
+    min = min(x),
+    max = max(x),
+    sum = sum(x),
     n = length(x))
 
 agg_join = function(agg1, agg2) {
 agg1[is.na(agg1)] = 0
 data.table(
-    min = pmin(agg1$min, agg2$min), 
-    max = pmax(agg1$max, agg2$max), 
-    sum = agg1$sum + agg2$sum, 
+    min = pmin(agg1$min, agg2$min),
+    max = pmax(agg1$max, agg2$max),
+    sum = agg1$sum + agg2$sum,
     n = agg1$n + agg2$n
-) 
+)
 }
 
 finalizer = list(
@@ -102,7 +182,7 @@ finalizer = list(
 )
 
 level2bRasterizeStats(
-  outdir,
+  l2bDir = outdir,
   metrics = c("rh100"),
   out_root = file.path(outdir, "output"),
   ul_lat = ul_lat,

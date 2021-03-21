@@ -227,9 +227,9 @@ a.1) Metrics available to GEDI
 \item \emph{cover} Canopy cover (fraction) from area of Gaussian fitted ground. Uses rho_v=0.57 and rho_g=0.4.
 \item \emph{leading edge ext} Leading edge extent (m), from Lefksy et al (2007).
 \item \emph{trailing edge extent} Trailing edge extent (m), from Lefksy et al (2007).
-\item \emph{rhGauss 0-100} RH metrics, 0%-100%, using ground from Gaussian fitting (m).
-\item \emph{rhMax 0-100} RH metrics, 0%-100%, using ground from lowest maximum (m).
-\item \emph{rhInfl 0-100} RH metrics, 0%-100%, using ground from inflection points (m).
+\item \emph{rhGauss 0-100} RH metrics, 0\%-100\%, using ground from Gaussian fitting (m).
+\item \emph{rhMax 0-100} RH metrics, 0\%-100\%, using ground from lowest maximum (m).
+\item \emph{rhInfl 0-100} RH metrics, 0\%-100\%, using ground from inflection points (m).
 \item \emph{gaussHalfCov} Canopy cover (fraction) from double the energy beneath the Gaussian ground. Uses rho_v=0.57 and rho_g=0.4.
 \item \emph{maxHalfCov} Canopy cover (fraction) from double the energy beneath the lowest maximum ground. Uses rho_v=0.57 and rho_g=0.4.
 \item \emph{infHalfCov} Canopy cover (fraction) from double the energy beneath the inflection point ground. Uses rho_v=0.57 and rho_g=0.4.
@@ -237,7 +237,7 @@ a.1) Metrics available to GEDI
 \item \emph{lon} Footprint centre longitude in projection of ALS data (m).
 \item \emph{lat} Footprint centre latitude in projection of ALS data (m).
 \item \emph{waveEnergy} Total energy within waveform (will be 1 scaled by noise for simulations).
-\item \emph{blairSense} Blair's sensitivity metric. Canopy cover at which this SNR would have90% chance of detecting ground (does not account for rho_v/rho_g).
+\item \emph{blairSense} Blair's sensitivity metric. Canopy cover at which this SNR would have90\% chance of detecting ground (does not account for rho_v/rho_g).
 \item \emph{FHD} Foliage height diversity
 \item \emph{niM2} Wenge Ni's biomass metric, equal to the sum of the RH metrics to the power of 2 (unpublished)
 \item \emph{niM2.1} Wenge Ni's biomass metric, equal to the sum of the RH metrics to the power of 2.1 (unpublished)
@@ -250,7 +250,7 @@ a.2) Metrics unavailable to GEDI
 \item \emph{true top} Levation of highest point of waveform (m), without noise. Includes pulse blurring.
 \item \emph{ground slope} Effective ground slope (degrees), from width of ground return. Includes roughness.
 \item \emph{ALS cover} Canopy cover (fraction) from ALS data. Uses rho_v=0.57 and rho_g=0.4.
-\item \emph{rhReal 0-100} RH metrics, 0%-100%, using "true" ground from ALS data (m).
+\item \emph{rhReal 0-100} RH metrics, 0\%-100\%, using "true" ground from ALS data (m).
 \item \emph{groundOverlap} Fraction of ground return overlapping with canopy return. A measure of understorey.
 \item \emph{groundMin} Depth of minimum between ground and canopy return. A measure of understorey.
 \item \emph{groundInfl} d2y/dx2 of inflection point between ground and canopy return. A measure of understorey.
@@ -270,15 +270,15 @@ a.3) System settings
 b) Signal processing description
 \itemize{
 \item \emph{Gaussian fitting} Used for "gHeight", "rhGauss" and "gaussHalfCov".
-The waveform is denoised (mean+5*sigma, noise tracking to avoid truncation), smoothed (pSigma*0.75) and Gaussians fitted with Levenberg-Marquardt optimisation.
-The center of the lowest Gaussian containing at least 0.5% of the waveform energy is selected as the ground.
+The waveform is denoised (mean+5\emph{sigma, noise tracking to avoid truncation), smoothed (pSigma}0.75) and Gaussians fitted with Levenberg-Marquardt optimisation.
+The center of the lowest Gaussian containing at least 0.5\% of the waveform energy is selected as the ground.
 
 \item \emph{Maximum} Used for "maxGround", "rhMax" and "maxHalfCov".
-The waveform is denoised (mean+5*sigma, noise tracking to avoid truncation), smoothed (pSigma*0.75).
+The waveform is denoised (mean+5\emph{sigma, noise tracking to avoid truncation), smoothed (pSigma}0.75).
 The lowest maximum is taken as the ground.
 
 \item \emph{Inflection points} Used for "inflGround", "rhInfl" and "inflHalfCov".
-The waveform is denoised (mean+5*sigma, noise tracking to avoid truncation), smoothed (pSigma*0.75).
+The waveform is denoised (mean+5\emph{sigma, noise tracking to avoid truncation), smoothed (pSigma}0.75).
 The centre of gravity between the lowest two inflection points is taken as the ground.
 
 \item \emph{Half covers} Used for "gaussHalfCov", "maxHalfCov" and "inflHalfCov".
@@ -287,7 +287,6 @@ Double that is the ground energy.
 Calculate canopy cover, correcting for \eqn{\rho_v}{rho_v} and \eqn{\rho_g}{rho_g}.
 
 \eqn{cover = \frac{E_{can}}{E_{can} + E_g*\frac{\rho_v}{\rho_g}}}{cover = (E_can/(E_can + E_g * (rho_v/rho_g)))}
-
 
 Where \eqn{E_{can}}{E_can} is the canopy energy, \eqn{E_g}{E_g} is the ground energy, \eqn{\rho_v}{rho_v} is the vegetation reflectance and \eqn{\rho_g}{rho_g} is the ground reflectance.
 

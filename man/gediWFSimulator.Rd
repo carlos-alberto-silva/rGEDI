@@ -48,7 +48,7 @@ Single footprint, list of footprints, or grid of footprints}
 
 \item{coords}{lon lat numeric vector. footprint coordinate in same system as lasfile}
 
-\item{listCoord}{name. Text file with list of coordinates. Pattern: X Y `[waveID]` `[geoCoordsX]` `[geoCoordsY]`. `[]` are optional, separated by spaces.}
+\item{listCoord}{name. Text file with list of coordinates. Pattern: X Y \verb{[waveID]} \verb{[geoCoordsX]} \verb{[geoCoordsY]}. \verb{[]} are optional, separated by spaces.}
 
 \item{gridBound}{minX maxX minY maxY numeric vector. make a grid of waveforms in this box}
 
