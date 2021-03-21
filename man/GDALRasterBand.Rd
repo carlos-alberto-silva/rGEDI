@@ -52,9 +52,9 @@ Efficiently reads a raster block
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{iXBlock}}{Integer. The i-th column block to access. The `iXBlock` will be offset $ BLOCKXSIZE \times iXBlock $ from the origin.}
+\item{\code{iXBlock}}{Integer. The i-th column block to access. The \code{iXBlock} will be offset \eqn{ BLOCKXSIZE \times iXBlock }{BLOCKXSIZE x iXBlock} from the origin.}
 
-\item{\code{iYBlock}}{Integer. The i-th row block to access. The `iYBlock` will be offset $ BLOCKYSIZE \times iYBlock $ from the origin.}
+\item{\code{iYBlock}}{Integer. The i-th row block to access. The \code{iYBlock} will be offset \eqn{ BLOCKYSIZE \times iYBlock }{BLOCKYSIZE x iYBlock} from the origin.}
 }
 \if{html}{\out{</div>}}
 }
@@ -78,9 +78,9 @@ Efficiently writes a raster block
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{iXBlock}}{Integer. The i-th column block to write. The `iXBlock` will be offset $ BLOCKXSIZE \times iXBlock $ from the origin.}
+\item{\code{iXBlock}}{Integer. The i-th column block to write. The \code{iXBlock} will be offset \eqn{ BLOCKXSIZE \times iXBlock }{BLOCKXSIZE x iXBlock} from the origin.}
 
-\item{\code{iYBlock}}{Integer. The i-th row block to write. The `iYBlock` will be offset $ BLOCKYSIZE \times iYBlock $ from the origin.}
+\item{\code{iYBlock}}{Integer. The i-th row block to write. The \code{iYBlock} will be offset \eqn{ BLOCKYSIZE \times iYBlock }{BLOCKYSIZE x iYBlock} from the origin.}
 
 \item{\code{buffer}}{RawVector/IntegerVector/NumericVector depending on the GDALDataType. This should be a 1D vector with size equal to raster $ BLOCKXSIZE \times BLOCKYSIZE $.}
 }
