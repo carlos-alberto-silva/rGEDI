@@ -51,7 +51,7 @@ These are the biophysical variables and additional information extracted by defa
 \item \emph{cover} Total canopy cover
 }
 
-A special column `pavd` is available, which is the sum of the pavd_z.
+A special column \code{pavd} is available, which is the sum of the pavd_z.
 
 The following columns are also available:
 \itemize{

@@ -288,7 +288,6 @@ Calculate canopy cover, correcting for \eqn{\rho_v}{rho_v} and \eqn{\rho_g}{rho_
 
 \eqn{cover = \frac{E_{can}}{E_{can} + E_g*\frac{\rho_v}{\rho_g}}}{cover = (E_can/(E_can + E_g * (rho_v/rho_g)))}
 
-
 Where \eqn{E_{can}}{E_can} is the canopy energy, \eqn{E_g}{E_g} is the ground energy, \eqn{\rho_v}{rho_v} is the vegetation reflectance and \eqn{\rho_g}{rho_g} is the ground reflectance.
 
 \item \emph{Edge extents} These are described in: Lefsky, Michael A., Michael Keller, Yong Pang, Plinio B. De Camargo, and Maria O. Hunter.
