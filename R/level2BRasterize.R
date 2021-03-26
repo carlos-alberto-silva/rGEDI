@@ -250,14 +250,18 @@ level2bRasterizeStats = function(l2bDir,
     metrics, out_root, ul_lat, ul_lon, lr_lat, lr_lon,
     res, creation_options = def_co, agg_function = default_agg_function, agg_join = default_agg_join, finalizer=default_finalizer
     ) {
-  x_blocks =
-        y_blocks =
-        l2b_quality_flag =
-        x_ind =
-        longitude_bin0 =
-        y_ind =
-        latitude_bin0 =
-        inds = NULL
+  block_inds =
+  block_xind =
+  block_yind =
+  inds = 
+  l2b_quality_flag =
+  latitude_bin0 =
+  longitude_bin0 =
+  x_block =
+  y_block = 
+  x_ind =
+  y_ind =
+    NULL
   projstring = 'GEOGCS["WGS 84",
     DATUM["WGS_1984",
         SPHEROID["WGS 84",6378137,298.257223563,
