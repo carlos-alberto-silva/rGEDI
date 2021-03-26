@@ -17,7 +17,33 @@ An S4 object of class "gedi.level2a".}
 
 \item{rh}{Integer vector. Specify which RH metrics to plot except rh0 and rh100, default c(25, 50, 75).}
 
-\item{...}{Will be passed to the main plot.}
+\item{wf_args}{List. A list of arguments to pass to the waveform \code{graphics::plot()}.}
+
+\item{cumEn_args}{List. A list of arguments to pass to the cumulative energy curve \code{graphics::plot()}.}
+
+\item{height_axis_args}{List. A list of arguments to pass to the height \code{graphics::axis()}.}
+
+\item{height_axis_text_args}{List. A list of arguments to pass to the height_axis label written as \code{graphics::text()}.}
+
+\item{rh_arrow_args}{List. A list of arguments to pass to the rh \code{graphics::arrows()}.}
+
+\item{rh_text_args}{List. A list of arguments to pass to the rh \code{graphics::text()}.}
+
+\item{rh0_text_args}{List. A list of arguments to pass to the rh0 \code{graphics::text()}.}
+
+\item{rh0_abline_args}{List. A list of arguments to pass to the rh0 \code{graphics::abline()}.}
+
+\item{rh100_text_args}{List. A list of arguments to pass to the rh100 \code{graphics::text()}.}
+
+\item{rh100_abline_args}{List. A list of arguments to pass to the rh100 \code{graphics::abline()}.}
+
+\item{gz_text_args}{List. A list of arguments to pass to the gz \code{graphics::text()}.}
+
+\item{gz_abline_args}{List. A list of arguments to pass to the gz \code{graphics::abline()}.}
+
+\item{par_args}{List. A list of arguments to pass to the \code{graphics::par()}.}
+
+\item{...}{Will be passed to the main wf plot.}
 }
 \value{
 Returns a raster layer(s) of selected GEDI Canopy Cover and Vertical Profile Metric(s)
@@ -37,16 +63,42 @@ level2A_fp_zip <- system.file("extdata",
                   package="rGEDI")
 
 # Unzipping GEDI level1B data
-level1Bpath <- unzip(level1B_fp_zip,exdir = outdir)
-level2Apath <- unzip(level2A_fp_zip,exdir = outdir)
 
 # Reading GEDI level1B and Level2A data (h5 file)
-level1b<-readLevel1B(level1Bpath=level1Bpath)
-level2a<-readLevel2A(level2Apath=level2Apath)
 
-shot_number = "19640521100108408"
 
-plotWFMetrics(level1b, level2a, shot_number, rh=c(25, 50, 75, 90))
+
+#
+plotWFMetrics(level1b, level2a, shot_number,
+             rh = c(25, 50, 75, 90),
+             main = sprintf("Shot number: \%s",
+                          shot_number))
+
+# Only elevation axis
+plotWFMetrics(level1b, level2a, shot_number,
+             rh=c(25, 50, 75, 90),
+             par_args = list(
+               mar = c(5, 4, 4, 1)),
+             height_axis_args = list(col=NA, col.ticks=NA),
+             main=sprintf("Shot Number \%s",
+                          shot_number),
+)
+#'
+# Only height axis
+plotWFMetrics(level1b, level2a, shot_number,
+            rh=c(25, 50, 75, 90),
+            wf_args = list(
+              ylab=NA, yaxt="n",
+              main=sprintf("Shot Number \%s",
+                          shot_number)),
+            par_args = list(
+              mar = c(5, 0, 4, 1),
+              oma = c(0,4,0,0)),
+            height_axis_args = list(side=2),
+            height_axis_text_args = list(
+              x=grconvertX(0, "npc"),
+              adj=c(0.5, -4.7))
+)
 
 close(level1b)
 close(level2a)

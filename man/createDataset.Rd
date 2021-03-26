@@ -84,7 +84,7 @@ band[[0,0]] = 1:(512*512)
 
 # Calculate the square - 10
 formulaCalculate(
-    formula = "x*2 - 10", 
+    formula = ~x*2 - 10, 
     data = list(x = band), 
     updateBand = band
 )

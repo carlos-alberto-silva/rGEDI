@@ -31,7 +31,7 @@ Characteristics. Flag indicating likely invalid waveform (1=valid, 0=invalid).
 \item \emph{lon_lowestmode} Longitude of center of lowest mode
 \item \emph{elev_highestreturn} Elevation of highest detected return relative to reference ellipsoid Meters
 \item \emph{elev_lowestmode} Elevation of center of lowest mode relative to reference ellipsoid
-\item \emph{rh} Relative height metrics at 1\\% interval
+\item \emph{rh} Relative height metrics at 1\% interval
 }
 }
 \examples{

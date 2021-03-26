@@ -145,7 +145,7 @@ GDALOpen = function(filename, readonly = TRUE) {
 
 #' GDALDataset [[]] accessor
 #' @description
-#' This function gives access to the GDALRasterBand using [[i]], where i is the band index to return.
+#' This function gives access to the GDALRasterBand using \[\[i\]\], where i is the band index to return.
 #' @param x GDALDatset. Automatically obtained from GDALDataset[[]] call.
 #' @param slice Integer. The index for the band to access.
 #' @return An object of GDALRasterBand R6 class.
@@ -269,7 +269,7 @@ GDALRasterBand <- R6::R6Class("GDALRasterBand",
 
 #' GDALRasterBand [[]]= setter
 #' @description
-#' This function gives access to the GDALRasterBand using [[i]], where i is the band index to return.
+#' This function gives access to the GDALRasterBand using \[\[i\]\], where i is the band index to return.
 #' @param x GDALRasterBand. Automatically obtained from GDALDataset[[]] call.
 #' @param blockX Integer. The x index for block to access.
 #' @param blockY Integer. The y index for block to access.
@@ -284,7 +284,7 @@ GDALRasterBand <- R6::R6Class("GDALRasterBand",
 
 #' GDALRasterBand [[]] getter
 #' @description
-#' This function gives access to the GDALRasterBand using [[i]], where i is the band index to return.
+#' This function gives access to the GDALRasterBand using \[\[i\]\], where i is the band index to return.
 #' @param x GDALRasterBand. Automatically obtained from GDALDataset[[]] call.
 #' @param blockX Integer. The x index for block to access.
 #' @param blockY Integer. The y index for block to access.

@@ -19,7 +19,7 @@ plot(x, y, ...)
 
 \item{...}{will be passed to the main plot}
 
-\item{relative}{if TRUE, the Waveform Amplitude will be showed in percentage (\\%)}
+\item{relative}{if TRUE, the Waveform Amplitude will be showed in percentage (\%)}
 
 \item{polygon}{if TRUE, the polygon will be added to the plot}
 
