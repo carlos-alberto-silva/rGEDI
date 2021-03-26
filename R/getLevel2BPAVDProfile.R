@@ -73,7 +73,7 @@ getLevel2BPAVDProfile<-function(level2b){
       height_lastbin=level2b_i[["geolocation/height_lastbin"]][],
       height_bin0=level2b_i[["geolocation/height_bin0"]][],
       pavd_z=t(level2b_i[["pavd_z"]][,1:level2b_i[["pavd_z"]]$dims[2]]))
-    m.dt<-rbind(m.dt,m)
+    m.dt<-data.table::rbindlist(list(m.dt,m))
   }
   colnames(m.dt)<-c("beam","shot_number","algorithmrun_flag",
                     "l2b_quality_flag","delta_time","lat_lowestmode",

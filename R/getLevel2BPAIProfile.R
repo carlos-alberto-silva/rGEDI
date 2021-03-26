@@ -73,7 +73,7 @@ getLevel2BPAIProfile<-function(level2b){
       height_lastbin=level2b_i[["geolocation/height_lastbin"]][],
       height_bin0=level2b_i[["geolocation/height_bin0"]][],
       pai_z=t(level2b_i[["pai_z"]][,1:level2b_i[["pai_z"]]$dims[2]]))
-    m.dt<-rbind(m.dt,m)
+    m.dt<-data.table::rbindlist(list(m.dt,m))
   }
   colnames(m.dt)<-c("beam","shot_number","algorithmrun_flag",
                     "l2b_quality_flag","delta_time","lat_lowestmode",

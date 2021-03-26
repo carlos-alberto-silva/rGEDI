@@ -216,7 +216,7 @@ getLevel2BVPM <- function(level2b, cols = c(
       }
       m[, eval(col) := level2b_i[[h5.address]][]]
     }
-    m.dt <- rbind(m.dt, m)
+    m.dt <- data.table::rbindlist(list(m.dt, m))
   }
   close(pb)
   return(m.dt)

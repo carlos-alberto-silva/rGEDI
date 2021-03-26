@@ -82,7 +82,7 @@ getLevel2AM<-function(level2a){
       elev_highestreturn=level2a_i[["elev_highestreturn"]][],
       elev_lowestmode=level2a_i[["elev_lowestmode"]][],
       rh)
-    rh.dt<-rbind(rh.dt,rhs)
+    rh.dt <- data.table::rbindlist(list(rh.dt,rhs))
     }
   }
 
