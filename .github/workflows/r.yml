@@ -65,6 +65,10 @@ jobs:
       - name: Install system dependencies
         if: runner.os == 'Linux'
         run: |
+          git pull
+          ls
+          ls src
+          ls src/libclidar
           sudo apt-get install -y xclip xsel
           while read -r cmd
           do
