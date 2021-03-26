@@ -7,7 +7,7 @@
 polyStatsLevel2BVPM(level2BVPM, func, id=NULL)
 }
 \arguments{
-\item{level2BVPM}{A GEDI Level2BVPM object (output of \code{\link[rGEDI:getLevel2BVPM]{getLevel2BVPM}} function).
+\item{level2BVPM}{A GEDI Level2BVPM object (output of \code{\link[=getLevel2BVPM]{getLevel2BVPM()}} function).
 An S4 object of class "data.table".}
 
 \item{func}{The function to be applied for computing the defined statistics}
@@ -15,7 +15,7 @@ An S4 object of class "data.table".}
 \item{id}{A vector containing the polygon id for each GEDI observation. Default is NULL}
 }
 \value{
-Returns an S4 object of class \code{\link[data.table:data.table]{data.table-class}}
+Returns an S4 object of class \link[data.table:data.table]{data.table::data.table}
 containting Statistics of GEDI level2BVPM defined metrics
 }
 \description{
@@ -76,5 +76,5 @@ head(cover_metrics)
 close(level2b)
 }
 \seealso{
-\href{https://lpdaac.usgs.gov/products/gedi02_bv002/}{https://lpdaac.usgs.gov/products/gedi02_bv002/}
+\url{https://lpdaac.usgs.gov/products/gedi02_bv002/}
 }

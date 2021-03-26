@@ -4,14 +4,14 @@
 #'
 #'@usage getLevel1BWF(level1b, shot_number)
 #'
-#'@param level1b A GEDI Level1B object (output of \code{\link[rGEDI:readLevel1B]{readLevel1B}} function). A S4 object of class "gedi.level1b".
+#'@param level1b A GEDI Level1B object (output of [readLevel1B()] function). A S4 object of class "gedi.level1b".
 #'@param shot_number Shot number. A scalar representing the shot number of a giving pulse.
 #'
 #'@return Returns an S4 object of class "gedi.fullwaveform".
 #'
-#'@details Shot numbers can be extracted using \code{\link[rGEDI:readLevel1B]{readLevel1B}} function.
+#'@details Shot numbers can be extracted using [readLevel1B] function.
 #'
-#'@seealso \href{https://lpdaac.usgs.gov/products/gedi01_bv002/}{https://lpdaac.usgs.gov/products/gedi01_bv002/}
+#'@seealso \url{https://lpdaac.usgs.gov/products/gedi01_bv002/}
 #'
 #'@examples
 #'# Specifying the path to GEDI level1B data (zip file)

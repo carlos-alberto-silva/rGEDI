@@ -7,7 +7,7 @@
 plotPAIProfile(level2BPAIProfile, beam = "BEAM0101", elev = TRUE)
 }
 \arguments{
-\item{level2BPAIProfile}{A GEDI Level2B object (output of \code{\link[rGEDI:getLevel2BPAIProfile]{getLevel2BPAIProfile}} function).
+\item{level2BPAIProfile}{A GEDI Level2B object (output of \code{\link[=getLevel2BPAIProfile]{getLevel2BPAIProfile()}} function).
 An S4 object of class "data.table".}
 
 \item{beam}{Select GEDI beam. Default is "BEAM0101". See details section.}
@@ -16,13 +16,13 @@ An S4 object of class "data.table".}
 height will be used instead.}
 }
 \value{
-Returns a ggplot object. See \code{\link[ggplot2:ggplot]{ggplot}} package.
+Returns a ggplot object. See \link[ggplot2:ggplot]{ggplot2::ggplot} package.
 }
 \description{
 This functions plots Plant Area Index (PAI) Profile (GEDI level2B)
 }
 \details{
-list of GEDI beams. See the output of \code{\link[rGEDI:getLevel2BPAIProfile]{getLevel2BPAIProfile}} function.
+list of GEDI beams. See the output of \code{\link[=getLevel2BPAIProfile]{getLevel2BPAIProfile()}} function.
 \itemize{
 \item \emph{BEAM0000}
 \item \emph{BEAM0001}
@@ -58,5 +58,5 @@ gprofile<-plotPAIProfile(level2BPAIProfile, beam="BEAM0101", elev=TRUE)
 close(level2b)
 }
 \seealso{
-\href{https://lpdaac.usgs.gov/products/gedi02_bv002/}{https://lpdaac.usgs.gov/products/gedi02_bv002/}
+\url{https://lpdaac.usgs.gov/products/gedi02_bv002/}
 }

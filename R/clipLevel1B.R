@@ -4,17 +4,17 @@
 #'
 #'@usage clipLevel1B(level1b, xmin, xmax, ymin, ymax, output)
 #'
-#'@param level1b A GEDI Level1B object (output of \code{\link[rGEDI:readLevel1B]{readLevel1B}} function).
-#'An S4 object of class "gedi.level1b".
+#'@param level1b A [`gedi.level1b-class`] object (output of [readLevel1B()] function).
+#'An S4 object of class [`gedi.level1b-class`].
 #'@param xmin Numeric. West longitude (x) coordinate of the bounding rectangle, in decimal degrees.
 #'@param xmax Numeric. East longitude (x) coordinate of the bounding rectangle, in decimal degrees.
 #'@param ymin Numeric. South latitude (y) coordinate of the bounding rectangle, in decimal degrees.
 #'@param ymax Numeric. North latitude (y) coordinate of the bounding rectangle, in decimal degrees.
 #'@param output Optional character path where to save the new hdf5file. The default stores a temporary file only.
 #'
-#'@return Returns a list of S4 objects of class "gedi.level1b" containing clipped GEDI Level1B data.
+#'@return Returns a list of S4 objects of class [`gedi.level1b-class`] containing clipped GEDI Level1B data.
 #'
-#'@seealso \href{https://lpdaac.usgs.gov/products/gedi01_bv002/}{https://lpdaac.usgs.gov/products/gedi01_bv002/}
+#'@seealso \url{https://lpdaac.usgs.gov/products/gedi01_bv002/}
 #'
 #'@examples
 #'\donttest{
@@ -72,14 +72,14 @@ clipLevel1B = function(level1b, xmin, xmax, ymin, ymax, output=""){
 #'@description This function clips GEDI Level1B (geolocated waveforms) data within a given bounding geometry
 #'
 #'
-#'@param level1b A GEDI Level1B object (output of \code{\link[rGEDI:readLevel1B]{readLevel1B}} function).
+#'@param level1b A [`gedi.level1b-class`] object (output of [readLevel1B()] function).
 #'An S4 object of class "gedi.level1b".
-#'@param polygon_spdf Polygon. An object of class \code{\link[sp]{SpatialPolygonsDataFrame-class}},
-#'which can be loaded as an ESRI shapefile using \code{\link[raster:shapefile]{raster::shapefile()}} function in the \emph{raster} package.
-#'@param output Optional character path where to save the new hdf5file. The default stores a temporary file only.
-#'@param split_by Polygon id. If defined, GEDI data will be clipped by each polygon using the attribute specified by \code{split_by} from the attribute table.
+#'@param polygon_spdf Polygon. An object of class [`sp::SpatialPolygonsDataFrame`][sp::SpatialPolygonsDataFrame-class] from `sp` package,
+#'which can be loaded as an ESRI shapefile using [raster::shapefile()].
+#'@param output Optional character path where to save the new [`hdf5r::H5File`][hdf5r::H5File-class]. The default stores a temporary file only.
+#'@param split_by Polygon id. If defined, GEDI data will be clipped by each polygon using the attribute specified by `split_by` from the attribute table.
 #'
-#'@return Returns a list of S4 object of class "gedi.level1b" containing clipped GEDI Level1B data.
+#'@return Returns a list of S4 object of class [`gedi.level1b-class`] containing clipped GEDI Level1B data.
 #'
 #'@examples
 #'\donttest{

@@ -5,11 +5,11 @@ requireNamespace("data.table")
 
 #' Class for GEDI level1B
 #'
-#' @slot h5 Object of class H5File from \emph{hdf5r} package containing the
+#' @slot h5 Object of class [`H5File`][hdf5r::H5File-class] from `hdf5r` package containing the
 #'GEDI level1B products: geolocated Waveforms
 #'
-#' @seealso \code{\link[hdf5r:H5File-class]{hdf5r::H5File}} in the \emph{hdf5r} package and
-#'\href{https://lpdaac.usgs.gov/products/gedi01_bv002/}{https://lpdaac.usgs.gov/products/gedi01_bv002/}
+#' @seealso [`H5File`][hdf5r::H5File-class] in the `hdf5r` package and
+#' \url{https://lpdaac.usgs.gov/products/gedi01_bv002/}
 #'
 #' @import methods
 #' @export
@@ -20,11 +20,11 @@ gedi.level1b <- setClass(
 
 #' Class for GEDI level2A
 #'
-#' @slot h5 Object of class H5File from \emph{hdf5r} package containing the
+#' @slot h5 Object of class H5File from `hdf5r` package containing the
 #'GEDI level2A products: ground elevation, canopy top height, and relative heights (RH).
 #'
-#' @seealso \code{\link[hdf5r:H5File-class]{hdf5r::H5File}} in the \emph{hdf5r} package and
-#'\href{https://lpdaac.usgs.gov/products/gedi02_av002/}{https://lpdaac.usgs.gov/products/gedi02_av002/}
+#' @seealso [`H5File`][hdf5r::H5File-class] in the `hdf5r` package and
+#' \url{https://lpdaac.usgs.gov/products/gedi02_av002/}
 #'
 #' @import methods
 #' @export
@@ -35,12 +35,12 @@ gedi.level2a <- setClass(
 
 #' Class for GEDI level2B
 #'
-#' @slot h5 Object of class H5File from \emph{hdf5r} package containing the
+#' @slot h5 Object of class [`H5File`][hdf5r::H5File-class] from `hdf5r` package containing the
 #'GEDI level2B products: canopy cover, Plant Area Index (PAI), Plant Area Volume Density (PAVD),
 #'and Foliage Height Diversity (FHD).
 #'
-#' @seealso \code{\link[hdf5r:H5File-class]{hdf5r::H5File}} in the \emph{hdf5r} package and
-#'\href{https://lpdaac.usgs.gov/products/gedi02_bv002/}{https://lpdaac.usgs.gov/products/gedi02_bv002/}
+#' @seealso [`H5File`][hdf5r::H5File-class] in the `hdf5r` package and
+#' \url{https://lpdaac.usgs.gov/products/gedi02_bv002/}
 #'
 #' @import methods
 #' @export
@@ -60,7 +60,7 @@ gedi.level2b <- setClass(
 #' for calibration and validation of spaceborne missions. Earth and Space Science.
 #' \doi{10.1029/2018EA000506}
 #'
-#' ii) gediSimulator: \href{https://bitbucket.org/StevenHancock/gedisimulator/src/master/}{https://bitbucket.org/StevenHancock/gedisimulator/src/master/}
+#' ii) gediSimulator: \url{https://bitbucket.org/StevenHancock/gedisimulator/src/master/}
 #'
 #' @import methods
 #' @export
@@ -84,14 +84,14 @@ gedi.fullwaveform <- setClass(
 
 #'Plot GEDI* object
 #'
-#'@param x An object of class "gedi.fullwaveform". (output of \code{\link[rGEDI:getLevel1BWF]{getLevel1BWF}} function)
+#'@param x An object of class [`gedi.fullwaveform-class`] (output of [getLevel1BWF()] function)
 #'@param y not used (inherited from R base)
-#'@param ... will be passed to the main plot
 #'
-#'@param relative if TRUE, the Waveform Amplitude will be showed in percentage (\%)
+#'@param relative if TRUE, the Waveform Amplitude will be showed in percentage (%)
 #'@param polygon if TRUE, the polygon will be added to the plot
 #'
-#'@param method methods used for simulating the GEDI full-waveform ("RXWAVEINT","RXWAVEINT" or "RXWAVEINT"). Default is "RXWAVECOUNT".
+#'@param method methods used for simulating the GEDI full-waveform ("RXWAVEINT", "RXWAVECOUNT" or "RXWAVEFRAC"). Default is "RXWAVECOUNT".
+#'@param ... will be passed to the main plot
 #'@return No return value
 #'
 #' @export
@@ -99,7 +99,7 @@ gedi.fullwaveform <- setClass(
 setGeneric("plot", function(x, y, ...)
   standardGeneric("plot"))
 
-#'@description For gedi.fullwaveform: will plot the full waveform\cr\cr
+#'@description For [`gedi.fullwaveform-class`]: will plot the full waveform
 #'@examples
 #'# Specifying the path to GEDI level1B data (zip file)
 #'outdir = tempdir()
@@ -163,7 +163,7 @@ setMethod("plot", signature("gedi.fullwaveform", y = "missing"), function(x,rela
 })
 
 
-#'@description for gedi.level1bSim: will plot the simulated waveform
+#'@description for [`gedi.level1bSim-class`]: will plot the simulated waveform
 #'
 #'@examples
 #'outdir <- tempdir()
@@ -281,7 +281,7 @@ h5closeall = function(con, ...) {
 #' @description 
 #' Closing files will avoid locking HDF5 GEDI files.
 #' 
-#'@param con An object of class gedi*
+#'@param con An object of class `gedi.level*`
 #'@param ... Inherited from base
 #'
 #' @export
@@ -290,15 +290,15 @@ h5closeall = function(con, ...) {
 setGeneric("close", function(con, ...)
   standardGeneric("close"))
 
-#' Handles the \link[rGEDI:gedi.level1bSim-class]{\code{gedi.level1b}}.
+#' Handles the [`rGEDI::gedi.level1bSim-class`].
 #'@rdname close
 setMethod("close", signature = c("gedi.level1b"), h5closeall)
-#' Handles the \link[rGEDI:gedi.level2a-class]{\code{gedi.level2a}}.
+#' Handles the [`rGEDI::gedi.level2a-class`].
 #'@rdname close
 setMethod("close", signature = c("gedi.level2a"), h5closeall)
-#' Handles the \link[rGEDI:gedi.level2b-class]{\code{gedi.level2b}}.
+#' Handles the [`rGEDI::gedi.level2b-class`].
 #'@rdname close
 setMethod("close", signature = c("gedi.level2b"), h5closeall)
-#' Handles the \link[rGEDI:gedi.level1bSim-class]{\code{gedi.level1bSim}}.
+#' Handles the [`rGEDI::gedi.level1bSim-class`].
 #'@rdname close
 setMethod("close", signature = c("gedi.level1bSim"), h5closeall)

@@ -10,7 +10,7 @@ readLevel1B(level1Bpath)
 \item{level1Bpath}{File path pointing to GEDI level1B data. Data in HDF5 Hierarchical Data Format (.h5).}
 }
 \value{
-Returns an S4 object of class "gedi.level1b" containing GEDI level1B data.
+Returns an S4 object of class \code{\linkS4class{gedi.level1b}} containing GEDI level1B data.
 }
 \description{
 This function reads GEDI level1B products: geolocated Waveforms
@@ -32,5 +32,5 @@ close(level1b)
 }
 \seealso{
 \code{\link[hdf5r:H5File-class]{hdf5r::H5File}} in the \emph{hdf5r} package and
-\href{https://lpdaac.usgs.gov/products/gedi01_bv002/}{https://lpdaac.usgs.gov/products/gedi01_bv002/}
+\url{https://lpdaac.usgs.gov/products/gedi01_bv002/}
 }

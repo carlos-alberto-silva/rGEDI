@@ -1,20 +1,19 @@
 #'Clip GEDI Full Waveform Geolocations by Coordinates
 #'
-#'@description This function clips GEDI level1B extracted geolocation (level1BGeo)
+#'@description This function clips GEDI level1B extracted geolocation ([getLevel1BGeo()])
 #' data a within given bounding coordinates
 #'
 #'@usage clipLevel1BGeo(level1BGeo, xmin, xmax, ymin, ymax)
 #'
-#'@param level1BGeo A GEDI Level1b object (output of \code{\link[rGEDI:readLevel1B]{readLevel1B}} function).
-#'An S4 object of class "gedi.level1b".
+#'@param level1BGeo A [`data.table::data.table-class`] resulting from [getLevel1BGeo()].
 #'@param xmin Numeric. West longitude (x) coordinate of the bounding rectangle, in decimal degrees.
 #'@param xmax Numeric. East longitude (x) coordinate of the bounding rectangle, in decimal degrees.
 #'@param ymin Numeric. South latitude (y) coordinate of the bounding rectangle, in decimal degrees.
 #'@param ymax Numeric. North latitude (y) coordinate of the bounding rectangle, in decimal degrees.
 #'
-#'@return Returns an S4 object of class \code{\link[data.table:data.table]{data.table-class}}.
+#'@return Returns an S4 object of class [`data.table::data.table-class`].
 #'
-#'@seealso \href{https://lpdaac.usgs.gov/products/gedi01_bv002/}{https://lpdaac.usgs.gov/products/gedi01_bv002/}
+#'@seealso \url{https://lpdaac.usgs.gov/products/gedi01_bv002/}
 #'
 #'@examples
 #'# Specifying the path to GEDI level1B data (zip file)
@@ -79,21 +78,18 @@ clipLevel1BGeo = function(level1BGeo,xmin, xmax, ymin, ymax){
 
 #'Clip GEDI Full Waveform Geolocations by geometry
 #'
-#'@description This function clips GEDI level1B extracted geolocation (level1BGeo)
+#'@description This function clips level1BGeo extracted geolocation (level1BGeo)
 #' data within a given geometry
 #'
-#'@usage clipLevel1BGeoGeometry(level1BGeo, polygon_spdf, split_by)
-#'
-#'@param level1BGeo A GEDI Level1b object (output of \code{\link[rGEDI:readLevel1B]{readLevel1B}} function).
-#'An S4 object of class "data.table".
-#'@param polygon_spdf Polygon. An object of class \code{\link[sp]{SpatialPolygonsDataFrame-class}},
-#'which can be loaded as an ESRI shapefile using \code{\link[raster:shapefile]{raster::shapefile()}} function in the \emph{raster} package.
+#'@param level1BGeo A [`data.table::data.table-class`] resulting from [getLevel1BGeo()] function.
+#'@param polygon_spdf Polygon. An object of class [`sp::SpatialPolygonsDataFrame-class`],
+#'which can be loaded as an ESRI shapefile using [raster::shapefile] function in the \emph{raster} package.
 #'@param split_by Polygon id. If defined, GEDI data will be clipped by each polygon using the polygon id from table of attribute defined by the user.
 #'
-#'@return Returns an S4 object of class \code{\link[data.table:data.table]{data.table-class}} containing the
+#'@return Returns an S4 object of class [`data.table::data.table-class`] containing the
 #'clipped GEDI level1B extracted geolocations.
 #'
-#'@seealso \href{https://lpdaac.usgs.gov/products/gedi01_bv002/}{https://lpdaac.usgs.gov/products/gedi01_bv002/}
+#'@seealso \url{https://lpdaac.usgs.gov/products/gedi01_bv002/}
 #'
 #'@examples
 #'# Specifying the path to GEDI level1B data (zip file)

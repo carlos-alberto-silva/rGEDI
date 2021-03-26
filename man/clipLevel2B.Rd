@@ -7,7 +7,7 @@
 clipLevel2B(level2b, xmin, xmax, ymin, ymax, output = "")
 }
 \arguments{
-\item{level2b}{A GEDI Level2B object (output of \code{\link[rGEDI:readLevel2B]{readLevel2B}} function).
+\item{level2b}{A GEDI Level2B object (output of \code{\link[=readLevel2B]{readLevel2B()}} function).
 An S4 object of class "gedi.level2b".}
 
 \item{xmin}{Numeric. West longitude (x) coordinate of the bounding rectangle, in decimal degrees.}
@@ -58,5 +58,5 @@ close(level2b_clip)
 }
 }
 \seealso{
-\href{https://lpdaac.usgs.gov/products/gedi01_bv002/}{https://lpdaac.usgs.gov/products/gedi01_bv002/}
+\url{https://lpdaac.usgs.gov/products/gedi01_bv002/}
 }

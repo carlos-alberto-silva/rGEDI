@@ -7,7 +7,7 @@
 clipLevel2BVPM(level2BVPM, xmin, xmax, ymin, ymax)
 }
 \arguments{
-\item{level2BVPM}{A GEDI Level2B object (output of \code{\link[rGEDI:readLevel1B]{readLevel1B}} function).
+\item{level2BVPM}{A GEDI Level2B object (output of \code{\link[=readLevel1B]{readLevel1B()}} function).
 An S4 object of class "data.table".}
 
 \item{xmin}{Numeric. West longitude (x) coordinate of the bounding rectangle, in decimal degrees.}
@@ -19,7 +19,7 @@ An S4 object of class "data.table".}
 \item{ymax}{Numeric. North latitude (y) coordinate of the bounding rectangle, in decimal degrees.}
 }
 \value{
-Returns an S4 object of class \code{\link[data.table:data.table]{data.table-class}}
+Returns an S4 object of class \link[data.table:data.table]{data.table::data.table}
 containing the Canopy Cover and Vertical Profile metrics.
 }
 \description{
@@ -67,5 +67,5 @@ leaflet() \%>\%
 close(level2b)
 }
 \seealso{
-\href{https://lpdaac.usgs.gov/products/gedi02_bv002/}{https://lpdaac.usgs.gov/products/gedi02_bv002/}
+\url{https://lpdaac.usgs.gov/products/gedi02_bv002/}
 }

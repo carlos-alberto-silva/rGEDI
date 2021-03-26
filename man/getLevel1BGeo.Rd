@@ -7,17 +7,16 @@
 getLevel1BGeo(level1b, select)
 }
 \arguments{
-\item{level1b}{A GEDI Level1B object (output of \code{\link[rGEDI:readLevel1B]{readLevel1B}} function).
-An S4 object of class "gedi.level1b".}
+\item{level1b}{A \code{\linkS4class{gedi.level1b}} object (output of \code{\link[=getLevel1BGeo]{getLevel1BGeo()}} function).}
 
 \item{select}{A character vector specifying the fields to extract from GEDI Level1B data. If NULL,
 by default it will extract \emph{latitude_bin0}, \emph{latitude_lastbin}, \emph{longitude_bin0}, \emph{longitude_lastbin}, and \emph{shot_number}. See details for more options.}
 }
 \value{
-Returns an S4 object of class \code{\link[data.table:data.table]{data.table-class}} containing the GEDI Full Waveform Geolocations
+Returns an S4 object of class \code{\link[data.table:data.table]{data.table::data.table}} containing the GEDI Full Waveform Geolocations
 }
 \description{
-This function extracts Pulse Full Waveform Geolocations from GEDI Level1B data
+This function extracts Pulse Full Waveform Geolocations from GEDI \code{\linkS4class{gedi.level1b}} data
 }
 \details{
 Additional fields to be extracted from GEDI level 1B:
@@ -123,5 +122,5 @@ head(level1bGeo)
 close(level1b)
 }
 \seealso{
-\href{https://lpdaac.usgs.gov/products/gedi01_bv002/}{https://lpdaac.usgs.gov/products/gedi01_bv002/}
+\url{https://lpdaac.usgs.gov/products/gedi01_bv002/}
 }

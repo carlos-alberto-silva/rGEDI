@@ -11,12 +11,12 @@ Class for GEDI level2B
 \section{Slots}{
 
 \describe{
-\item{\code{h5}}{Object of class H5File from \emph{hdf5r} package containing the
+\item{\code{h5}}{Object of class \code{\link[hdf5r:H5File-class]{H5File}} from \code{hdf5r} package containing the
 GEDI level2B products: canopy cover, Plant Area Index (PAI), Plant Area Volume Density (PAVD),
 and Foliage Height Diversity (FHD).}
 }}
 
 \seealso{
-\code{\link[hdf5r:H5File-class]{hdf5r::H5File}} in the \emph{hdf5r} package and
-\href{https://lpdaac.usgs.gov/products/gedi02_bv002/}{https://lpdaac.usgs.gov/products/gedi02_bv002/}
+\code{\link[hdf5r:H5File-class]{H5File}} in the \code{hdf5r} package and
+\url{https://lpdaac.usgs.gov/products/gedi02_bv002/}
 }

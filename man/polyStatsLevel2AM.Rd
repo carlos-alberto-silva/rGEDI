@@ -7,7 +7,7 @@
 polyStatsLevel2AM(level2AM, func, id=NULL)
 }
 \arguments{
-\item{level2AM}{A GEDI Level2AM object (output of \code{\link[rGEDI:getLevel2AM]{getLevel2AM}} function).
+\item{level2AM}{A GEDI Level2AM object (output of \code{\link[=getLevel2AM]{getLevel2AM()}} function).
 An S4 object of class "data.table".}
 
 \item{func}{The function to be applied for computing the defined statistics}
@@ -15,7 +15,7 @@ An S4 object of class "data.table".}
 \item{id}{A vector containing the polygon id for each GEDI observation. Default is NULL}
 }
 \value{
-Returns an S4 object of class \code{\link[data.table:data.table]{data.table-class}}
+Returns an S4 object of class \link[data.table:data.table]{data.table::data.table}
 containting Statistics of GEDI level2A defined metrics
 }
 \description{
@@ -74,5 +74,5 @@ RH100metrics<-polyStatsLevel2AM(level2AM_clip,func=mySetOfMetrics(rh100),
 close(level2a)
 }
 \seealso{
-\href{https://lpdaac.usgs.gov/products/gedi02_av002/}{https://lpdaac.usgs.gov/products/gedi02_av002/}
+\url{https://lpdaac.usgs.gov/products/gedi02_av002/}
 }

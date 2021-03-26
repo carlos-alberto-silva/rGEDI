@@ -10,7 +10,7 @@ readLevel2A(level2Apath)
 \item{level2Apath}{File path pointing to GEDI level2A data. Data in HDF5 Hierarchical Data Format (.h5).}
 }
 \value{
-Returns an S4 object of class "gedi.level2a" containing GEDI level2A data.
+Returns an S4 object of class \code{\linkS4class{gedi.level2a}} containing GEDI level2A data.
 }
 \description{
 This function reads GEDI level2A products: ground elevation, canopy top height, and relative heights (RH).
@@ -31,5 +31,5 @@ level2a<-readLevel2A(level2Apath=level2Apath)
 close(level2a)
 }
 \seealso{
-\href{https://lpdaac.usgs.gov/products/gedi02_av002/}{https://lpdaac.usgs.gov/products/gedi02_av002/}
+\url{https://lpdaac.usgs.gov/products/gedi02_av002/}
 }

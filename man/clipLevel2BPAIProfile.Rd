@@ -7,7 +7,7 @@
 clipLevel2BPAIProfile(level2BPAIProfile, xmin, xmax, ymin, ymax)
 }
 \arguments{
-\item{level2BPAIProfile}{A GEDI Level2B object (output of \code{\link[rGEDI:getLevel2BPAIProfile]{getLevel2BPAIProfile}} function).
+\item{level2BPAIProfile}{A GEDI Level2B object (output of \code{\link[=getLevel2BPAIProfile]{getLevel2BPAIProfile()}} function).
 An S4 object of class "gedi.level2b".}
 
 \item{xmin}{Numeric. West longitude (x) coordinate of the bounding rectangle, in decimal degrees.}
@@ -19,7 +19,7 @@ An S4 object of class "gedi.level2b".}
 \item{ymax}{Numeric. North latitude (y) coordinate of the bounding rectangle, in decimal degrees.}
 }
 \value{
-Returns an S4 object of class \code{\link[data.table:data.table]{data.table-class}}
+Returns an S4 object of class \link[data.table:data.table]{data.table::data.table}
 containing the Plant Area Index profile data.
 }
 \description{
@@ -54,5 +54,5 @@ level2b_clip <- clipLevel2BPAIProfile(level2BPAIProfile,xmin, xmax, ymin, ymax)
 close(level2b)
 }
 \seealso{
-\href{https://lpdaac.usgs.gov/products/gedi02_bv002/}{https://lpdaac.usgs.gov/products/gedi02_bv002/}
+\url{https://lpdaac.usgs.gov/products/gedi02_bv002/}
 }

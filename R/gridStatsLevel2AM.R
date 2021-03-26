@@ -6,14 +6,14 @@
 #'
 #'@usage gridStatsLevel2AM(level2AM, func, res)
 #'
-#'@param level2AM A GEDI Level2AM object (output of \code{\link[rGEDI:getLevel2AM]{getLevel2AM}} function).
+#'@param level2AM A GEDI Level2AM object (output of [getLevel2AM()] function).
 #'An S4 object of class "data.table".
 #'@param func The function(s) to be applied to each cell
 #'@param res Spatial resolution in decimal degrees for the output raster layer
 #'
 #'@return Return a raster layer(s) of selected GEDI Elevation and Height Metric(s)
 #'
-#'@seealso \href{https://lpdaac.usgs.gov/products/gedi02_av002/}{https://lpdaac.usgs.gov/products/gedi02_av002/}
+#'@seealso \url{https://lpdaac.usgs.gov/products/gedi02_av002/}
 #'
 #'@examples
 #'# specify the path to GEDI level2A data (zip file)

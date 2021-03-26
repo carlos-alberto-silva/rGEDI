@@ -5,17 +5,17 @@
 #'
 #'@usage clipLevel2AM(level2AM, xmin, xmax, ymin, ymax)
 #'
-#'@param level2AM A GEDI Level2A object (output of \code{\link[rGEDI:readLevel2A]{readLevel2A}} function).
+#'@param level2AM A GEDI Level2A object (output of [readLevel2A()] function).
 #'An S4 object of class "gedi.level2a".
 #'@param xmin Numeric. West longitude (x) coordinate of bounding rectangle, in decimal degrees.
 #'@param xmax Numeric. East longitude (x) coordinate of bounding rectangle, in decimal degrees.
 #'@param ymin Numeric. South latitude (y) coordinate of bounding rectangle, in decimal degrees.
 #'@param ymax Numeric. North latitude (y) coordinate of bounding rectangle, in decimal degrees.
 #'
-#'@return Returns an S4 object of class \code{\link[data.table:data.table]{data.table-class}}
+#'@return Returns an S4 object of class [data.table::data.table]
 #'containing the clipped elevation and relative heights metrics.
 #'
-#'@seealso \href{https://lpdaac.usgs.gov/products/gedi02_av002/}{https://lpdaac.usgs.gov/products/gedi02_av002/}
+#'@seealso \url{https://lpdaac.usgs.gov/products/gedi02_av002/}
 #'
 #'@examples
 #'# Specifying the path to GEDI level2A data (zip file)
@@ -70,13 +70,13 @@ clipLevel2AM = function(level2AM,xmin, xmax, ymin, ymax){
 #'
 #'@usage clipLevel2AMGeometry(level2AM, polygon_spdf, split_by)
 #'
-#'@param level2AM A GEDI Level2A object (output of \code{\link[rGEDI:readLevel2A]{readLevel2A}} function).
+#'@param level2AM A GEDI Level2A object (output of [readLevel2A()] function).
 #'An S4 object of class "data.table".
-#'@param polygon_spdf Polygon. An object of class \code{\link[sp]{SpatialPolygonsDataFrame-class}},
-#'which can be loaded as an ESRI shapefile using \code{\link[raster:shapefile]{raster::shapefile()}} function in the \emph{raster} package.
+#'@param polygon_spdf Polygon. An object of class [`sp::SpatialPolygonsDataFrame-class`],
+#'which can be loaded as an ESRI shapefile using [raster::shapefile] function in the \emph{raster} package.
 #'@param split_by Polygon id. If defined, GEDI data will be clipped by each polygon using the polygon id from table of attribute defined by the user
 #'
-#'@return Returns an S4 object of class \code{\link[data.table:data.table]{data.table-class}}
+#'@return Returns an S4 object of class [data.table::data.table]
 #'containing the clipped elevation and relative heights metrics.
 #'
 #'@examples

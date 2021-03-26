@@ -8,10 +8,10 @@
 The rGEDI package provides functions for i) downloading, ii) visualizing, iii) clipping, iv) gridding, iv) simulating and v) exporting GEDI data.
 }
 \note{
-See more details about GEDI data in \href{https://gedi.umd.edu/data/products/}{https://gedi.umd.edu/data/products/}.
+See more details about GEDI data in \url{https://gedi.umd.edu/data/products/}.
 }
 \seealso{
-For comprehensive examples refer to \href{https://github.com/carlos-alberto-silva/rGEDI/blob/master/README.md}{https://github.com/carlos-alberto-silva/rGEDI/blob/master/README.md}
+For comprehensive examples refer to \url{https://github.com/carlos-alberto-silva/rGEDI/blob/master/README.md}
 }
 \author{
 Carlos A. Silva, Caio Hamamura, Ruben Valbuena, Steve Hancock, Adrian Cardil, Eben N. Broadbent, Danilo R. A. de Almeida, Celso H. L. Silva Junior and Carine Klauberg

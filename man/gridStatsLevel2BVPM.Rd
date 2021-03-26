@@ -8,7 +8,7 @@ GEDI derived Canopy Cover and Vertical Profile Metrics (Level2B)}
 gridStatsLevel2BVPM(level2BVPM, func, res)
 }
 \arguments{
-\item{level2BVPM}{A GEDI Level2AM object (output of \code{\link[rGEDI:getLevel2BVPM]{getLevel2BVPM}} function).
+\item{level2BVPM}{A GEDI Level2AM object (output of \code{\link[=getLevel2BVPM]{getLevel2BVPM()}} function).
 An S4 object of class "data.table".}
 
 \item{func}{The function(s) to be applied to each cell}
@@ -66,5 +66,5 @@ plot(fhd_mean)
 close(level2b)
 }
 \seealso{
-\href{https://lpdaac.usgs.gov/products/gedi02_bv002/}{https://lpdaac.usgs.gov/products/gedi02_bv002/}
+\url{https://lpdaac.usgs.gov/products/gedi02_bv002/}
 }

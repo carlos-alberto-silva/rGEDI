@@ -5,15 +5,15 @@
 #'
 #'@usage polyStatsLevel2BVPM(level2BVPM, func, id=NULL)
 #'
-#'@param level2BVPM A GEDI Level2BVPM object (output of \code{\link[rGEDI:getLevel2BVPM]{getLevel2BVPM}} function).
+#'@param level2BVPM A GEDI Level2BVPM object (output of [getLevel2BVPM()] function).
 #'An S4 object of class "data.table".
 #'@param func The function to be applied for computing the defined statistics
 #'@param id A vector containing the polygon id for each GEDI observation. Default is NULL
 #'
-#'@return Returns an S4 object of class \code{\link[data.table:data.table]{data.table-class}}
+#'@return Returns an S4 object of class [data.table::data.table]
 #'containting Statistics of GEDI level2BVPM defined metrics
 #'
-#'@seealso \href{https://lpdaac.usgs.gov/products/gedi02_bv002/}{https://lpdaac.usgs.gov/products/gedi02_bv002/}
+#'@seealso \url{https://lpdaac.usgs.gov/products/gedi02_bv002/}
 #'
 #'@examples
 #'# Specifying the path to GEDI level2B data (zip file)

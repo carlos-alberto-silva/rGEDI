@@ -6,10 +6,10 @@
 #'
 #'@param level1Bpath File path pointing to GEDI level1B data. Data in HDF5 Hierarchical Data Format (.h5).
 #'
-#'@return Returns an S4 object of class "gedi.level1b" containing GEDI level1B data.
+#'@return Returns an S4 object of class [`gedi.level1b-class`] containing GEDI level1B data.
 #'
-#'@seealso \code{\link[hdf5r:H5File-class]{hdf5r::H5File}} in the \emph{hdf5r} package and
-#'\href{https://lpdaac.usgs.gov/products/gedi01_bv002/}{https://lpdaac.usgs.gov/products/gedi01_bv002/}
+#'@seealso [`hdf5r::H5File-class`] in the \emph{hdf5r} package and
+#'\url{https://lpdaac.usgs.gov/products/gedi01_bv002/}
 #'
 #'@examples
 #'# Specifying the path to GEDI level1B data (zip file)

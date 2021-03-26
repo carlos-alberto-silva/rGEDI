@@ -15,7 +15,7 @@ gediDownload(
 \arguments{
 \item{filepath}{Vector object; path to the GEDI data}
 
-\item{outdir}{Vector object, output directory for downloading GEDI data, default tempdir()}
+\item{outdir}{Vector object, output directory for downloading GEDI data, default \code{\link[=tempdir]{tempdir()}}}
 
 \item{overwrite}{logical; overwrite file if they already exists in destination, default FALSE}
 
@@ -24,7 +24,7 @@ gediDownload(
 \item{timeout}{integer; connection timeout in seconds.}
 }
 \value{
-No return value on success, on failure it will \code{stop()}
+No return value on success, on failure it will \code{\link[=stop]{stop()}}
 }
 \description{
 Download GEDI data from LP DAAC Data Pool. Users will need to enter their
@@ -62,5 +62,5 @@ gediDownload(filepath,outdir)
 }
 }
 \references{
-Credits to Cole Krehbiel. Code adapted from <\href{https://git.earthdata.nasa.gov/projects/LPDUR/repos/daac_data_download_r/browse/DAACDataDownload.R>}{https://git.earthdata.nasa.gov/projects/LPDUR/repos/daac_data_download_r/browse/DAACDataDownload.R>}
+Credits to Cole Krehbiel. Code adapted from \url{https://git.earthdata.nasa.gov/projects/LPDUR/repos/daac_data_download_r/browse/DAACDataDownload.R}
 }

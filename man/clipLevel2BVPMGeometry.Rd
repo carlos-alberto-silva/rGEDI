@@ -7,16 +7,16 @@
 clipLevel2BVPMGeometry(level2BVPM, polygon_spdf, split_by)
 }
 \arguments{
-\item{level2BVPM}{A GEDI Level2B object (output of \code{\link[rGEDI:readLevel1B]{readLevel1B}} function).
+\item{level2BVPM}{A GEDI Level2B object (output of \code{\link[=readLevel1B]{readLevel1B()}} function).
 An S4 object of class "gedi.level2b".}
 
-\item{polygon_spdf}{Polygon. An object of class \code{\link[sp]{SpatialPolygonsDataFrame-class}},
-which can be loaded as an ESRI shapefile using \code{\link[raster:shapefile]{raster::shapefile()}} function in the \emph{raster} package.}
+\item{polygon_spdf}{Polygon. An object of class \code{\link[sp:SpatialPolygonsDataFrame-class]{sp::SpatialPolygonsDataFrame}},
+which can be loaded as an ESRI shapefile using \link[raster:shapefile]{raster::shapefile} function in the \emph{raster} package.}
 
 \item{split_by}{Polygon id. If defined, GEDI data will be clipped by each polygon using the attribute specified by \code{split_by} from the attribute table.}
 }
 \value{
-Returns an S4 object of class \code{\link[data.table:data.table]{data.table-class}}
+Returns an S4 object of class \link[data.table:data.table]{data.table::data.table}
 containing the Canopy Cover and Vertical Profile metrics.
 }
 \description{
@@ -67,5 +67,5 @@ leaflet() \%>\%
 close(level2b)
 }
 \seealso{
-\href{https://lpdaac.usgs.gov/products/gedi02_bv002/}{https://lpdaac.usgs.gov/products/gedi02_bv002/}
+\url{https://lpdaac.usgs.gov/products/gedi02_bv002/}
 }

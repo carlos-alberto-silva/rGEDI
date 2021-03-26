@@ -3,7 +3,7 @@
 #' @description GEDI full waveform data processing and metrics extraction
 #'
 #! \bold{Input output}
-#' @param input \code{\link[rGEDI:gedi.level1bSim-class]{gedi.level1bSim}} (may be a list of objects). Simulated waveform input object(s).
+#' @param input [`rGEDI::gedi.level1bSim-class`] (may be a list of objects). Simulated waveform input object(s).
 #' @param outRoot name. output filename root
 # @param inList list. input file list for multiple files
 #' @param writeFit write fitted waveform
@@ -185,7 +185,7 @@
 #' for calibration and validation of spaceborne missions. Earth and Space Science.
 #' \doi{10.1029/2018EA000506}
 #'
-#' ii) gediSimulator: \href{https://bitbucket.org/StevenHancock/gedisimulator/src/master/}{https://bitbucket.org/StevenHancock/gedisimulator/src/master/}
+#' ii) gediSimulator: \url{https://bitbucket.org/StevenHancock/gedisimulator/src/master/}
 #'
 #' @examples
 #'\dontshow{

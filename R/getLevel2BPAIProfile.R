@@ -4,13 +4,13 @@
 #'
 #'@usage getLevel2BPAIProfile(level2b)
 #'
-#'@param level2b A GEDI Level2B object (output of \code{\link[rGEDI:readLevel2B]{readLevel2B}} function).
+#'@param level2b A GEDI Level2B object (output of [readLevel2B()] function).
 #'An S4 object of class "gedi.level2b".
 #'
-#'@return Returns an S4 object of class \code{\link[data.table:data.table]{data.table-class}}
+#'@return Returns an S4 object of class [data.table::data.table]
 #'containing the elevation and relative heights.
 #'
-#'@seealso \href{https://lpdaac.usgs.gov/products/gedi02_bv002/}{https://lpdaac.usgs.gov/products/gedi02_bv002/}
+#'@seealso \url{https://lpdaac.usgs.gov/products/gedi02_bv002/}
 #'
 #'@details Characteristics. Flag indicating likely invalid waveform (1=valid, 0=invalid).
 #'\itemize{

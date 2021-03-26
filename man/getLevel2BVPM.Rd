@@ -13,13 +13,13 @@ getLevel2BVPM(
 )
 }
 \arguments{
-\item{level2b}{A GEDI Level2B object (output of \code{\link[rGEDI:readLevel2B]{readLevel2B}}
+\item{level2b}{A GEDI Level2B object (output of \code{\link[=readLevel2B]{readLevel2B()}}
 function). An S4 object of class "gedi.level2b".}
 
 \item{cols}{A character vector containing the list of columns to be extracted. See the default columns in the description.}
 }
 \value{
-Returns an S4 object of class \code{\link[data.table:data.table]{data.table-class}}
+Returns an S4 object of class \link[data.table:data.table]{data.table::data.table}
 containing the Vegetation Profile Biophysical Variables.
 }
 \description{
@@ -49,7 +49,7 @@ These are the biophysical variables and additional information extracted by defa
 \item \emph{cover} Total canopy cover
 }
 
-Every other columns in the GEDI2B product are also available, you can specify each column by using the `cols` parameter.
+Every other columns in the GEDI2B product are also available, you can specify each column by using the \code{cols} parameter.
 }
 \examples{
 # Specifying the path to GEDI level2B data (zip file)
@@ -71,5 +71,5 @@ head(level2BVPM)
 close(level2b)
 }
 \seealso{
-\href{https://lpdaac.usgs.gov/products/gedi02_bv002/}{https://lpdaac.usgs.gov/products/gedi02_bv002/}
+\url{https://lpdaac.usgs.gov/products/gedi02_bv002/}
 }

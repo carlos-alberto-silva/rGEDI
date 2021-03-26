@@ -24,7 +24,7 @@ concept_ids <- list(
 #' @param version Character. The version of the GEDI product files to be
 #' returned. Default "002".
 #' @param daterange Vector. Date range. Specify your start and end dates
-#' using ISO 8601 [YYYY]-[MM]-[DD]T[hh]:[mm]:[ss]Z. Ex.:
+#' using ISO 8601 \[YYYY\]-\[MM\]-\[DD\]T\[hh\]:\[mm\]:\[ss\]Z. Ex.:
 #' c("2019-07-01T00:00:00Z","2020-05-22T23:59:59Z"). If NULL (default),
 #' the date range filter will be not applied.
 #'
@@ -36,7 +36,7 @@ concept_ids <- list(
 #' (e.g. \[ul_lat,ul_lon,lr_lat,lr_lon\]).
 #'
 #' This function relies on the existing CMR tool:
-#' \href{https://cmr.earthdata.nasa.gov/search/site/docs/search/api.html}{https://cmr.earthdata.nasa.gov/search/site/docs/search/api.html}
+#' \url{https://cmr.earthdata.nasa.gov/search/site/docs/search/api.html}
 #'
 #' @examples
 #' \donttest{

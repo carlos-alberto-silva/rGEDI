@@ -7,8 +7,8 @@
 clipLevel1B(level1b, xmin, xmax, ymin, ymax, output)
 }
 \arguments{
-\item{level1b}{A GEDI Level1B object (output of \code{\link[rGEDI:readLevel1B]{readLevel1B}} function).
-An S4 object of class "gedi.level1b".}
+\item{level1b}{A \code{\linkS4class{gedi.level1b}} object (output of \code{\link[=readLevel1B]{readLevel1B()}} function).
+An S4 object of class \code{\linkS4class{gedi.level1b}}.}
 
 \item{xmin}{Numeric. West longitude (x) coordinate of the bounding rectangle, in decimal degrees.}
 
@@ -21,7 +21,7 @@ An S4 object of class "gedi.level1b".}
 \item{output}{Optional character path where to save the new hdf5file. The default stores a temporary file only.}
 }
 \value{
-Returns a list of S4 objects of class "gedi.level1b" containing clipped GEDI Level1B data.
+Returns a list of S4 objects of class \code{\linkS4class{gedi.level1b}} containing clipped GEDI Level1B data.
 }
 \description{
 This function clips GEDI Level1B data (geolocated waveforms) within a given bounding coordinates
@@ -58,5 +58,5 @@ close(level1b_clip)
 }
 }
 \seealso{
-\href{https://lpdaac.usgs.gov/products/gedi01_bv002/}{https://lpdaac.usgs.gov/products/gedi01_bv002/}
+\url{https://lpdaac.usgs.gov/products/gedi01_bv002/}
 }

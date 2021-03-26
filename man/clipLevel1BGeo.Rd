@@ -7,8 +7,7 @@
 clipLevel1BGeo(level1BGeo, xmin, xmax, ymin, ymax)
 }
 \arguments{
-\item{level1BGeo}{A GEDI Level1b object (output of \code{\link[rGEDI:readLevel1B]{readLevel1B}} function).
-An S4 object of class "gedi.level1b".}
+\item{level1BGeo}{A \code{\link[data.table:data.table-class]{data.table::data.table}} resulting from \code{\link[=getLevel1BGeo]{getLevel1BGeo()}}.}
 
 \item{xmin}{Numeric. West longitude (x) coordinate of the bounding rectangle, in decimal degrees.}
 
@@ -19,10 +18,10 @@ An S4 object of class "gedi.level1b".}
 \item{ymax}{Numeric. North latitude (y) coordinate of the bounding rectangle, in decimal degrees.}
 }
 \value{
-Returns an S4 object of class \code{\link[data.table:data.table]{data.table-class}}.
+Returns an S4 object of class \code{\link[data.table:data.table-class]{data.table::data.table}}.
 }
 \description{
-This function clips GEDI level1B extracted geolocation (level1BGeo)
+This function clips GEDI level1B extracted geolocation (\code{\link[=getLevel1BGeo]{getLevel1BGeo()}})
 data a within given bounding coordinates
 }
 \examples{
@@ -66,5 +65,5 @@ leaflet() \%>\%
 close(level1b)
 }
 \seealso{
-\href{https://lpdaac.usgs.gov/products/gedi01_bv002/}{https://lpdaac.usgs.gov/products/gedi01_bv002/}
+\url{https://lpdaac.usgs.gov/products/gedi01_bv002/}
 }

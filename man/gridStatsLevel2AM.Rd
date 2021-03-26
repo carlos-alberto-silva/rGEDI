@@ -8,7 +8,7 @@ GEDI derived Elevation and Height Metrics (Level2A)}
 gridStatsLevel2AM(level2AM, func, res)
 }
 \arguments{
-\item{level2AM}{A GEDI Level2AM object (output of \code{\link[rGEDI:getLevel2AM]{getLevel2AM}} function).
+\item{level2AM}{A GEDI Level2AM object (output of \code{\link[=getLevel2AM]{getLevel2AM()}} function).
 An S4 object of class "data.table".}
 
 \item{func}{The function(s) to be applied to each cell}
@@ -66,5 +66,5 @@ plot(ZGmean)
 close(level2a)
 }
 \seealso{
-\href{https://lpdaac.usgs.gov/products/gedi02_av002/}{https://lpdaac.usgs.gov/products/gedi02_av002/}
+\url{https://lpdaac.usgs.gov/products/gedi02_av002/}
 }

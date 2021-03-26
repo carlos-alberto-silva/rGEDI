@@ -5,15 +5,15 @@
 #'
 #'@usage polyStatsLevel2AM(level2AM, func, id=NULL)
 #'
-#'@param level2AM A GEDI Level2AM object (output of \code{\link[rGEDI:getLevel2AM]{getLevel2AM}} function).
+#'@param level2AM A GEDI Level2AM object (output of [getLevel2AM()] function).
 #'An S4 object of class "data.table".
 #'@param func The function to be applied for computing the defined statistics
 #'@param id A vector containing the polygon id for each GEDI observation. Default is NULL
 #'
-#'@return Returns an S4 object of class \code{\link[data.table:data.table]{data.table-class}}
+#'@return Returns an S4 object of class [data.table::data.table]
 #'containting Statistics of GEDI level2A defined metrics
 #'
-#'@seealso \href{https://lpdaac.usgs.gov/products/gedi02_av002/}{https://lpdaac.usgs.gov/products/gedi02_av002/}
+#'@seealso \url{https://lpdaac.usgs.gov/products/gedi02_av002/}
 #'
 #'@examples
 #'# Specifying the path to GEDI level2A data (zip file)

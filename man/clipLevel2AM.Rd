@@ -7,7 +7,7 @@
 clipLevel2AM(level2AM, xmin, xmax, ymin, ymax)
 }
 \arguments{
-\item{level2AM}{A GEDI Level2A object (output of \code{\link[rGEDI:readLevel2A]{readLevel2A}} function).
+\item{level2AM}{A GEDI Level2A object (output of \code{\link[=readLevel2A]{readLevel2A()}} function).
 An S4 object of class "gedi.level2a".}
 
 \item{xmin}{Numeric. West longitude (x) coordinate of bounding rectangle, in decimal degrees.}
@@ -19,7 +19,7 @@ An S4 object of class "gedi.level2a".}
 \item{ymax}{Numeric. North latitude (y) coordinate of bounding rectangle, in decimal degrees.}
 }
 \value{
-Returns an S4 object of class \code{\link[data.table:data.table]{data.table-class}}
+Returns an S4 object of class \link[data.table:data.table]{data.table::data.table}
 containing the clipped elevation and relative heights metrics.
 }
 \description{
@@ -54,5 +54,5 @@ level2AM_clip <- clipLevel2AM(level2AM,xmin, xmax, ymin, ymax)
 close(level2a)
 }
 \seealso{
-\href{https://lpdaac.usgs.gov/products/gedi02_av002/}{https://lpdaac.usgs.gov/products/gedi02_av002/}
+\url{https://lpdaac.usgs.gov/products/gedi02_av002/}
 }

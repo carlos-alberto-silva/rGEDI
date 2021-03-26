@@ -7,7 +7,7 @@
 plotPAVDProfile(level2BPAVDProfile, beam = "BEAM0101", elev = TRUE)
 }
 \arguments{
-\item{level2BPAVDProfile}{A GEDI Level2B object (output of \code{\link[rGEDI:getLevel2BPAVDProfile]{getLevel2BPAVDProfile}} function).
+\item{level2BPAVDProfile}{A GEDI Level2B object (output of \code{\link[=getLevel2BPAVDProfile]{getLevel2BPAVDProfile()}} function).
 An S4 object of class "data.table".}
 
 \item{beam}{Select GEDI beam. Default is "BEAM0101". See details section.}
@@ -16,13 +16,13 @@ An S4 object of class "data.table".}
 height will be used instead.}
 }
 \value{
-Returns a ggplot object. See \code{\link[ggplot2:ggplot]{ggplot}} package.
+Returns a ggplot object. See \link[ggplot2:ggplot]{ggplot2::ggplot} package.
 }
 \description{
 This functions plots Plant Area Volume Density profile (GEDI level2B)
 }
 \details{
-list of GEDI beams. See the output of \code{\link[rGEDI:getLevel2BPAVDProfile]{getLevel2BPAVDProfile}} function.
+list of GEDI beams. See the output of \code{\link[=getLevel2BPAVDProfile]{getLevel2BPAVDProfile()}} function.
 \itemize{
 \item \emph{BEAM0000}
 \item \emph{BEAM0001}
@@ -57,5 +57,5 @@ gprofile<-plotPAVDProfile(level2BPAVDProfile, beam="BEAM0101", elev=TRUE)
 close(level2b)
 }
 \seealso{
-\href{https://lpdaac.usgs.gov/products/gedi02_bv002/}{https://lpdaac.usgs.gov/products/gedi02_bv002/}
+\url{https://lpdaac.usgs.gov/products/gedi02_bv002/}
 }

@@ -71,14 +71,14 @@ var.map[["surface_flag"]]            = "surface_flag"
 #'Total Gap Probability (theta), and Total canopy cover.
 #'
 #'
-#'@param level2b A GEDI Level2B object (output of \code{\link[rGEDI:readLevel2B]{readLevel2B}}
+#'@param level2b A GEDI Level2B object (output of [readLevel2B()]
 #'function). An S4 object of class "gedi.level2b".
 #'@param cols A character vector containing the list of columns to be extracted. See the default columns in the description.
 #'
-#'@return Returns an S4 object of class \code{\link[data.table:data.table]{data.table-class}}
+#'@return Returns an S4 object of class [data.table::data.table]
 #'containing the Vegetation Profile Biophysical Variables.
 #'
-#'@seealso \href{https://lpdaac.usgs.gov/products/gedi02_bv002/}{https://lpdaac.usgs.gov/products/gedi02_bv002/}
+#'@seealso \url{https://lpdaac.usgs.gov/products/gedi02_bv002/}
 #'
 #'@details These are the biophysical variables and additional information extracted by default:
 #'\itemize{

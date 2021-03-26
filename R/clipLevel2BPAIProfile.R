@@ -7,17 +7,17 @@
 #'@usage clipLevel2BPAIProfile(level2BPAIProfile, xmin, xmax, ymin, ymax)
 #'
 #'
-#'@param level2BPAIProfile A GEDI Level2B object (output of \code{\link[rGEDI:getLevel2BPAIProfile]{getLevel2BPAIProfile}} function).
+#'@param level2BPAIProfile A GEDI Level2B object (output of [getLevel2BPAIProfile()] function).
 #'An S4 object of class "gedi.level2b".
 #'@param xmin Numeric. West longitude (x) coordinate of the bounding rectangle, in decimal degrees.
 #'@param xmax Numeric. East longitude (x) coordinate of the bounding rectangle, in decimal degrees.
 #'@param ymin Numeric. South latitude (y) coordinate of the bounding rectangle, in decimal degrees.
 #'@param ymax Numeric. North latitude (y) coordinate of the bounding rectangle, in decimal degrees.
 #'
-#'@return Returns an S4 object of class \code{\link[data.table:data.table]{data.table-class}}
+#'@return Returns an S4 object of class [data.table::data.table]
 #'containing the Plant Area Index profile data.
 #'
-#'@seealso \href{https://lpdaac.usgs.gov/products/gedi02_bv002/}{https://lpdaac.usgs.gov/products/gedi02_bv002/}
+#'@seealso \url{https://lpdaac.usgs.gov/products/gedi02_bv002/}
 #'
 #'@examples
 #'# Specifying the path to GEDI level2B data (zip file)
@@ -70,16 +70,16 @@ clipLevel2BPAIProfile = function(level2BPAIProfile,xmin, xmax, ymin, ymax){
 #'
 #'@usage clipLevel2BPAIProfileGeometry(level2BPAIProfile, polygon_spdf, split_by)
 #'
-#'@param level2BPAIProfile A GEDI Level2B object (output of \code{\link[rGEDI:getLevel2BPAIProfile]{getLevel2BPAIProfile}} function).
+#'@param level2BPAIProfile A GEDI Level2B object (output of [getLevel2BPAIProfile()] function).
 #'An S4 object of class "data.table".
-#'@param polygon_spdf Polygon. An object of class \code{\link[sp]{SpatialPolygonsDataFrame-class}},
-#'which can be loaded as an ESRI shapefile using \code{\link[raster:shapefile]{raster::shapefile()}} function in the \emph{raster} package.
-#'@param split_by Polygon id. If defined, GEDI data will be clipped by each polygon using the attribute specified by \code{split_by} from the attribute table.
+#'@param polygon_spdf Polygon. An object of class [`sp::SpatialPolygonsDataFrame-class`],
+#'which can be loaded as an ESRI shapefile using [raster::shapefile] function in the \emph{raster} package.
+#'@param split_by Polygon id. If defined, GEDI data will be clipped by each polygon using the attribute specified by `split_by` from the attribute table.
 #'
-#'@return Returns an S4 object of class \code{\link[data.table:data.table]{data.table-class}}
+#'@return Returns an S4 object of class [data.table::data.table]
 #'containing the Plant Area Index profile data.
 #'
-#'@seealso \href{https://lpdaac.usgs.gov/products/gedi02_bv002/}{https://lpdaac.usgs.gov/products/gedi02_bv002/}
+#'@seealso \url{https://lpdaac.usgs.gov/products/gedi02_bv002/}
 #'
 #'@examples
 #'# Specifying the path to GEDI level2B data (zip file)

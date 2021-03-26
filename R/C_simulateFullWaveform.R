@@ -68,7 +68,7 @@
 # @param seed n integer. random number seed
 #'
 #' #'
-#' @return Returns an S4 object of class \code{\link[hdf5r:H5File-class]{hdf5r::H5File}} form the \emph{hdf5r} package
+#' @return Returns an S4 object of class [`hdf5r::H5File-class`]
 #' containing the simulated GEDI full-waveform.
 #'
 #' @seealso
@@ -77,7 +77,7 @@
 #' for calibration and validation of spaceborne missions. Earth and Space Science.
 #' \doi{10.1029/2018EA000506}
 #'
-#' ii) gediSimulator: \href{https://bitbucket.org/StevenHancock/gedisimulator/src/master/}{https://bitbucket.org/StevenHancock/gedisimulator/src/master/}
+#' ii) gediSimulator: \url{https://bitbucket.org/StevenHancock/gedisimulator/src/master/}
 #'
 #'@examples
 #'\dontshow{

@@ -19,7 +19,7 @@ close(con, ...)
 \S4method{close}{gedi.level1bSim}(con, ...)
 }
 \arguments{
-\item{con}{An object of class gedi*}
+\item{con}{An object of class \verb{gedi.level*}}
 
 \item{...}{Inherited from base}
 }

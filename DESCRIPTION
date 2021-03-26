@@ -54,6 +54,7 @@ SystemRequirements:
   zlib (>= 1.2)
 NeedsCompilation: yes
 RoxygenNote: 7.1.1
+Roxygen: list(markdown = TRUE)
 BugReports: https://groups.yahoo.com/neo/groups/rGEDI
 URL: https://github.com/carlos-alberto-silva/rGEDI
 Copyright: inst/COPYRIGHTS

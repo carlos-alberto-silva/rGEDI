@@ -4,9 +4,9 @@
 #'
 #'@usage plotWFMetrics(level1b, level2a, shot_number, rh=c(25, 50, 75),...)
 #'
-#'@param level1b A GEDI Level1B object (output of \code{\link[rGEDI:readLevel1B]{readLevel1B}} function).
+#'@param level1b A GEDI Level1B object (output of [readLevel1B()] function).
 #'An S4 object of class "gedi.level1b".
-#'@param level2a A GEDI Level2A object (output of \code{\link[rGEDI:readLevel2A]{readLevel2A}} function).
+#'@param level2a A GEDI Level2A object (output of [readLevel2A()] function).
 #'An S4 object of class "gedi.level2a".
 #'@param shot_number Shot number. A scalar representing the shot number of a giving pulse.
 #'@param rh Integer vector. Specify which RH metrics to plot except rh0 and rh100, default c(25, 50, 75).
@@ -14,7 +14,7 @@
 #'
 #'@return Returns a raster layer(s) of selected GEDI Canopy Cover and Vertical Profile Metric(s)
 #'
-#'@seealso \href{https://lpdaac.usgs.gov/products/gedi02_bv002/}{https://lpdaac.usgs.gov/products/gedi02_bv002/}
+#'@seealso \url{https://lpdaac.usgs.gov/products/gedi02_bv002/}
 #'
 #'@examples
 #'# specify the path to GEDI level1B and Level2A data (zip file)

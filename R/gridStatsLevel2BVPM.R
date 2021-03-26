@@ -6,14 +6,14 @@
 #'
 #'@usage gridStatsLevel2BVPM(level2BVPM, func, res)
 #'
-#'@param level2BVPM A GEDI Level2AM object (output of \code{\link[rGEDI:getLevel2BVPM]{getLevel2BVPM}} function).
+#'@param level2BVPM A GEDI Level2AM object (output of [getLevel2BVPM()] function).
 #'An S4 object of class "data.table".
 #'@param func The function(s) to be applied to each cell
 #'@param res Spatial resolution in decimal degrees for the output raster layer
 #'
 #'@return Returns a raster layer(s) of selected GEDI Canopy Cover and Vertical Profile Metric(s)
 #'
-#'@seealso \href{https://lpdaac.usgs.gov/products/gedi02_bv002/}{https://lpdaac.usgs.gov/products/gedi02_bv002/}
+#'@seealso \url{https://lpdaac.usgs.gov/products/gedi02_bv002/}
 #'
 #'@examples
 #'# specify the path to GEDI level2B data (zip file)

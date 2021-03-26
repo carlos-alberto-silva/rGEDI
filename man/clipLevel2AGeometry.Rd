@@ -7,10 +7,10 @@
 clipLevel2AGeometry(level2a, polygon_spdf, output="", split_by=NULL)
 }
 \arguments{
-\item{level2a}{A GEDI Level2A object (output of \code{\link[rGEDI:readLevel2A]{readLevel2A}} function).
+\item{level2a}{A GEDI Level2A object (output of \code{\link[=readLevel2A]{readLevel2A()}} function).
 An S4 object of class "gedi.level2a".}
 
-\item{polygon_spdf}{Polygon. An object of class \code{\link[sp]{SpatialPolygonsDataFrame-class}},
+\item{polygon_spdf}{Polygon. An object of class \code{\link[sp:SpatialPolygonsDataFrame-class]{sp::SpatialPolygonsDataFrame}},
 which can be loaded as an ESRI shapefile using \code{\link[raster:shapefile]{raster::shapefile()}} function in the \emph{raster} package.}
 
 \item{output}{optional character path where to save the new h5file. Default "" (temporary file).}
@@ -57,5 +57,5 @@ lapply(level2a_clip, close)
 }
 }
 \seealso{
-\href{https://lpdaac.usgs.gov/products/gedi02_av002/}{https://lpdaac.usgs.gov/products/gedi02_av002/}
+\url{https://lpdaac.usgs.gov/products/gedi02_av002/}
 }

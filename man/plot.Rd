@@ -13,7 +13,7 @@ plot(x, y, ...)
 \S4method{plot}{gedi.level1bSim,missing}(x, relative = FALSE, polygon = FALSE, method = "RXWAVEINT", ...)
 }
 \arguments{
-\item{x}{An object of class "gedi.fullwaveform". (output of \code{\link[rGEDI:getLevel1BWF]{getLevel1BWF}} function)}
+\item{x}{An object of class \code{\linkS4class{gedi.fullwaveform}} (output of \code{\link[=getLevel1BWF]{getLevel1BWF()}} function)}
 
 \item{y}{not used (inherited from R base)}
 
@@ -23,15 +23,15 @@ plot(x, y, ...)
 
 \item{polygon}{if TRUE, the polygon will be added to the plot}
 
-\item{method}{methods used for simulating the GEDI full-waveform ("RXWAVEINT","RXWAVEINT" or "RXWAVEINT"). Default is "RXWAVECOUNT".}
+\item{method}{methods used for simulating the GEDI full-waveform ("RXWAVEINT", "RXWAVECOUNT" or "RXWAVEFRAC"). Default is "RXWAVECOUNT".}
 }
 \value{
 No return value
 }
 \description{
-For gedi.fullwaveform: will plot the full waveform\cr\cr
+For \code{\linkS4class{gedi.fullwaveform}}: will plot the full waveform
 
-for gedi.level1bSim: will plot the simulated waveform
+for \code{\linkS4class{gedi.level1bSim}}: will plot the simulated waveform
 }
 \examples{
 # Specifying the path to GEDI level1B data (zip file)

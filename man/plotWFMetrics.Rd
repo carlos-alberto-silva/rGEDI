@@ -7,10 +7,10 @@
 plotWFMetrics(level1b, level2a, shot_number, rh=c(25, 50, 75),...)
 }
 \arguments{
-\item{level1b}{A GEDI Level1B object (output of \code{\link[rGEDI:readLevel1B]{readLevel1B}} function).
+\item{level1b}{A GEDI Level1B object (output of \code{\link[=readLevel1B]{readLevel1B()}} function).
 An S4 object of class "gedi.level1b".}
 
-\item{level2a}{A GEDI Level2A object (output of \code{\link[rGEDI:readLevel2A]{readLevel2A}} function).
+\item{level2a}{A GEDI Level2A object (output of \code{\link[=readLevel2A]{readLevel2A()}} function).
 An S4 object of class "gedi.level2a".}
 
 \item{shot_number}{Shot number. A scalar representing the shot number of a giving pulse.}
@@ -52,5 +52,5 @@ close(level1b)
 close(level2a)
 }
 \seealso{
-\href{https://lpdaac.usgs.gov/products/gedi02_bv002/}{https://lpdaac.usgs.gov/products/gedi02_bv002/}
+\url{https://lpdaac.usgs.gov/products/gedi02_bv002/}
 }

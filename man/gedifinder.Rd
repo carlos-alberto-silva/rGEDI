@@ -74,8 +74,8 @@ gedi02b_list <- gedifinder(
 \seealso{
 bbox: Defined by the upper left and lower right corner coordinates,
 in lat,lon ordering, for the bounding box of the area of interest
-(e.g. \[ul_lat,ul_lon,lr_lat,lr_lon\]).
+(e.g. [ul_lat,ul_lon,lr_lat,lr_lon]).
 
 This function relies on the existing CMR tool:
-\href{https://cmr.earthdata.nasa.gov/search/site/docs/search/api.html}{https://cmr.earthdata.nasa.gov/search/site/docs/search/api.html}
+\url{https://cmr.earthdata.nasa.gov/search/site/docs/search/api.html}
 }

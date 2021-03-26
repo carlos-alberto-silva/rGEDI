@@ -7,9 +7,9 @@
 #'
 #'@param level2Apath File path pointing to GEDI level2A data. Data in HDF5 Hierarchical Data Format (.h5).
 #'
-#'@return Returns an S4 object of class "gedi.level2a" containing GEDI level2A data.
+#'@return Returns an S4 object of class [`gedi.level2a-class`] containing GEDI level2A data.
 #'
-#'@seealso \href{https://lpdaac.usgs.gov/products/gedi02_av002/}{https://lpdaac.usgs.gov/products/gedi02_av002/}
+#'@seealso \url{https://lpdaac.usgs.gov/products/gedi02_av002/}
 #'
 #'@examples
 #'# Specifying the path to GEDI level2A data (zip file)

@@ -3,7 +3,7 @@
 #'@description This function extracts GEDI Level1B data a within given bounding coordinates
 #'
 #'
-#'@param level2b A GEDI Level2B object (output of \code{\link[rGEDI:readLevel2B]{readLevel2B}} function).
+#'@param level2b A GEDI Level2B object (output of [readLevel2B()] function).
 #'An S4 object of class "gedi.level2b".
 #'@param xmin Numeric. West longitude (x) coordinate of the bounding rectangle, in decimal degrees.
 #'@param xmax Numeric. East longitude (x) coordinate of the bounding rectangle, in decimal degrees.
@@ -13,7 +13,7 @@
 #'
 #'@return Returns a list of S4 object of class "gedi.level2b" containing clipped GEDI Level2B data.
 #'
-#'@seealso \href{https://lpdaac.usgs.gov/products/gedi01_bv002/}{https://lpdaac.usgs.gov/products/gedi01_bv002/}
+#'@seealso \url{https://lpdaac.usgs.gov/products/gedi01_bv002/}
 #'
 #'@examples
 #'\donttest{
@@ -72,16 +72,16 @@ clipLevel2B = function(level2b, xmin, xmax, ymin, ymax, output=""){
 #'
 #'@description This function extracts GEDI Level1B data within a given geometry
 #'
-#'@param level2b A GEDI Level2B object (output of \code{\link[rGEDI:readLevel2B]{readLevel2B}} function).
+#'@param level2b A GEDI Level2B object (output of [readLevel2B()] function).
 #'An S4 object of class "gedi.level2b".
-#'@param polygon_spdf Polygon. An object of class \code{\link[sp]{SpatialPolygonsDataFrame-class}},
-#'which can be loaded as an ESRI shapefile using \code{\link[raster:shapefile]{raster::shapefile()}} function in the \emph{raster} package.
+#'@param polygon_spdf Polygon. An object of class [`sp::SpatialPolygonsDataFrame-class`],
+#'which can be loaded as an ESRI shapefile using [raster::shapefile] function in the \emph{raster} package.
 #'@param output optional character path where to save the new h5file. Default "" (temporary file).
-#'@param split_by Polygon id. If defined, GEDI data will be clipped by each polygon using the attribute specified by \code{split_by} from the attribute table.
+#'@param split_by Polygon id. If defined, GEDI data will be clipped by each polygon using the attribute specified by `split_by` from the attribute table.
 #'
 #'@return Returns a list of S4 objects of class "gedi.level2b" containing clipped GEDI Level2B data.
 #'
-#'@seealso \href{https://lpdaac.usgs.gov/products/gedi01_bv002/}{https://lpdaac.usgs.gov/products/gedi01_bv002/}
+#'@seealso \url{https://lpdaac.usgs.gov/products/gedi01_bv002/}
 #'
 #'@examples
 #'\donttest{
