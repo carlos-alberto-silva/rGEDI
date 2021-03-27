@@ -77,7 +77,7 @@ jobs:
       - name: Install system dependencies
         if: runner.os == 'macOS'
         run: |
-          brew install libzip hdf5 gdal gsl
+          brew install libzip hdf5 gdal gsl automake
 
       - name: Install dependencies
         run: |
