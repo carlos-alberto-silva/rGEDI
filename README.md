@@ -2,7 +2,7 @@
 
 [![R-CMD-check](https://github.com/carlos-alberto-silva/rGEDI/actions/workflows/r.yml/badge.svg?branch=master)](https://github.com/carlos-alberto-silva/rGEDI/actions/workflows/r.yml)
 [![CRAN](https://www.r-pkg.org/badges/version/rGEDI)](https://cran.r-project.org/package=rGEDI)
-![Github](https://img.shields.io/badge/Github-0.1.9-green.svg)
+![Github](https://img.shields.io/badge/Github-0.1.12-green.svg)
 ![licence](https://img.shields.io/badge/Licence-GPL--3-blue.svg) 
 ![Downloads](https://cranlogs.r-pkg.org/badges/grand-total/rGEDI)
 [![Build Status](https://travis-ci.com/carlos-alberto-silva/rGEDI.svg?token=Jqizwyc6gBxNafNccTdU&branch=master)](https://travis-ci.com/carlos-alberto-silva/rGEDI)
