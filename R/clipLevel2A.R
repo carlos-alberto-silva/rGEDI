@@ -227,6 +227,7 @@ clipByMask2A = function(level2a, masks, output = "") {
 
       if (is.na(alg_id)) {
         mask = masks[[beam_id]][["main"]]
+        if (level2a@h5[[beam_id]]$exists("shot_number") == FALSE) next
         beam_shot_n = level2a@h5[[beam_id]][["shot_number"]]$dims
       } else {
         mask = masks[[beam_id]][[alg_id]]
