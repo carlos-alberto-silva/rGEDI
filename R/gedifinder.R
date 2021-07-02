@@ -59,7 +59,7 @@ concept_ids <- list(
 #'   ul_lon,
 #'   lr_lat,
 #'   lr_lon,
-#'   version = "001",
+#'   version = "002",
 #'   daterange = daterange
 #' )
 #' }

@@ -66,7 +66,7 @@ gedi02b_list <- gedifinder(
   ul_lon,
   lr_lat,
   lr_lon,
-  version = "001",
+  version = "002",
   daterange = daterange
 )
 }
