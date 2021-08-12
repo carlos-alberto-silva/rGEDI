@@ -11,7 +11,7 @@ default_finalizer = list(
   kur = ~((n - 1) / ((n - 2) * (n - 3))) * ((n + 1) * ((n * M4) / (M2^2) - 3.0) + 6)
 )
 
-default_agg_function = ~data.table(
+default_agg_function = ~data.table::data.table(
     n = length(x),
     M1 = mean(x,na.rm = T),
     M2 = e1071::moment(x, order = 2, center = TRUE, na.rm = T) * length(x),
@@ -253,12 +253,12 @@ level2bRasterizeStats = function(l2bDir,
   block_inds =
   block_xind =
   block_yind =
-  inds = 
+  inds =
   l2b_quality_flag =
   latitude_bin0 =
   longitude_bin0 =
   x_block =
-  y_block = 
+  y_block =
   x_ind =
   y_ind =
     NULL
@@ -272,7 +272,7 @@ level2bRasterizeStats = function(l2bDir,
     UNIT["degree",0.01745329251994328,
         AUTHORITY["EPSG","9122"]],
     AUTHORITY["EPSG","4326"]]'
-  l2b_list = sapply(l2bDir, function(search_path) list.files(search_path, "GEDI02_B.*h5"))
+  l2b_list = sapply(l2bDir, function(search_path) list.files(search_path, pattern = "GEDI02_B.*h5", recursive = TRUE, full.name = TRUE))
   total_files = length(l2b_list)
 
   xres = res[1]
@@ -284,7 +284,7 @@ level2bRasterizeStats = function(l2bDir,
   metricCounter = 0
   nMetrics = length(metrics)
 
-  
+
   func = lazyeval::f_interp(agg_function)
   call = lazyeval::as_call(func)
   x = 1
@@ -333,22 +333,23 @@ level2bRasterizeStats = function(l2bDir,
     # l2b_path = l2b_list[1]
     for (l2b_path in l2b_list) {
       file_index = file_index + 1
-      message(sprintf("Reading file %s (%d/%d)", l2b_path, file_index, total_files), appendLF = T)
-      l2b = readLevel2B(file.path(l2bDir, l2b_path))
+      message(sprintf("Reading file %s (%d/%d)", basename(l2b_path), file_index, total_files), appendLF = T)
+      l2b = readLevel2B(l2b_path)
 
       vals = getLevel2BVPM(l2b, cols = cols)
       vals = clipLevel2BVPM(vals, ul_lon, lr_lon, lr_lat, ul_lat)
-      
+
       cols_without_quality = c(setdiff(cols, "l2b_quality_flag"))
       vals = vals[l2b_quality_flag == 1, cols_without_quality, with = FALSE]
+      if (nrow(vals) == 0) next
 
       vals[, x_ind := as.integer(vals[, floor((longitude_bin0 - ul_lon) / xres)])]
       vals[, y_ind := as.integer(vals[, floor((latitude_bin0 - ul_lat) / yres)])]
       vals[, inds := 1 + x_ind + y_ind * block_x_size]
       names(vals) = gsub(metric, "x", names(vals))
       aggs = vals[,eval(call), by = list(inds, x_ind, y_ind)]
-      aggs[, 
-        c("x_block", "y_block") := lapply(.SD, function(x) as.integer(floor(x / block_x_size))), 
+      aggs[,
+        c("x_block", "y_block") := lapply(.SD, function(x) as.integer(floor(x / block_x_size))),
         .SDcols = c("x_ind", "y_ind")
       ]
       aggs[, `:=`(block_xind = x_ind - x_block * block_x_size,
@@ -364,12 +365,12 @@ level2bRasterizeStats = function(l2bDir,
       invisible(apply(blocks, 1, function(row) {
         ii = get("ii", thisEnv) + 1
         assign("ii", ii, thisEnv)
-        
+
         message(sprintf("\rProcessing blocks...%.2f%%", (100.0 * ii) / total_rows), appendLF = F)
         agg1 = data.table::as.data.table(
           lapply(bands, function(x)x[[row$x_block, row$y_block]])
         )
-        
+
         agg1[row$vals$block_inds] = agg_join(agg1[row$vals$block_inds], row$vals[,1:(ncol(row$vals)-1)])
         lapply(stats, function(x) bands[[x]][[row$x_block, row$y_block]] = agg1[[x]])
       }))
