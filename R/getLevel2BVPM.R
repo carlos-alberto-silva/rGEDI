@@ -77,7 +77,7 @@ l2b.var.map[["surface_flag"]] = "surface_flag"
 #'@return Returns an S4 object of class [data.table::data.table]
 #'containing the Vegetation Profile Biophysical Variables.
 #'
-#'@seealso \url{https://lpdaac.usgs.gov/products/gedi02_bv002/}
+#'@seealso https://lpdaac.usgs.gov/products/gedi02_bv001/
 #'
 #'@details These are the biophysical variables and additional information extracted by default:
 #'\itemize{
@@ -103,7 +103,7 @@ l2b.var.map[["surface_flag"]] = "surface_flag"
 #'}
 #'
 #'A special column `pavd` is available, which is the sum of the pavd_z.
-#' 
+#'
 #'The following columns are also available:
 #'\itemize{
 #'\item \emph{channel} Channel number (0-7)
@@ -205,6 +205,8 @@ getLevel2BVPM <- function(level2b, cols = c(
     #col = cols[1]
     for (col in cols) {
       h5.address = l2b.var.map[[col]]
+      if (level2b_i$exists(col))
+        h5.address = col
       if (col == "pavd")  {
         h5.address = "pavd_z"
         m[, eval(col) := colSums(level2b_i[[h5.address]][,])]
@@ -212,11 +214,14 @@ getLevel2BVPM <- function(level2b, cols = c(
       }
       if (is.null(h5.address)) {
         if (i.s == 1) warning(sprintf("The column '%s' is not available in the GEDI2B product!", col))
+        m[, eval(col) := NA]
         next
       }
-      m[, eval(col) := level2b_i[[h5.address]][]]
+      base_addr <- gsub("^(.*)/.*", "\\1", h5.address)
+      if (level2b_i$exists(base_addr) && level2b_i$exists(h5.address))
+        m[, eval(col) := level2b_i[[h5.address]][]]
     }
-    m.dt <- data.table::rbindlist(list(m.dt, m))
+    m.dt <- data.table::rbindlist(list(m.dt, m), fill = TRUE)
   }
   close(pb)
   return(m.dt)
