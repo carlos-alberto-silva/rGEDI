@@ -63,16 +63,16 @@ co = c("TILED=YES", "BLOCKXSIZE=512", "BLOCKYSIZE=512", "COMPRESSION=LZW")
 
 # Create a new raster dataset
 ds = createDataset(
-raster_path = raster_path, 
-nbands = nbands, 
-datatype = datatype, 
-projstring = projstring, 
-lr_lat = lr_lat, 
-ul_lat = ul_lat, 
-ul_lon = ul_lon, 
-lr_lon = lr_lon, 
-res = res, 
-nodata = nodata, 
+raster_path = raster_path,
+nbands = nbands,
+datatype = datatype,
+projstring = projstring,
+lr_lat = lr_lat,
+ul_lat = ul_lat,
+ul_lon = ul_lon,
+lr_lon = lr_lon,
+res = res,
+nodata = nodata,
 co = co
 )
 
@@ -84,8 +84,8 @@ band[[0,0]] = 1:(512*512)
 
 # Calculate the square - 10
 formulaCalculate(
-    formula = ~x*2 - 10, 
-    data = list(x = band), 
+    formula = ~x*2 - 10,
+    data = list(x = band),
     updateBand = band
 )
 

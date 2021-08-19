@@ -165,7 +165,18 @@ public:
   }
 };
 
-GDALDatasetR *create_dataset(const char *output, int nbands, int datatype, const char *projection, double lat_min, double lat_max, double lon_min, double lon_max, std::vector<double> res, double nodata, CharacterVector co)
+GDALDatasetR *create_dataset(
+  const char *output, 
+  int nbands, 
+  int datatype, 
+  const char *projection, 
+  double lat_min, 
+  double lat_max, 
+  double lon_min, 
+  double lon_max, 
+  std::vector<double> res, 
+  double nodata, 
+  CharacterVector co)
 {
   CPLErr err = CE_None;
   int width = (int)ceil((lon_max - lon_min) / res[0]);
@@ -267,6 +278,5 @@ RCPP_MODULE(gdal_module)
 
   function("create_dataset", &create_dataset);
   function("RGDALOpen", &RGDALOpen);
-
   function("InitializeGDAL", &InitializeGDAL);
 }

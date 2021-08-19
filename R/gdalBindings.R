@@ -37,8 +37,8 @@ defaultProjection = 'GEOGCS["WGS 84",
 #' @param nodata Numeric. The no data value for the raster. Default 0.
 #' @param co CharacterVector. A CharacterVector of creation options for GDAL. Default NULL
 #' @return An object from GDALDataset R6 class.
-#' 
-#' @examples 
+#'
+#' @examples
 #' # Parameters
 #' raster_path = file.path(tempdir(), "output.tif")
 #' ul_lat = -15
@@ -54,36 +54,47 @@ defaultProjection = 'GEOGCS["WGS 84",
 #'
 #' # Create a new raster dataset
 #' ds = createDataset(
-#' raster_path = raster_path, 
-#' nbands = nbands, 
-#' datatype = datatype, 
-#' projstring = projstring, 
-#' lr_lat = lr_lat, 
-#' ul_lat = ul_lat, 
-#' ul_lon = ul_lon, 
-#' lr_lon = lr_lon, 
-#' res = res, 
-#' nodata = nodata, 
+#' raster_path = raster_path,
+#' nbands = nbands,
+#' datatype = datatype,
+#' projstring = projstring,
+#' lr_lat = lr_lat,
+#' ul_lat = ul_lat,
+#' ul_lon = ul_lon,
+#' lr_lon = lr_lon,
+#' res = res,
+#' nodata = nodata,
 #' co = co
 #' )
 #'
 #' # Get the GDALRasterBand for ds
 #' band = ds[[1]]
-#' 
+#'
 #' # Set some dummy values
 #' band[[0,0]] = 1:(512*512)
 #'
 #' # Calculate the square - 10
 #' formulaCalculate(
-#'     formula = ~x*2 - 10, 
-#'     data = list(x = band), 
+#'     formula = ~x*2 - 10,
+#'     data = list(x = band),
 #'     updateBand = band
 #' )
 #'
 #' ds$Close()
 #' @export
 createDataset = function(raster_path, nbands, datatype, projstring, lr_lat, ul_lat, ul_lon, lr_lon, res, nodata, co = NULL) {
-  ds = create_dataset(raster_path, nbands, datatype, projstring, lr_lat, ul_lat, ul_lon, lr_lon, res, nodata, co)
+  ds = create_dataset(
+    raster_path,
+    nbands,
+    datatype,
+    projstring,
+    lr_lat,
+    ul_lat,
+    ul_lon,
+    lr_lon,
+    res,
+    nodata,
+    co)
   GDALDataset$new(ds)
 }
 
@@ -303,7 +314,7 @@ GDALRasterBand <- R6::R6Class("GDALRasterBand",
 #'
 #' @return Nothing, it just updates the band of interest.
 #'
-#' @examples 
+#' @examples
 #' # Parameters
 #' raster_path = file.path(tempdir(), "output.tif")
 #' ul_lat = -15
@@ -319,34 +330,34 @@ GDALRasterBand <- R6::R6Class("GDALRasterBand",
 #'
 #' # Create a new raster dataset
 #' ds = createDataset(
-#' raster_path = raster_path, 
-#' nbands = nbands, 
-#' datatype = datatype, 
-#' projstring = projstring, 
-#' lr_lat = lr_lat, 
-#' ul_lat = ul_lat, 
-#' ul_lon = ul_lon, 
-#' lr_lon = lr_lon, 
-#' res = res, 
-#' nodata = nodata, 
+#' raster_path = raster_path,
+#' nbands = nbands,
+#' datatype = datatype,
+#' projstring = projstring,
+#' lr_lat = lr_lat,
+#' ul_lat = ul_lat,
+#' ul_lon = ul_lon,
+#' lr_lon = lr_lon,
+#' res = res,
+#' nodata = nodata,
 #' co = co
 #' )
 #'
 #' # Get the GDALRasterBand for ds
 #' band = ds[[1]]
-#' 
+#'
 #' # Set some dummy values
 #' band[[0,0]] = 1:(512*512)
 #'
 #' # Calculate the square - 10
 #' formulaCalculate(
-#'     formula = ~x*2 - 10, 
-#'     data = list(x = band), 
+#'     formula = ~x*2 - 10,
+#'     data = list(x = band),
 #'     updateBand = band
 #' )
 #'
 #' ds$Close()
-#' 
+#'
 #' @export
 formulaCalculate =  function(formula, data, updateBand) {
   first = data[[1]]
@@ -366,9 +377,9 @@ formulaCalculate =  function(formula, data, updateBand) {
         blockCounter = blockCounter + 1
         message(
           sprintf(
-            "\rCalculating block %d/%d (%.2f%%)           ", 
-            blockCounter, 
-            totalBlocks, 
+            "\rCalculating block %d/%d (%.2f%%)           ",
+            blockCounter,
+            totalBlocks,
             100*blockCounter/totalBlocks
           ), appendLF = FALSE
         )

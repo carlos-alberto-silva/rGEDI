@@ -63,10 +63,14 @@ level2A_fp_zip <- system.file("extdata",
                   package="rGEDI")
 
 # Unzipping GEDI level1B data
+level1Bpath <- unzip(level1B_fp_zip,exdir = outdir)
+level2Apath <- unzip(level2A_fp_zip,exdir = outdir)
 
 # Reading GEDI level1B and Level2A data (h5 file)
+level1b<-readLevel1B(level1Bpath=level1Bpath)
+level2a<-readLevel2A(level2Apath=level2Apath)
 
-
+shot_number = "19640521100108408"
 
 #
 plotWFMetrics(level1b, level2a, shot_number,
