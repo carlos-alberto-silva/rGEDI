@@ -58,5 +58,5 @@ close(level1b_clip)
 }
 }
 \seealso{
-https://lpdaac.usgs.gov/products/gedi01_bv001/
+\href{https://lpdaac.usgs.gov/products/gedi01_bv002/}{https://lpdaac.usgs.gov/products/gedi01_bv002/}
 }

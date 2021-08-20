@@ -36,7 +36,7 @@ concept_ids <- list(
 #' (e.g. \[ul_lat,ul_lon,lr_lat,lr_lon\]).
 #'
 #' This function relies on the existing CMR tool:
-#' https://cmr.earthdata.nasa.gov/search/site/docs/search/api.html
+#' \href{https://cmr.earthdata.nasa.gov/search/site/docs/search/api.html}{https://cmr.earthdata.nasa.gov/search/site/docs/search/api.html}
 #'
 #' @examples
 #' \donttest{

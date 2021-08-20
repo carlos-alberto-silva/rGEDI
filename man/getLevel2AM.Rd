@@ -55,5 +55,5 @@ head(level2AM)
 close(level2a)
 }
 \seealso{
-https://lpdaac.usgs.gov/products/gedi02_av001/
+\href{https://lpdaac.usgs.gov/products/gedi02_av002/}{https://lpdaac.usgs.gov/products/gedi02_av002/}
 }

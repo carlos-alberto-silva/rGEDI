@@ -77,7 +77,7 @@
 #' for calibration and validation of spaceborne missions. Earth and Space Science.
 #' \doi{10.1029/2018EA000506}
 #'
-#' ii) gediSimulator: https://bitbucket.org/StevenHancock/gedisimulator/src/master/
+#' ii) gediSimulator: \href{https://bitbucket.org/StevenHancock/gedisimulator/src/master/}{https://bitbucket.org/StevenHancock/gedisimulator/src/master/}
 #'
 #'@examples
 #'\dontshow{

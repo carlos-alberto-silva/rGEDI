@@ -17,7 +17,7 @@
 #'@return Returns an S4 object of class \code{\link[data.table:data.table]{data.table-class}}
 #'containing the Canopy Cover and Vertical Profile metrics.
 #'
-#'@seealso https://lpdaac.usgs.gov/products/gedi02_bv001/
+#'@seealso \href{https://lpdaac.usgs.gov/products/gedi02_bv002/}{https://lpdaac.usgs.gov/products/gedi02_bv002/}
 #'
 #'@examples
 #'# Specifying the path to GEDI level2B data (zip file)
@@ -94,7 +94,7 @@ clipLevel2BVPM = function(level2BVPM,xmin, xmax, ymin, ymax){
 #'@return Returns an S4 object of class \code{\link[data.table:data.table]{data.table-class}}
 #'containing the Canopy Cover and Vertical Profile metrics.
 #'
-#'@seealso https://lpdaac.usgs.gov/products/gedi02_bv001/
+#'@seealso \href{https://lpdaac.usgs.gov/products/gedi02_bv002/}{https://lpdaac.usgs.gov/products/gedi02_bv002/}
 #'
 #'@examples
 #'# Specifying the path to GEDI level2B data (zip file)

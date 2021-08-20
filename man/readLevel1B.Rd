@@ -32,5 +32,5 @@ close(level1b)
 }
 \seealso{
 \code{\link[hdf5r:H5File-class]{hdf5r::H5File}} in the \emph{hdf5r} package and
-https://lpdaac.usgs.gov/products/gedi01_bv001/
+\href{https://lpdaac.usgs.gov/products/gedi01_bv002/}{https://lpdaac.usgs.gov/products/gedi01_bv002/}
 }

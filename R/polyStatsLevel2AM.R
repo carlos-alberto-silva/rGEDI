@@ -13,7 +13,7 @@
 #'@return Returns an S4 object of class \code{\link[data.table:data.table]{data.table-class}}
 #'containting Statistics of GEDI level2A defined metrics
 #'
-#'@seealso https://lpdaac.usgs.gov/products/gedi02_av001/
+#'@seealso \href{https://lpdaac.usgs.gov/products/gedi02_av002/}{https://lpdaac.usgs.gov/products/gedi02_av002/}
 #'
 #'@examples
 #'# Specifying the path to GEDI level2A data (zip file)

@@ -11,7 +11,7 @@
 #'
 #'@details Shot numbers can be extracted using \code{\link[rGEDI:readLevel1B]{readLevel1B}} function.
 #'
-#'@seealso https://lpdaac.usgs.gov/products/gedi01_bv001/
+#'@seealso \href{https://lpdaac.usgs.gov/products/gedi01_bv002/}{https://lpdaac.usgs.gov/products/gedi01_bv002/}
 #'
 #'@examples
 #'# Specifying the path to GEDI level1B data (zip file)

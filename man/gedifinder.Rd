@@ -77,5 +77,5 @@ in lat,lon ordering, for the bounding box of the area of interest
 (e.g. \[ul_lat,ul_lon,lr_lat,lr_lon\]).
 
 This function relies on the existing CMR tool:
-https://cmr.earthdata.nasa.gov/search/site/docs/search/api.html
+\href{https://cmr.earthdata.nasa.gov/search/site/docs/search/api.html}{https://cmr.earthdata.nasa.gov/search/site/docs/search/api.html}
 }

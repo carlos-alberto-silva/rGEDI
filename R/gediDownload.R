@@ -10,7 +10,7 @@
 #'@param timeout integer; connection timeout in seconds.
 #'
 #'@return No return value on success, on failure it will \code{stop()}
-#'@references Credits to Cole Krehbiel. Code adapted from <https://git.earthdata.nasa.gov/projects/LPDUR/repos/daac_data_download_r/browse/DAACDataDownload.R>
+#'@references Credits to Cole Krehbiel. Code adapted from <\href{https://git.earthdata.nasa.gov/projects/LPDUR/repos/daac_data_download_r/browse/DAACDataDownload.R>}{https://git.earthdata.nasa.gov/projects/LPDUR/repos/daac_data_download_r/browse/DAACDataDownload.R>}
 #'@examples
 #'\dontrun{
 #'# Set path to GEDI data

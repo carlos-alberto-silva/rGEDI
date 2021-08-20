@@ -14,7 +14,7 @@
 #'
 #'@return Returns a raster layer(s) of selected GEDI Canopy Cover and Vertical Profile Metric(s)
 #'
-#'@seealso https://lpdaac.usgs.gov/products/gedi02_bv001/
+#'@seealso \href{https://lpdaac.usgs.gov/products/gedi02_bv002/}{https://lpdaac.usgs.gov/products/gedi02_bv002/}
 #'
 #'@examples
 #'# specify the path to GEDI level1B and Level2A data (zip file)

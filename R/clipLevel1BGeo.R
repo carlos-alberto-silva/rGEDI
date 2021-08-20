@@ -14,7 +14,7 @@
 #'
 #'@return Returns an S4 object of class \code{\link[data.table:data.table]{data.table-class}}.
 #'
-#'@seealso https://lpdaac.usgs.gov/products/gedi01_bv001/
+#'@seealso \href{https://lpdaac.usgs.gov/products/gedi01_bv002/}{https://lpdaac.usgs.gov/products/gedi01_bv002/}
 #'
 #'@examples
 #'# Specifying the path to GEDI level1B data (zip file)
@@ -93,7 +93,7 @@ clipLevel1BGeo = function(level1BGeo,xmin, xmax, ymin, ymax){
 #'@return Returns an S4 object of class \code{\link[data.table:data.table]{data.table-class}} containing the
 #'clipped GEDI level1B extracted geolocations.
 #'
-#'@seealso https://lpdaac.usgs.gov/products/gedi01_bv001/
+#'@seealso \href{https://lpdaac.usgs.gov/products/gedi01_bv002/}{https://lpdaac.usgs.gov/products/gedi01_bv002/}
 #'
 #'@examples
 #'# Specifying the path to GEDI level1B data (zip file)

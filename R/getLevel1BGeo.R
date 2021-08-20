@@ -12,7 +12,7 @@
 #'@return Returns an S4 object of class \code{\link[data.table:data.table]{data.table-class}} containing the GEDI Full Waveform Geolocations
 #'
 #'
-#'@seealso https://lpdaac.usgs.gov/products/gedi01_bv001/
+#'@seealso \href{https://lpdaac.usgs.gov/products/gedi01_bv002/}{https://lpdaac.usgs.gov/products/gedi01_bv002/}
 #'
 #'@details Additional fields to be extracted from GEDI level 1B:
 #'\itemize{

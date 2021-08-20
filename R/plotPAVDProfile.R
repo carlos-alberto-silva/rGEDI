@@ -10,7 +10,7 @@
 #'
 #'@return Returns a ggplot object. See \code{\link[ggplot2:ggplot]{ggplot}} package.
 #'
-#'@seealso https://lpdaac.usgs.gov/products/gedi02_bv001/
+#'@seealso \href{https://lpdaac.usgs.gov/products/gedi02_bv002/}{https://lpdaac.usgs.gov/products/gedi02_bv002/}
 #'
 #'@details list of GEDI beams. See the output of \code{\link[rGEDI:getLevel2BPAVDProfile]{getLevel2BPAVDProfile}} function.
 #'\itemize{

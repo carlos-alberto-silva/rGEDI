@@ -9,7 +9,7 @@ requireNamespace("data.table")
 #'GEDI level1B products: geolocated Waveforms
 #'
 #' @seealso \code{\link[hdf5r:H5File-class]{hdf5r::H5File}} in the \emph{hdf5r} package and
-#'https://lpdaac.usgs.gov/products/gedi01_bv001/
+#'\href{https://lpdaac.usgs.gov/products/gedi01_bv002/}{https://lpdaac.usgs.gov/products/gedi01_bv002/}
 #'
 #' @import methods
 #' @export
@@ -24,7 +24,7 @@ gedi.level1b <- setClass(
 #'GEDI level2A products: ground elevation, canopy top height, and relative heights (RH).
 #'
 #' @seealso \code{\link[hdf5r:H5File-class]{hdf5r::H5File}} in the \emph{hdf5r} package and
-#'https://lpdaac.usgs.gov/products/gedi02_av001/
+#'\href{https://lpdaac.usgs.gov/products/gedi02_av002/}{https://lpdaac.usgs.gov/products/gedi02_av002/}
 #'
 #' @import methods
 #' @export
@@ -40,7 +40,7 @@ gedi.level2a <- setClass(
 #'and Foliage Height Diversity (FHD).
 #'
 #' @seealso \code{\link[hdf5r:H5File-class]{hdf5r::H5File}} in the \emph{hdf5r} package and
-#'https://lpdaac.usgs.gov/products/gedi02_bv001/
+#'\href{https://lpdaac.usgs.gov/products/gedi02_bv002/}{https://lpdaac.usgs.gov/products/gedi02_bv002/}
 #'
 #' @import methods
 #' @export
@@ -60,7 +60,7 @@ gedi.level2b <- setClass(
 #' for calibration and validation of spaceborne missions. Earth and Space Science.
 #' \doi{10.1029/2018EA000506}
 #'
-#' ii) gediSimulator: https://bitbucket.org/StevenHancock/gedisimulator/src/master/
+#' ii) gediSimulator: \href{https://bitbucket.org/StevenHancock/gedisimulator/src/master/}{https://bitbucket.org/StevenHancock/gedisimulator/src/master/}
 #'
 #' @import methods
 #' @export

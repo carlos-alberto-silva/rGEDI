@@ -71,5 +71,5 @@ head(level2BVPM)
 close(level2b)
 }
 \seealso{
-https://lpdaac.usgs.gov/products/gedi02_bv001/
+\href{https://lpdaac.usgs.gov/products/gedi02_bv002/}{https://lpdaac.usgs.gov/products/gedi02_bv002/}
 }

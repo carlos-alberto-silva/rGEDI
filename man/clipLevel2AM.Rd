@@ -54,5 +54,5 @@ level2AM_clip <- clipLevel2AM(level2AM,xmin, xmax, ymin, ymax)
 close(level2a)
 }
 \seealso{
-https://lpdaac.usgs.gov/products/gedi02_av001/
+\href{https://lpdaac.usgs.gov/products/gedi02_av002/}{https://lpdaac.usgs.gov/products/gedi02_av002/}
 }

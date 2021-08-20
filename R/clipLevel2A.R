@@ -14,7 +14,7 @@
 #'
 #'@return Returns a list of S4 objects of class "gedi.level2a" containing clipped GEDI Level2A data.
 #'
-#'@seealso https://lpdaac.usgs.gov/products/gedi02_av001/
+#'@seealso \href{https://lpdaac.usgs.gov/products/gedi02_av002/}{https://lpdaac.usgs.gov/products/gedi02_av002/}
 #'
 #'@examples
 #'\donttest{
@@ -81,7 +81,7 @@ clipLevel2A = function(level2a, xmin, xmax, ymin, ymax, output=""){
 #'
 #'@return Returns a list of S4 object of class "gedi.level2a" containing clipped GEDI Level2A data.
 #'
-#'@seealso https://lpdaac.usgs.gov/products/gedi02_av001/
+#'@seealso \href{https://lpdaac.usgs.gov/products/gedi02_av002/}{https://lpdaac.usgs.gov/products/gedi02_av002/}
 #'
 #'@examples
 #'\donttest{

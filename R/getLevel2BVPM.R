@@ -78,7 +78,7 @@ var.map[["surface_flag"]]            = "surface_flag"
 #'@return Returns an S4 object of class \code{\link[data.table:data.table]{data.table-class}}
 #'containing the Vegetation Profile Biophysical Variables.
 #'
-#'@seealso https://lpdaac.usgs.gov/products/gedi02_bv001/
+#'@seealso \href{https://lpdaac.usgs.gov/products/gedi02_bv002/}{https://lpdaac.usgs.gov/products/gedi02_bv002/}
 #'
 #'@details These are the biophysical variables and additional information extracted by default:
 #'\itemize{
