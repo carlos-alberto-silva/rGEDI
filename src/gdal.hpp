@@ -14,6 +14,11 @@ public:
     band = the_band;
   }
 
+  void CalculateStatistics()
+  {
+    band->GetStatistics(false, true, NULL, NULL, NULL, NULL);
+  }
+
   IntegerVector GetBlockXSize()
   {
     IntegerVector result(1);
@@ -166,16 +171,16 @@ public:
 };
 
 GDALDatasetR *create_dataset(
-  const char *output, 
-  int nbands, 
-  int datatype, 
-  const char *projection, 
-  double lat_min, 
-  double lat_max, 
-  double lon_min, 
-  double lon_max, 
-  std::vector<double> res, 
-  double nodata, 
+  const char *output,
+  int nbands,
+  int datatype,
+  const char *projection,
+  double lat_min,
+  double lat_max,
+  double lon_min,
+  double lon_max,
+  std::vector<double> res,
+  double nodata,
   CharacterVector co)
 {
   CPLErr err = CE_None;
@@ -274,7 +279,8 @@ RCPP_MODULE(gdal_module)
       .method("GetNoDataValue", &GDALRasterBandR::GetNoDataValue)
       .method("GetXSize", &GDALRasterBandR::GetXSize)
       .method("GetYSize", &GDALRasterBandR::GetYSize)
-      .method("GetRasterDataType", &GDALRasterBandR::GetRasterDataType);
+      .method("GetRasterDataType", &GDALRasterBandR::GetRasterDataType)
+      .method("CalculateStatistics", &GDALRasterBandR::CalculateStatistics);
 
   function("create_dataset", &create_dataset);
   function("RGDALOpen", &RGDALOpen);

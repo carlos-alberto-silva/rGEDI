@@ -118,5 +118,5 @@ head(level2BVPM)
 close(level2b)
 }
 \seealso{
-\url{https://lpdaac.usgs.gov/products/gedi02_bv002/}
+https://lpdaac.usgs.gov/products/gedi02_bv001/
 }

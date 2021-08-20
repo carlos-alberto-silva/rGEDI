@@ -17,5 +17,5 @@ GEDI level2A products: ground elevation, canopy top height, and relative heights
 
 \seealso{
 \code{\link[hdf5r:H5File-class]{H5File}} in the \code{hdf5r} package and
-https://lpdaac.usgs.gov/products/gedi02_av001/
+\url{https://lpdaac.usgs.gov/products/gedi02_av002/}
 }

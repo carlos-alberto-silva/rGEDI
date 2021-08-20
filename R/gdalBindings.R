@@ -254,6 +254,14 @@ GDALRasterBand <- R6::R6Class("GDALRasterBand",
                                   private$band$GetXSize()
                                 },
 
+
+#' @description
+#' Calculate statistics for the [`GDALRasterBand`][rGEDI::GDALRasterBand-class]
+#' @return nothing
+                                CalculateStatistics = function() {
+                                  private$band$CalculateStatistics()
+                                },
+
 #' @description
 #' Get the band height
 #' @return An integer indicating band height

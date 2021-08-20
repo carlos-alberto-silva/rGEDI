@@ -324,7 +324,7 @@ level2bRasterizeStats = function(l2bDir,
     xsize = rasts[[1]]$GetRasterXSize()
     ysize = rasts[[1]]$GetRasterYSize()
 
-    bands  = lapply(rasts, function(x) x[[1]])
+    bands = lapply(rasts, function(x) x[[1]])
 
     block_x_size = bands[[1]]$GetBlockXSize()
     block_y_size = bands[[1]]$GetBlockYSize()
@@ -337,17 +337,27 @@ level2bRasterizeStats = function(l2bDir,
       l2b = readLevel2B(l2b_path)
 
       vals = getLevel2BVPM(l2b, cols = cols)
+      # Clip metrics by extent
       vals = clipLevel2BVPM(vals, ul_lon, lr_lon, lr_lat, ul_lat)
 
+      # Get metrics without l2b_quality_flag
       cols_without_quality = c(setdiff(cols, "l2b_quality_flag"))
       vals = vals[l2b_quality_flag == 1, cols_without_quality, with = FALSE]
+
+      # Goto next file if no data is available after clipping
       if (nrow(vals) == 0) next
 
+      # Compute x/y indices (0-based) from lon/lat
       vals[, x_ind := as.integer(vals[, floor((longitude_bin0 - ul_lon) / xres)])]
       vals[, y_ind := as.integer(vals[, floor((latitude_bin0 - ul_lat) / yres)])]
+      # Compute single index (1-based) aggregating x/y indices based on block size 
       vals[, inds := 1 + x_ind + y_ind * block_x_size]
       names(vals) = gsub(metric, "x", names(vals))
+
+      # Compute statistics from the function provided by the user
       aggs = vals[,eval(call), by = list(inds, x_ind, y_ind)]
+
+      # Calculate x_block/y_block indices
       aggs[,
         c("x_block", "y_block") := lapply(.SD, function(x) as.integer(floor(x / block_x_size))),
         .SDcols = c("x_ind", "y_ind")
@@ -356,11 +366,14 @@ level2bRasterizeStats = function(l2bDir,
                   block_yind = y_ind - y_block * block_y_size)]
       aggs[, block_inds := 1 + block_xind + block_yind * block_x_size]
 
+      # Get calculated stats aggregated by each block
       blocks = aggs[,list(vals=list(.SD)) , by=list(x_block, y_block), .SDcols=c(stats, "block_inds")]
 
       thisEnv = new.env()
       assign("ii", 0, thisEnv)
       total_rows = nrow(blocks)
+
+      # Join aggregates for each block of raster
       # ii = 1
       invisible(apply(blocks, 1, function(row) {
         ii = get("ii", thisEnv) + 1
@@ -380,6 +393,9 @@ level2bRasterizeStats = function(l2bDir,
 
       close(l2b)
     }
+    # Update statistics for bands
+    lapply(bands, function(x) x$CalculateStatistics())
+    
     finalize_rasts = lapply(names(finalizer), function(x) {
         rast_name = sprintf("%s_%s_%s.tif", out_root, metric, x)
         message(sprintf("Writing raster: %s", rast_name))

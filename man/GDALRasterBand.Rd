@@ -18,6 +18,7 @@ This constructor must not be called at all, this is automatically called from GD
 \item \href{#method-GetBlockXSize}{\code{GDALRasterBand$GetBlockXSize()}}
 \item \href{#method-GetBlockYSize}{\code{GDALRasterBand$GetBlockYSize()}}
 \item \href{#method-GetXSize}{\code{GDALRasterBand$GetXSize()}}
+\item \href{#method-CalculateStatistics}{\code{GDALRasterBand$CalculateStatistics()}}
 \item \href{#method-GetYSize}{\code{GDALRasterBand$GetYSize()}}
 \item \href{#method-GetNoDataValue}{\code{GDALRasterBand$GetNoDataValue()}}
 \item \href{#method-GetRasterDataType}{\code{GDALRasterBand$GetRasterDataType()}}
@@ -137,6 +138,19 @@ Get the band width
 
 \subsection{Returns}{
 An integer indicating band width
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CalculateStatistics"></a>}}
+\if{latex}{\out{\hypertarget{method-CalculateStatistics}{}}}
+\subsection{Method \code{CalculateStatistics()}}{
+Calculate statistics for the \code{\link[=GDALRasterBand-class]{GDALRasterBand}}
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{GDALRasterBand$CalculateStatistics()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+nothing
 }
 }
 \if{html}{\out{<hr>}}
