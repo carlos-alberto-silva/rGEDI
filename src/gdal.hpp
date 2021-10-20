@@ -33,7 +33,8 @@ public:
     return result;
   }
 
-  int GetRasterDataType() {
+  int GetRasterDataType()
+  {
     return (int)band->GetRasterDataType();
   }
 
@@ -164,24 +165,24 @@ public:
   {
     if (!closed)
     {
-      GDALClose(GDALDataset::ToHandle(ds));
+      GDALClose((GDALDatasetH)ds);
       closed = true;
     }
   }
 };
 
 GDALDatasetR *create_dataset(
-  const char *output,
-  int nbands,
-  int datatype,
-  const char *projection,
-  double lat_min,
-  double lat_max,
-  double lon_min,
-  double lon_max,
-  std::vector<double> res,
-  double nodata,
-  CharacterVector co)
+    const char *output,
+    int nbands,
+    int datatype,
+    const char *projection,
+    double lat_min,
+    double lat_max,
+    double lon_min,
+    double lon_max,
+    std::vector<double> res,
+    double nodata,
+    CharacterVector co)
 {
   CPLErr err = CE_None;
   int width = (int)ceil((lon_max - lon_min) / res[0]);
