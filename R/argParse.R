@@ -1,78 +1,81 @@
-stopifnotMessage = function(...) {
-  ok = TRUE
-  errors = list()
-  listargs = list(...)
-  for (i in 1:length(listargs)) {
+stopifnotMessage <- function(...) {
+  ok <- TRUE
+  errors <- list()
+  listargs <- list(...)
+  for (i in seq_len(length(listargs))) {
     if (listargs[i] == FALSE) {
-      errors[[""]] = names(listargs)[i]
-      ok = FALSE
+      errors[[""]] <- names(listargs)[i]
+      ok <- FALSE
     }
   }
   if (ok == FALSE) {
-    stop(paste0("\n\nWhen validating the arguments:\n    ", paste(errors, collapse="\n    ")))
+    stop(paste0("\n\nWhen validating the arguments:\n    ", paste(errors, collapse = "\n    ")))
   }
 }
 
-checkNumericLength = function(x, len) {
-  return (is.null(x) || (length(x) == len && is.numeric(x)))
+checkNumericLength <- function(x, len) {
+  return(is.null(x) || (length(x) == len && is.numeric(x)))
 }
 
-checkNumeric = function(x) {
-  return (checkNumericLength(x, 1))
+checkNumeric <- function(x) {
+  return(checkNumericLength(x, 1))
 }
 
-checkLogical = function(x) {
-  return (is.null(x) || (length(x) == 1 && is.logical(x)))
+checkLogical <- function(x) {
+  return(is.null(x) || (length(x) == 1 && is.logical(x)))
 }
 
-checkInteger = function(x) {
-  x_int = as.integer(x)
-  return (is.null(x) || (length(x_int) == 1 && is.integer(x_int) && !is.na(x_int)))
+checkInteger <- function(x) {
+  x_int <- as.integer(x)
+  return(is.null(x) || (length(x_int) == 1 && is.integer(x_int) && !is.na(x_int)))
 }
 
-checkCharacter = function(x) {
-  return (is.null(x) || (length(x) == 1 && is.character(x)))
+checkCharacter <- function(x) {
+  return(is.null(x) || (length(x) == 1 && is.character(x)))
 }
 
-checkFilepath = function(x, newFile=TRUE, optional = TRUE) {
-  exists = TRUE
+checkFilepath <- function(x, newFile = TRUE, optional = TRUE) {
+  exists <- TRUE
   if (is.null(x)) {
-    if (optional)
-      return (TRUE)
-    else
-      return (FALSE)
+    if (optional) {
+      return(TRUE)
+    } else {
+      return(FALSE)
+    }
   }
-  if (!is.character(x) || length(x) != 1)
-    return (FALSE)
+  if (!is.character(x) || length(x) != 1) {
+    return(FALSE)
+  }
 
 
-  if (!newFile)
-    return (file.exists(x))
+  if (!newFile) {
+    return(file.exists(x))
+  }
 
-  return (TRUE)
+  return(TRUE)
 }
 
-checkParentDir = function(x, optional=FALSE) {
+checkParentDir <- function(x, optional = FALSE) {
   if (optional && is.null(x)) {
-    return (TRUE)
+    return(TRUE)
   }
-  dirName = fs::path_dir(x)
-  return (fs::dir_exists(dirName)[[1]])
+  dirName <- fs::path_dir(x)
+  return(fs::dir_exists(dirName)[[1]])
 }
 
-inputOrInList = function(input) {
-  inList=NULL
+inputOrInList <- function(input) {
+  inList <- NULL
   if (length(input) > 1) {
-    inList = tempfile(fileext=".txt")
-    fileHandle = file(inList, "w")
+    inList <- tempfile(fileext = ".txt")
+    fileHandle <- file(inList, "w")
     writeLines(input, fileHandle)
     close(fileHandle)
-    return (list(NULL, inList))
+    return(list(NULL, inList))
   }
-  return (list(input, NULL))
+  return(list(input, NULL))
 }
 
-cleanInList = function(x) {
+cleanInList <- function(x) {
   if (!is.null(x[[2]]) && file.exists(x[[2]])) {
     file.remove(x[[2]])
   }

@@ -1,170 +1,178 @@
-#'Clip GEDI Canopy Cover and Vertical Profile Metrics by Coordinates
+#' Clip GEDI Canopy Cover and Vertical Profile Metrics by Coordinates
 #'
-#'@description This function clips GEDI level2B derived
-#'Canopy Cover and Vertical Profile metrics a within given bounding coordinates
-#'
-#'
-#'@usage clipLevel2BVPM(level2BVPM, xmin, xmax, ymin, ymax)
+#' @description This function clips GEDI level2B derived
+#' Canopy Cover and Vertical Profile metrics a within given bounding coordinates
 #'
 #'
-#'@param level2BVPM A GEDI Level2B object (output of [readLevel1B()] function).
-#'An S4 object of class "data.table".
-#'@param xmin Numeric. West longitude (x) coordinate of the bounding rectangle, in decimal degrees.
-#'@param xmax Numeric. East longitude (x) coordinate of the bounding rectangle, in decimal degrees.
-#'@param ymin Numeric. South latitude (y) coordinate of the bounding rectangle, in decimal degrees.
-#'@param ymax Numeric. North latitude (y) coordinate of the bounding rectangle, in decimal degrees.
+#' @usage clipLevel2BVPM(level2BVPM, xmin, xmax, ymin, ymax)
 #'
-#'@return Returns an S4 object of class [data.table::data.table]
-#'containing the Canopy Cover and Vertical Profile metrics.
 #'
-#'@seealso \url{https://lpdaac.usgs.gov/products/gedi02_bv002/}
+#' @param level2BVPM A GEDI Level2B object (output of [readLevel1B()] function).
+#' An S4 object of class "data.table".
+#' @param xmin Numeric. West longitude (x) coordinate of the bounding rectangle, in decimal degrees.
+#' @param xmax Numeric. East longitude (x) coordinate of the bounding rectangle, in decimal degrees.
+#' @param ymin Numeric. South latitude (y) coordinate of the bounding rectangle, in decimal degrees.
+#' @param ymax Numeric. North latitude (y) coordinate of the bounding rectangle, in decimal degrees.
 #'
-#'@examples
-#'# Specifying the path to GEDI level2B data (zip file)
-#'outdir = tempdir()
-#'level2B_fp_zip <- system.file("extdata",
-#'                   "GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub.zip",
-#'                   package="rGEDI")
+#' @return Returns an S4 object of class [data.table::data.table]
+#' containing the Canopy Cover and Vertical Profile metrics.
 #'
-#'# Unzipping GEDI level2A data
-#'level2Bpath <- unzip(level2B_fp_zip,exdir = outdir)
+#' @seealso \url{https://lpdaac.usgs.gov/products/gedi02_bv002/}
 #'
-#'# Reading GEDI level2B data (h5 file)
-#'level2b<-readLevel2B(level2Bpath=level2Bpath)
+#' @examples
+#' # Specifying the path to GEDI level2B data (zip file)
+#' outdir <- tempdir()
+#' level2B_fp_zip <- system.file("extdata",
+#'   "GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub.zip",
+#'   package = "rGEDI"
+#' )
 #'
-#'# Extracting canopy cover and vertical profile metrics
-#'level2BVPM<-getLevel2BVPM(level2b)
+#' # Unzipping GEDI level2A data
+#' level2Bpath <- unzip(level2B_fp_zip, exdir = outdir)
 #'
-#'# Bounding rectangle coordinates
-#'xmin = -44.15036
-#'xmax = -44.10066
-#'ymin = -13.75831
-#'ymax = -13.71244
+#' # Reading GEDI level2B data (h5 file)
+#' level2b <- readLevel2B(level2Bpath = level2Bpath)
 #'
-#'# Clipping level2BVPM by extent boundary box
-#'level2b_clip <- clipLevel2BVPM(level2BVPM,xmin, xmax, ymin, ymax)
+#' # Extracting canopy cover and vertical profile metrics
+#' level2BVPM <- getLevel2BVPM(level2b)
 #'
-#'hasLeaflet = require(leaflet)
+#' # Bounding rectangle coordinates
+#' xmin <- -44.15036
+#' xmax <- -44.10066
+#' ymin <- -13.75831
+#' ymax <- -13.71244
 #'
-#'if (hasLeaflet) {
-#'leaflet() %>%
-#'  addCircleMarkers(level2b_clip$longitude_bin0,
-#'                   level2b_clip$latitude_bin0,
-#'                   radius = 1,
-#'                   opacity = 1,
-#'                   color = "red")  %>%
-#'  addScaleBar(options = list(imperial = FALSE)) %>%
-#'  addProviderTiles(providers$Esri.WorldImagery)
-#'}
+#' # Clipping level2BVPM by extent boundary box
+#' level2b_clip <- clipLevel2BVPM(level2BVPM, xmin, xmax, ymin, ymax)
 #'
-#'close(level2b)
-#'@export
-clipLevel2BVPM = function(level2BVPM,xmin, xmax, ymin, ymax){
+#' hasLeaflet <- require(leaflet)
+#'
+#' if (hasLeaflet) {
+#'   leaflet() %>%
+#'     addCircleMarkers(level2b_clip$longitude_bin0,
+#'       level2b_clip$latitude_bin0,
+#'       radius = 1,
+#'       opacity = 1,
+#'       color = "red"
+#'     ) %>%
+#'     addScaleBar(options = list(imperial = FALSE)) %>%
+#'     addProviderTiles(providers$Esri.WorldImagery)
+#' }
+#'
+#' close(level2b)
+#' @export
+clipLevel2BVPM <- function(level2BVPM, xmin, xmax, ymin, ymax) {
   # xmin ymin xmax ymax
-  mask =
+  mask <-
     level2BVPM$longitude_bin0 >= xmin &
-    level2BVPM$longitude_bin0 <= xmax &
-    level2BVPM$latitude_bin0 >= ymin &
-    level2BVPM$latitude_bin0 <=  ymax &
-    level2BVPM$longitude_lastbin >= xmin &
-    level2BVPM$longitude_lastbin <= xmax &
-    level2BVPM$latitude_lastbin >= ymin &
-    level2BVPM$latitude_lastbin <=  ymax
+      level2BVPM$longitude_bin0 <= xmax &
+      level2BVPM$latitude_bin0 >= ymin &
+      level2BVPM$latitude_bin0 <= ymax &
+      level2BVPM$longitude_lastbin >= xmin &
+      level2BVPM$longitude_lastbin <= xmax &
+      level2BVPM$latitude_lastbin >= ymin &
+      level2BVPM$latitude_lastbin <= ymax
 
-  mask[!stats::complete.cases(mask)] = FALSE
-  mask = (1:length(level2BVPM$longitude_bin0))[mask]
-  newFile<-level2BVPM[mask,]
-  return (newFile)
+  mask[!stats::complete.cases(mask)] <- FALSE
+  mask <- seq_len(length(level2BVPM$longitude_bin0))[mask]
+  newFile <- level2BVPM[mask, ]
+  return(newFile)
 }
 
-#'Clip GEDI Canopy Cover and Vertical Profile Metrics by geometry
+#' Clip GEDI Canopy Cover and Vertical Profile Metrics by geometry
 #'
-#'@description This function clips GEDI level2B derived
-#'Canopy Cover and Vertical Profile metrics within a given geometry
+#' @description This function clips GEDI level2B derived
+#' Canopy Cover and Vertical Profile metrics within a given geometry
 #'
-#'@usage clipLevel2BVPMGeometry(level2BVPM, polygon_spdf, split_by)
+#' @usage clipLevel2BVPMGeometry(level2BVPM, polygon_spdf, split_by)
 #'
 #'
-#'@param level2BVPM A GEDI Level2B object (output of [readLevel1B()] function).
-#'An S4 object of class "gedi.level2b".
-#'@param polygon_spdf Polygon. An object of class [`sp::SpatialPolygonsDataFrame-class`],
-#'which can be loaded as an ESRI shapefile using [raster::shapefile] function in the \emph{raster} package.
-#'@param split_by Polygon id. If defined, GEDI data will be clipped by each polygon using the attribute specified by `split_by` from the attribute table.
+#' @param level2BVPM A GEDI Level2B object (output of [readLevel1B()] function).
+#' An S4 object of class "gedi.level2b".
+#' @param polygon_spdf Polygon. An object of class [`sp::SpatialPolygonsDataFrame-class`],
+#' which can be loaded as an ESRI shapefile using [raster::shapefile] function in the \emph{raster} package.
+#' @param split_by Polygon id. If defined, GEDI data will be clipped by each polygon using the attribute specified
+#' by `split_by` from the attribute table.
 #'
-#'@return Returns an S4 object of class [data.table::data.table]
-#'containing the Canopy Cover and Vertical Profile metrics.
+#' @return Returns an S4 object of class [data.table::data.table]
+#' containing the Canopy Cover and Vertical Profile metrics.
 #'
-#'@seealso \url{https://lpdaac.usgs.gov/products/gedi02_bv002/}
+#' @seealso \url{https://lpdaac.usgs.gov/products/gedi02_bv002/}
 #'
-#'@examples
-#'# Specifying the path to GEDI level2B data (zip file)
-#'outdir = tempdir()
-#'level2B_fp_zip <- system.file("extdata",
-#'                   "GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub.zip",
-#'                   package="rGEDI")
+#' @examples
+#' # Specifying the path to GEDI level2B data (zip file)
+#' outdir <- tempdir()
+#' level2B_fp_zip <- system.file("extdata",
+#'   "GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub.zip",
+#'   package = "rGEDI"
+#' )
 #'
-#'# Unzipping GEDI level2A data
-#'level2Bpath <- unzip(level2B_fp_zip,exdir = outdir)
+#' # Unzipping GEDI level2A data
+#' level2Bpath <- unzip(level2B_fp_zip, exdir = outdir)
 #'
-#'# Reading GEDI level2B data (h5 file)
-#'level2b<-readLevel2B(level2Bpath=level2Bpath)
+#' # Reading GEDI level2B data (h5 file)
+#' level2b <- readLevel2B(level2Bpath = level2Bpath)
 #'
-#'# Extracting canopy cover and vertical profile metrics
-#'level2BVPM<-getLevel2BVPM(level2b)
+#' # Extracting canopy cover and vertical profile metrics
+#' level2BVPM <- getLevel2BVPM(level2b)
 #'
-#'# Specifying the path to shapefile
-#'polygon_filepath <- system.file("extdata", "stands_cerrado.shp", package="rGEDI")
+#' # Specifying the path to shapefile
+#' polygon_filepath <- system.file("extdata", "stands_cerrado.shp", package = "rGEDI")
 #'
-#'# Reading shapefile as SpatialPolygonsDataFrame object
-#'library(raster)
-#'polygon_spdf<-shapefile(polygon_filepath)
+#' # Reading shapefile as SpatialPolygonsDataFrame object
+#' library(raster)
+#' polygon_spdf <- shapefile(polygon_filepath)
 #'
-#'# Clipping level2BVPM by geometry
-#'level2b_clip_geometry <- clipLevel2BVPMGeometry(level2BVPM,polygon_spdf,split_by="id")
+#' # Clipping level2BVPM by geometry
+#' level2b_clip_geometry <- clipLevel2BVPMGeometry(level2BVPM, polygon_spdf, split_by = "id")
 #'
-#'hasLeaflet = require(leaflet)
+#' hasLeaflet <- require(leaflet)
 #'
-#'if (hasLeaflet) {
-#'leaflet() %>%
-#'  addCircleMarkers(level2b_clip_geometry$longitude_bin0,
-#'                   level2b_clip_geometry$latitude_bin0,
-#'                   radius = 1,
-#'                   opacity = 1,
-#'                   color = "red")  %>%
-#'  addScaleBar(options = list(imperial = FALSE)) %>%
-#'  addPolygons(data=polygon_spdf,weight=1,col = 'white',
-#'              opacity = 1, fillOpacity = 0) %>%
-#'  addProviderTiles(providers$Esri.WorldImagery)
-#'}
+#' if (hasLeaflet) {
+#'   leaflet() %>%
+#'     addCircleMarkers(level2b_clip_geometry$longitude_bin0,
+#'       level2b_clip_geometry$latitude_bin0,
+#'       radius = 1,
+#'       opacity = 1,
+#'       color = "red"
+#'     ) %>%
+#'     addScaleBar(options = list(imperial = FALSE)) %>%
+#'     addPolygons(
+#'       data = polygon_spdf, weight = 1, col = "white",
+#'       opacity = 1, fillOpacity = 0
+#'     ) %>%
+#'     addProviderTiles(providers$Esri.WorldImagery)
+#' }
 #'
-#'close(level2b)
-#'@export
-clipLevel2BVPMGeometry = function(level2BVPM, polygon_spdf, split_by=NULL) {
-  exshp<-raster::extent(polygon_spdf)
-  level2bdt<-clipLevel2BVPM(level2BVPM, xmin=exshp[1], xmax=exshp[2], ymin=exshp[3], ymax=exshp[4])
+#' close(level2b)
+#' @export
+clipLevel2BVPMGeometry <- function(level2BVPM, polygon_spdf, split_by = NULL) {
+  exshp <- raster::extent(polygon_spdf)
+  level2bdt <- clipLevel2BVPM(level2BVPM, xmin = exshp[1], xmax = exshp[2], ymin = exshp[3], ymax = exshp[4])
 
-  if (nrow(level2bdt) == 0) {print("The polygon does not overlap the GEDI data")} else {
-  points = sp::SpatialPointsDataFrame(coords=matrix(c(level2bdt$longitude_lastbin, level2bdt$latitude_lastbin), ncol=2),
-                                      data=data.frame(id=1:length(level2bdt$longitude_lastbin)), proj4string = polygon_spdf@proj4string)
-  pts = raster::intersect(points, polygon_spdf)
-  colnames(pts@data)<-c("rowids",names(polygon_spdf))
-
-  if (!is.null(split_by)){
-
-    if ( any(names(polygon_spdf)==split_by)){
-
-      mask = as.integer(pts@data$rowids)
-      newFile<-level2bdt[mask,]
-      newFile$poly_id<-pts@data[,split_by]
-    } else {stop(paste("The",split_by,"is not included in the attribute table.
-                       Please check the names in the attribute table"))}
-
+  if (nrow(level2bdt) == 0) {
+    print("The polygon does not overlap the GEDI data")
   } else {
-  mask = as.integer(pts@data$rowids)
-  newFile<-level2bdt[mask,]
+    points <- sp::SpatialPointsDataFrame(
+      coords = matrix(c(level2bdt$longitude_lastbin, level2bdt$latitude_lastbin), ncol = 2),
+      data = data.frame(id = seq_len(length(level2bdt$longitude_lastbin))), proj4string = polygon_spdf@proj4string
+    )
+    pts <- raster::intersect(points, polygon_spdf)
+    colnames(pts@data) <- c("rowids", names(polygon_spdf))
+
+    if (!is.null(split_by)) {
+      if (any(names(polygon_spdf) == split_by)) {
+        mask <- as.integer(pts@data$rowids)
+        newFile <- level2bdt[mask, ]
+        newFile$poly_id <- pts@data[, split_by]
+      } else {
+        stop(paste("The", split_by, "is not included in the attribute table.
+                       Please check the names in the attribute table"))
+      }
+    } else {
+      mask <- as.integer(pts@data$rowids)
+      newFile <- level2bdt[mask, ]
+    }
+    return(newFile)
   }
-  return (newFile)}
 }
-
-
-
