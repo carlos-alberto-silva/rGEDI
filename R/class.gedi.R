@@ -14,7 +14,7 @@ requireNamespace("data.table")
 #' @import methods
 #' @export
 gedi.level1b <- setClass(
-  class = "gedi.level1b",
+  Class = "gedi.level1b",
   slots = list(h5 = "H5File")
 )
 
@@ -29,7 +29,7 @@ gedi.level1b <- setClass(
 #' @import methods
 #' @export
 gedi.level2a <- setClass(
-  class = "gedi.level2a",
+  Class = "gedi.level2a",
   slots = list(h5 = "H5File")
 )
 
@@ -45,7 +45,7 @@ gedi.level2a <- setClass(
 #' @import methods
 #' @export
 gedi.level4a <- setClass(
-  class = "gedi.level4a",
+  Class = "gedi.level4a",
   slots = list(h5 = "H5File")
 )
 #' Class for GEDI level2B
@@ -60,7 +60,7 @@ gedi.level4a <- setClass(
 #' @import methods
 #' @export
 gedi.level2b <- setClass(
-  class = "gedi.level2b",
+  Class = "gedi.level2b",
   slots = list(h5 = "H5File")
 )
 
@@ -80,7 +80,7 @@ gedi.level2b <- setClass(
 #' @import methods
 #' @export
 gedi.level1bSim <- setClass(
-  class = "gedi.level1bSim",
+  Class = "gedi.level1bSim",
   slots = list(h5 = "H5File")
 )
 
@@ -92,7 +92,7 @@ gedi.level1bSim <- setClass(
 #' @import methods
 #' @export
 gedi.fullwaveform <- setClass(
-  class = "gedi.fullwaveform",
+  Class = "gedi.fullwaveform",
   slots = list(dt = "data.table")
 )
 
