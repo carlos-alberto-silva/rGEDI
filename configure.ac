@@ -5,7 +5,7 @@ m4_include([inst/m4/zlib.m4])
 
 
 # The version set here will propagate to other files from here
-AC_INIT([gedisimulator], 0.0.1)
+AC_INIT([gedisimulator],[0.0.1])
 
 # Checks for common programs using default macros
 CC=`"${R_HOME}/bin/R" CMD config CC`
@@ -65,5 +65,6 @@ AX_CHECK_ZLIB(,
 ##################
 
 
-AC_OUTPUT(src/Makevars)
+AC_CONFIG_FILES([src/Makevars])
+AC_OUTPUT
 
