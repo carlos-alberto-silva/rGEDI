@@ -71,7 +71,9 @@ with the following formulas according to Terriberry (2007) and
 
 The \code{agg_function} is a formula which return a data.table with the
 aggregate function to perform over the data.
-The default is:\if{html}{\out{<div class="r">}}\preformatted{~data.table(
+The default is:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{~data.table(
     n = length(x),
     M1 = mean(x,na.rm = T),
     M2 = e1071::moment(x, order = 2, center = TRUE, na.rm = T) * length(x),
@@ -85,7 +87,9 @@ The default is:\if{html}{\out{<div class="r">}}\preformatted{~data.table(
 The \code{agg_join} is a function to merge two data.table aggregates
 from the \code{agg_function}. Since the h5 files will be aggregated
 one by one, the statistics from the different h5 files should
-have a function to merge. The default function is:\if{html}{\out{<div class="r">}}\preformatted{function(x1, x2) \{
+have a function to merge. The default function is:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{function(x1, x2) \{
     combined = data.table()
     x1$n[is.na(x1$n)] = 0
     x1$M1[is.na(x1$M1)] = 0
@@ -126,7 +130,9 @@ The \code{finalizer} is a list of formulas to generate the final
 rasters based on the intermediate statistics from the previous
 functions. The default \code{finalizer} will calculate the \code{sd},
 \code{skewness} and \code{kurtosis} based on the \code{M2}, \code{M3}, \code{M4} and \code{n}
-values. It is defined as:\if{html}{\out{<div class="r">}}\preformatted{list(
+values. It is defined as:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{list(
   sd = ~sqrt(M2/(n - 1)),
   skew = ~sqrt((n * (n - 1))) * ((sqrt(n) * M3) / (M2^1.5)) / (n - 2),
   kur = ~((n - 1) / ((n - 2) * (n - 3))) * ((n + 1) * ((n * M4) / (M2^2) - 3.0) + 6)

@@ -9,17 +9,17 @@ Wrapping class for GDALDataset C++ API exporting GetRasterBand, GetRasterXSize, 
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
-\item \href{#method-new}{\code{GDALDataset$new()}}
-\item \href{#method-GetRasterBand}{\code{GDALDataset$GetRasterBand()}}
-\item \href{#method-GetRasterXSize}{\code{GDALDataset$GetRasterXSize()}}
-\item \href{#method-GetRasterYSize}{\code{GDALDataset$GetRasterYSize()}}
-\item \href{#method-Close}{\code{GDALDataset$Close()}}
-\item \href{#method-clone}{\code{GDALDataset$clone()}}
+\item \href{#method-GDALDataset-new}{\code{GDALDataset$new()}}
+\item \href{#method-GDALDataset-GetRasterBand}{\code{GDALDataset$GetRasterBand()}}
+\item \href{#method-GDALDataset-GetRasterXSize}{\code{GDALDataset$GetRasterXSize()}}
+\item \href{#method-GDALDataset-GetRasterYSize}{\code{GDALDataset$GetRasterYSize()}}
+\item \href{#method-GDALDataset-Close}{\code{GDALDataset$Close()}}
+\item \href{#method-GDALDataset-clone}{\code{GDALDataset$clone()}}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-new"></a>}}
-\if{latex}{\out{\hypertarget{method-new}{}}}
+\if{html}{\out{<a id="method-GDALDataset-new"></a>}}
+\if{latex}{\out{\hypertarget{method-GDALDataset-new}{}}}
 \subsection{Method \code{new()}}{
 Create a new raster file based on specified data. It will output a *.tif file.
 \subsection{Usage}{
@@ -40,8 +40,8 @@ An object from GDALDataset R6 class.
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-GetRasterBand"></a>}}
-\if{latex}{\out{\hypertarget{method-GetRasterBand}{}}}
+\if{html}{\out{<a id="method-GDALDataset-GetRasterBand"></a>}}
+\if{latex}{\out{\hypertarget{method-GDALDataset-GetRasterBand}{}}}
 \subsection{Method \code{GetRasterBand()}}{
 Function to retrieve the GDALRasterBand R6 Object.
 \subsection{Usage}{
@@ -60,8 +60,8 @@ An object of GDALRasterBand R6 class.
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-GetRasterXSize"></a>}}
-\if{latex}{\out{\hypertarget{method-GetRasterXSize}{}}}
+\if{html}{\out{<a id="method-GDALDataset-GetRasterXSize"></a>}}
+\if{latex}{\out{\hypertarget{method-GDALDataset-GetRasterXSize}{}}}
 \subsection{Method \code{GetRasterXSize()}}{
 Get the width for the raster
 \subsection{Usage}{
@@ -73,8 +73,8 @@ An integer indicating the raster width
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-GetRasterYSize"></a>}}
-\if{latex}{\out{\hypertarget{method-GetRasterYSize}{}}}
+\if{html}{\out{<a id="method-GDALDataset-GetRasterYSize"></a>}}
+\if{latex}{\out{\hypertarget{method-GDALDataset-GetRasterYSize}{}}}
 \subsection{Method \code{GetRasterYSize()}}{
 Get the height for the raster
 \subsection{Usage}{
@@ -86,8 +86,8 @@ An integer indicating the raster height
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-Close"></a>}}
-\if{latex}{\out{\hypertarget{method-Close}{}}}
+\if{html}{\out{<a id="method-GDALDataset-Close"></a>}}
+\if{latex}{\out{\hypertarget{method-GDALDataset-Close}{}}}
 \subsection{Method \code{Close()}}{
 Closes the GDALDataset
 \subsection{Usage}{
@@ -99,8 +99,8 @@ An integer indicating the raster width
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-clone"></a>}}
-\if{latex}{\out{\hypertarget{method-clone}{}}}
+\if{html}{\out{<a id="method-GDALDataset-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-GDALDataset-clone}{}}}
 \subsection{Method \code{clone()}}{
 The objects of this class are cloneable with this method.
 \subsection{Usage}{

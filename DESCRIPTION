@@ -56,7 +56,7 @@ SystemRequirements:
   szip (>= 2.1),
   zlib (>= 1.2)
 NeedsCompilation: yes
-RoxygenNote: 7.1.1
+RoxygenNote: 7.2.0
 Roxygen: list(markdown = TRUE)
 RdMacros: Rdpack 
 BugReports: https://github.com/carlos-alberto-silva/rGEDI/issues

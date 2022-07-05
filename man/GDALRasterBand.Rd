@@ -12,22 +12,22 @@ This constructor must not be called at all, this is automatically called from GD
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
-\item \href{#method-new}{\code{GDALRasterBand$new()}}
-\item \href{#method-ReadBlock}{\code{GDALRasterBand$ReadBlock()}}
-\item \href{#method-WriteBlock}{\code{GDALRasterBand$WriteBlock()}}
-\item \href{#method-GetBlockXSize}{\code{GDALRasterBand$GetBlockXSize()}}
-\item \href{#method-GetBlockYSize}{\code{GDALRasterBand$GetBlockYSize()}}
-\item \href{#method-GetXSize}{\code{GDALRasterBand$GetXSize()}}
-\item \href{#method-CalculateStatistics}{\code{GDALRasterBand$CalculateStatistics()}}
-\item \href{#method-GetYSize}{\code{GDALRasterBand$GetYSize()}}
-\item \href{#method-GetNoDataValue}{\code{GDALRasterBand$GetNoDataValue()}}
-\item \href{#method-GetRasterDataType}{\code{GDALRasterBand$GetRasterDataType()}}
-\item \href{#method-clone}{\code{GDALRasterBand$clone()}}
+\item \href{#method-GDALRasterBand-new}{\code{GDALRasterBand$new()}}
+\item \href{#method-GDALRasterBand-ReadBlock}{\code{GDALRasterBand$ReadBlock()}}
+\item \href{#method-GDALRasterBand-WriteBlock}{\code{GDALRasterBand$WriteBlock()}}
+\item \href{#method-GDALRasterBand-GetBlockXSize}{\code{GDALRasterBand$GetBlockXSize()}}
+\item \href{#method-GDALRasterBand-GetBlockYSize}{\code{GDALRasterBand$GetBlockYSize()}}
+\item \href{#method-GDALRasterBand-GetXSize}{\code{GDALRasterBand$GetXSize()}}
+\item \href{#method-GDALRasterBand-CalculateStatistics}{\code{GDALRasterBand$CalculateStatistics()}}
+\item \href{#method-GDALRasterBand-GetYSize}{\code{GDALRasterBand$GetYSize()}}
+\item \href{#method-GDALRasterBand-GetNoDataValue}{\code{GDALRasterBand$GetNoDataValue()}}
+\item \href{#method-GDALRasterBand-GetRasterDataType}{\code{GDALRasterBand$GetRasterDataType()}}
+\item \href{#method-GDALRasterBand-clone}{\code{GDALRasterBand$clone()}}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-new"></a>}}
-\if{latex}{\out{\hypertarget{method-new}{}}}
+\if{html}{\out{<a id="method-GDALRasterBand-new"></a>}}
+\if{latex}{\out{\hypertarget{method-GDALRasterBand-new}{}}}
 \subsection{Method \code{new()}}{
 Creates a new GDALRasterBand
 \subsection{Usage}{
@@ -48,8 +48,8 @@ An object of GDALRasterBand R6 class
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-ReadBlock"></a>}}
-\if{latex}{\out{\hypertarget{method-ReadBlock}{}}}
+\if{html}{\out{<a id="method-GDALRasterBand-ReadBlock"></a>}}
+\if{latex}{\out{\hypertarget{method-GDALRasterBand-ReadBlock}{}}}
 \subsection{Method \code{ReadBlock()}}{
 Efficiently reads a raster block
 \subsection{Usage}{
@@ -74,8 +74,8 @@ RawVector for GDALDataType$GDT_Byte, IntegerVector for int types and NumericVect
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-WriteBlock"></a>}}
-\if{latex}{\out{\hypertarget{method-WriteBlock}{}}}
+\if{html}{\out{<a id="method-GDALRasterBand-WriteBlock"></a>}}
+\if{latex}{\out{\hypertarget{method-GDALRasterBand-WriteBlock}{}}}
 \subsection{Method \code{WriteBlock()}}{
 Efficiently writes a raster block
 \subsection{Usage}{
@@ -102,8 +102,8 @@ Nothing
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-GetBlockXSize"></a>}}
-\if{latex}{\out{\hypertarget{method-GetBlockXSize}{}}}
+\if{html}{\out{<a id="method-GDALRasterBand-GetBlockXSize"></a>}}
+\if{latex}{\out{\hypertarget{method-GDALRasterBand-GetBlockXSize}{}}}
 \subsection{Method \code{GetBlockXSize()}}{
 Get the block width
 \subsection{Usage}{
@@ -115,8 +115,8 @@ An integer indicating block width
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-GetBlockYSize"></a>}}
-\if{latex}{\out{\hypertarget{method-GetBlockYSize}{}}}
+\if{html}{\out{<a id="method-GDALRasterBand-GetBlockYSize"></a>}}
+\if{latex}{\out{\hypertarget{method-GDALRasterBand-GetBlockYSize}{}}}
 \subsection{Method \code{GetBlockYSize()}}{
 Get the block height
 \subsection{Usage}{
@@ -128,8 +128,8 @@ An integer indicating block height
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-GetXSize"></a>}}
-\if{latex}{\out{\hypertarget{method-GetXSize}{}}}
+\if{html}{\out{<a id="method-GDALRasterBand-GetXSize"></a>}}
+\if{latex}{\out{\hypertarget{method-GDALRasterBand-GetXSize}{}}}
 \subsection{Method \code{GetXSize()}}{
 Get the band width
 \subsection{Usage}{
@@ -141,8 +141,8 @@ An integer indicating band width
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-CalculateStatistics"></a>}}
-\if{latex}{\out{\hypertarget{method-CalculateStatistics}{}}}
+\if{html}{\out{<a id="method-GDALRasterBand-CalculateStatistics"></a>}}
+\if{latex}{\out{\hypertarget{method-GDALRasterBand-CalculateStatistics}{}}}
 \subsection{Method \code{CalculateStatistics()}}{
 Calculate statistics for the \code{\link[=GDALRasterBand-class]{GDALRasterBand}}
 \subsection{Usage}{
@@ -154,8 +154,8 @@ nothing
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-GetYSize"></a>}}
-\if{latex}{\out{\hypertarget{method-GetYSize}{}}}
+\if{html}{\out{<a id="method-GDALRasterBand-GetYSize"></a>}}
+\if{latex}{\out{\hypertarget{method-GDALRasterBand-GetYSize}{}}}
 \subsection{Method \code{GetYSize()}}{
 Get the band height
 \subsection{Usage}{
@@ -167,8 +167,8 @@ An integer indicating band height
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-GetNoDataValue"></a>}}
-\if{latex}{\out{\hypertarget{method-GetNoDataValue}{}}}
+\if{html}{\out{<a id="method-GDALRasterBand-GetNoDataValue"></a>}}
+\if{latex}{\out{\hypertarget{method-GDALRasterBand-GetNoDataValue}{}}}
 \subsection{Method \code{GetNoDataValue()}}{
 Get band no data value
 \subsection{Usage}{
@@ -180,8 +180,8 @@ Numeric indicating no data value
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-GetRasterDataType"></a>}}
-\if{latex}{\out{\hypertarget{method-GetRasterDataType}{}}}
+\if{html}{\out{<a id="method-GDALRasterBand-GetRasterDataType"></a>}}
+\if{latex}{\out{\hypertarget{method-GDALRasterBand-GetRasterDataType}{}}}
 \subsection{Method \code{GetRasterDataType()}}{
 Get band datatype
 \subsection{Usage}{
@@ -193,8 +193,8 @@ Numeric indicating the datatype
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-clone"></a>}}
-\if{latex}{\out{\hypertarget{method-clone}{}}}
+\if{html}{\out{<a id="method-GDALRasterBand-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-GDALRasterBand-clone}{}}}
 \subsection{Method \code{clone()}}{
 The objects of this class are cloneable with this method.
 \subsection{Usage}{
