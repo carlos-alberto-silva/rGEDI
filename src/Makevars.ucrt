@@ -1,0 +1,67 @@
+# Makefile for GEDI simulator tools
+CXX_STD = CXX11
+HANCOCKTOOLS_ROOT = ./tools
+GEDIRAT_ROOT = ./gedisimulator
+LIBCLIDAR_ROOT = ./libclidar
+CMPFIT_ROOT = ./cmpfit-1.2
+
+LIBCLIDAR=libclidar.a
+LIBTOOLS=libtools.a
+LIBGEDISIMULATOR=libgedisimulator.a
+LIBCMPFIT=libcmpfit.a
+
+# Copied from rgdal
+GDAL_LIBS = -lgdal -lgta -lsqlite3 -lmysqlclient -lspatialite -lproj -lgeos_c -lgeos  \
+        -ljson-c -lnetcdf -lpq \
+        -lpoppler -llcms2 -lfreetype -lharfbuzz -lfreetype -llz4 -lpcre2-8 \
+        -lwebp -lcurl -lidn2 -lunistring -lssh2 -lgcrypt -lgpg-error -lssl \
+        -lhdf5_hl -lhdf5 -lexpat -lfreexl \
+        -lmfhdf -ldf -lportablexdr  -lpcre \
+        -lopenjp2 -ljasper -lpng -ljpeg -ltiff -lwebp -lgeotiff -lgif -lxml2 -llzma \
+        -lodbc32 -lodbccp32 -liconv -lpsapi -lwldap32 -lsecur32 -lgdi32 -lnormaliz \
+        -lbz2 -lzstd -lz -lcrypto -lcrypt32 -lcfitsio -lws2_32
+
+
+PKG_CFLAGS += -I$(GDAL_INC) -DDLLEXPORT -D_USE_MATH_DEFINES -D_WIN32 \
+	-DWIN32 -DH5_BUILT_AS_DYNAMIC_LIB -DDLL_EXPORTS \
+	-DUSEPHOTON
+
+ARCH=$(PROCESSOR_ARCHITECTURE)
+
+PKG_CPPFLAGS += -I${HANCOCKTOOLS_ROOT} -I$(CMPFIT_ROOT) \
+-I${LIBCLIDAR_ROOT} -I.
+
+PKG_LIBS += \
+	-L. \
+	$(GDAL_LIBS) -lz -lm \
+	-lgedisimulator -lclidar -lcmpfit -ltools -lgsl
+
+TOOLS = $(HANCOCKTOOLS_ROOT)/tools.o
+CLIDAR = $(LIBCLIDAR_ROOT)/libLasProcess.o $(LIBCLIDAR_ROOT)/libLasRead.o \
+	$(LIBCLIDAR_ROOT)/gaussFit.o $(LIBCLIDAR_ROOT)/libLidVoxel.o \
+	$(LIBCLIDAR_ROOT)/libTLSread.o $(LIBCLIDAR_ROOT)/libLidarHDF.o \
+	$(LIBCLIDAR_ROOT)/libOctree.o
+CMPFIT = $(CMPFIT_ROOT)/mpfit.o
+GEDISIMULATOR = $(GEDIRAT_ROOT)/gediIO.o $(GEDIRAT_ROOT)/photonCount.o \
+	 $(GEDIRAT_ROOT)/gediNoise.o
+
+OBJECTS = gediMetrics.o gediSimulator.o \
+	argParse.o functionWrappers.o \
+	registerDynamicSymbol.o rasterizeHDF.o RcppExports.o
+
+
+$(SHLIB): $(LIBTOOLS) $(LIBCLIDAR) $(LIBCMPFIT) $(LIBGEDISIMULATOR) $(OBJECTS)
+$(LIBTOOLS): $(TOOLS)
+$(LIBCLIDAR): $(CLIDAR)
+$(LIBCMPFIT): $(CMPFIT)
+$(LIBGEDISIMULATOR): $(GEDISIMULATOR)
+
+winlibs:
+	"$(R_HOME)/bin/Rscript" "../tools/winlibs.R" $(HDF5_VERSION) $(GDAL_VERSION)
+	cp -r $(GDAL_BASE)/share/gdal ../inst/
+	cp -r $(GDAL_BASE)/share/proj ../inst/
+
+deps:
+	"$(R_HOME)/bin/Rscript" "../tools/deps.R"
+
+.PHONY: all winlibs deps
