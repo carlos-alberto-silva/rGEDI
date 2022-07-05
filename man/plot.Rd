@@ -75,10 +75,10 @@ las_amazon<-readLAS(lasfile_amazon)
 las_Savanna<-readLAS(lasfile_Savanna)
 
 # Extracting plot center geolocations
-xcenter_amazon = mean(las_amazon@bbox[1,])
-ycenter_amazon = mean(las_amazon@bbox[2,])
-xcenter_Savanna = mean(las_Savanna@bbox[1,])
-ycenter_Savanna = mean(las_Savanna@bbox[2,])
+xcenter_amazon = mean(bbox(las_amazon)[1,])
+ycenter_amazon = mean(bbox(las_amazon)[2,])
+xcenter_Savanna = mean(bbox(las_Savanna)[1,])
+ycenter_Savanna = mean(bbox(las_Savanna)[2,])
 
 # Simulating GEDI full-waveform
 wf_amazon<-gediWFSimulator(
