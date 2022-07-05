@@ -130,7 +130,7 @@ setGeneric("plot", function(x, y, ...)
 #' @rdname plot
 setMethod("plot", signature("gedi.fullwaveform", y = "missing"), function(x,relative=FALSE,polygon=FALSE,...) {
 
-  if (!class(x)=="gedi.fullwaveform"){
+  if (!is(x, "gedi.fullwaveform")){
 
     print("Invalid input file. It should be an object of class 'gedi.fullwaveform' ")
   } else {
@@ -235,7 +235,7 @@ setMethod("plot", signature("gedi.fullwaveform", y = "missing"), function(x,rela
 #' @rdname plot
 setMethod("plot", signature("gedi.level1bSim", y = "missing"), function(x,relative=FALSE,polygon=FALSE,method="RXWAVEINT",...) {
 
-  if (!class(x)=="gedi.level1bSim"){
+  if (!is(x, "gedi.level1bSim")){
 
     print("Invalid input file. It should be an object of class 'gedi.fullwaveform' ")
   } else {

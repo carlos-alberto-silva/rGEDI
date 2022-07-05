@@ -406,7 +406,7 @@ gediWFMetrics = function(
   )
 
   inputInList = list(NULL, NULL)
-  if (class(input)=="list") {
+  if (is(input, "list")) {
     files = sapply(input, function(x) {
       close(x)
       return (x@h5$filename)
@@ -525,7 +525,7 @@ gediWFMetrics = function(
       names(metricData) = header }
   }
 
-  if (class(input)=="list") {
+  if (is(input, "list")) {
     files = sapply(input, function(x) {
       x@h5 = hdf5r::H5File$new(x@h5$filename, mode="r")
     })
