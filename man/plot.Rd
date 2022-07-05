@@ -23,7 +23,8 @@ plot(x, y, ...)
 
 \item{polygon}{if TRUE, the polygon will be added to the plot}
 
-\item{method}{methods used for simulating the GEDI full-waveform ("RXWAVEINT", "RXWAVECOUNT" or "RXWAVEFRAC"). Default is "RXWAVECOUNT".}
+\item{method}{methods used for simulating the GEDI full-waveform
+("RXWAVEINT", "RXWAVECOUNT" or "RXWAVEFRAC"). Default is "RXWAVECOUNT".}
 }
 \value{
 No return value
@@ -35,44 +36,49 @@ for \code{\linkS4class{gedi.level1bSim}}: will plot the simulated waveform
 }
 \examples{
 # Specifying the path to GEDI level1B data (zip file)
-outdir = tempdir()
+outdir <- tempdir()
 level1B_fp_zip <- system.file("extdata",
-                  "GEDI01_B_2019108080338_O01964_T05337_02_003_01_sub.zip",
-                  package="rGEDI")
+  "GEDI01_B_2019108080338_O01964_T05337_02_003_01_sub.zip",
+  package = "rGEDI"
+)
 
 # Unzipping GEDI level1B data
-level1Bpath <- unzip(level1B_fp_zip,exdir = outdir)
+level1Bpath <- unzip(level1B_fp_zip, exdir = outdir)
 
 # Reading GEDI level1B data (h5 file)
-level1b<-readLevel1B(level1Bpath=level1Bpath)
+level1b <- readLevel1B(level1Bpath = level1Bpath)
 
 # Extracting GEDI Full-Waveform
-wf <- getLevel1BWF(level1b, shot_number="19640521100108408")
+wf <- getLevel1BWF(level1b, shot_number = "19640521100108408")
 
 # Plotting GEDI Full-waveform
-oldpar<-par()
-par(mfrow = c(1,2), cex.axis = 1.5)
-plot(wf, relative=FALSE, polygon=TRUE, type="l", lwd=2, col="forestgreen",
-xlab="", ylab="Elevation (m)")
+oldpar <- par()
+par(mfrow = c(1, 2), cex.axis = 1.5)
+plot(wf,
+  relative = FALSE, polygon = TRUE, type = "l", lwd = 2, col = "forestgreen",
+  xlab = "", ylab = "Elevation (m)"
+)
 
-plot(wf, relative=TRUE, polygon=TRUE, type="l", lwd=2, col="forestgreen",
-xlab="Waveform Amplitude (\%)", ylab="Elevation (m)")
+plot(wf,
+  relative = TRUE, polygon = TRUE, type = "l", lwd = 2, col = "forestgreen",
+  xlab = "Waveform Amplitude (\%)", ylab = "Elevation (m)"
+)
 
-par(oldpar) 
+par(oldpar)
 close(level1b)
 outdir <- tempdir()
 
-zipfile_amazon <- system.file("extdata", "Amazon.zip", package="rGEDI")
-zipfile_Savanna <- system.file("extdata", "Savanna.zip", package="rGEDI")
+zipfile_amazon <- system.file("extdata", "Amazon.zip", package = "rGEDI")
+zipfile_Savanna <- system.file("extdata", "Savanna.zip", package = "rGEDI")
 
-lasfile_amazon <- unzip(zipfile_amazon,exdir=outdir)
-lasfile_Savanna <- unzip(zipfile_Savanna,exdir=outdir)
+lasfile_amazon <- unzip(zipfile_amazon, exdir = outdir)
+lasfile_Savanna <- unzip(zipfile_Savanna, exdir = outdir)
 
 # Reading and plot ALS file
-libsAvailable = require(lidR) && require(plot3D)
+libsAvailable <- require(lidR) && require(plot3D)
 if (libsAvailable) {
-las_amazon<-readLAS(lasfile_amazon)
-las_Savanna<-readLAS(lasfile_Savanna)
+  las_amazon <- readLAS(lasfile_amazon)
+  las_Savanna <- readLAS(lasfile_Savanna)
 
 # Extracting plot center geolocations
 xcenter_amazon = mean(bbox(las_amazon)[1,])
@@ -80,49 +86,55 @@ ycenter_amazon = mean(bbox(las_amazon)[2,])
 xcenter_Savanna = mean(bbox(las_Savanna)[1,])
 ycenter_Savanna = mean(bbox(las_Savanna)[2,])
 
-# Simulating GEDI full-waveform
-wf_amazon<-gediWFSimulator(
-                          input=lasfile_amazon,
-                          output=file.path(
-                                        outdir,
-                                        "gediWF_amazon_simulation.h5"
-                                        ),
-                          coords = c(xcenter_amazon, ycenter_amazon))
-wf_Savanna<-gediWFSimulator(
-                            input=lasfile_Savanna,
-                            output=file.path(
-                                          outdir,
-                                          "gediWF_Savanna_simulation.h5"
-                                          ),
-                            coords = c(xcenter_Savanna, ycenter_Savanna))
-# Plot Full-waveform
-par(mfrow=c(2,2), mar=c(4,4,0,0), oma=c(0,0,1,1),cex.axis = 1.2)
-scatter3D(
-         las_amazon@data$X,
-         las_amazon@data$Y,
-         las_amazon@data$Z,
-         pch = 16, colkey = FALSE, main="",
-         cex = 0.5, bty = "u", col.panel ="gray90",
-         phi = 30, alpha=1, theta=45, col.grid = "gray50",
-         xlab="UTM Easting (m)", ylab="UTM Northing (m)", zlab="Elevation (m)"
-         )
+  # Simulating GEDI full-waveform
+  wf_amazon <- gediWFSimulator(
+    input = lasfile_amazon,
+    output = file.path(
+      outdir,
+      "gediWF_amazon_simulation.h5"
+    ),
+    coords = c(xcenter_amazon, ycenter_amazon)
+  )
+  wf_Savanna <- gediWFSimulator(
+    input = lasfile_Savanna,
+    output = file.path(
+      outdir,
+      "gediWF_Savanna_simulation.h5"
+    ),
+    coords = c(xcenter_Savanna, ycenter_Savanna)
+  )
+  # Plot Full-waveform
+  par(mfrow = c(2, 2), mar = c(4, 4, 0, 0), oma = c(0, 0, 1, 1), cex.axis = 1.2)
+  scatter3D(
+    las_amazon@data$X,
+    las_amazon@data$Y,
+    las_amazon@data$Z,
+    pch = 16, colkey = FALSE, main = "",
+    cex = 0.5, bty = "u", col.panel = "gray90",
+    phi = 30, alpha = 1, theta = 45, col.grid = "gray50",
+    xlab = "UTM Easting (m)", ylab = "UTM Northing (m)", zlab = "Elevation (m)"
+  )
 
-plot(wf_amazon, relative=TRUE, polygon=TRUE, type="l", lwd=2, col="forestgreen",
-    xlab="", ylab="Elevation (m)", ylim=c(90,140))
-grid()
-scatter3D(
-         las_Savanna@data$X,las_Savanna@data$Y,las_Savanna@data$Z,
-         pch = 16,colkey = FALSE, main="",
-         cex = 0.5,bty = "u",col.panel ="gray90",
-         phi = 30,alpha=1,theta=45,col.grid = "gray50",
-         xlab="UTM Easting (m)", ylab="UTM Northing (m)", zlab="Elevation (m)"
-         )
+  plot(wf_amazon,
+    relative = TRUE, polygon = TRUE, type = "l", lwd = 2, col = "forestgreen",
+    xlab = "", ylab = "Elevation (m)", ylim = c(90, 140)
+  )
+  grid()
+  scatter3D(
+    las_Savanna@data$X, las_Savanna@data$Y, las_Savanna@data$Z,
+    pch = 16, colkey = FALSE, main = "",
+    cex = 0.5, bty = "u", col.panel = "gray90",
+    phi = 30, alpha = 1, theta = 45, col.grid = "gray50",
+    xlab = "UTM Easting (m)", ylab = "UTM Northing (m)", zlab = "Elevation (m)"
+  )
 
-plot(wf_Savanna, relative=TRUE, polygon=TRUE, type="l", lwd=2, col="green",
-    xlab="Waveform Amplitude (\%)", ylab="Elevation (m)", ylim=c(815,835))
-grid()
+  plot(wf_Savanna,
+    relative = TRUE, polygon = TRUE, type = "l", lwd = 2, col = "green",
+    xlab = "Waveform Amplitude (\%)", ylab = "Elevation (m)", ylim = c(815, 835)
+  )
+  grid()
 
-close(wf_amazon)
-close(wf_Savanna)
+  close(wf_amazon)
+  close(wf_Savanna)
 }
 }
