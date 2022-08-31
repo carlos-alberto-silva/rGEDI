@@ -33,8 +33,9 @@ PKG_CPPFLAGS += -I${HANCOCKTOOLS_ROOT} -I$(CMPFIT_ROOT) \
 
 PKG_LIBS += \
 	-L. \
-	$(GDAL_LIBS) -lz -lm \
-	-lgedisimulator -lclidar -lcmpfit -ltools -lgsl
+	-lz -lm \
+	-lclidar -ltools -lgedisimulator -lcmpfit \
+	-lgsl $(GDAL_LIBS)
 
 TOOLS = $(HANCOCKTOOLS_ROOT)/tools.o
 CLIDAR = $(LIBCLIDAR_ROOT)/libLasProcess.o $(LIBCLIDAR_ROOT)/libLasRead.o \
@@ -47,7 +48,7 @@ GEDISIMULATOR = $(GEDIRAT_ROOT)/gediIO.o $(GEDIRAT_ROOT)/photonCount.o \
 
 OBJECTS = gediMetrics.o gediSimulator.o \
 	argParse.o functionWrappers.o \
-	registerDynamicSymbol.o rasterizeHDF.o RcppExports.o
+	registerDynamicSymbol.o
 
 
 $(SHLIB): $(LIBTOOLS) $(LIBCLIDAR) $(LIBCMPFIT) $(LIBGEDISIMULATOR) $(OBJECTS)

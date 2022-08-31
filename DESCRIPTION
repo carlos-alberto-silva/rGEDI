@@ -33,8 +33,6 @@ Imports:
   jsonlite,
   lazyeval,
   raster,
-  rgdal,
-  rgeos,
   RColorBrewer,
   sp,
   stats
@@ -53,7 +51,7 @@ SystemRequirements:
   szip (>= 2.1),
   zlib (>= 1.2)
 NeedsCompilation: yes
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.0
 Roxygen: list(markdown = TRUE)
 BugReports: https://groups.yahoo.com/neo/groups/rGEDI
 URL: https://github.com/carlos-alberto-silva/rGEDI
