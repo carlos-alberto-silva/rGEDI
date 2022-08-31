@@ -1,5 +1,13 @@
 <!-- NEWS.md is maintained by https://cynkra.github.io/fledge, do not edit -->
 
+# rGEDI 0.3.1 (2022-08-31)
+
+* Use Makevars.ucrt for R 4.2
+* Remove @bbox from lidR: deprecated slot
+* Add Makevars.ucrt for the new Rtools42
+* Use markdown in functions documentation
+
+
 # rGEDI 0.3.0 (2021-08-20)
 
 * Add inst/proj and inst/gdal to .gitignore
