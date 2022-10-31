@@ -11,7 +11,7 @@ LIBGEDISIMULATOR=libgedisimulator.a
 LIBCMPFIT=libcmpfit.a
 
 # Copied from rgdal
-GDAL_LIBS = -lgdal -lgta -lsqlite3 -lmysqlclient -lspatialite -lproj -lgeos_c -lgeos  \
+GDAL_LIBS = -lgdal -lgta -lproj -lsqlite3 -lmysqlclient -lspatialite -lgeos_c -lgeos  \
         -ljson-c -lnetcdf -lpq \
         -lpoppler -llcms2 -lfreetype -lharfbuzz -lfreetype -llz4 -lpcre2-8 \
         -lwebp -lcurl -lidn2 -lunistring -lssh2 -lgcrypt -lgpg-error -lssl \
