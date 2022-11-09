@@ -22,7 +22,7 @@ GDAL_LIBS = -lgdal -lgta -lproj -lsqlite3 -lmysqlclient -lspatialite -lgeos_c -l
         -lbz2 -lzstd -lz -lcrypto -lcrypt32 -lcfitsio -lws2_32
 
 
-PKG_CFLAGS += -I$(GDAL_INC) -DDLLEXPORT -D_USE_MATH_DEFINES -D_WIN32 \
+PKG_CFLAGS += -DDLLEXPORT -D_USE_MATH_DEFINES -D_WIN32 \
 	-DWIN32 -DH5_BUILT_AS_DYNAMIC_LIB -DDLL_EXPORTS \
 	-DUSEPHOTON
 
