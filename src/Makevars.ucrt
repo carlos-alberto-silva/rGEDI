@@ -11,15 +11,15 @@ LIBGEDISIMULATOR=libgedisimulator.a
 LIBCMPFIT=libcmpfit.a
 
 # Copied from rgdal
-GDAL_LIBS = -lgdal -lgta -lproj -lsqlite3 -lmysqlclient -lspatialite -lgeos_c -lgeos  \
+GDAL_LIBS = -lgdal -lhdf5_hl -lhdf5 -lgta -lproj -lsqlite3 -lmysqlclient -lspatialite -lgeos_c -lgeos  \
         -ljson-c -lnetcdf -lpq \
         -lpoppler -llcms2 -lfreetype -lharfbuzz -lfreetype -llz4 -lpcre2-8 \
         -lwebp -lcurl -lidn2 -lunistring -lssh2 -lgcrypt -lgpg-error -lssl \
-        -lhdf5_hl -lhdf5 -lexpat -lfreexl \
+        -lexpat -lfreexl \
         -lmfhdf -ldf -lportablexdr  -lpcre \
         -lopenjp2 -ljasper -lpng -ljpeg -ltiff -lwebp -lgeotiff -lgif -lxml2 -llzma \
         -lodbc32 -lodbccp32 -liconv -lpsapi -lwldap32 -lsecur32 -lgdi32 -lnormaliz \
-        -lbz2 -lzstd -lz -lcrypto -lcrypt32 -lcfitsio -lws2_32 -lszip
+        -lbz2 -lzstd -lz -lcrypto -lcrypt32 -lcfitsio -lws2_32
 
 
 PKG_CFLAGS += -DDLLEXPORT -D_USE_MATH_DEFINES -D_WIN32 \
