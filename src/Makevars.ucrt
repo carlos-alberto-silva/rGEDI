@@ -19,7 +19,7 @@ GDAL_LIBS = -lgdal -lhdf5_hl -lhdf5 -lgta -lproj -lsqlite3 -lmysqlclient -lspati
         -lmfhdf -ldf -lportablexdr  -lpcre \
         -lopenjp2 -ljasper -lpng -ljpeg -ltiff -lwebp -lgeotiff -lgif -lxml2 -llzma \
         -lodbc32 -lodbccp32 -liconv -lpsapi -lwldap32 -lsecur32 -lgdi32 -lnormaliz \
-        -lbz2 -lzstd -lz -lcrypto -lcrypt32 -lcfitsio -lws2_32
+        -lbz2 -lzstd -lz -lcrypto -lcrypt32 -lcfitsio -lws2_32 -lsz
 
 
 PKG_CFLAGS += -DDLLEXPORT -D_USE_MATH_DEFINES -D_WIN32 \
