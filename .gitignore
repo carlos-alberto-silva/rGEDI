@@ -8,6 +8,7 @@ windows
 *.dll
 *.obj
 *.so
+*.a
 **.vscode
 src/build
 rGEDI.Rcheck
