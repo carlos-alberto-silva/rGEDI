@@ -6,8 +6,8 @@
 \usage{
 getLevel2BVPM(
   level2b,
-  cols = c("beam", "shot_number", "algorithmrun_flag", "l2b_quality_flag",
-    "delta_time", "sensitivity", "solar_elevation", "latitude_lastbin", "latitude_bin0",
+  cols = c("beam", "shot_number", "algorithmrun_flag", "l2b_quality_flag", "delta_time",
+    "sensitivity", "solar_elevation", "latitude_lastbin", "latitude_bin0",
     "longitude_bin0", "longitude_lastbin", "elev_highestreturn", "elev_lowestmode",
     "rh100", "pai", "fhd_normal", "omega", "pgap_theta", "cover")
 )

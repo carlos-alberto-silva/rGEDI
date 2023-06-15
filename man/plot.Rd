@@ -3,14 +3,11 @@
 \name{plot}
 \alias{plot}
 \alias{plot,gedi.fullwaveform,missing-method}
-\alias{plot,gedi.level1bSim,missing-method}
 \title{Plot GEDI* object}
 \usage{
 plot(x, y, ...)
 
 \S4method{plot}{gedi.fullwaveform,missing}(x, relative = FALSE, polygon = FALSE, ...)
-
-\S4method{plot}{gedi.level1bSim,missing}(x, relative = FALSE, polygon = FALSE, method = "RXWAVEINT", ...)
 }
 \arguments{
 \item{x}{An object of class \code{\linkS4class{gedi.fullwaveform}} (output of \code{\link[=getLevel1BWF]{getLevel1BWF()}} function)}
@@ -30,8 +27,6 @@ No return value
 }
 \description{
 For \code{\linkS4class{gedi.fullwaveform}}: will plot the full waveform
-
-for \code{\linkS4class{gedi.level1bSim}}: will plot the simulated waveform
 }
 \examples{
 # Specifying the path to GEDI level1B data (zip file)
@@ -60,69 +55,4 @@ xlab="Waveform Amplitude (\%)", ylab="Elevation (m)")
 
 par(oldpar) 
 close(level1b)
-outdir <- tempdir()
-
-zipfile_amazon <- system.file("extdata", "Amazon.zip", package="rGEDI")
-zipfile_Savanna <- system.file("extdata", "Savanna.zip", package="rGEDI")
-
-lasfile_amazon <- unzip(zipfile_amazon,exdir=outdir)
-lasfile_Savanna <- unzip(zipfile_Savanna,exdir=outdir)
-
-# Reading and plot ALS file
-libsAvailable = require(lidR) && require(plot3D)
-if (libsAvailable) {
-las_amazon<-readLAS(lasfile_amazon)
-las_Savanna<-readLAS(lasfile_Savanna)
-
-# Extracting plot center geolocations
-xcenter_amazon = mean(bbox(las_amazon)[1,])
-ycenter_amazon = mean(bbox(las_amazon)[2,])
-xcenter_Savanna = mean(bbox(las_Savanna)[1,])
-ycenter_Savanna = mean(bbox(las_Savanna)[2,])
-
-# Simulating GEDI full-waveform
-wf_amazon<-gediWFSimulator(
-                          input=lasfile_amazon,
-                          output=file.path(
-                                        outdir,
-                                        "gediWF_amazon_simulation.h5"
-                                        ),
-                          coords = c(xcenter_amazon, ycenter_amazon))
-wf_Savanna<-gediWFSimulator(
-                            input=lasfile_Savanna,
-                            output=file.path(
-                                          outdir,
-                                          "gediWF_Savanna_simulation.h5"
-                                          ),
-                            coords = c(xcenter_Savanna, ycenter_Savanna))
-# Plot Full-waveform
-par(mfrow=c(2,2), mar=c(4,4,0,0), oma=c(0,0,1,1),cex.axis = 1.2)
-scatter3D(
-         las_amazon@data$X,
-         las_amazon@data$Y,
-         las_amazon@data$Z,
-         pch = 16, colkey = FALSE, main="",
-         cex = 0.5, bty = "u", col.panel ="gray90",
-         phi = 30, alpha=1, theta=45, col.grid = "gray50",
-         xlab="UTM Easting (m)", ylab="UTM Northing (m)", zlab="Elevation (m)"
-         )
-
-plot(wf_amazon, relative=TRUE, polygon=TRUE, type="l", lwd=2, col="forestgreen",
-    xlab="", ylab="Elevation (m)", ylim=c(90,140))
-grid()
-scatter3D(
-         las_Savanna@data$X,las_Savanna@data$Y,las_Savanna@data$Z,
-         pch = 16,colkey = FALSE, main="",
-         cex = 0.5,bty = "u",col.panel ="gray90",
-         phi = 30,alpha=1,theta=45,col.grid = "gray50",
-         xlab="UTM Easting (m)", ylab="UTM Northing (m)", zlab="Elevation (m)"
-         )
-
-plot(wf_Savanna, relative=TRUE, polygon=TRUE, type="l", lwd=2, col="green",
-    xlab="Waveform Amplitude (\%)", ylab="Elevation (m)", ylim=c(815,835))
-grid()
-
-close(wf_amazon)
-close(wf_Savanna)
-}
 }

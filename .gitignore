@@ -20,3 +20,4 @@ inst/gdal
 inst/proj
 src/Makevars
 config.status
+test.R

@@ -7,6 +7,8 @@
 gediWFSimulator(
   input,
   output,
+  ground = TRUE,
+  ascii = FALSE,
   waveID = NULL,
   coords = NULL,
   listCoord = NULL,
@@ -42,6 +44,10 @@ gediWFSimulator(
 \item{input}{character vector. lasfile input filename}
 
 \item{output}{character. output filename}
+
+\item{ground}{record separate ground and canopy waveforms, default TRUE (shouldn't change).}
+
+\item{ascii}{write output as ASCII. Good for quick tests, default FALSE}
 
 \item{waveID}{id. supply a waveID to pass to the output (only for single footprints)
 Single footprint, list of footprints, or grid of footprints}

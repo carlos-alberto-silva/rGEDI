@@ -9,7 +9,7 @@
 #' @param output character. output filename
 
 #Ground should always be true
-# @param ground record separate ground and canopy waveforms
+#' @param ground record separate ground and canopy waveforms, default TRUE (shouldn't change).
 
 #Always HDF
 # @param hdf write output as HDF5. Best with gridded or list of coords
@@ -29,7 +29,7 @@
 #' @param res res. range resolution of waveform digitisation to output, in units of ALS data
 
 # Not LVIS
-# @param LVIS use LVIS pulse length, sigma=6. 25m
+# @param LVIS use LVIS pulse length, sigma=6.25m
 #' @param topHat use a top hat wavefront
 #' @param sideLobe use side lobes
 #' @param lobeAng ang. lobe axis azimuth
@@ -151,6 +151,7 @@
 gediWFSimulator = function(
   input,
   output,
+  ground = TRUE,
   ascii = FALSE,
   waveID = NULL,
   coords = NULL,
@@ -188,12 +189,12 @@ gediWFSimulator = function(
   polyGround = FALSE) {
 
   # Set parameters that shouldn't be changed for GEDI
-  ground = TRUE
-  hdf = TRUE
-  ascii = FALSE
+  l1b = TRUE
+  hdf = FALSE
   LVIS = FALSE
   if (ascii == TRUE) {
     hdf = FALSE
+    l1b = FALSE
   }
 
   decon = FALSE
@@ -255,6 +256,7 @@ gediWFSimulator = function(
         ground,
         hdf,
         ascii,
+        l1b,
         waveID,
 
         coords,
@@ -332,7 +334,7 @@ gediWFSimulator = function(
   }
   result = tryCatch(hdf5r::H5File$new(output, "r"), error=function(e) stop("The output file was not created\nSomething went wrong!"))
 
-  result<- new("gedi.level1bSim", h5 = result)
+  result<- new("gedi.level1b", h5 = result)
 
   return(result)
 }

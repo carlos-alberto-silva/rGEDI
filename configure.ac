@@ -25,6 +25,11 @@ AX_PATH_GSL(0.1,,
 			 RPM-based: sudo dnf install gsl-devel
 			 MacOS: brew install gsl))
 
+##################
+## GDAL
+##################
+AX_LIB_GDAL2()
+
 
 ##################
 ## HDF5

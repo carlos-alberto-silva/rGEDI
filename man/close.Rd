@@ -5,7 +5,6 @@
 \alias{close,gedi.level1b-method}
 \alias{close,gedi.level2a-method}
 \alias{close,gedi.level2b-method}
-\alias{close,gedi.level1bSim-method}
 \title{Close hdf5 connections from gedi* objects}
 \usage{
 close(con, ...)
@@ -15,8 +14,6 @@ close(con, ...)
 \S4method{close}{gedi.level2a}(con, ...)
 
 \S4method{close}{gedi.level2b}(con, ...)
-
-\S4method{close}{gedi.level1bSim}(con, ...)
 }
 \arguments{
 \item{con}{An object of class \verb{gedi.level*}}

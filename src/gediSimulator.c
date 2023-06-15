@@ -6,7 +6,7 @@
 #include "argParse.h"
 
 #define main gediRat
-#define control metric_control
+#define control rat_control
 #define readCommands readCommands_rat
     #include "gedisimulator/gediRat.h"
     #include "gedisimulator/gediRat.c"
@@ -24,6 +24,7 @@ SEXP C_gediSimulator(
     SEXP ground,
     SEXP hdf,
     SEXP ascii,
+    SEXP l1b,
     SEXP waveID,
     SEXP coord,
     SEXP listCoord,
@@ -62,7 +63,7 @@ SEXP C_gediSimulator(
     SEXP seed)
 {
     int argc = 1;
-    char *argv[108];
+    char *argv[109];
     const char* algName = "gediSimulator";
 
     argv[0] = malloc((strlen(algName)+1) * sizeof(char));
@@ -74,6 +75,7 @@ SEXP C_gediSimulator(
     PARSE_ARG(logical, ground);
     PARSE_ARG(logical, hdf);
     PARSE_ARG(logical, ascii);
+    PARSE_ARG(logical, l1b);
     PARSE_ARG(char, waveID);
     PARSE_ARG(realArray, coord);
     PARSE_ARG(char, listCoord);
@@ -117,7 +119,6 @@ SEXP C_gediSimulator(
     PARSE_ARG(logical, nnGround);
     PARSE_ARG(integer, seed);
 
-
 #ifdef DEBUG   
     for (int i = 1; i < argc; i++) {
         Rprintf("%s ", argv[i]);
@@ -135,70 +136,3 @@ SEXP C_gediSimulator(
     return (ScalarInteger(0));
 } 
 
-#ifdef DEBUG
-    #include "debug.c"
-
-    int main() {
-        initR();
-        SEXP gridBound = PROTECT(allocVector(REALSXP, 4));
-        double *pGridBound = REAL(gridBound);
-        *(pGridBound++) = 278204;
-        *(pGridBound++) = 278296;
-        *(pGridBound++) = 602203;
-        *(pGridBound++) = 602296;
-        pGridBound = NULL;
-
-        C_gediSimulator(
-            mkString("E:/Documentos/sample.las"),
-            mkString("E:/Documentos/sample.h5"),
-            R_NilValue,
-            R_NilValue,
-            ScalarLogical(1),
-            R_NilValue, 
-            R_NilValue,
-
-            R_NilValue, 
-            R_NilValue,
-            gridBound,
-            ScalarReal(15.0),
-
-            ScalarReal(-1.0),
-            ScalarReal(15.0),
-            R_NilValue,
-            ScalarReal(5.5),
-            R_NilValue,
-            ScalarReal(0.15),
-            R_NilValue,
-            R_NilValue,
-            R_NilValue,
-            ScalarReal(0.0),
-
-            R_NilValue,
-            ScalarReal(1000000.0),
-            ScalarReal(1.0),
-
-            ScalarInteger(20000000),
-            ScalarInteger(1024),
-            R_NilValue,
-            R_NilValue,
-            ScalarLogical(1),
-            R_NilValue,
-
-            R_NilValue,
-            ScalarInteger(0),
-            ScalarInteger(40),
-
-            R_NilValue,
-            R_NilValue,
-            R_NilValue,
-
-            R_NilValue,
-            R_NilValue,
-            R_NilValue,
-            R_NilValue,
-            R_NilValue,
-            ScalarInteger(200));
-
-            UNPROTECT(1);
-    }
-#endif

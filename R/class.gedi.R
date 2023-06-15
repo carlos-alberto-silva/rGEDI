@@ -49,25 +49,6 @@ gedi.level2b <- setClass(
   slots = list(h5 = "H5File")
 )
 
-#' Class for GEDI Full-Waveform Simulation
-#'
-#' @slot h5 Object of class H5File from \emph{hdf5r} package package containing the simulated
-#' GEDI full-waveform
-#'
-#' @seealso
-#' i) Hancock, S., Armston, J., Hofton, M., Sun, X., Tang, H., Duncanson, L.I., Kellner,
-#' J.R. and Dubayah, R., 2019. The GEDI simulator: A large-footprint waveform lidar simulator
-#' for calibration and validation of spaceborne missions. Earth and Space Science.
-#' \doi{10.1029/2018EA000506}
-#'
-#' ii) gediSimulator: \url{https://bitbucket.org/StevenHancock/gedisimulator/src/master/}
-#'
-#' @import methods
-#' @export
-gedi.level1bSim <- setClass(
-  Class="gedi.level1bSim",
-  slots = list(h5 = "H5File")
-)
 
 #' Class for GEDI level1B Full Waveform
 #'
@@ -163,114 +144,6 @@ setMethod("plot", signature("gedi.fullwaveform", y = "missing"), function(x,rela
 })
 
 
-#'@description for [`gedi.level1bSim-class`]: will plot the simulated waveform
-#'
-#'@examples
-#'outdir <- tempdir()
-#' 
-#'zipfile_amazon <- system.file("extdata", "Amazon.zip", package="rGEDI")
-#'zipfile_Savanna <- system.file("extdata", "Savanna.zip", package="rGEDI")
-#'
-# specify the path to ALS data
-#'lasfile_amazon <- unzip(zipfile_amazon,exdir=outdir)
-#'lasfile_Savanna <- unzip(zipfile_Savanna,exdir=outdir)
-#'
-#'# Reading and plot ALS file
-#'libsAvailable = require(lidR) && require(plot3D)
-#'if (libsAvailable) {
-#'las_amazon<-readLAS(lasfile_amazon)
-#'las_Savanna<-readLAS(lasfile_Savanna)
-#'
-#'# Extracting plot center geolocations
-#'xcenter_amazon = mean(bbox(las_amazon)[1,])
-#'ycenter_amazon = mean(bbox(las_amazon)[2,])
-#'xcenter_Savanna = mean(bbox(las_Savanna)[1,])
-#'ycenter_Savanna = mean(bbox(las_Savanna)[2,])
-#'
-#'# Simulating GEDI full-waveform
-#'wf_amazon<-gediWFSimulator(
-#'                           input=lasfile_amazon,
-#'                           output=file.path(
-#'                                         outdir,
-#'                                         "gediWF_amazon_simulation.h5"
-#'                                         ),
-#'                           coords = c(xcenter_amazon, ycenter_amazon))
-#' wf_Savanna<-gediWFSimulator(
-#'                             input=lasfile_Savanna,
-#'                             output=file.path(
-#'                                           outdir,
-#'                                           "gediWF_Savanna_simulation.h5"
-#'                                           ),
-#'                             coords = c(xcenter_Savanna, ycenter_Savanna))
-#'# Plot Full-waveform
-#'par(mfrow=c(2,2), mar=c(4,4,0,0), oma=c(0,0,1,1),cex.axis = 1.2)
-#'scatter3D(
-#'          las_amazon@data$X,
-#'          las_amazon@data$Y,
-#'          las_amazon@data$Z,
-#'          pch = 16, colkey = FALSE, main="",
-#'          cex = 0.5, bty = "u", col.panel ="gray90",
-#'          phi = 30, alpha=1, theta=45, col.grid = "gray50",
-#'          xlab="UTM Easting (m)", ylab="UTM Northing (m)", zlab="Elevation (m)"
-#'          )
-#'
-#'plot(wf_amazon, relative=TRUE, polygon=TRUE, type="l", lwd=2, col="forestgreen",
-#'     xlab="", ylab="Elevation (m)", ylim=c(90,140))
-#'grid()
-#'scatter3D(
-#'          las_Savanna@data$X,las_Savanna@data$Y,las_Savanna@data$Z,
-#'          pch = 16,colkey = FALSE, main="",
-#'          cex = 0.5,bty = "u",col.panel ="gray90",
-#'          phi = 30,alpha=1,theta=45,col.grid = "gray50",
-#'          xlab="UTM Easting (m)", ylab="UTM Northing (m)", zlab="Elevation (m)"
-#'          )
-#'
-#'plot(wf_Savanna, relative=TRUE, polygon=TRUE, type="l", lwd=2, col="green",
-#'     xlab="Waveform Amplitude (%)", ylab="Elevation (m)", ylim=c(815,835))
-#'grid()
-#'
-#' close(wf_amazon)
-#' close(wf_Savanna)
-#'}
-#' @rdname plot
-setMethod("plot", signature("gedi.level1bSim", y = "missing"), function(x,relative=FALSE,polygon=FALSE,method="RXWAVEINT",...) {
-
-  if (!is(x, "gedi.level1bSim")){
-
-    print("Invalid input file. It should be an object of class 'gedi.fullwaveform' ")
-  } else {
-
-    wfh5<-x@h5
-    z = seq(wfh5[["Z0"]][],wfh5[["ZN"]][], length.out = wfh5[["NBINS"]][])
-
-    if  (method=="RXWAVEINT") { x0<-wfh5[["RXWAVEINT"]][,]}
-    if  (method=="RXWAVECOUNT") { x0<-wfh5[["RXWAVECOUNT"]][,]}
-    if  (method=="RXWAVEFRAC") { x0<-wfh5[["RXWAVEFRAC"]][,]}
-
-    x<-x0
-
-    if (relative==TRUE){
-      x=c(x-min(x))/(max(x)-min(x))*100
-    } else{
-      x=x
-    }
-
-    if (polygon==TRUE){
-
-      xstart<-x[which(z==min(z, na.rm=T))]
-      xend<-x[which(z==max(z, na.rm=T))]
-
-      xl<-c(min(x),min(x),xstart,rev(x),xend,min(x))
-      yl<-c(max(z, na.rm=T),min(z, na.rm=T),min(z, na.rm=T),rev(z),max(z, na.rm=T),max(z, na.rm=T))
-
-      suppressWarnings({plot(xl,yl,...)})
-      suppressWarnings({polygon(xl,yl,...)})
-    } else {
-      suppressWarnings({plot(x=x,y=z,...)})
-    }
-  }
-})
-
 h5closeall = function(con, ...) {
   try(con@h5$close_all(), silent=TRUE)
 }
@@ -290,7 +163,7 @@ h5closeall = function(con, ...) {
 setGeneric("close", function(con, ...)
   standardGeneric("close"))
 
-#' Handles the [`rGEDI::gedi.level1bSim-class`].
+#' Handles the [`rGEDI::gedi.level1b-class`].
 #'@rdname close
 setMethod("close", signature = c("gedi.level1b"), h5closeall)
 #' Handles the [`rGEDI::gedi.level2a-class`].
@@ -299,6 +172,3 @@ setMethod("close", signature = c("gedi.level2a"), h5closeall)
 #' Handles the [`rGEDI::gedi.level2b-class`].
 #'@rdname close
 setMethod("close", signature = c("gedi.level2b"), h5closeall)
-#' Handles the [`rGEDI::gedi.level1bSim-class`].
-#'@rdname close
-setMethod("close", signature = c("gedi.level1bSim"), h5closeall)
