@@ -122,7 +122,7 @@ leaflet() %>%
 # Extracting GEDI full-waveform for a giving shotnumber
 wf <- getLevel1BWF(gedilevel1b, shot_number="19640521100108408")
 
-par(mfrow = c(2,1), mar=c(4,4,1,1), cex.axis = 1.5)
+par(mfrow = c(1,2), mar=c(4,4,1,1), cex.axis = 1.5)
 
 plot(wf, relative=FALSE, polygon=TRUE, type="l", lwd=2, col="forestgreen",
      xlab="Waveform Amplitude", ylab="Elevation (m)")
@@ -465,7 +465,7 @@ pai_maps<-levelplot(pai_metrics,
                     names.attr=c("PAI min","PAI max","PAI mean", "PAI sd"))
 
 # Exporting maps 
-png("fig6.png", width = 6, height = 8, units = 'in', res = 300)
+png("fig7.png", width = 6, height = 8, units = 'in', res = 300)
 pai_maps
 dev.off()
 
@@ -504,14 +504,19 @@ scatter3D(las_amazon@data$X,las_amazon@data$Y,las_amazon@data$Z,pch = 16,colkey 
           cex = 0.5,bty = "u",col.panel ="gray90",phi = 30,alpha=1,theta=45,
           col.grid = "gray50", xlab="UTM Easting (m)", ylab="UTM Northing (m)", zlab="Elevation (m)")
 
-plot(wf_amazon, relative=TRUE, polygon=TRUE, type="l", lwd=2, col="forestgreen",
+# Simulated waveforms shot_number is incremental beggining from 0
+shot_number = 0
+simulated_waveform_amazon = getLevel1BWF(wf_amazon, shot_number)
+plot(simulated_waveform_amazon, relative=TRUE, polygon=TRUE, type="l", lwd=2, col="forestgreen",
      xlab="", ylab="Elevation (m)", ylim=c(90,140))
 grid()
 scatter3D(las_savanna@data$X,las_savanna@data$Y,las_savanna@data$Z,pch = 16,colkey = FALSE, main="",
           cex = 0.5,bty = "u",col.panel ="gray90",phi = 30,alpha=1,theta=45,
           col.grid = "gray50", xlab="UTM Easting (m)", ylab="UTM Northing (m)", zlab="Elevation (m)")
 
-plot(wf_savanna, relative=TRUE, polygon=TRUE, type="l", lwd=2, col="green",
+shot_number = 0
+simulated_waveform_savanna = getLevel1BWF(wf_savanna, shot_number)
+plot(simulated_waveform_savanna, relative=TRUE, polygon=TRUE, type="l", lwd=2, col="green",
 xlab="Waveform Amplitude (%)", ylab="Elevation (m)", ylim=c(815,835))
 grid()
 dev.off()
@@ -529,9 +534,9 @@ metrics<-rbind(wf_amazon_metrics,wf_savanna_metrics)
 rownames(metrics)<-c("Amazon","Savanna")
 head(metrics[,1:8])
 
-#         #wave ID true ground true top ground slope ALS cover gHeight maxGround inflGround
-# Amazon         0      -1e+06   133.29       -1e+06        -1   94.97     99.84      95.19
-# Savanna        0      -1e+06   831.51       -1e+06        -1  822.18    822.21     822.25
+#                wave ID true ground true top ground slope ALS cover gHeight maxGround inflGround
+#Amazon  gedi.BEAM0000.0      -1e+06   133.25       -1e+06        -1   94.93     99.95      95.16
+#Savanna gedi.BEAM0000.0      -1e+06   831.47       -1e+06        -1  822.18    822.17     822.25
 ```
 ## Extracting GEDI full-waveform derived metrics after adding noise to the full-waveform
 ```
