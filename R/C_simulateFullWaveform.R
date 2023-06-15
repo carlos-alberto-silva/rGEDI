@@ -13,7 +13,7 @@
 
 #Always HDF
 # @param hdf write output as HDF5. Best with gridded or list of coords
-# @param ascii write output as ASCII (default). Good for quick tests
+#' @param ascii write output as ASCII. Good for quick tests, default FALSE
 #' @param waveID id. supply a waveID to pass to the output (only for single footprints)
 #' Single footprint, list of footprints, or grid of footprints
 #' @param coords lon lat numeric vector. footprint coordinate in same system as lasfile
@@ -151,6 +151,7 @@
 gediWFSimulator = function(
   input,
   output,
+  ascii = FALSE,
   waveID = NULL,
   coords = NULL,
   listCoord = NULL,
@@ -191,6 +192,9 @@ gediWFSimulator = function(
   hdf = TRUE
   ascii = FALSE
   LVIS = FALSE
+  if (ascii == TRUE) {
+    hdf = FALSE
+  }
 
   decon = FALSE
   indDecon = FALSE
@@ -204,6 +208,7 @@ gediWFSimulator = function(
     "input file(s) do not exist!"=all(file.exists(input)),
     "input is not a LAS file!"=all(fs::path_ext(input) == "las"),
     "output path is not valid!"=dir.exists(fs::path_dir(output)),
+    "ascii should is not valid!"=checkLogical(ascii),
     "waveID should only work along with coords!"=is.null(waveID) || length(coords) == 2, # If waveID should only work along with coords
     "coords is invalid!"=checkNumericLength(coords, 2),
     "listCoord is invalid!"=is.null(listCoord) || file.exists(listCoord),
@@ -297,6 +302,34 @@ gediWFSimulator = function(
   unloadLibrary()
 
   cleanInList(inputInList)
+  if (ascii == TRUE) {
+    result = read.table(output)
+    metadata = strsplit(readLines(output)[2:7], split=' ')
+    final = list()
+    if (ncol(result) == 10) {
+      colnames(result) = c("elevation","discrete intensity","discrete count","discrete fraction","ALS pulse","ALS and GEDI pulse","ind decon","ind decon GEDI","decon GEDI","ind decon")
+    } else if (ncol(result) == 16) {
+      colnames(result) = c("elevation", "discrete intensity", "int canopy", "int ground", "discrete count", "count canopy", "count ground", "discrete fraction", "fraction canopy", "fraction ground", "ALS pulse", "ALS and GEDI pulse", "ind decon", "ind decon GEDI", "decon GEDI", "ind decon")
+    }
+    temp = as.numeric(metadata[[1]][c(3,5,7,9)])
+    names(temp) = c('fSigma', 'pSigma', 'res', 'sideLobes')
+    final = as.list(temp)
+    print(metadata)
+    final$'coord' = as.numeric(metadata[[2]][c(3,4)])
+    final$density_point = as.numeric(metadata[[3]][4])
+    final$beam = as.numeric(metadata[[3]][6])
+    final$meanScanAng = as.numeric(metadata[[4]][3])
+    line = 5
+    if (is.null(waveID) == FALSE) {
+      final$waveID = waveID
+      line = line + 1
+    }
+    final$ground = as.numeric(metadata[[line]][3])
+    final$groundAlg = ifelse(polyGround, 'poly', 'simple')
+    final$slope = as.numeric(metadata[[line]][4])
+    final$waveform = result
+    return(final)
+  }
   result = tryCatch(hdf5r::H5File$new(output, "r"), error=function(e) stop("The output file was not created\nSomething went wrong!"))
 
   result<- new("gedi.level1bSim", h5 = result)
