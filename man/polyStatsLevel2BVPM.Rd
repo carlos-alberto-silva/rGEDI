@@ -16,7 +16,7 @@ An S4 object of class "data.table".}
 }
 \value{
 Returns an S4 object of class \link[data.table:data.table]{data.table::data.table}
-containting Statistics of GEDI level2BVPM defined metrics
+Containing Statistics of GEDI level2BVPM defined metrics
 }
 \description{
 Computes a Series of Statistics of GEDI derived Canopy Cover and Vertical Profile metrics

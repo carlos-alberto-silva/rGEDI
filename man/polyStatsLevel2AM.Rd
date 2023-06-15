@@ -16,7 +16,7 @@ An S4 object of class "data.table".}
 }
 \value{
 Returns an S4 object of class \link[data.table:data.table]{data.table::data.table}
-containting Statistics of GEDI level2A defined metrics
+Containing Statistics of GEDI level2A defined metrics
 }
 \description{
 Computes a Series of Statistics from GEDI derived Elevation and Height Metrics (Level2A)

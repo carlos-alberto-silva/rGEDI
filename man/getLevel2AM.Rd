@@ -20,7 +20,7 @@ This function extracts Elevation and Relative Height (RH) metrics from GEDI Leve
 \details{
 Characteristics. Flag indicating likely invalid waveform (1=valid, 0=invalid).
 \itemize{
-\item \emph{beam} Beam identifie
+\item \emph{beam} Beam identifier
 \item \emph{shot_number} Shot number
 \item \emph{degrade_flag} Flag indicating degraded state of pointing and/or positioning information
 \item \emph{quality_flag} Flag simplifying selection of most useful data

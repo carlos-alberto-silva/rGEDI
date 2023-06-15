@@ -20,7 +20,7 @@ This function extracts the Plant Area Volume Density (PAVD) Profile from GEDI Le
 \details{
 Characteristics. Flag indicating likely invalid waveform (1=valid, 0=invalid).
 \itemize{
-\item \emph{beam} Beam identifie
+\item \emph{beam} Beam identifier
 \item \emph{shot_number} Shot number
 \item \emph{algorithmrun_flag} The L2B algorithm is run if this flag is set to 1 indicating data have sufficient waveform fidelity for L2B to run
 \item \emph{l2b_quality_flag} L2B quality flag

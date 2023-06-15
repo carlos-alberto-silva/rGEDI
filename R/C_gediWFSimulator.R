@@ -23,7 +23,7 @@
 #' Lidar characteristics. Defaults are expected GEDI values.
 #' @param pSigma pSigmasig. set Gaussian pulse width as 1 sigma
 #' @param pFWHM fhwm. set Gaussian pulse width as FWHM in ns
-#' @param readPulse file. read pulse shape and width from a file insteda of making Gaussian
+#' @param readPulse file. read pulse shape and width from a file instead of making Gaussian
 #' @param fSigma sig. set footprint width
 #' @param wavefront file. read wavefront shape from file instead of setting Gaussian. Note that footprint width is still set by fSigma
 #' @param res res. range resolution of waveform digitisation to output, in units of ALS data
@@ -118,25 +118,24 @@
 #'
 #'oldpar<-par()
 #'par(mfrow=c(2,2), mar=c(4,4,0,0), oma=c(0,0,1,1),cex.axis = 1.2)
-#'scatter3D(
-#'          als_Amazon@data$X,als_Amazon@data$Y,als_Amazon@data$Z,
-#'          pch = 16,colkey = FALSE, main="",
-#'          cex = 0.5,bty = "u",col.panel ="gray90",
-#'          phi = 30,alpha=1,theta=45,col.grid = "gray50",
-#'          xlab="UTM Easting (m)", ylab="UTM Northing (m)", zlab="Elevation (m)")
+#'scatter3D(las_amazon@data$X,las_amazon@data$Y,las_amazon@data$Z,pch = 16,colkey = FALSE, main="",
+#'          cex = 0.5,bty = "u",col.panel ="gray90",phi = 30,alpha=1,theta=45,
+#'          col.grid = "gray50", xlab="UTM Easting (m)", ylab="UTM Northing (m)", zlab="Elevation (m)")
 #'
-#'plot(wf_Amazon, relative=TRUE, polygon=TRUE, type="l", lwd=2, col="forestgreen",
+#'# Simulated waveforms shot_number is incremental beggining from 0
+#'shot_number = 0
+#'simulated_waveform_amazon = getLevel1BWF(wf_amazon, shot_number)
+#'plot(simulated_waveform_amazon, relative=TRUE, polygon=TRUE, type="l", lwd=2, col="forestgreen",
 #'     xlab="", ylab="Elevation (m)", ylim=c(90,140))
 #'grid()
-#'scatter3D(
-#'          als_Savanna@data$X,als_Savanna@data$Y,als_Savanna@data$Z,
-#'          pch = 16,colkey = FALSE, main="",
-#'          cex = 0.5,bty = "u",col.panel ="gray90",
-#'          phi = 30,alpha=1,theta=45,col.grid = "gray50",
-#'          xlab="UTM Easting (m)", ylab="UTM Northing (m)", zlab="Elevation (m)")
+#'scatter3D(las_savanna@data$X,las_savanna@data$Y,las_savanna@data$Z,pch = 16,colkey = FALSE, main="",
+#'          cex = 0.5,bty = "u",col.panel ="gray90",phi = 30,alpha=1,theta=45,
+#'          col.grid = "gray50", xlab="UTM Easting (m)", ylab="UTM Northing (m)", zlab="Elevation (m)")
 #'
-#'plot(wf_Savanna, relative=TRUE, polygon=TRUE, type="l", lwd=2, col="green",
-#'     xlab="Waveform Amplitude (%)", ylab="Elevation (m)", ylim=c(815,835))
+#'shot_number = 0
+#'simulated_waveform_savanna = getLevel1BWF(wf_savanna, shot_number)
+#'plot(simulated_waveform_savanna, relative=TRUE, polygon=TRUE, type="l", lwd=2, col="green",
+#'xlab="Waveform Amplitude (%)", ylab="Elevation (m)", ylim=c(815,835))
 #'grid()
 #'
 #'par(oldpar)

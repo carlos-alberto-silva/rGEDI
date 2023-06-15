@@ -75,12 +75,12 @@
 #' @param varScale x. variable noise threshold scale (multiple of stdev above mean to set threshold)
 #' @param statsLen len. length to calculate noise stats over for varNoise
 #' @param noiseTrack use noise tracking
-#' @param sWidth sig. smoothing width, after densoising
+#' @param sWidth sig. smoothing width, after denoising
 #' @param psWidth sigma. smoothing width, before denoising
 #' @param msWidth sig. smoothing width, after noise stats, before denoising
 #' @param preMatchF matched filter before denoising
 #' @param postMatchF matched filter after denoising
-#' @param pFile file. read pulse file, for deconvoltuion and matched filters
+#' @param pFile file. read pulse file, for deconvolution and matched filters
 #' @param gWidth sig. Gaussian parameter selection smoothing width
 #' @param minGsig sig. minimum Gaussian sigma to fit
 #' @param minWidth n. minimum feature width in bins

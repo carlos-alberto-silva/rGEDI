@@ -179,7 +179,7 @@ gediWFMetrics(
 
 \item{noiseTrack}{use noise tracking}
 
-\item{sWidth}{sig. smoothing width, after densoising}
+\item{sWidth}{sig. smoothing width, after denoising}
 
 \item{psWidth}{sigma. smoothing width, before denoising}
 
@@ -189,7 +189,7 @@ gediWFMetrics(
 
 \item{postMatchF}{matched filter after denoising}
 
-\item{pFile}{file. read pulse file, for deconvoltuion and matched filters}
+\item{pFile}{file. read pulse file, for deconvolution and matched filters}
 
 \item{gWidth}{sig. Gaussian parameter selection smoothing width}
 

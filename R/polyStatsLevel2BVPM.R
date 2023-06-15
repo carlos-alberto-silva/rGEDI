@@ -11,7 +11,7 @@
 #'@param id A vector containing the polygon id for each GEDI observation. Default is NULL
 #'
 #'@return Returns an S4 object of class [data.table::data.table]
-#'containting Statistics of GEDI level2BVPM defined metrics
+#'Containing Statistics of GEDI level2BVPM defined metrics
 #'
 #'@seealso \url{https://lpdaac.usgs.gov/products/gedi02_bv002/}
 #'
