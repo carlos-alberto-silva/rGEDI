@@ -13,3 +13,5 @@
 ^.*\.o$
 .*.git$
 ^\.github$
+^CRAN-SUBMISSION$
+^cran-comments\.md$
