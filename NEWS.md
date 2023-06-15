@@ -1,5 +1,13 @@
 <!-- NEWS.md is maintained by https://cynkra.github.io/fledge, do not edit -->
 
+# rGEDI 0.4.0 (2023-06-15)
+
+* gediMetrics: now working again, had a bug, allow beam filter
+* gediSimulator: allow ascii output
+* Update Hancocks's gedisimulator
+* Makevars.ucrt: remove GDAL from requirements
+
+
 # rGEDI 0.3.1 (2022-08-31)
 
 * Use Makevars.ucrt for R 4.2
