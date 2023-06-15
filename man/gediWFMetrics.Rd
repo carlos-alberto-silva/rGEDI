@@ -44,7 +44,7 @@ gediWFMetrics(
   nPhotons = 2.1,
   photonWind = 200,
   noiseMult = 0.1,
-  rhoVrhoG = 1,
+  rhoVrhoG = NULL,
   nPhotC = 2.1,
   nPhotG = -1,
   photHDF = FALSE,

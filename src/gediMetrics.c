@@ -191,13 +191,18 @@ SEXP C_gediMetrics(
 
 
 #ifdef DEBUG   
+    Rprintf("./gediMetric ");
     for (int i = 1; i < argc; i++) {
         Rprintf("%s ", argv[i]);
     }
+    Rprintf("\n");
 #endif
 
     GetRNGstate();
-    gediMetric(argc, argv);
+    int status = gediMetric(argc, argv);
+    if (status != 0) {
+        REprintf("Something went wrong!");
+    }
     PutRNGstate();
 
     for (int i = 0; i < argc; i++) {
@@ -207,93 +212,3 @@ SEXP C_gediMetrics(
     
     return (ScalarInteger(0));
 } 
-
-#ifdef DEBUG
-    #include "debug.c"
-
-    int main() {
-        initR();
-
-        SEXP vec = PROTECT(allocVector(VECSXP, 11));
-        int i = 0;
-        SET_VECTOR_ELT(vec, i++, PROTECT(ScalarReal(1.2l)));
-        SET_VECTOR_ELT(vec, i++, PROTECT(ScalarReal(0.764331l)));
-        SET_VECTOR_ELT(vec, i++, PROTECT(ScalarReal(0.0l)));
-        SET_VECTOR_ELT(vec, i++, PROTECT(ScalarLogical(0)));
-        SET_VECTOR_ELT(vec, i++, PROTECT(R_NilValue));
-        SET_VECTOR_ELT(vec, i++, PROTECT(R_NilValue));
-        SET_VECTOR_ELT(vec, i++, PROTECT(ScalarReal(0.4l)));
-        SET_VECTOR_ELT(vec, i++, PROTECT(ScalarReal(0.57l)));
-        SET_VECTOR_ELT(vec, i++, PROTECT(R_NilValue));
-        SET_VECTOR_ELT(vec, i++, PROTECT(ScalarLogical(0)));
-        SET_VECTOR_ELT(vec, i++, PROTECT(R_NilValue));
-
-        C_gediMetrics(
-            mkString("E:/Documentos/sample_noised.h5"),
-            mkString("E:/Documentos/sample"),
-            R_NilValue,
-            ScalarLogical(0),
-            ScalarLogical(0),
-            ScalarLogical(0),
-            ScalarLogical(0),
-            ScalarLogical(1),
-            R_NilValue,
-            R_NilValue,
-            R_NilValue,
-            R_NilValue,
-            R_NilValue,
-            ScalarLogical(0),
-            ScalarLogical(0),
-            ScalarLogical(0),
-            ScalarReal(5.0l),
-            ScalarReal(10.0l),
-            ScalarReal(30.0l),
-            ScalarLogical(0),
-            ScalarReal(0.0l),
-            ScalarReal(0.001l),
-            ScalarLogical(0),
-            ScalarLogical(0),
-            ScalarLogical(0),
-            ScalarLogical(0),
-            ScalarLogical(0),
-            ScalarReal(0.0l),
-            ScalarReal(0.0l),
-            R_NilValue,
-            ScalarReal(0.0l),
-            R_NilValue,
-            R_NilValue,
-            R_NilValue,
-            R_NilValue,
-            R_NilValue,
-            R_NilValue,
-            ScalarLogical(0),
-            ScalarReal(-1.0l),
-            ScalarReal(0.764331l),
-            R_NilValue,
-            ScalarLogical(0),
-            R_NilValue,
-            ScalarLogical(0),
-            ScalarLogical(0),
-            ScalarReal(2.1l),
-            ScalarReal(200.0l),
-            ScalarReal(0.1l),
-            ScalarReal(1.0l),
-            ScalarReal(2.1l),
-            ScalarReal(-1.0l),
-            ScalarLogical(0),
-            ScalarReal(0.0l),
-            ScalarReal(0.00000000000001l),
-            ScalarLogical(0),
-            R_NilValue,
-            R_NilValue,
-            ScalarLogical(0),
-            R_NilValue,
-            ScalarReal(0.0l),
-            R_NilValue,
-            ScalarLogical(0),
-            ScalarLogical(0),
-            R_NilValue,
-            vec);
-            UNPROTECT(12);
-    }
-#endif
