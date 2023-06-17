@@ -10,32 +10,23 @@ LIBTOOLS=libtools.a
 LIBGEDISIMULATOR=libgedisimulator.a
 LIBCMPFIT=libcmpfit.a
 
-# Copied from rgdal
-GDAL_LIBS = -fopenmp -lgdal -larmadillo -lopenblas -lgfortran -lquadmath -lblosc -lkea -lhdf5_cpp -lhdf5 -lgta -lmysqlclient -lspatialite -lminizip -lproj -lgeos_c -lgeos  \
-        -ljson-c -lnetcdf -lpq -lpgcommon -lpgport \
-        -lpoppler -llcms2 -lfreetype -lharfbuzz -lfreetype -llz4 -lpcre2-8 \
-        -lwebp -lcurl -lbcrypt -lidn2 -lunistring -lssh2 -lgcrypt -lgpg-error -lssl \
-        -lhdf5_hl -lhdf5 -lsz -lexpat -lfreexl \
-        -lmfhdf -ldf -lportablexdr  -lpcre \
-        -lopenjp2 -ljasper -lpng -ljpeg -ltiff -lwebp -lgeotiff -lgif -lxml2 -llzma \
-        -lodbc32 -lodbccp32 -liconv -lpsapi -lwldap32 -lsecur32 -lgdi32 -lnormaliz \
-        -lbz2 -lzstd -lz -lcrypto -lcrypt32 -lcfitsio -lws2_32 -lsqlite3
+PKG_CONFIG_CFLAGS = -DCURL_STATICLIB
+PKG_CONFIG_LIBS = -lgdal -larmadillo -lopenblas -lgomp -lmingwthrd -lgfortran -lquadmath -lgeotiff -lpoppler -lharfbuzz -lfreetype -lharfbuzz_too -lfreetype_too -lglib-2.0 -lintl -lwinmm -lole32 -lshlwapi -luuid -lpng -lgif -lnetcdf -lhdf5_hl -lblosc -llz4 -lgta -lmfhdf -lportablexdr -ldf -lkea -lhdf5_cpp -lhdf5 -lwsock32 -lsz -lopenjp2 -llcms2 -lpng16 -lpcre2-8 -lspatialite -ldl -lminizip -lbz2 -lmysqlclient -lpq -lpgcommon -lpgport -lshell32 -lsecur32 -lodbc32 -lodbccp32 -lfreexl -lexpat -lxml2 -lgeos_c -lgeos -lpsapi -lproj -lsqlite3 -ltiff -lwebp -lsharpyuv -llzma -ljpeg -ljson-c -lstdc++ -lcurl -lidn2 -lunistring -liconv -lcharset -lssh2 -lgcrypt -lgpg-error -lbcrypt -ladvapi32 -lssl -lcrypto -lcrypt32 -lgdi32 -lwldap32 -lzstd -lz -lws2_32 -lpthread -lgsl -lgslcblas -lm
 
 
 PKG_CFLAGS += -DDLLEXPORT -D_USE_MATH_DEFINES -D_WIN32 \
 	-DWIN32 -DH5_BUILT_AS_DYNAMIC_LIB -DDLL_EXPORTS \
-	-DUSEPHOTON
+	-DUSEPHOTON ${PKG_CONFIG_CFLAGS}
 
 ARCH=$(PROCESSOR_ARCHITECTURE)
 
 PKG_CPPFLAGS += -I${HANCOCKTOOLS_ROOT} -I$(CMPFIT_ROOT) \
--I${LIBCLIDAR_ROOT} -I.
+-I${LIBCLIDAR_ROOT} -I. ${PKG_CONFIG_CFLAGS}
 
 PKG_LIBS += \
 	-L. \
-	-lz -lm \
 	-lclidar -ltools -lgedisimulator -lcmpfit \
-	-lgsl $(GDAL_LIBS)
+	${PKG_CONFIG_LIBS}
 
 TOOLS = $(HANCOCKTOOLS_ROOT)/tools.o
 CLIDAR = $(LIBCLIDAR_ROOT)/libLasProcess.o $(LIBCLIDAR_ROOT)/libLasRead.o \

@@ -16,13 +16,12 @@
    $Id: mpfit.c,v 1.20 2010/11/13 08:15:35 craigm Exp $
  */
 
-#include <R.h>
-#include <Rinternals.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 #include <string.h>
 #include "mpfit.h"
+#include "functionWrappers.h"
 
 /* Forward declarations of functions in this module */
 static int mp_fdjac2(mp_func funct,
@@ -1108,8 +1107,8 @@ int mp_fdjac2(mp_func funct,
   }
 
   if (has_debug_deriv) {
-    Rprintf("FJAC DEBUG BEGIN\n");
-    Rprintf("#  %10s %10s %10s %10s %10s %10s\n", 
+    msgf("FJAC DEBUG BEGIN\n");
+    msgf("#  %10s %10s %10s %10s %10s %10s\n", 
 	   "IPNT", "FUNC", "DERIV_U", "DERIV_N", "DIFF_ABS", "DIFF_REL");
   }
 
@@ -1121,7 +1120,7 @@ int mp_fdjac2(mp_func funct,
     
     /* Check for debugging */
     if (debug) {
-      Rprintf("FJAC PARM %d\n", ifree[j]);
+      msgf("FJAC PARM %d\n", ifree[j]);
     }
 
     /* Skip parameters already done by user-computed partials */
@@ -1161,7 +1160,7 @@ int mp_fdjac2(mp_func funct,
 	  fjac[ij] = (wa[i] - fvec[i])/h; /* fjac[i+m*j] */
 	  if ((da == 0 && dr == 0 && (fjold != 0 || fjac[ij] != 0)) ||
 	      ((da != 0 || dr != 0) && (fabs(fjold-fjac[ij]) > da + fabs(fjold)*dr))) {
-	    Rprintf("   %10d %10.4g %10.4g %10.4g %10.4g %10.4g\n", 
+	    msgf("   %10d %10.4g %10.4g %10.4g %10.4g %10.4g\n", 
 		   i, fvec[i], fjold, fjac[ij], fjold-fjac[ij], 
 		   (fjold == 0)?(0):((fjold-fjac[ij])/fjold));
 	  }
@@ -1193,7 +1192,7 @@ int mp_fdjac2(mp_func funct,
 	  fjac[ij] = (fjac[ij] - wa[i])/(2*h); /* fjac[i+m*j] */
 	  if ((da == 0 && dr == 0 && (fjold != 0 || fjac[ij] != 0)) ||
 	      ((da != 0 || dr != 0) && (fabs(fjold-fjac[ij]) > da + fabs(fjold)*dr))) {
-	    Rprintf("   %10d %10.4g %10.4g %10.4g %10.4g %10.4g\n", 
+	    msgf("   %10d %10.4g %10.4g %10.4g %10.4g %10.4g\n", 
 		   i, fvec[i], fjold, fjac[ij], fjold-fjac[ij], 
 		   (fjold == 0)?(0):((fjold-fjac[ij])/fjold));
 	  }
@@ -1204,7 +1203,7 @@ int mp_fdjac2(mp_func funct,
   }
 
   if (has_debug_deriv) {
-    Rprintf("FJAC DEBUG END\n");
+    msgf("FJAC DEBUG END\n");
   }
 
  DONE:
@@ -2199,9 +2198,9 @@ int mp_covar(int n, double *r, int ldr, int *ipvt, double tol, double *wa)
 #if 0
   for (j=0; j<n; j++) {
     for (i=0; i<n; i++) {
-      Rprintf("%f ", r[j*ldr+i]);
+      msgf("%f ", r[j*ldr+i]);
     }
-    Rprintf("\n");
+    msgf("\n");
   }
 #endif
 
@@ -2284,9 +2283,9 @@ int mp_covar(int n, double *r, int ldr, int *ipvt, double tol, double *wa)
 #if 0
   for (j=0; j<n; j++) {
     for (i=0; i<n; i++) {
-      Rprintf("%f ", r[j*ldr+i]);
+      msgf("%f ", r[j*ldr+i]);
     }
-    Rprintf("\n");
+    msgf("\n");
   }
 #endif
 
