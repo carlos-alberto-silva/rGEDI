@@ -24,44 +24,44 @@ each grid cell for GEDI derived Elevation and Height Metrics (Level2A)
 }
 \examples{
 # specify the path to GEDI level2A data (zip file)
-outdir = tempdir()
+outdir <- tempdir()
 level2A_fp_zip <- system.file("extdata",
-                  "GEDI02_A_2019108080338_O01964_T05337_02_001_01_sub.zip",
-                  package="rGEDI")
+  "GEDI02_A_2019108080338_O01964_T05337_02_001_01_sub.zip",
+  package = "rGEDI"
+)
 
 # Unzipping GEDI level2A data
-level2Apath <- unzip(level2A_fp_zip,exdir = outdir)
+level2Apath <- unzip(level2A_fp_zip, exdir = outdir)
 
 # Reading GEDI level2A data (h5 file)
-level2a<-readLevel2A(level2Apath=level2Apath)
+level2a <- readLevel2A(level2Apath = level2Apath)
 
 # Get GEDI derived Elevation and Height Metrics
-level2AM<-getLevel2AM(level2a)
+level2AM <- getLevel2AM(level2a)
 head(level2AM)
 
 #' Define your own function
-mySetOfMetrics = function(x)
-{
-metrics = list(
-   min =min(x), # Min of z
-   max = max(x), # Max of z
-   mean = mean(x), # Mean of z
-   sd = sd(x)# Sd of z
-   )
-   return(metrics)
+mySetOfMetrics <- function(x) {
+  metrics <- list(
+    min = min(x), # Min of z
+    max = max(x), # Max of z
+    mean = mean(x), # Mean of z
+    sd = sd(x) # Sd of z
+  )
+  return(metrics)
 }
 
 #' Computing a serie of GEDI metrics
-ZTstats<-gridStatsLevel2AM(level2AM = level2AM, func=mySetOfMetrics(elev_highestreturn), res=0.005)
-plot(ZTstats)
+ZTstats <- gridStatsLevel2AM(level2AM = level2AM, func = mySetOfMetrics(elev_highestreturn), res = 0.005)
+head(ZTstats)
 
 #' Computing the maximum of RH100 only
-maxRH100<-gridStatsLevel2AM(level2AM = level2AM, func=max(rh100), res=0.005)
-plot(maxRH100)
+maxRH100 <- gridStatsLevel2AM(level2AM = level2AM, func = max(rh100), res = 0.005)
+head(maxRH100)
 
 #' Computing the mean of ZG only
-ZGmean<-gridStatsLevel2AM(level2AM = level2AM, func=mean(elev_lowestmode), res=0.005)
-plot(ZGmean)
+ZGmean <- gridStatsLevel2AM(level2AM = level2AM, func = mean(elev_lowestmode), res = 0.005)
+head(ZGmean)
 
 close(level2a)
 }

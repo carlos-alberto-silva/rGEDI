@@ -8,12 +8,11 @@
 #define main gediMetric
 #define control metric_control
 #define readCommands readCommands_metric
-    #include "gedisimulator/gediMetric.h"
-    #include "gedisimulator/gediMetric.c"
+#include "gedisimulator/gediMetric.h"
+#include "gedisimulator/gediMetric.c"
 #undef readCommands
 #undef control
 #undef main
-
 
 SEXP C_gediMetrics(
     // Input output
@@ -93,25 +92,23 @@ SEXP C_gediMetrics(
 {
     int argc = 1;
     char *argv[108];
-    const char* algName = "gediMetric";
+    const char *algName = "gediMetric";
 
-    argv[0] = malloc((strlen(algName)+1) * sizeof(char));
+    argv[0] = malloc((strlen(algName) + 1) * sizeof(char));
     strcpy(argv[0], algName);
 
     int i = 0;
-    #define paramsFromList VECTOR_ELT(aggParams, i++)
-    SEXP gWidth = paramsFromList;
-    SEXP minGsig = paramsFromList;
-    SEXP minWidth = paramsFromList;
-    SEXP medNoise = paramsFromList;
-    SEXP varDrift = paramsFromList;
-    SEXP driftFac = paramsFromList;
-    SEXP rhoG = paramsFromList;
-    SEXP rhoC = paramsFromList;
-    SEXP pSigma = paramsFromList;
-    SEXP gold = paramsFromList;
-    SEXP deconTol = paramsFromList;
-    #undef paramsFromList
+    SEXP gWidth = VECTOR_ELT(aggParams, i++);
+    SEXP minGsig = VECTOR_ELT(aggParams, i++);
+    SEXP minWidth = VECTOR_ELT(aggParams, i++);
+    SEXP medNoise = VECTOR_ELT(aggParams, i++);
+    SEXP varDrift = VECTOR_ELT(aggParams, i++);
+    SEXP driftFac = VECTOR_ELT(aggParams, i++);
+    SEXP rhoG = VECTOR_ELT(aggParams, i++);
+    SEXP rhoC = VECTOR_ELT(aggParams, i++);
+    SEXP pSigma = VECTOR_ELT(aggParams, i++);
+    SEXP gold = VECTOR_ELT(aggParams, i++);
+    SEXP deconTol = VECTOR_ELT(aggParams, i++);
 
     PARSE_ARG(char, input);
     PARSE_ARG(char, outRoot);
@@ -189,10 +186,10 @@ SEXP C_gediMetrics(
     PARSE_ARG(logical, gold);
     PARSE_ARG(real, deconTol);
 
-
-#ifdef DEBUG   
+#ifdef DEBUG
     Rprintf("./gediMetric ");
-    for (int i = 1; i < argc; i++) {
+    for (int i = 1; i < argc; i++)
+    {
         Rprintf("%s ", argv[i]);
     }
     Rprintf("\n");
@@ -200,15 +197,107 @@ SEXP C_gediMetrics(
 
     GetRNGstate();
     int status = gediMetric(argc, argv);
-    if (status != 0) {
+    if (status != 0)
+    {
         REprintf("Something went wrong!");
     }
     PutRNGstate();
 
-    for (int i = 0; i < argc; i++) {
+    for (int i = 0; i < argc; i++)
+    {
         free(argv[i]);
     }
 
-    
     return (ScalarInteger(0));
-} 
+}
+
+#ifdef DEBUG
+#include "debug.c"
+
+int main()
+{ // Wait for debugger to attach
+    initR();
+
+    SEXP vec = PROTECT(allocVector(VECSXP, 11));
+    int i = 0;
+    SET_VECTOR_ELT(vec, i++, PROTECT(ScalarReal(1.2l)));
+    SET_VECTOR_ELT(vec, i++, PROTECT(ScalarReal(0.764331l)));
+    SET_VECTOR_ELT(vec, i++, PROTECT(ScalarReal(0.0l)));
+    SET_VECTOR_ELT(vec, i++, PROTECT(ScalarLogical(0)));
+    SET_VECTOR_ELT(vec, i++, PROTECT(R_NilValue));
+    SET_VECTOR_ELT(vec, i++, PROTECT(R_NilValue));
+    SET_VECTOR_ELT(vec, i++, PROTECT(ScalarReal(0.4l)));
+    SET_VECTOR_ELT(vec, i++, PROTECT(ScalarReal(0.57l)));
+    SET_VECTOR_ELT(vec, i++, PROTECT(R_NilValue));
+    SET_VECTOR_ELT(vec, i++, PROTECT(ScalarLogical(0)));
+    SET_VECTOR_ELT(vec, i++, PROTECT(R_NilValue));
+
+    C_gediMetrics(
+        mkString("E:/Documentos/sample_noised.h5"),
+        mkString("E:/Documentos/sample"),
+        R_NilValue,
+        ScalarLogical(0),
+        ScalarLogical(0),
+        ScalarLogical(0),
+        ScalarLogical(0),
+        ScalarLogical(1),
+        R_NilValue,
+        R_NilValue,
+        R_NilValue,
+        R_NilValue,
+        R_NilValue,
+        ScalarLogical(0),
+        ScalarLogical(0),
+        ScalarLogical(0),
+        ScalarReal(5.0l),
+        ScalarReal(10.0l),
+        ScalarReal(30.0l),
+        ScalarLogical(0),
+        ScalarReal(0.0l),
+        ScalarReal(0.001l),
+        ScalarLogical(0),
+        ScalarLogical(0),
+        ScalarLogical(0),
+        ScalarLogical(0),
+        ScalarLogical(0),
+        ScalarReal(0.0l),
+        ScalarReal(0.0l),
+        R_NilValue,
+        ScalarReal(0.0l),
+        R_NilValue,
+        R_NilValue,
+        R_NilValue,
+        R_NilValue,
+        R_NilValue,
+        R_NilValue,
+        ScalarLogical(0),
+        ScalarReal(-1.0l),
+        ScalarReal(0.764331l),
+        R_NilValue,
+        ScalarLogical(0),
+        R_NilValue,
+        ScalarLogical(0),
+        ScalarLogical(0),
+        ScalarReal(2.1l),
+        ScalarReal(200.0l),
+        ScalarReal(0.1l),
+        ScalarReal(1.0l),
+        ScalarReal(2.1l),
+        ScalarReal(-1.0l),
+        ScalarLogical(0),
+        ScalarReal(0.0l),
+        ScalarReal(0.00000000000001l),
+        ScalarLogical(0),
+        R_NilValue,
+        R_NilValue,
+        ScalarLogical(0),
+        R_NilValue,
+        ScalarReal(0.0l),
+        R_NilValue,
+        ScalarLogical(0),
+        ScalarLogical(0),
+        R_NilValue,
+        vec);
+    UNPROTECT(12);
+}
+#endif

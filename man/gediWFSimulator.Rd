@@ -126,67 +126,79 @@ Input and output filenames, and formats
 }
 \examples{
 \dontshow{
-rm(list=ls())
+rm(list = ls())
 }
-libsAvailable = require(lidR) && require(plot3D)
+libsAvailable <- require(lidR) && require(plot3D)
 if (libsAvailable) {
-outdir=tempdir()
+  outdir <- tempdir()
 
-# specify the path to ALS data (zip)
-alsfile_Amazon_zip <- system.file("extdata", "Amazon.zip", package="rGEDI")
-alsfile_Savanna_zip <- system.file("extdata", "Savanna.zip", package="rGEDI")
+  # specify the path to ALS data (zip)
+  alsfile_Amazon_zip <- system.file("extdata", "Amazon.zip", package = "rGEDI")
+  alsfile_Savanna_zip <- system.file("extdata", "Savanna.zip", package = "rGEDI")
 
-# Unzipping ALS data
-alsfile_Amazon_filepath <- unzip(alsfile_Amazon_zip,exdir = outdir)
-alsfile_Savanna_filepath <- unzip(alsfile_Savanna_zip,exdir = outdir)
+  # Unzipping ALS data
+  alsfile_Amazon_filepath <- unzip(alsfile_Amazon_zip, exdir = outdir)
+  alsfile_Savanna_filepath <- unzip(alsfile_Savanna_zip, exdir = outdir)
 
-# Reading and plot ALS file (las file)
-als_Amazon<-readLAS(alsfile_Amazon_filepath)
-als_Savanna<-readLAS(alsfile_Savanna_filepath)
+  # Reading and plot ALS file (las file)
+  als_Amazon <- readLAS(alsfile_Amazon_filepath)
+  als_Savanna <- readLAS(alsfile_Savanna_filepath)
 
-# Extracting plot center geolocations
-xcenter_Amazon = mean(bbox(als_Amazon)[1,])
-ycenter_Amazon = mean(bbox(als_Amazon)[2,])
-xcenter_Savanna = mean(bbox(als_Savanna)[1,])
-ycenter_Savanna = mean(bbox(als_Savanna)[2,])
+  # Extracting plot center geolocations
+  xcenter_Amazon <- mean(bbox(als_Amazon)[1, ])
+  ycenter_Amazon <- mean(bbox(als_Amazon)[2, ])
+  xcenter_Savanna <- mean(bbox(als_Savanna)[1, ])
+  ycenter_Savanna <- mean(bbox(als_Savanna)[2, ])
 
-# Simulating GEDI full waveform
-wf_Amazon<-gediWFSimulator(input=alsfile_Amazon_filepath,
-                          output=file.path(outdir,"gediWF_amazon_simulation.h5"),
-                          coords = c(xcenter_Amazon, ycenter_Amazon))
+  # Simulating GEDI full waveform
+  wf_Amazon <- gediWFSimulator(
+    input = alsfile_Amazon_filepath,
+    output = file.path(outdir, "gediWF_amazon_simulation.h5"),
+    coords = c(xcenter_Amazon, ycenter_Amazon)
+  )
 
-wf_Savanna<-gediWFSimulator(input=alsfile_Savanna_filepath,
-                           output=file.path(outdir,"gediWF_Savanna_simulation.h5"),
-                           coords = c(xcenter_Savanna, ycenter_Savanna))
+  wf_Savanna <- gediWFSimulator(
+    input = alsfile_Savanna_filepath,
+    output = file.path(outdir, "gediWF_Savanna_simulation.h5"),
+    coords = c(xcenter_Savanna, ycenter_Savanna)
+  )
 
-# Plot ALS and GEDI simulated full waveform
+  # Plot ALS and GEDI simulated full waveform
 
-oldpar<-par()
-par(mfrow=c(2,2), mar=c(4,4,0,0), oma=c(0,0,1,1),cex.axis = 1.2)
-scatter3D(las_amazon@data$X,las_amazon@data$Y,las_amazon@data$Z,pch = 16,colkey = FALSE, main="",
-         cex = 0.5,bty = "u",col.panel ="gray90",phi = 30,alpha=1,theta=45,
-         col.grid = "gray50", xlab="UTM Easting (m)", ylab="UTM Northing (m)", zlab="Elevation (m)")
+  oldpar <- par()
+  par(mfrow = c(2, 2), mar = c(4, 4, 0, 0), oma = c(0, 0, 1, 1), cex.axis = 1.2)
+  scatter3D(als_Amazon@data$X, als_Amazon@data$Y, als_Amazon@data$Z,
+    pch = 16, colkey = FALSE, main = "",
+    cex = 0.5, bty = "u", col.panel = "gray90", phi = 30, alpha = 1, theta = 45,
+    col.grid = "gray50", xlab = "UTM Easting (m)", ylab = "UTM Northing (m)", zlab = "Elevation (m)"
+  )
 
-# Simulated waveforms shot_number is incremental beggining from 0
-shot_number = 0
-simulated_waveform_amazon = getLevel1BWF(wf_amazon, shot_number)
-plot(simulated_waveform_amazon, relative=TRUE, polygon=TRUE, type="l", lwd=2, col="forestgreen",
-    xlab="", ylab="Elevation (m)", ylim=c(90,140))
-grid()
-scatter3D(las_savanna@data$X,las_savanna@data$Y,las_savanna@data$Z,pch = 16,colkey = FALSE, main="",
-         cex = 0.5,bty = "u",col.panel ="gray90",phi = 30,alpha=1,theta=45,
-         col.grid = "gray50", xlab="UTM Easting (m)", ylab="UTM Northing (m)", zlab="Elevation (m)")
+  # Simulated waveforms shot_number is incremental beggining from 0
+  shot_number <- 0
+  simulated_waveform_amazon <- getLevel1BWF(wf_Amazon, shot_number)
+  plot(simulated_waveform_amazon,
+    relative = TRUE, polygon = TRUE, type = "l", lwd = 2, col = "forestgreen",
+    xlab = "", ylab = "Elevation (m)", ylim = c(90, 140)
+  )
+  grid()
+  scatter3D(als_Savanna@data$X, als_Savanna@data$Y, als_Savanna@data$Z,
+    pch = 16, colkey = FALSE, main = "",
+    cex = 0.5, bty = "u", col.panel = "gray90", phi = 30, alpha = 1, theta = 45,
+    col.grid = "gray50", xlab = "UTM Easting (m)", ylab = "UTM Northing (m)", zlab = "Elevation (m)"
+  )
 
-shot_number = 0
-simulated_waveform_savanna = getLevel1BWF(wf_savanna, shot_number)
-plot(simulated_waveform_savanna, relative=TRUE, polygon=TRUE, type="l", lwd=2, col="green",
-xlab="Waveform Amplitude (\%)", ylab="Elevation (m)", ylim=c(815,835))
-grid()
+  shot_number <- 0
+  simulated_waveform_savanna <- getLevel1BWF(wf_Savanna, shot_number)
+  plot(simulated_waveform_savanna,
+    relative = TRUE, polygon = TRUE, type = "l", lwd = 2, col = "green",
+    xlab = "Waveform Amplitude (\%)", ylab = "Elevation (m)", ylim = c(815, 835)
+  )
+  grid()
 
-par(oldpar)
+  par(oldpar)
 
-close(wf_Amazon)
-close(wf_Savanna)
+  close(wf_Amazon)
+  close(wf_Savanna)
 }
 
 }
