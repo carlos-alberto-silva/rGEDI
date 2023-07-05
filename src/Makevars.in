@@ -25,6 +25,7 @@ src = $(LIBCLIDAR_ROOT)/libLasProcess.c $(LIBCLIDAR_ROOT)/libLasRead.c \
 	$(LIBCLIDAR_ROOT)/libOctree.c $(GEDIRAT_ROOT)/gediNoise.c \
 	$(CMPFIT_ROOT)/mpfit.c  $(HANCOCKTOOLS_ROOT)/tools.c \
 	gediMetrics.c gediSimulator.c \
+	collocateWavesWrapper.c \
 	argParse.c registerDynamicSymbol.c \
 	functionWrappers.c
 

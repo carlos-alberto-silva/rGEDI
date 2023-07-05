@@ -10,7 +10,7 @@ LIBTOOLS=libtools.a
 LIBGEDISIMULATOR=libgedisimulator.a
 LIBCMPFIT=libcmpfit.a
 
-PKG_CONFIG_CFLAGS = -DCURL_STATICLIB
+PKG_CONFIG_CFLAGS = -DCURL_STATICLIB -DDEBUG
 PKG_CONFIG_LIBS = -lgdal -larmadillo -lopenblas -lgomp -lmingwthrd -lgfortran -lquadmath -lgeotiff -lpoppler -lharfbuzz -lfreetype -lharfbuzz_too -lfreetype_too -lglib-2.0 -lintl -lwinmm -lole32 -lshlwapi -luuid -lpng -lgif -lnetcdf -lhdf5_hl -lblosc -llz4 -lgta -lmfhdf -lportablexdr -ldf -lkea -lhdf5_cpp -lhdf5 -lwsock32 -lsz -lopenjp2 -llcms2 -lpng16 -lpcre2-8 -lspatialite -ldl -lminizip -lbz2 -lmysqlclient -lpq -lpgcommon -lpgport -lshell32 -lsecur32 -lodbc32 -lodbccp32 -lfreexl -lexpat -lxml2 -lgeos_c -lgeos -lpsapi -lproj -lsqlite3 -ltiff -lwebp -lsharpyuv -llzma -ljpeg -ljson-c -lstdc++ -lcurl -lidn2 -lunistring -liconv -lcharset -lssh2 -lgcrypt -lgpg-error -lbcrypt -ladvapi32 -lssl -lcrypto -lcrypt32 -lgdi32 -lwldap32 -lzstd -lz -lws2_32 -lpthread -lgsl -lgslcblas -lm
 
 
@@ -37,7 +37,7 @@ CMPFIT = $(CMPFIT_ROOT)/mpfit.o
 GEDISIMULATOR = $(GEDIRAT_ROOT)/gediIO.o $(GEDIRAT_ROOT)/photonCount.o \
 	 $(GEDIRAT_ROOT)/gediNoise.o
 
-OBJECTS = gediMetrics.o gediSimulator.o \
+OBJECTS = gediMetrics.o gediSimulator.o collocateWavesWrapper.o\
 	argParse.o functionWrappers.o \
 	registerDynamicSymbol.o
 

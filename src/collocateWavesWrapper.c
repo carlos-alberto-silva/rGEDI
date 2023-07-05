@@ -90,7 +90,7 @@ SEXP C_collocateWaves(
     SEXP nOctPix)
 {
     int argc = 1;
-    char *argv[108];
+    char *argv[58];
     const char *algName = "collocateWaves";
 
     argv[0] = malloc((strlen(algName) + 1) * sizeof(char));
@@ -160,7 +160,6 @@ SEXP C_collocateWaves(
     PARSE_ARG(logical, noOctree);
     PARSE_ARG(integer, octLevels);
     PARSE_ARG(integer, nOctPix);
-    
 
 #ifdef DEBUG
     Rprintf("./collocateWaves ");
@@ -170,6 +169,14 @@ SEXP C_collocateWaves(
     }
     Rprintf("\n");
 #endif
+    GetRNGstate();
+    collocateWaves_main(argc, argv);
+    GetRNGstate();
+
+    for (int i = 0; i < argc; i++)
+    {
+        free(argv[i]);
+    }
 
     return ScalarInteger(0);
 }

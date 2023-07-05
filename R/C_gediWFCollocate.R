@@ -143,7 +143,7 @@ gediWFCollocate <- function(
     simplex = FALSE,
     anneal = FALSE,
     fixFsig = FALSE,
-    geoError = FALSE,
+    geoError = NULL,
     quickGeo = FALSE,
     optTol = 0.2,
     maxIter = 300,

@@ -21,3 +21,6 @@ inst/proj
 src/Makevars
 config.status
 test.R
+build
+src/out
+.vs

@@ -3,10 +3,11 @@
 ^examples\.R$
 ^.*TODO-.*$
 ^notrack.*$
-.travis.yml
+\.travis\.yml
 ^windows$
 ^readme$
-^.vscode$
+\.vscode
+\.vs
 ^Meta$
 ^doc$
 ^.*\.dll$
@@ -16,3 +17,6 @@
 ^CRAN-SUBMISSION$
 ^cran-comments\.md$
 ^\.lintr$
+build
+vcpkg_installed
+^src/out$
