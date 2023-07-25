@@ -160,8 +160,12 @@ getLevel2BVPM<-function(level2b, cols=c(
     for (col in cols) {
       h5.address = var.map[[col]]
       if (is.null(h5.address)) {
-        if (i.s == 1) warning(sprintf("The column '%s' is not available in the GEDI2B product!", col))
-        next
+        if (col %in% names(level2b_i)) {
+          h5.address = col
+        } else {
+          if (i.s == 1) warning(sprintf("The column '%s' is not available in the GEDI2B product for BEAM %s!", col, i))
+          next
+        }
       }
       m[,eval(col):=level2b_i[[h5.address]][]]
     }
