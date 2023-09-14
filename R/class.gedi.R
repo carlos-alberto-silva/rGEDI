@@ -63,6 +63,22 @@ gedi.fullwaveform <- setClass(
 )
 
 
+#' Class for GEDI level3
+#'
+#' @slot raster Object of class [`SpatRaster`][terra::SpatRaster] from `terra` package containing the
+#' GEDI level3 products: rasterized metrics
+#'
+#' @seealso
+#' \url{https://daac.ornl.gov/GEDI/guides/GEDI_L3_LandSurface_Metrics_V2.html}
+#'
+#' @import methods
+#' @export
+gedi.level3 <- setClass(
+  Class = "gedi.level3",
+  slots = list(raster = "SpatRaster")
+)
+
+
 #' Plot GEDI* object
 #' 
 #' @description For [`gedi.fullwaveform-class`]: will plot the full waveform
