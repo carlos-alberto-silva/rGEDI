@@ -1,10 +1,11 @@
 concept_ids <- list(
-  GEDI01_B.001 = "C1656765475-LPDAAC_ECS",
-  GEDI02_A.001 = "C1656766463-LPDAAC_ECS",
-  GEDI02_B.001 = "C1656767133-LPDAAC_ECS",
   GEDI01_B.002 = "C1908344278-LPDAAC_ECS",
   GEDI02_A.002 = "C1908348134-LPDAAC_ECS",
-  GEDI02_B.002 = "C1908350066-LPDAAC_ECS"
+  GEDI02_B.002 = "C1908350066-LPDAAC_ECS",
+  GEDI03.002 = "C2153683336-ORNL_CLOUD",
+  GEDI04_A.001 = "C2734289572-ORNL_CLOUD",
+  GEDI04_A.002 = "C2237824918-ORNL_CLOUD",
+  GEDI04_B.002 = "C2244602422-ORNL_CLOUD"
 )
 
 #' GEDI finder
@@ -12,7 +13,8 @@ concept_ids <- list(
 #' @description This function finds the exact granule(s) that contain GEDI data
 #' for a given region of interest and date range
 #'
-#' @param product GEDI data level; Options: "GEDI01_B", "GEDI02_A" or "GEDI02_B"
+#' @param product GEDI data level; Options: "GEDI01_B", "GEDI02_A",
+#' "GEDI02_B", "GEDI03", "GEDI04_A", "GEDI04_A", "GEDI04_B"
 #' @param ul_lat Numeric. Upper left (ul) corner coordinates, in lat
 #' (decimal degrees) for the bounding box of the area of interest.
 #' @param ul_lon Numeric. Upper left (ul) corner coordinates, in lon
@@ -78,7 +80,7 @@ gedifinder <- function(product,
   # Granules search url pattern
   url_format <- paste0(
     "https://cmr.earthdata.nasa.gov/search/granules.json?",
-    "pretty=true&provider=LPDAAC_ECS&page_size=2000&concept_id=%s",
+    "pretty=true&project=GEDI&page_size=2000&concept_id=%s",
     "&bounding_box=%s"
   )
   request_url <- sprintf(
@@ -111,9 +113,20 @@ gedifinder <- function(product,
 
     if (length(granules) == 0) break
 
+    hrefs <- sapply(granules, function(x) x$links[[1]]$href)
+    
+    ## Level3 has a bug, the links are different from CMR is different from https://daac.ornl.gov/cgi-bin/dsviewer.pl?ds_id=1952
+    if (product == 'GEDI03') {
+      hrefs <- gsub(
+        'data.ornldaac.earthdata.nasa.gov/protected',
+        'daac.ornl.gov/daacdata',
+        hrefs
+        )
+    }
+
     granules_href <- c(
       granules_href,
-      sapply(granules, function(x) x$links[[1]]$href)
+      hrefs
     )
     page <- page + 1
   }
