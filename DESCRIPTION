@@ -42,6 +42,7 @@ Suggests:
   lidR,
   plot3D,
   rasterVis,
+  sf,
   viridis
 SystemRequirements: 
   GNU Scientific Library (>= 2.1),
