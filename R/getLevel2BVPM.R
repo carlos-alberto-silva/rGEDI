@@ -194,35 +194,40 @@ getLevel2BVPM <- function(level2b, cols = c(
                                      hdf5r::list.groups(level2b, recursive = F)), value = T)
   m.dt <- data.table::data.table()
   pb <- utils::txtProgressBar(min = 0, max = length(groups_id), style = 3)
-  i.s = 0
+  i_s = 0
 
-  #i = groups_id[1]
   for (i in groups_id) {
-    i.s <- i.s + 1
+    i_s = i_s + 1
     utils::setTxtProgressBar(pb, i.s)
-    level2b_i <- level2b[[i]]
-    m <- data.table::data.table()
-    #col = cols[1]
+    level2b_i = level2b[[i]]
+    m = data.table::data.table()
     for (col in cols) {
-      h5.address = l2b.var.map[[col]]
-      if (level2b_i$exists(col))
-        h5.address = col
+      h5_address = l2b.var.map[[col]]
       if (col == "pavd")  {
-        h5.address = "pavd_z"
-        m[, eval(col) := colSums(level2b_i[[h5.address]][,])]
+        h5_address = "pavd_z"
+        m[, eval(col) := colSums(level2b_i[[h5_address]][, ])]
         next
       }
-      if (is.null(h5.address)) {
-        if (i.s == 1) warning(sprintf("The column '%s' is not available in the GEDI2B product!", col))
-        m[, eval(col) := NA]
-        next
+      if (is.null(h5_address)) {
+        if (level2b_i$exists(col)) {
+        h5_address = col
+        } else {
+          if (i.s == 1) warning(
+            sprintf(
+              "The column '%s' is not available in the GEDI2B product!",
+              col
+            )
+          )
+          m[, eval(col) := NA]
+          next
+        }
       }
-      base_addr <- gsub("^(.*)/.*", "\\1", h5.address)
-      if (level2b_i$exists(base_addr) && level2b_i$exists(h5.address))
-        m[, eval(col) := level2b_i[[h5.address]][]]
+      base_addr = gsub("^(.*)/.*", "\\1", h5_address)
+      if (level2b_i$exists(base_addr) && level2b_i$exists(h5_address))
+        m[, eval(col) := level2b_i[[h5_address]][]]
     }
-    m.dt <- data.table::rbindlist(list(m.dt, m), fill = TRUE)
+    m_dt = data.table::rbindlist(list(m.dt, m), fill = TRUE)
   }
   close(pb)
-  return(m.dt)
+  return(m_dt)
 }
