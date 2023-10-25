@@ -45,7 +45,11 @@
 #' }
 #'
 #' #' Computing a serie of GEDI metrics
-#' ZTstats <- gridStatsLevel2AM(level2AM = level2AM, func = mySetOfMetrics(elev_highestreturn), res = 0.005)
+#' ZTstats <- gridStatsLevel2AM(
+#'   level2AM = level2AM,
+#'   func = mySetOfMetrics(elev_highestreturn),
+#'   res = 0.005
+#' )
 #' head(ZTstats)
 #'
 #' #' Computing the maximum of RH100 only
@@ -61,6 +65,7 @@
 #' @export
 gridStatsLevel2AM <- function(level2AM, func, res = 0.5) {
   requireNamespace("data.table")
+  cells <- NA
   # this code has been adapted from the grid_metrics function in lidR package (Roussel et al. 2019)
   # https://github.com/Jean-Romain/lidR/blob/master/R/grid_metrics.r
 

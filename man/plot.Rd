@@ -23,29 +23,34 @@ For \code{\linkS4class{gedi.fullwaveform}}: will plot the full waveform
 }
 \examples{
 # Specifying the path to GEDI level1B data (zip file)
-outdir = tempdir()
+outdir <- tempdir()
 level1B_fp_zip <- system.file("extdata",
-                  "GEDI01_B_2019108080338_O01964_T05337_02_003_01_sub.zip",
-                  package="rGEDI")
+  "GEDI01_B_2019108080338_O01964_T05337_02_003_01_sub.zip",
+  package = "rGEDI"
+)
 
 # Unzipping GEDI level1B data
-level1Bpath <- unzip(level1B_fp_zip,exdir = outdir)
+level1Bpath <- unzip(level1B_fp_zip, exdir = outdir)
 
 # Reading GEDI level1B data (h5 file)
-level1b<-readLevel1B(level1Bpath=level1Bpath)
+level1b <- readLevel1B(level1Bpath = level1Bpath)
 
 # Extracting GEDI Full-Waveform
-wf <- getLevel1BWF(level1b, shot_number="19640521100108408")
+wf <- getLevel1BWF(level1b, shot_number = "19640521100108408")
 
 # Plotting GEDI Full-waveform
-oldpar<-par()
-par(mfrow = c(1,2), cex.axis = 1.5)
-plot(wf, relative=FALSE, polygon=TRUE, type="l", lwd=2, col="forestgreen",
-xlab="", ylab="Elevation (m)")
+oldpar <- par()
+par(mfrow = c(1, 2), cex.axis = 1.5)
+plot(wf,
+  relative = FALSE, polygon = TRUE, type = "l", lwd = 2, col = "forestgreen",
+  xlab = "", ylab = "Elevation (m)"
+)
 
-plot(wf, relative=TRUE, polygon=TRUE, type="l", lwd=2, col="forestgreen",
-xlab="Waveform Amplitude (\%)", ylab="Elevation (m)")
+rGEDI::plot(wf,
+  relative = TRUE, polygon = TRUE, type = "l", lwd = 2, col = "forestgreen",
+  xlab = "Waveform Amplitude (\%)", ylab = "Elevation (m)"
+)
 
-par(oldpar) 
+par(oldpar)
 close(level1b)
 }

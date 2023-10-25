@@ -24,52 +24,56 @@ within a given area defined or not by a polygon
 }
 \examples{
 # Specifying the path to GEDI level2A data (zip file)
-outdir = tempdir()
+outdir <- tempdir()
 level2A_fp_zip <- system.file("extdata",
-                  "GEDI02_A_2019108080338_O01964_T05337_02_001_01_sub.zip",
-                  package="rGEDI")
+  "GEDI02_A_2019108080338_O01964_T05337_02_001_01_sub.zip",
+  package = "rGEDI"
+)
 
 # Unzipping GEDI level2A data
-level2Apath <- unzip(level2A_fp_zip,exdir = outdir)
+level2Apath <- unzip(level2A_fp_zip, exdir = outdir)
 
 # Reading GEDI level2A data (h5 file)
-level2a<-readLevel2A(level2Apath=level2Apath)
+level2a <- readLevel2A(level2Apath = level2Apath)
 
 # Specifying the path to shapefile
-polygon_filepath <- system.file("extdata", "stands_cerrado.shp", package="rGEDI")
+polygon_filepath <- system.file("extdata", "stands_cerrado.shp", package = "rGEDI")
 
 # Reading shapefile as SpatialPolygonsDataFrame object
 library(raster)
-polygon_spdf<-shapefile(polygon_filepath)
+polygon_spdf <- shapefile(polygon_filepath)
 
 # Extracting GEDI Eleveation and Relative Metrics (level2A)
-level2AM<-getLevel2AM(level2a)
+level2AM <- getLevel2AM(level2a)
 head(level2AM)
 
 # Clipping GEDI data by geometry
-level2AM_clip = clipLevel2AMGeometry(level2AM, polygon_spdf, split_by="id")
+level2AM_clip <- clipLevel2AMGeometry(level2AM, polygon_spdf, split_by = "id")
 
 #' Define your own function
-mySetOfMetrics = function(x)
-{
-metrics = list(
-   min =min(x), # Min of x
-   max = max(x), # Max of x
-   mean = mean(x), # Mean of x
-   sd = sd(x)# Sd of x
- )
- return(metrics)
+mySetOfMetrics <- function(x) {
+  metrics <- list(
+    min = min(x), # Min of x
+    max = max(x), # Max of x
+    mean = mean(x), # Mean of x
+    sd = sd(x) # Sd of x
+  )
+  return(metrics)
 }
 
 # Computing the maximum of RH100
-RH100max<-polyStatsLevel2AM(level2AM_clip,func=max(rh100), id=NULL)
+RH100max <- polyStatsLevel2AM(level2AM_clip, func = max(rh100), id = NULL)
 
 # Computing the maximum of RH100 stratified by polygon
-RH100max_poly<-polyStatsLevel2AM(level2AM_clip,func=max(rh100), id=NULL)
+RH100max_poly <- polyStatsLevel2AM(level2AM_clip, func = max(rh100), id = NULL)
 
 # Computing a serie statistics for GEDI metrics stratified by polygon
-RH100metrics<-polyStatsLevel2AM(level2AM_clip,func=mySetOfMetrics(rh100),
-                     id=level2AM_clip$id)
+RH100metrics <- polyStatsLevel2AM(level2AM_clip,
+  func = mySetOfMetrics(rh100),
+  id = level2AM_clip$id
+)
+
+head(RH100metrics)
 
 close(level2a)
 }

@@ -45,7 +45,11 @@
 #' }
 #'
 #' #' Computing a serie of statistics of GEDI derived canopy cover
-#' cover_stats <- gridStatsLevel2BVPM(level2BVPM = level2BVPM, func = mySetOfMetrics(cover), res = 0.005)
+#' cover_stats <- gridStatsLevel2BVPM(
+#'   level2BVPM = level2BVPM,
+#'   func = mySetOfMetrics(cover),
+#'   res = 0.005
+#' )
 #' head(cover_stats)
 #'
 #' #' Computing the max of the Total Plant Area Index only
@@ -60,6 +64,7 @@
 #' @export
 gridStatsLevel2BVPM <- function(level2BVPM, func, res) {
   requireNamespace("data.table")
+  cells <- NA
   # this code has been adapted from the grid_metrics function in lidR package (Roussel et al. 2019)
   # https://github.com/Jean-Romain/lidR/blob/master/R/grid_metrics.r
 

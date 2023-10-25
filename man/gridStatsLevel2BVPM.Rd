@@ -24,44 +24,48 @@ each grid cell for GEDI derived Canopy Cover and Vertical Profile Metrics (Level
 }
 \examples{
 # specify the path to GEDI level2B data (zip file)
-outdir = tempdir()
+outdir <- tempdir()
 level2B_fp_zip <- system.file("extdata",
-                  "GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub.zip",
-                  package="rGEDI")
+  "GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub.zip",
+  package = "rGEDI"
+)
 
 # Unzipping GEDI level2A data
-level2Bpath <- unzip(level2B_fp_zip,exdir = outdir)
+level2Bpath <- unzip(level2B_fp_zip, exdir = outdir)
 
 # Reading GEDI level2B data (h5 file)
-level2b<-readLevel2B(level2Bpath=level2Bpath)
+level2b <- readLevel2B(level2Bpath = level2Bpath)
 
 # Get GEDI derived Canopy Cover and Vertical Profile Metrics
-level2BVPM<-getLevel2BVPM(level2b)
+level2BVPM <- getLevel2BVPM(level2b)
 head(level2BVPM)
 
 #' Define your own function
-mySetOfMetrics = function(x)
-{
-metrics = list(
-   min =min(x), # Min of z
-   max = max(x), # Max of z
-   mean = mean(x), # Mean of z
-   sd = sd(x)# Sd of z
-   )
-   return(metrics)
+mySetOfMetrics <- function(x) {
+  metrics <- list(
+    min = min(x), # Min of z
+    max = max(x), # Max of z
+    mean = mean(x), # Mean of z
+    sd = sd(x) # Sd of z
+  )
+  return(metrics)
 }
 
 #' Computing a serie of statistics of GEDI derived canopy cover
-cover_stats<-gridStatsLevel2BVPM(level2BVPM = level2BVPM, func=mySetOfMetrics(cover), res=0.005)
-plot(cover_stats)
+cover_stats <- gridStatsLevel2BVPM(
+  level2BVPM = level2BVPM,
+  func = mySetOfMetrics(cover),
+  res = 0.005
+)
+head(cover_stats)
 
 #' Computing the max of the Total Plant Area Index only
-pai_max<-gridStatsLevel2BVPM(level2BVPM = level2BVPM, func=max(pai), res=0.005)
-plot(pai_max)
+pai_max <- gridStatsLevel2BVPM(level2BVPM = level2BVPM, func = max(pai), res = 0.005)
+head(pai_max)
 
 #' Computing the Foliage Height Diversity Index only
-fhd_mean<-gridStatsLevel2BVPM(level2BVPM = level2BVPM, func=mean(fhd_normal), res=0.005)
-plot(fhd_mean)
+fhd_mean <- gridStatsLevel2BVPM(level2BVPM = level2BVPM, func = mean(fhd_normal), res = 0.005)
+head(fhd_mean)
 
 close(level2b)
 }

@@ -15,7 +15,8 @@ gedifinder(
 )
 }
 \arguments{
-\item{product}{GEDI data level; Options: "GEDI01_B", "GEDI02_A" or "GEDI02_B"}
+\item{product}{GEDI data level; Options: "GEDI01_B", "GEDI02_A",
+"GEDI02_B", "GEDI03", "GEDI04_A", "GEDI04_A", "GEDI04_B"}
 
 \item{ul_lat}{Numeric. Upper left (ul) corner coordinates, in lat
 (decimal degrees) for the bounding box of the area of interest.}
