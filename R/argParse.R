@@ -2,7 +2,7 @@ stopifnotMessage = function(...) {
   ok = TRUE
   errors = list()
   listargs = list(...)
-  for (i in 1:length(listargs)) {
+  for (i in seq_along(listargs)) {
     if (listargs[i] == FALSE) {
       errors[[""]] = names(listargs)[i]
       ok = FALSE
