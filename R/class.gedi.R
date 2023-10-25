@@ -64,24 +64,16 @@ gedi.fullwaveform <- setClass(
 
 
 #' Plot GEDI* object
-#'
+#' 
+#' @description For [`gedi.fullwaveform-class`]: will plot the full waveform
+#' 
 #' @param x An object of class [`gedi.fullwaveform-class`] (output of [getLevel1BWF()] function)
-#' @param y not used (inherited from R base)
-#'
 #' @param relative if TRUE, the Waveform Amplitude will be showed in percentage (%)
 #' @param polygon if TRUE, the polygon will be added to the plot
-#'
-#' @param method methods used for simulating the GEDI full-waveform ("RXWAVEINT", "RXWAVECOUNT" or "RXWAVEFRAC"). Default is "RXWAVECOUNT".
 #' @param ... will be passed to the main plot
+#' 
 #' @return No return value
 #'
-#' @export
-#' @method plot gedi.fullwaveform
-setGeneric("plot", function(x, y, ...) {
-  standardGeneric("plot")
-})
-
-#' @description For [`gedi.fullwaveform-class`]: will plot the full waveform
 #' @examples
 #' # Specifying the path to GEDI level1B data (zip file)
 #' outdir <- tempdir()
@@ -107,48 +99,54 @@ setGeneric("plot", function(x, y, ...) {
 #'   xlab = "", ylab = "Elevation (m)"
 #' )
 #'
-#' plot(wf,
+#' rGEDI::plot(wf,
 #'   relative = TRUE, polygon = TRUE, type = "l", lwd = 2, col = "forestgreen",
 #'   xlab = "Waveform Amplitude (%)", ylab = "Elevation (m)"
 #' )
 #'
 #' par(oldpar)
 #' close(level1b)
+#' @export
+#' @method plot gedi.fullwaveform
 #' @rdname plot
-setMethod("plot", signature("gedi.fullwaveform", y = "missing"), function(x, relative = FALSE, polygon = FALSE, ...) {
-  if (!is(x, "gedi.fullwaveform")) {
-    print("Invalid input file. It should be an object of class 'gedi.fullwaveform' ")
-  } else {
-    x0 <- as.data.frame(x@dt)
-    x <- x0[, 1]
-    z <- x0[, 2]
-
-    if (relative == TRUE) {
-      x <- c(x - min(x)) / (max(x) - min(x)) * 100
+setMethod(
+  f = "plot",
+  signature("gedi.fullwaveform", y = "missing"),
+  definition = function(x, relative = FALSE, polygon = FALSE, ...) {
+    if (!is(x, "gedi.fullwaveform")) {
+      print("Invalid input file. It should be an object of class 'gedi.fullwaveform' ")
     } else {
-      x <- x
-    }
+      x0 <- as.data.frame(x@dt)
+      x <- x0[, 1]
+      z <- x0[, 2]
 
-    if (polygon == TRUE) {
-      xstart <- x[which(z == min(z, na.rm = T))]
-      xend <- x[which(z == max(z, na.rm = T))]
+      if (relative == TRUE) {
+        x <- c(x - min(x)) / (max(x) - min(x)) * 100
+      } else {
+        x <- x
+      }
 
-      xl <- c(min(x), min(x), xstart, rev(x), xend, min(x))
-      yl <- c(max(z, na.rm = T), min(z, na.rm = T), min(z, na.rm = T), rev(z), max(z, na.rm = T), max(z, na.rm = T))
+      if (polygon == TRUE) {
+        xstart <- x[which(z == min(z, na.rm = T))]
+        xend <- x[which(z == max(z, na.rm = T))]
 
-      suppressWarnings({
-        plot(xl, yl, ...)
-      })
-      suppressWarnings({
-        polygon(xl, yl, ...)
-      })
-    } else {
-      suppressWarnings({
-        plot(x = x, y = z, ...)
-      })
+        xl <- c(min(x), min(x), xstart, rev(x), xend, min(x))
+        yl <- c(max(z, na.rm = T), min(z, na.rm = T), min(z, na.rm = T), rev(z), max(z, na.rm = T), max(z, na.rm = T))
+
+        suppressWarnings({
+          plot(xl, yl, ...)
+        })
+        suppressWarnings({
+          polygon(xl, yl, ...)
+        })
+      } else {
+        suppressWarnings({
+          plot(x = x, y = z, ...)
+        })
+      }
     }
   }
-})
+)
 
 
 h5closeall <- function(con, ...) {
@@ -167,10 +165,6 @@ h5closeall <- function(con, ...) {
 #' @export
 #' @rdname close
 #' @method close gedi.level1b
-setGeneric("close", function(con, ...) {
-  standardGeneric("close")
-})
-
 #' Handles the [`rGEDI::gedi.level1b-class`].
 #' @rdname close
 setMethod("close", signature = c("gedi.level1b"), h5closeall)
