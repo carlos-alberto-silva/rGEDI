@@ -154,23 +154,39 @@ h5closeall <- function(con, ...) {
 }
 
 
-#' Close hdf5 connections from gedi* objects
+#' Safely closes the [`rGEDI::gedi.level1b-class`]
 #'
 #' @description
 #' Closing files will avoid locking HDF5 GEDI files.
 #'
-#' @param con An object of class `gedi.level*`
+#' @param con An object of class `gedi.level1b`
 #' @param ... Inherited from base
-#'
+#' 
 #' @export
 #' @rdname close
 #' @method close gedi.level1b
-#' Handles the [`rGEDI::gedi.level1b-class`].
-#' @rdname close
 setMethod("close", signature = c("gedi.level1b"), h5closeall)
-#' Handles the [`rGEDI::gedi.level2a-class`].
+
+
+#' Safely closes the [`rGEDI::gedi.level2a-class`]
+#'
+#' @description
+#' Closing files will avoid locking HDF5 GEDI files.
+#' 
+#' @param con An object of class `gedi.level2a`
+#' @param ... Inherited from base
+#' @method close gedi.level2a
 #' @rdname close
 setMethod("close", signature = c("gedi.level2a"), h5closeall)
-#' Handles the [`rGEDI::gedi.level2b-class`].
+
+
+#' Safely closes the [`rGEDI::gedi.level2b-class`]
+#'
+#' @description
+#' Closing files will avoid locking HDF5 GEDI files.
+#'
+#' @param con An object of class `gedi.level2b`
+#' @param ... Inherited from base
+#' @method close gedi.level2b
 #' @rdname close
 setMethod("close", signature = c("gedi.level2b"), h5closeall)
