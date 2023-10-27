@@ -1,7 +1,7 @@
 #'@import sp
 NULL
 
-createAttributesWithinGroup = function(h5, newFile, group="/") {
+createAttributesWithinGroup = function(h5, newFile, group = "/") {
   for (attr in hdf5r::list.attributes(h5[[group]])) {
     hdf5r::h5attr(newFile[[group]], attr) = hdf5r::h5attr(h5[[group]], attr)
   }
@@ -20,18 +20,18 @@ clipSpDataByExtentLevel2A = function(spData, xmin, xmax, ymin, ymax) {
         y$latitude_lowest <= ymax
 
       mask[!stats::complete.cases(mask)] = FALSE
-      return ((1:length(y$longitude_lowest))[mask])
+      return((seq_along(y$longitude_lowest))[mask])
     })
     return (masks2)
   })
   if(all(sapply(masks, function(x) sum(sapply(x, length)))==0)){
     stop("The clipping ROI does not intersect with the data!")
   }
-  return (masks)
+  return(masks)
 }
 
 
-getPolygonMaskLevel2A = function(spData, masks, polygon_spdf, split_by) {
+getPolygonMaskLevel2A = function(spData, masks, polygon, split_by) {
   message("Intersecting with polygon...")
   pb = utils::txtProgressBar(min = 0, max = length(masks), style = 3)
   progress = 0
@@ -40,7 +40,7 @@ getPolygonMaskLevel2A = function(spData, masks, polygon_spdf, split_by) {
   if (is.null(split_by)) {
     masknames = ""
   } else {
-    masknames = unique(paste0(polygon_spdf@data[[split_by]]))
+    masknames = unique(paste0(polygon[[split_by]]))
   }
 
   for (m in masknames) {
@@ -50,14 +50,18 @@ getPolygonMaskLevel2A = function(spData, masks, polygon_spdf, split_by) {
   for (beam in names(masks)) {
     masks2 = masks[[beam]]
 
-    for (i in 1:length(masks2)) {
+    for (i in seq_along(masks2)) {
       mask = masks2[[i]]
       if (length(mask) == 0) next
 
-      spDataMasked = spData[[beam]][[i]][mask,]
-      points = sp::SpatialPointsDataFrame(coords=matrix(c(spDataMasked$longitude_highest, spDataMasked$latitude_highest), ncol=2),
-                                          data=data.frame(id=mask), proj4string = polygon_spdf@proj4string)
-      pts = suppressPackageStartupMessages(raster::intersect(points, polygon_spdf))
+      spDataMasked = spData[[beam]][[i]][mask, ]
+      points = sf::st_as_sf(
+        spDataMasked,
+        coords = c("longitude_highest", "latitude_highest"),
+        crs = sf::st_crs(polygon)
+      )
+
+      pts = suppressPackageStartupMessages(raster::intersect(points, polygon))
 
 
       mask_name = names(masks2)[i]
@@ -67,10 +71,10 @@ getPolygonMaskLevel2A = function(spData, masks, polygon_spdf, split_by) {
         split_by2 = split_by
       }
       if (is.null(split_by)) {
-        polygon_masks[[1]][[beam]][[mask_name]] = pts@data[,1]
+        polygon_masks[[1]][[beam]][[mask_name]] = pts[, 1]
       } else {
-        for (pol_id in as.character(unique(pts@data[split_by2])[,1])) {
-          polygon_masks[[pol_id]][[beam]][[mask_name]] = pts[(pts@data[split_by2] == pol_id)[,1],]@data[,1]
+        for (pol_id in as.character(unique(pts[split_by2])[, 1])) {
+          polygon_masks[[pol_id]][[beam]][[mask_name]] = pts[(pts[split_by2] == pol_id)[, 1], ][, 1]
         }
       }
 
@@ -79,17 +83,18 @@ getPolygonMaskLevel2A = function(spData, masks, polygon_spdf, split_by) {
     }
   }
   close(pb)
-  if(all(
+
+  if (all(
     sapply(
       polygon_masks, function(x) {
         res=sapply(x, function(y) sum(sapply(y, length)))
-        ifelse(length(res)>0,sum(res),0)
+        ifelse(length(res)>0, sum(res), 0)
       }
-    )==0))
-    {
+    ) == 0))
+  {
     stop("The clipping polygon does not intersect with the data!")
   }
-  return (polygon_masks)
+  return(polygon_masks)
 }
 
 
@@ -105,7 +110,7 @@ clipSpDataByExtentLevelB = function(spData, xmin, xmax, ymin, ymax) {
       x$latitude_lastbin <= ymax
 
     mask[!stats::complete.cases(mask)] = FALSE
-    return ((1:length(x$longitude_bin0))[mask])
+    return((seq_along(x$longitude_bin0))[mask])
   })
   if (all(sapply(masks, length)==0)) {
     stop("The clipping ROI does not intersect with the data!")
@@ -118,11 +123,11 @@ checkOutput = function(output) {
     output = tempfile(fileext = ".h5")
   }
   output = fs::path_ext_set(output, "h5")
-  return (output)
+  return(output)
 }
 
 
-getPolygonMaskLevelB = function(spData, masks, polygon_spdf, split_by) {
+getPolygonMaskLevelB = function(spData, masks, polygon, split_by) {
   message("Intersecting with polygons...")
   pb = utils::txtProgressBar(min = 0, max = length(masks), style = 3)
   progress = 0
@@ -131,7 +136,7 @@ getPolygonMaskLevelB = function(spData, masks, polygon_spdf, split_by) {
   if (is.null(split_by)) {
     masknames = ""
   } else {
-    masknames = unique(paste0(polygon_spdf@data[[split_by]]))
+    masknames = unique(paste0(polygon[[split_by]]))
   }
   for (m in masknames) {
     polygon_masks[[m]] = list()
@@ -142,21 +147,25 @@ getPolygonMaskLevelB = function(spData, masks, polygon_spdf, split_by) {
 
     if (length(mask) == 0) next
 
-    spDataMasked = spData[[beam]][mask,]
-    points = sp::SpatialPointsDataFrame(coords=matrix(c(spDataMasked$longitude_bin0, spDataMasked$latitude_bin0), ncol=2),
-                                        data=data.frame(idrownames=mask), proj4string = polygon_spdf@proj4string)
-    pts = suppressPackageStartupMessages(raster::intersect(points, polygon_spdf))
-    if (ncol(pts@data) == 2) {
+    spDataMasked = spData[[beam]][mask, ]
+    points = sf::st_as_sf(
+      spDataMasked,
+      coords = c("longitude_bin0", "latitude_bin0"),
+      crs = sf::st_crs(polygon)
+    )
+
+    pts = suppressPackageStartupMessages(terra::intersect(points, polygon))
+    if (ncol(pts) == 2) {
       split_by2 = 2
     } else {
       split_by2 = split_by
     }
     if (is.null(split_by)) {
-      polygon_masks[[1]][[beam]] = pts@data[,1]
+      polygon_masks[[1]][[beam]] = pts[,1]
     } else {
-      for (pol_id in unique(as.character(paste0(pts@data[[split_by2]])))) {
+      for (pol_id in unique(as.character(paste0(pts[[split_by2]])))) {
 
-        polygon_masks[[pol_id]][[beam]] = pts[pts@data[[split_by2]] == pol_id,]@data[,1]
+        polygon_masks[[pol_id]][[beam]] = pts[pts[[split_by2]] == pol_id,][,1]
       }
     }
 
@@ -168,7 +177,7 @@ getPolygonMaskLevelB = function(spData, masks, polygon_spdf, split_by) {
   if (all(sapply(polygon_masks, length)==0)) {
     stop("The polygon does not intersect with the data!")
   }
-  return (polygon_masks)
+  return(polygon_masks)
 }
 
 clipByMasks = function(h5file, polygon_masks, output, split_by, clipFun) {
@@ -176,7 +185,7 @@ clipByMasks = function(h5file, polygon_masks, output, split_by, clipFun) {
   results = list()
   i = 0
   len_masks = length(polygon_masks)
-  for (pol_idx in 1:length(polygon_masks)) {
+  for (pol_idx in seq_along(polygon_masks)) {
     pol_id = names(polygon_masks)[pol_idx]
     i = i + 1
     message(sprintf("Writing %s='%s': %d of %d", split_by, pol_id, i, len_masks))
@@ -186,7 +195,7 @@ clipByMasks = function(h5file, polygon_masks, output, split_by, clipFun) {
                                 output = output2)
   }
 
-  return (results)
+  return(results)
 }
 
 
@@ -202,12 +211,13 @@ checkClipExtentInputs = function(obj, className, xmin, xmax, ymin, ymax) {
   do.call(stopifnotMessage, criterias)
 }
 
-checkClipGeoInputs = function(obj, className, polygon_spdf, split_by) {
+checkClipGeoInputs = function(obj, className, polygon, split_by) {
   criterias = list()
   criterias[paste0("Object is not from class", className)] = class(obj) == className
   criterias = c(criterias, list(
-    "polygon_spdf is not a SpatialPolygonsDataFrame" = class(polygon_spdf) == "SpatialPolygonsDataFrame",
-    "split_by is not a valid attribute of polygon_spdf" = is.null(split_by) || split_by %in% colnames(polygon_spdf@data)
+    "is not a valid sf object" = all(c('sf', 'data.frame') %in% class(polygon)),
+    "polygon_spdf is not a SpatialPolygonsDataFrame" = any(c('POLYGON', 'MULTIPOLYGON') %in% sf::st_geometry_type(polygon)),
+    "split_by is not a valid attribute of polygon_spdf" = is.null(split_by) || split_by %in% colnames(polygon)
   ))
   do.call(stopifnotMessage, criterias)
 }

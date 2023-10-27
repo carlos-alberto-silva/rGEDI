@@ -74,8 +74,7 @@ clipLevel1B = function(level1b, xmin, xmax, ymin, ymax, output=""){
 #'
 #'@param level1b A [`gedi.level1b-class`] object (output of [readLevel1B()] function).
 #'An S4 object of class "gedi.level1b".
-#'@param polygon_spdf Polygon. An object of class [`sp::SpatialPolygonsDataFrame`][sp::SpatialPolygonsDataFrame-class] from `sp` package,
-#'which can be loaded as an ESRI shapefile using [raster::shapefile()].
+#'@param polygon_spdf Polygon or Multipolygon. An object opened with `sf::st_read`,
 #'@param output Optional character path where to save the new [`hdf5r::H5File`][hdf5r::H5File-class]. The default stores a temporary file only.
 #'@param split_by Polygon id. If defined, GEDI data will be clipped by each polygon using the attribute specified by `split_by` from the attribute table.
 #'
@@ -116,19 +115,19 @@ clipLevel1B = function(level1b, xmin, xmax, ymin, ymax, output=""){
 #'}
 #'@import hdf5r
 #'@export
-clipLevel1BGeometry = function(level1b, polygon_spdf, output="", split_by=NULL) {
+clipLevel1BGeometry = function(level1b, polygon, output="", split_by=NULL) {
   output = checkOutput(output)
-  checkClipGeoInputs(level1b, "gedi.level1b", polygon_spdf, split_by)
+  checkClipGeoInputs(level1b, "gedi.level1b", polygon, split_by)
 
   spData = getSpatialData1B(level1b)
 
-  xmin = polygon_spdf@bbox[1,1]
-  xmax = polygon_spdf@bbox[1,2]
-  ymin = polygon_spdf@bbox[2,1]
-  ymax = polygon_spdf@bbox[2,2]
+  xmin = polygon@bbox[1,1]
+  xmax = polygon@bbox[1,2]
+  ymin = polygon@bbox[2,1]
+  ymax = polygon@bbox[2,2]
 
   masks = clipSpDataByExtentLevelB(spData, xmin, xmax, ymin, ymax)
-  polygon_masks = getPolygonMaskLevelB(spData, masks, polygon_spdf, split_by)
+  polygon_masks = getPolygonMaskLevelB(spData, masks, polygon, split_by)
   results = clipByMasks(level1b, polygon_masks, output, split_by, clipByMask1B)
 
   return (results)
