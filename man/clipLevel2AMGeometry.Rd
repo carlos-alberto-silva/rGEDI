@@ -4,16 +4,18 @@
 \alias{clipLevel2AMGeometry}
 \title{Clip GEDI Elevation and Height Metrics by Coordinates}
 \usage{
-clipLevel2AMGeometry(level2AM, polygon_spdf, split_by)
+clipLevel2AMGeometry(level2AM, polygon, split_by = "id")
 }
 \arguments{
 \item{level2AM}{A GEDI Level2A object (output of \code{\link[=readLevel2A]{readLevel2A()}} function).
 An S4 object of class "data.table".}
 
-\item{polygon_spdf}{Polygon. An object of class \code{\link[sp:SpatialPolygonsDataFrame-class]{sp::SpatialPolygonsDataFrame}},
-which can be loaded as an ESRI shapefile using \link[raster:shapefile]{raster::shapefile} function in the \emph{raster} package.}
+\item{polygon}{Polygon. An object of class \code{\link[sf:sf]{sf::sf}},
+which can be loaded as an ESRI shapefile using \link[sf:st_read]{sf::st_read} function in the
+\emph{sf} package.}
 
-\item{split_by}{Polygon id. If defined, GEDI data will be clipped by each polygon using the polygon id from table of attribute defined by the user}
+\item{split_by}{Polygon id. If defined, GEDI data will be clipped by each polygon using
+the polygon id from table of attribute defined by the user}
 }
 \value{
 Returns an S4 object of class \link[data.table:data.table]{data.table::data.table}
@@ -25,43 +27,47 @@ within a given bounding coordinates
 }
 \examples{
 # Specifying the path to GEDI level2A data (zip file)
-outdir = tempdir()
+outdir <- tempdir()
 level2A_fp_zip <- system.file("extdata",
-                  "GEDI02_A_2019108080338_O01964_T05337_02_001_01_sub.zip",
-                  package="rGEDI")
+  "GEDI02_A_2019108080338_O01964_T05337_02_001_01_sub.zip",
+  package = "rGEDI"
+)
 
 # Unzipping GEDI level2A data
-level2Apath <- unzip(level2A_fp_zip,exdir = outdir)
+level2Apath <- unzip(level2A_fp_zip, exdir = outdir)
 
 # Reading GEDI level2A data (h5 file)
-level2a<-readLevel2A(level2Apath=level2Apath)
+level2a <- readLevel2A(level2Apath = level2Apath)
 
 # Extracting GEDI Elevation and Height Metrics
-level2AM = getLevel2AM(level2a)
+level2AM <- getLevel2AM(level2a)
 
 # Specifying the path to shapefile
-polygon_filepath <- system.file("extdata", "stands_cerrado.shp", package="rGEDI")
+polygon_filepath <- system.file("extdata", "stands_cerrado.shp", package = "rGEDI")
 
-# Reading shapefile as SpatialPolygonsDataFrame object
-library(raster)
-polygon_spdf<-shapefile(polygon_filepath)
+# Reading shapefile as sf object
+library(sf)
+polygon <- sf::st_read(polygon_filepath)
 
 # Clipping GEDI data by Geometry
-level2AM_clip = clipLevel2AMGeometry(level2AM, polygon_spdf, split_by="id")
+level2AM_clip <- clipLevel2AMGeometry(level2AM, polygon, split_by = "id")
 
-hasLeaflet = require(leaflet)
+hasLeaflet <- require(leaflet)
 
 if (hasLeaflet) {
-leaflet() \%>\%
- addCircleMarkers(level2AM_clip$lat_lowestmode,
-                  level2AM_clip$lon_lowestmode,
-                  radius = 1,
-                  opacity = 1,
-                  color = "red")  \%>\%
- addScaleBar(options = list(imperial = FALSE)) \%>\%
- addPolygons(data=polygon_spdf,weight=1,col = 'white',
-             opacity = 1, fillOpacity = 0) \%>\%
- addProviderTiles(providers$Esri.WorldImagery)
+  leaflet() \%>\%
+    addCircleMarkers(level2AM_clip$lat_lowestmode,
+      level2AM_clip$lon_lowestmode,
+      radius = 1,
+      opacity = 1,
+      color = "red"
+    ) \%>\%
+    addScaleBar(options = list(imperial = FALSE)) \%>\%
+    addPolygons(
+      data = polygon, weight = 1, col = "white",
+      opacity = 1, fillOpacity = 0
+    ) \%>\%
+    addProviderTiles(providers$Esri.WorldImagery)
 }
 
 close(level2a)

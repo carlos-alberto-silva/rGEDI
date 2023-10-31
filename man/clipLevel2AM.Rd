@@ -28,28 +28,29 @@ within a given bounding coordinates
 }
 \examples{
 # Specifying the path to GEDI level2A data (zip file)
-outdir = tempdir()
+outdir <- tempdir()
 level2A_fp_zip <- system.file("extdata",
-                  "GEDI02_A_2019108080338_O01964_T05337_02_001_01_sub.zip",
-                  package="rGEDI")
+  "GEDI02_A_2019108080338_O01964_T05337_02_001_01_sub.zip",
+  package = "rGEDI"
+)
 
 # Unzipping GEDI level2A data
-level2Apath <- unzip(level2A_fp_zip,exdir = outdir)
+level2Apath <- unzip(level2A_fp_zip, exdir = outdir)
 
 # Reading GEDI level2A data (h5 file)
-level2a<-readLevel2A(level2Apath=level2Apath)
+level2a <- readLevel2A(level2Apath = level2Apath)
 
 # Extracting GEDI Elevation and Height Metrics
-level2AM = getLevel2AM(level2a)
+level2AM <- getLevel2AM(level2a)
 
 # Bounding rectangle coordinates
-xmin = -44.15036
-xmax = -44.10066
-ymin = -13.75831
-ymax = -13.71244
+xmin <- -44.15036
+xmax <- -44.10066
+ymin <- -13.75831
+ymax <- -13.71244
 
 # Clipping GEDI data by boundary box extent
-level2AM_clip <- clipLevel2AM(level2AM,xmin, xmax, ymin, ymax)
+level2AM_clip <- clipLevel2AM(level2AM, xmin, xmax, ymin, ymax)
 
 close(level2a)
 }

@@ -4,14 +4,14 @@
 \alias{clipLevel2BGeometry}
 \title{Clip GEDI Level2B data by geometry}
 \usage{
-clipLevel2BGeometry(level2b, polygon_spdf, output = "", split_by = NULL)
+clipLevel2BGeometry(level2b, polygon, output = "", split_by = NULL)
 }
 \arguments{
 \item{level2b}{A GEDI Level2B object (output of \code{\link[=readLevel2B]{readLevel2B()}} function).
 An S4 object of class "gedi.level2b".}
 
-\item{polygon_spdf}{Polygon. An object of class \code{\link[sp:SpatialPolygonsDataFrame-class]{sp::SpatialPolygonsDataFrame}},
-which can be loaded as an ESRI shapefile using \link[raster:shapefile]{raster::shapefile} function in the \emph{raster} package.}
+\item{polygon}{Polygon. An object of class \code{\link[sf:sf]{sf::sf}},
+which can be loaded as an ESRI shapefile using \link[sf:st_read]{sf::st_read} function in the \emph{sf} package.}
 
 \item{output}{optional character path where to save the new h5file. Default "" (temporary file).}
 
@@ -25,33 +25,36 @@ This function extracts GEDI Level1B data within a given geometry
 }
 \examples{
 \donttest{
-outdir = tempdir()
+outdir <- tempdir()
 
 # Specifying the path to GEDI level2B data (zip file)
 level2B_fp_zip <- system.file("extdata",
-                  "GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub.zip",
-                  package="rGEDI")
+  "GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub.zip",
+  package = "rGEDI"
+)
 
 # Unzipping GEDI level2A data
-level2Bpath <- unzip(level2B_fp_zip,exdir = outdir)
+level2Bpath <- unzip(level2B_fp_zip, exdir = outdir)
 
 # Reading GEDI level2B data (h5 file)
-level2b<-readLevel2B(level2Bpath=level2Bpath)
+level2b <- readLevel2B(level2Bpath = level2Bpath)
 
 # Specifying the path to shapefile
-polygon_filepath <- system.file("extdata", "stands_cerrado.shp", package="rGEDI")
+polygon_filepath <- system.file("extdata", "stands_cerrado.shp", package = "rGEDI")
 
-# Reading shapefile as SpatialPolygonsDataFrame object
-library(raster)
-polygon_spdf<-shapefile(polygon_filepath)
+# Reading shapefile as sf object
+library(sf)
+polygon <- sf::st_read(polygon_filepath)
 
 # Specifying output file and path
-output<-file.path(outdir,"GEDI02_B_2019108080338_O01964_T05337_02_001_01_clip")
+output <- file.path(outdir, "GEDI02_B_2019108080338_O01964_T05337_02_001_01_clip")
 
 # Clipping GEDI data by extent boundary box
-level2b_clip <- clipLevel2BGeometry(level2b, polygon_spdf = polygon_spdf,
-                                   output=output,
-                                   split_by="id")
+level2b_clip <- clipLevel2BGeometry(level2b,
+  polygon = polygon,
+  output = output,
+  split_by = "id"
+)
 
 close(level2b)
 lapply(level2b_clip, close)

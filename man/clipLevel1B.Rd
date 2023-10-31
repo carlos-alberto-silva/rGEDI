@@ -18,40 +18,44 @@ An S4 object of class \code{\linkS4class{gedi.level1b}}.}
 
 \item{ymax}{Numeric. North latitude (y) coordinate of the bounding rectangle, in decimal degrees.}
 
-\item{output}{Optional character path where to save the new hdf5file. The default stores a temporary file only.}
+\item{output}{Optional character path where to save the new hdf5file. The default stores a
+temporary file only.}
 }
 \value{
-Returns a list of S4 objects of class \code{\linkS4class{gedi.level1b}} containing clipped GEDI Level1B data.
+Returns a list of S4 objects of class \code{\linkS4class{gedi.level1b}} containing
+clipped GEDI Level1B data.
 }
 \description{
-This function clips GEDI Level1B data (geolocated waveforms) within a given bounding coordinates
+This function clips GEDI Level1B data (geolocated waveforms) within a given
+bounding coordinates
 }
 \examples{
 \donttest{
 # Specifying the path to GEDI level1B data (zip file)
-outdir = tempdir()
+outdir <- tempdir()
 
 level1B_fp_zip <- system.file("extdata",
-                  "GEDI01_B_2019108080338_O01964_T05337_02_003_01_sub.zip",
-                  package="rGEDI")
+  "GEDI01_B_2019108080338_O01964_T05337_02_003_01_sub.zip",
+  package = "rGEDI"
+)
 
 # Unzipping GEDI level1B data
-level1Bpath <- unzip(level1B_fp_zip,exdir = outdir)
+level1Bpath <- unzip(level1B_fp_zip, exdir = outdir)
 
 # Reading GEDI level1B data (h5 file)
-level1b<-readLevel1B(level1Bpath=level1Bpath)
+level1b <- readLevel1B(level1Bpath = level1Bpath)
 
 # Bounding rectangle coordinates
-xmin=-44.13
-xmax=-44.12
-ymin=-13.74
-ymax=-13.73
+xmin <- -44.13
+xmax <- -44.12
+ymin <- -13.74
+ymax <- -13.73
 
 # Specifying output file and path
-output<-file.path(outdir,"GEDI01_B_2019108080338_O01964_T05337_02_003_01_clip")
+output <- file.path(outdir, "GEDI01_B_2019108080338_O01964_T05337_02_003_01_clip")
 
 # Clipping GEDI Level1B data by extent boundary box
-level1b_clip <- clipLevel1B(level1b,xmin, xmax, ymin, ymax,output)
+level1b_clip <- clipLevel1B(level1b, xmin, xmax, ymin, ymax, output)
 
 close(level1b)
 close(level1b_clip)
