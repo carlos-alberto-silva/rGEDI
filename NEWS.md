@@ -1,5 +1,13 @@
 <!-- NEWS.md is maintained by https://cynkra.github.io/fledge, do not edit -->
 
+# rGEDI 0.5.0 (2023-10-31)
+
+* Replaced every usage of raster with stars
+* Split gedisimulator apart
+* Update gedifinder to find level3 and level4 products
+* Use user defined functions from parent env instead global
+
+
 # rGEDI 0.4.0 (2023-06-15)
 
 * gediMetrics: now working again, had a bug, allow beam filter
