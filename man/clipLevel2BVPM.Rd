@@ -28,40 +28,42 @@ Canopy Cover and Vertical Profile metrics a within given bounding coordinates
 }
 \examples{
 # Specifying the path to GEDI level2B data (zip file)
-outdir = tempdir()
+outdir <- tempdir()
 level2B_fp_zip <- system.file("extdata",
-                  "GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub.zip",
-                  package="rGEDI")
+  "GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub.zip",
+  package = "rGEDI"
+)
 
 # Unzipping GEDI level2A data
-level2Bpath <- unzip(level2B_fp_zip,exdir = outdir)
+level2Bpath <- unzip(level2B_fp_zip, exdir = outdir)
 
 # Reading GEDI level2B data (h5 file)
-level2b<-readLevel2B(level2Bpath=level2Bpath)
+level2b <- readLevel2B(level2Bpath = level2Bpath)
 
 # Extracting canopy cover and vertical profile metrics
-level2BVPM<-getLevel2BVPM(level2b)
+level2BVPM <- getLevel2BVPM(level2b)
 
 # Bounding rectangle coordinates
-xmin = -44.15036
-xmax = -44.10066
-ymin = -13.75831
-ymax = -13.71244
+xmin <- -44.15036
+xmax <- -44.10066
+ymin <- -13.75831
+ymax <- -13.71244
 
 # Clipping level2BVPM by extent boundary box
-level2b_clip <- clipLevel2BVPM(level2BVPM,xmin, xmax, ymin, ymax)
+level2b_clip <- clipLevel2BVPM(level2BVPM, xmin, xmax, ymin, ymax)
 
-hasLeaflet = require(leaflet)
+hasLeaflet <- require(leaflet)
 
 if (hasLeaflet) {
-leaflet() \%>\%
- addCircleMarkers(level2b_clip$longitude_bin0,
-                  level2b_clip$latitude_bin0,
-                  radius = 1,
-                  opacity = 1,
-                  color = "red")  \%>\%
- addScaleBar(options = list(imperial = FALSE)) \%>\%
- addProviderTiles(providers$Esri.WorldImagery)
+  leaflet() \%>\%
+    addCircleMarkers(level2b_clip$longitude_bin0,
+      level2b_clip$latitude_bin0,
+      radius = 1,
+      opacity = 1,
+      color = "red"
+    ) \%>\%
+    addScaleBar(options = list(imperial = FALSE)) \%>\%
+    addProviderTiles(providers$Esri.WorldImagery)
 }
 
 close(level2b)

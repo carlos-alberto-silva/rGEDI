@@ -4,14 +4,14 @@
 \alias{clipLevel2BVPMGeometry}
 \title{Clip GEDI Canopy Cover and Vertical Profile Metrics by geometry}
 \usage{
-clipLevel2BVPMGeometry(level2BVPM, polygon_spdf, split_by)
+clipLevel2BVPMGeometry(level2BVPM, polygon, split_by = NULL)
 }
 \arguments{
 \item{level2BVPM}{A GEDI Level2B object (output of \code{\link[=readLevel1B]{readLevel1B()}} function).
 An S4 object of class "gedi.level2b".}
 
-\item{polygon_spdf}{Polygon. An object of class \code{\link[sp:SpatialPolygonsDataFrame-class]{sp::SpatialPolygonsDataFrame}},
-which can be loaded as an ESRI shapefile using \link[raster:shapefile]{raster::shapefile} function in the \emph{raster} package.}
+\item{polygon}{Polygon. An object of class \code{\link[sf:sf]{sf::sf}},
+which can be loaded as an ESRI shapefile using \link[sf:st_read]{sf::st_read} function in the \emph{sf} package.}
 
 \item{split_by}{Polygon id. If defined, GEDI data will be clipped by each polygon using the attribute specified by \code{split_by} from the attribute table.}
 }
@@ -25,43 +25,47 @@ Canopy Cover and Vertical Profile metrics within a given geometry
 }
 \examples{
 # Specifying the path to GEDI level2B data (zip file)
-outdir = tempdir()
+outdir <- tempdir()
 level2B_fp_zip <- system.file("extdata",
-                  "GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub.zip",
-                  package="rGEDI")
+  "GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub.zip",
+  package = "rGEDI"
+)
 
 # Unzipping GEDI level2A data
-level2Bpath <- unzip(level2B_fp_zip,exdir = outdir)
+level2Bpath <- unzip(level2B_fp_zip, exdir = outdir)
 
 # Reading GEDI level2B data (h5 file)
-level2b<-readLevel2B(level2Bpath=level2Bpath)
+level2b <- readLevel2B(level2Bpath = level2Bpath)
 
 # Extracting canopy cover and vertical profile metrics
-level2BVPM<-getLevel2BVPM(level2b)
+level2BVPM <- getLevel2BVPM(level2b)
 
 # Specifying the path to shapefile
-polygon_filepath <- system.file("extdata", "stands_cerrado.shp", package="rGEDI")
+polygon_filepath <- system.file("extdata", "stands_cerrado.shp", package = "rGEDI")
 
-# Reading shapefile as SpatialPolygonsDataFrame object
-library(raster)
-polygon_spdf<-shapefile(polygon_filepath)
+# Reading shapefile as sf object
+library(sf)
+polygon <- sf::st_read(polygon_filepath)
 
 # Clipping level2BVPM by geometry
-level2b_clip_geometry <- clipLevel2BVPMGeometry(level2BVPM,polygon_spdf,split_by="id")
+level2b_clip_geometry <- clipLevel2BVPMGeometry(level2BVPM, polygon, split_by = "id")
 
-hasLeaflet = require(leaflet)
+hasLeaflet <- require(leaflet)
 
 if (hasLeaflet) {
-leaflet() \%>\%
- addCircleMarkers(level2b_clip_geometry$longitude_bin0,
-                  level2b_clip_geometry$latitude_bin0,
-                  radius = 1,
-                  opacity = 1,
-                  color = "red")  \%>\%
- addScaleBar(options = list(imperial = FALSE)) \%>\%
- addPolygons(data=polygon_spdf,weight=1,col = 'white',
-             opacity = 1, fillOpacity = 0) \%>\%
- addProviderTiles(providers$Esri.WorldImagery)
+  leaflet() \%>\%
+    addCircleMarkers(level2b_clip_geometry$longitude_bin0,
+      level2b_clip_geometry$latitude_bin0,
+      radius = 1,
+      opacity = 1,
+      color = "red"
+    ) \%>\%
+    addScaleBar(options = list(imperial = FALSE)) \%>\%
+    addPolygons(
+      data = polygon, weight = 1, col = "white",
+      opacity = 1, fillOpacity = 0
+    ) \%>\%
+    addProviderTiles(providers$Esri.WorldImagery)
 }
 
 close(level2b)

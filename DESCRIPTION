@@ -31,10 +31,10 @@ Imports:
   hdf5r,
   jsonlite,
   lazyeval,
-  raster,
   RColorBrewer,
   sp,
-  stats
+  stats,
+  stars
 Suggests:
   lattice,
   leaflet,

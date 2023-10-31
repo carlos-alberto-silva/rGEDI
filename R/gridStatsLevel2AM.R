@@ -9,9 +9,9 @@
 #' @param level2AM A GEDI Level2AM object (output of [getLevel2AM()] function).
 #' An S4 object of class "data.table".
 #' @param func The function(s) to be applied to each cell
-#' @param res Spatial resolution in decimal degrees for the output raster layer
+#' @param res Spatial resolution in decimal degrees for the output stars raster layer
 #'
-#' @return Return a raster layer(s) of selected GEDI Elevation and Height Metric(s)
+#' @return Return a stars raster layer(s) of selected GEDI Elevation and Height Metric(s)
 #'
 #' @seealso \url{https://lpdaac.usgs.gov/products/gedi02_av002/}
 #'
@@ -50,15 +50,15 @@
 #'   func = mySetOfMetrics(elev_highestreturn),
 #'   res = 0.005
 #' )
-#' head(ZTstats)
+#' plot(ZTstats)
 #'
 #' #' Computing the maximum of RH100 only
-#' maxRH100 <- gridStatsLevel2AM(level2AM = level2AM, func = max(rh100), res = 0.005)
-#' head(maxRH100)
+#' maxRH100 <- gridStatsLevel2AM(level2AM = level2AM, func = mySetOfMetrics(rh100), res = 0.0005)
+#' plot(maxRH100)
 #'
 #' #' Computing the mean of ZG only
 #' ZGmean <- gridStatsLevel2AM(level2AM = level2AM, func = mean(elev_lowestmode), res = 0.005)
-#' head(ZGmean)
+#' plot(ZGmean)
 #'
 #' close(level2a)
 #' @importFrom stats setNames na.omit
@@ -71,27 +71,36 @@ gridStatsLevel2AM <- function(level2AM, func, res = 0.5) {
 
   # Add data.table operator
   `:=` <- data.table::`:=`
+  `%>%` <- sf::`%>%`
+
   call <- lazy_call(func)
-  vars <- all.names(call)[-1]
-  level2AM.dt <- level2AM[, names(level2AM) %in% c("lon_lowestmode", "lat_lowestmode", vars), with = FALSE]
-  level2AM.dt <- setNames(level2AM.dt, c("y", "x", vars))
-  layout <- raster::raster(raster::extent(level2AM.dt), res = res)
-  level2AM.dt[, cells := raster::cellFromXY(layout, na.omit(level2AM.dt[, 2:1]))]
-  metrics <- lazy_apply_dt_call(level2AM.dt, call, group.by = "by = cells")
-  xy_coords <- raster::xyFromCell(layout, metrics[[1]])
-  metrics[, cells := NULL]
-  output.dt <- na.omit(cbind(xy_coords, metrics))
-  output <- sp::SpatialPixelsDataFrame(output.dt[, 1:2], output.dt[, -c(1:2)]) # , proj4string = level2AM.dt@proj4string)
-  if (names(metrics)[1] == "V1") {
-    names(output) <- all.names(call)[2]
-  } else {
-    names(output) <- names(metrics)
+
+
+  sf <- sf::st_as_sf(level2AM, coords = c("lon_lowestmode", "lat_lowestmode"))
+  layout <- sf::st_bbox(sf) %>%
+    stars::st_as_stars(dx = res, dy = res, values = NA, crs = "epsg:4326")
+
+  level2AM[, cells := stars::st_cells(layout, sf)]
+  metrics <- lazy_apply_dt_call(level2AM, call, group.by = "by = cells")
+  n_metrics <- ncol(metrics) - 1
+  output <- sf::st_bbox(sf) %>%
+    stars::st_as_stars(
+      dx = res,
+      dy = res,
+      values = as.numeric(NA),
+      nz = n_metrics,
+      crs = "epsg:4326"
+    )
+
+  dim_data <- stars::st_dimensions(output) %>%
+    setNames(c("x", "y", "bands"))
+  dim_data$bands$values <- names(metrics)[-1]
+
+  stars::st_dimensions(output) <- dim_data
+
+  for (metric in seq_along(names(metrics)[-1])) {
+    output[[1]][, , metric][metrics$cells] <- metrics[[metric]]
   }
-  if (length(names(metrics)) > 1) {
-    output <- raster::brick(output)
-  } else {
-    output <- raster::raster(output)
-  }
-  rm(level2AM.dt)
+
   return(output)
 }

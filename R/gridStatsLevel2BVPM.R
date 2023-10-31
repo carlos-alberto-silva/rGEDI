@@ -4,14 +4,12 @@
 #' @description This function computes a series of user defined descriptive statistics within
 #' each grid cell for GEDI derived Canopy Cover and Vertical Profile Metrics (Level2B)
 #'
-#' @usage gridStatsLevel2BVPM(level2BVPM, func, res)
-#'
 #' @param level2BVPM A GEDI Level2AM object (output of [getLevel2BVPM()] function).
 #' An S4 object of class "data.table".
 #' @param func The function(s) to be applied to each cell
-#' @param res Spatial resolution in decimal degrees for the output raster layer
+#' @param res Spatial resolution in decimal degrees for the output stars raster layer
 #'
-#' @return Returns a raster layer(s) of selected GEDI Canopy Cover and Vertical Profile Metric(s)
+#' @return Returns a stars raster layer(s) of selected GEDI Canopy Cover and Vertical Profile Metric(s)
 #'
 #' @seealso \url{https://lpdaac.usgs.gov/products/gedi02_bv002/}
 #'
@@ -50,15 +48,15 @@
 #'   func = mySetOfMetrics(cover),
 #'   res = 0.005
 #' )
-#' head(cover_stats)
+#' plot(cover_stats)
 #'
 #' #' Computing the max of the Total Plant Area Index only
 #' pai_max <- gridStatsLevel2BVPM(level2BVPM = level2BVPM, func = max(pai), res = 0.005)
-#' head(pai_max)
+#' plot(pai_max)
 #'
 #' #' Computing the Foliage Height Diversity Index only
 #' fhd_mean <- gridStatsLevel2BVPM(level2BVPM = level2BVPM, func = mean(fhd_normal), res = 0.005)
-#' head(fhd_mean)
+#' plot(fhd_mean)
 #'
 #' close(level2b)
 #' @export
@@ -70,31 +68,36 @@ gridStatsLevel2BVPM <- function(level2BVPM, func, res) {
 
   # Add data.table operator
   `:=` <- data.table::`:=`
+  `%>%` <- sf::`%>%`
+
   call <- lazy_call(func)
-  vars <- all.names(call)[-1]
-  level2b.dt <- na.omit(level2BVPM[
-    ,
-    names(level2BVPM) %in% c("longitude_lastbin", "latitude_lastbin", vars),
-    with = FALSE
-  ])
-  level2b.dt <- setNames(level2b.dt, c("y", "x", vars))
-  layout <- raster::raster(raster::extent(level2b.dt), res = res)
-  level2b.dt[, cells := raster::cellFromXY(layout, na.omit(level2b.dt[, 2:1])), ]
-  metrics <- lazy_apply_dt_call(level2b.dt, call, group.by = "by = cells")
-  xy_coords <- raster::xyFromCell(layout, metrics[[1]])
-  metrics[, cells := NULL]
-  output.dt <- na.omit(cbind(xy_coords, metrics))
-  output <- sp::SpatialPixelsDataFrame(output.dt[, 1:2], output.dt[, -c(1:2)]) # , proj4string = level2b.dt@proj4string)
-  if (names(metrics)[1] == "V1") {
-    names(output) <- all.names(call)[2]
-  } else {
-    names(output) <- names(metrics)
+
+
+  sf <- sf::st_as_sf(level2BVPM, coords = c("longitude_bin0", "latitude_bin0"))
+  layout <- sf::st_bbox(sf) %>%
+    stars::st_as_stars(dx = res, dy = res, values = NA, crs = "epsg:4326")
+
+  level2BVPM[, cells := stars::st_cells(layout, sf)]
+  metrics <- lazy_apply_dt_call(level2BVPM, call, group.by = "by = cells")
+  n_metrics <- ncol(metrics) - 1
+  output <- sf::st_bbox(sf) %>%
+    stars::st_as_stars(
+      dx = res,
+      dy = res,
+      values = as.numeric(NA),
+      nz = n_metrics,
+      crs = "epsg:4326"
+    )
+
+  dim_data <- stars::st_dimensions(output) %>%
+    setNames(c("x", "y", "bands"))
+  dim_data$bands$values <- names(metrics)[-1]
+
+  stars::st_dimensions(output) <- dim_data
+
+  for (metric in seq_along(names(metrics)[-1])) {
+    output[[1]][, , metric][metrics$cells] <- metrics[[metric]]
   }
-  if (length(names(metrics)) > 1) {
-    output <- raster::brick(output)
-  } else {
-    output <- raster::raster(output)
-  }
-  rm(level2b.dt)
+
   return(output)
 }

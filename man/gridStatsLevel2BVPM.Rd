@@ -13,10 +13,10 @@ An S4 object of class "data.table".}
 
 \item{func}{The function(s) to be applied to each cell}
 
-\item{res}{Spatial resolution in decimal degrees for the output raster layer}
+\item{res}{Spatial resolution in decimal degrees for the output stars raster layer}
 }
 \value{
-Returns a raster layer(s) of selected GEDI Canopy Cover and Vertical Profile Metric(s)
+Returns a stars raster layer(s) of selected GEDI Canopy Cover and Vertical Profile Metric(s)
 }
 \description{
 This function computes a series of user defined descriptive statistics within
@@ -57,15 +57,15 @@ cover_stats <- gridStatsLevel2BVPM(
   func = mySetOfMetrics(cover),
   res = 0.005
 )
-head(cover_stats)
+plot(cover_stats)
 
 #' Computing the max of the Total Plant Area Index only
 pai_max <- gridStatsLevel2BVPM(level2BVPM = level2BVPM, func = max(pai), res = 0.005)
-head(pai_max)
+plot(pai_max)
 
 #' Computing the Foliage Height Diversity Index only
 fhd_mean <- gridStatsLevel2BVPM(level2BVPM = level2BVPM, func = mean(fhd_normal), res = 0.005)
-head(fhd_mean)
+plot(fhd_mean)
 
 close(level2b)
 }

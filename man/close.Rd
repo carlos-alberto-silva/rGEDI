@@ -2,15 +2,25 @@
 % Please edit documentation in R/class.gedi.R
 \name{close,gedi.level1b-method}
 \alias{close,gedi.level1b-method}
+\alias{close,gedi.level2a-method}
+\alias{close,gedi.level2b-method}
 \title{Safely closes the \code{\linkS4class{gedi.level1b}}}
 \usage{
 \S4method{close}{gedi.level1b}(con, ...)
+
+\S4method{close}{gedi.level2a}(con, ...)
+
+\S4method{close}{gedi.level2b}(con, ...)
 }
 \arguments{
-\item{con}{An object of class \code{gedi.level1b}}
+\item{con}{An object of class \code{gedi.level2b}}
 
 \item{...}{Inherited from base}
 }
 \description{
+Closing files will avoid locking HDF5 GEDI files.
+
+Closing files will avoid locking HDF5 GEDI files.
+
 Closing files will avoid locking HDF5 GEDI files.
 }

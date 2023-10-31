@@ -28,28 +28,29 @@ Plant Area Volume Density profile within a given bounding coordinates
 }
 \examples{
 # specify the path to GEDI level2B data (zip file)
-outdir = tempdir()
+outdir <- tempdir()
 level2B_fp_zip <- system.file("extdata",
-                  "GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub.zip",
-                  package="rGEDI")
+  "GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub.zip",
+  package = "rGEDI"
+)
 
 # Unzipping GEDI level2A data
-level2Bpath <- unzip(level2B_fp_zip,exdir = outdir)
+level2Bpath <- unzip(level2B_fp_zip, exdir = outdir)
 
 # Reading GEDI level2B data (h5 file)
-level2b<-readLevel2B(level2Bpath=level2Bpath)
+level2b <- readLevel2B(level2Bpath = level2Bpath)
 
 # Extracting GEDI Plant Area Volume Density profile
-level2BPAVDProfile<-getLevel2BPAVDProfile(level2b)
+level2BPAVDProfile <- getLevel2BPAVDProfile(level2b)
 
 # Bounding rectangle coordinates
-xmin = -44.15036
-xmax = -44.10066
-ymin = -13.75831
-ymax = -13.71244
+xmin <- -44.15036
+xmax <- -44.10066
+ymin <- -13.75831
+ymax <- -13.71244
 
 # Clipping GEDI Plant Area Volume Density profile by boundary box extent
-level2BPAVDProfile_clip <- clipLevel2BPAVDProfile(level2BPAVDProfile,xmin, xmax, ymin, ymax)
+level2BPAVDProfile_clip <- clipLevel2BPAVDProfile(level2BPAVDProfile, xmin, xmax, ymin, ymax)
 
 close(level2b)
 }

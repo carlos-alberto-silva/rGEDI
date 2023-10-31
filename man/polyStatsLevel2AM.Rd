@@ -39,16 +39,16 @@ level2a <- readLevel2A(level2Apath = level2Apath)
 # Specifying the path to shapefile
 polygon_filepath <- system.file("extdata", "stands_cerrado.shp", package = "rGEDI")
 
-# Reading shapefile as SpatialPolygonsDataFrame object
-library(raster)
-polygon_spdf <- shapefile(polygon_filepath)
+# Reading shapefile as sf object
+library(sf)
+polygon <- sf::st_read(polygon_filepath)
 
 # Extracting GEDI Eleveation and Relative Metrics (level2A)
 level2AM <- getLevel2AM(level2a)
 head(level2AM)
 
 # Clipping GEDI data by geometry
-level2AM_clip <- clipLevel2AMGeometry(level2AM, polygon_spdf, split_by = "id")
+level2AM_clip <- clipLevel2AMGeometry(level2AM, polygon, split_by = "id")
 
 #' Define your own function
 mySetOfMetrics <- function(x) {

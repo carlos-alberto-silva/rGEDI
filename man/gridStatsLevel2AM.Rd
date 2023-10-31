@@ -13,10 +13,10 @@ An S4 object of class "data.table".}
 
 \item{func}{The function(s) to be applied to each cell}
 
-\item{res}{Spatial resolution in decimal degrees for the output raster layer}
+\item{res}{Spatial resolution in decimal degrees for the output stars raster layer}
 }
 \value{
-Return a raster layer(s) of selected GEDI Elevation and Height Metric(s)
+Return a stars raster layer(s) of selected GEDI Elevation and Height Metric(s)
 }
 \description{
 This function computes a series of user defined descriptive statistics within
@@ -57,15 +57,15 @@ ZTstats <- gridStatsLevel2AM(
   func = mySetOfMetrics(elev_highestreturn),
   res = 0.005
 )
-head(ZTstats)
+plot(ZTstats)
 
 #' Computing the maximum of RH100 only
-maxRH100 <- gridStatsLevel2AM(level2AM = level2AM, func = max(rh100), res = 0.005)
-head(maxRH100)
+maxRH100 <- gridStatsLevel2AM(level2AM = level2AM, func = mySetOfMetrics(rh100), res = 0.0005)
+plot(maxRH100)
 
 #' Computing the mean of ZG only
 ZGmean <- gridStatsLevel2AM(level2AM = level2AM, func = mean(elev_lowestmode), res = 0.005)
-head(ZGmean)
+plot(ZGmean)
 
 close(level2a)
 }
