@@ -1,7 +1,5 @@
-# setClass("gedi.level1b", representation(h5="H5File",level1b.spdf='SpatialPointsDataFrame'))
-#' @importFrom hdf5r H5File
-setRefClass("H5File")
-requireNamespace("data.table")
+#' @import methods
+methods::setRefClass("H5File")
 
 #' Class for GEDI level1B
 #'
@@ -11,9 +9,8 @@ requireNamespace("data.table")
 #' @seealso [`H5File`][hdf5r::H5File-class] in the `hdf5r` package and
 #' \url{https://lpdaac.usgs.gov/products/gedi01_bv002/}
 #'
-#' @import methods
 #' @export
-gedi.level1b <- setClass(
+gedi.level1b <- methods::setClass(
   Class = "gedi.level1b",
   slots = list(h5 = "H5File")
 )
@@ -26,9 +23,8 @@ gedi.level1b <- setClass(
 #' @seealso [`H5File`][hdf5r::H5File-class] in the `hdf5r` package and
 #' \url{https://lpdaac.usgs.gov/products/gedi02_av002/}
 #'
-#' @import methods
 #' @export
-gedi.level2a <- setClass(
+gedi.level2a <- methods::setClass(
   Class = "gedi.level2a",
   slots = list(h5 = "H5File")
 )
@@ -42,9 +38,8 @@ gedi.level2a <- setClass(
 #' @seealso [`H5File`][hdf5r::H5File-class] in the `hdf5r` package and
 #' \url{https://lpdaac.usgs.gov/products/gedi02_bv002/}
 #'
-#' @import methods
 #' @export
-gedi.level2b <- setClass(
+gedi.level2b <- methods::setClass(
   Class = "gedi.level2b",
   slots = list(h5 = "H5File")
 )
@@ -55,9 +50,8 @@ gedi.level2b <- setClass(
 #' @slot dt Object of class data.table from \emph{data.table} package containing
 #' the extracted GEDI full-waveform elevation and amplitude.
 #'
-#' @import methods
 #' @export
-gedi.fullwaveform <- setClass(
+gedi.fullwaveform <- methods::setClass(
   Class = "gedi.fullwaveform",
   slots = list(dt = "data.table")
 )
@@ -65,29 +59,29 @@ gedi.fullwaveform <- setClass(
 
 #' Class for GEDI level3
 #'
-#' @slot raster Object of class [`SpatRaster`][terra::SpatRaster] from `terra` package containing the
-#' GEDI level3 products: rasterized metrics
+#' @slot raster Object of class [`SpatRaster`][terra::SpatRaster]
+#' from `terra` package, read by `terra::rast` containing the GEDI level3
+#' products: rasterized metrics
 #'
 #' @seealso
 #' \url{https://daac.ornl.gov/GEDI/guides/GEDI_L3_LandSurface_Metrics_V2.html}
 #'
-#' @import methods
+#' @importClassesFrom terra SpatRaster
 #' @export
-gedi.level3 <- setClass(
+gedi.level3 <- methods::setClass(
   Class = "gedi.level3",
   slots = list(raster = "SpatRaster")
 )
 
-
 #' Plot GEDI* object
-#' 
+#'
 #' @description For [`gedi.fullwaveform-class`]: will plot the full waveform
-#' 
+#'
 #' @param x An object of class [`gedi.fullwaveform-class`] (output of [getLevel1BWF()] function)
 #' @param relative if TRUE, the Waveform Amplitude will be showed in percentage (%)
 #' @param polygon if TRUE, the polygon will be added to the plot
 #' @param ... will be passed to the main plot
-#' 
+#'
 #' @return No return value
 #'
 #' @examples
@@ -143,11 +137,18 @@ setMethod(
       }
 
       if (polygon == TRUE) {
-        xstart <- x[which(z == min(z, na.rm = T))]
-        xend <- x[which(z == max(z, na.rm = T))]
+        xstart <- x[which(z == min(z, na.rm = TRUE))]
+        xend <- x[which(z == max(z, na.rm = TRUE))]
 
         xl <- c(min(x), min(x), xstart, rev(x), xend, min(x))
-        yl <- c(max(z, na.rm = T), min(z, na.rm = T), min(z, na.rm = T), rev(z), max(z, na.rm = T), max(z, na.rm = T))
+        yl <- c(
+          max(z, na.rm = TRUE),
+          min(z, na.rm = TRUE),
+          min(z, na.rm = TRUE),
+          rev(z),
+          max(z, na.rm = TRUE),
+          max(z, na.rm = TRUE)
+        )
 
         suppressWarnings({
           plot(xl, yl, ...)
@@ -177,7 +178,7 @@ h5closeall <- function(con, ...) {
 #'
 #' @param con An object of class `gedi.level1b`
 #' @param ... Inherited from base
-#' 
+#'
 #' @export
 #' @rdname close
 #' @method close gedi.level1b
@@ -188,7 +189,7 @@ setMethod("close", signature = c("gedi.level1b"), h5closeall)
 #'
 #' @description
 #' Closing files will avoid locking HDF5 GEDI files.
-#' 
+#'
 #' @param con An object of class `gedi.level2a`
 #' @param ... Inherited from base
 #' @method close gedi.level2a

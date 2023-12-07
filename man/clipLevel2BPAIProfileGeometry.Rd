@@ -10,8 +10,8 @@ clipLevel2BPAIProfileGeometry(level2BPAIProfile, polygon, split_by = NULL)
 \item{level2BPAIProfile}{A GEDI Level2B object (output of \code{\link[=getLevel2BPAIProfile]{getLevel2BPAIProfile()}} function).
 An S4 object of class "data.table".}
 
-\item{polygon}{Polygon. An object of class \code{\link[sf:sf]{sf::sf}},
-which can be loaded as an ESRI shapefile using \link[sf:st_read]{sf::st_read} function in the \emph{sf} package.}
+\item{polygon}{Polygon. An object of class \code{SpatVect},
+which can be loaded as an ESRI shapefile using \link[terra:vect]{terra::vect} function in the \emph{terra} package.}
 
 \item{split_by}{Polygon id. If defined, GEDI data will be clipped by each polygon using the
 attribute specified by \code{split_by} from the attribute table.}
@@ -44,9 +44,9 @@ level2BPAIProfile <- getLevel2BPAIProfile(level2b)
 # Specifying the path to shapefile
 polygon_filepath <- system.file("extdata", "stands_cerrado.shp", package = "rGEDI")
 
-# Reading shapefile as sf object
-library(sf)
-polygon <- sf::st_read(polygon_filepath)
+# Reading shapefile as SpatVect object
+library(terra)
+polygon <- terra::vect(polygon_filepath)
 
 # Clipping GEDI Plant Area Index profile by geometry
 level2b_clip_geometry <- clipLevel2BPAIProfileGeometry(

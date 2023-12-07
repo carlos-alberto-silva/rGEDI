@@ -77,10 +77,11 @@ clipLevel2B <- function(level2b, xmin, xmax, ymin, ymax, output = "") {
 #'
 #' @param level2b A GEDI Level2B object (output of [readLevel2B()] function).
 #' An S4 object of class "gedi.level2b".
-#' @param polygon Polygon. An object of class [`sf::sf`],
-#' which can be loaded as an ESRI shapefile using [sf::st_read] function in the \emph{sf} package.
+#' @param polygon Polygon. An object of class `SpatVect`,
+#' which can be loaded as an ESRI shapefile using [terra::vect] function in the \emph{terra} package.
 #' @param output optional character path where to save the new h5file. Default "" (temporary file).
-#' @param split_by Polygon id. If defined, GEDI data will be clipped by each polygon using the attribute specified by `split_by` from the attribute table.
+#' @param split_by Polygon id. If defined, GEDI data will be clipped by each polygon using the attribute
+#' specified by `split_by` from the attribute table.
 #'
 #' @return Returns a list of S4 objects of class "gedi.level2b" containing clipped GEDI Level2B data.
 #'
@@ -105,9 +106,9 @@ clipLevel2B <- function(level2b, xmin, xmax, ymin, ymax, output = "") {
 #' # Specifying the path to shapefile
 #' polygon_filepath <- system.file("extdata", "stands_cerrado.shp", package = "rGEDI")
 #'
-#' # Reading shapefile as sf object
-#' library(sf)
-#' polygon <- sf::st_read(polygon_filepath)
+#' # Reading shapefile as SpatVect object
+#' library(terra)
+#' polygon <- terra::vect(polygon_filepath)
 #'
 #' # Specifying output file and path
 #' output <- file.path(outdir, "GEDI02_B_2019108080338_O01964_T05337_02_001_01_clip")
@@ -129,7 +130,7 @@ clipLevel2BGeometry <- function(level2b, polygon, output = "", split_by = NULL) 
 
   spData <- getSpatialData2B(level2b)
 
-  bbox <- sf::st_bbox(polygon)
+  bbox <- terra::ext(polygon)
   xmin <- bbox$xmin
   xmax <- bbox$xmax
   ymin <- bbox$ymin
@@ -148,8 +149,8 @@ getSpatialData2B <- function(level2b) {
   level2b.h5 <- level2b@h5
   groups_id <- grep("BEAM\\d{4}$", gsub(
     "/", "",
-    hdf5r::list.groups(level2b.h5, recursive = F)
-  ), value = T)
+    hdf5r::list.groups(level2b.h5, recursive = FALSE)
+  ), value = TRUE)
 
   beams_spdf <- list()
 
@@ -203,7 +204,7 @@ clipByMask2B <- function(level2b, masks, output = "") {
     hdf5r::createGroup(newFile, group)
     createAttributesWithinGroup(level2b@h5, newFile, group)
 
-    for (dt in hdf5r::list.datasets(level2b@h5[[group]], recursive = FALSE, full.names = T)) {
+    for (dt in hdf5r::list.datasets(level2b@h5[[group]], recursive = FALSE, full.names = TRUE)) {
       beam_shot_n <- level2b@h5[[beam_id]][["shot_number"]]$dims
       h5_dt <- level2b@h5[[dt]]
       dt_dim <- h5_dt$dims
@@ -221,7 +222,7 @@ clipByMask2B <- function(level2b, masks, output = "") {
           hdf5r::createDataSet(newFile, dt, h5_dt[mask], dtype = dtype, chunk_dim = chunkdims)
         } else if ((dt_dim %% beam_shot_n) == 0) {
           n_waveforms <- h5_dt$dims / beam_shot_n
-          v.seq <- Vectorize(seq.default, vectorize.args = c("from"), SIMPLIFY = T)
+          v.seq <- Vectorize(seq.default, vectorize.args = c("from"), SIMPLIFY = TRUE)
           mask_init <- mask * n_waveforms - (n_waveforms - 1)
           mask_waveform <- matrix(v.seq(mask_init, len = n_waveforms), nrow = 1)[1, ]
           total_size <- n_waveforms * mask_size
@@ -265,10 +266,7 @@ clipByMask2B <- function(level2b, masks, output = "") {
   }
 
   newFile$close_all()
-
-  newFile <- hdf5r::H5File$new(output, mode = "r")
-  result <- new("gedi.level2b", h5 = newFile)
+  result <- readLevel2B(output)
   close(pb)
-  # spatial = level2b2dt(level2b)
   return(result)
 }

@@ -32,9 +32,9 @@
 #' # Specifying the path to shapefile
 #' polygon_filepath <- system.file("extdata", "stands_cerrado.shp", package = "rGEDI")
 #'
-#' # Reading shapefile as sf object
-#' library(sf)
-#' polygon <- sf::st_read(polygon_filepath)
+#' # Reading shapefile as SpatVect object
+#' library(terra)
+#' polygon <- terra::vect(polygon_filepath)
 #'
 #' # Extracting GEDI Canopy Cover and Vertical Profile Metrics
 #' level2BVPM <- getLevel2BVPM(level2b)
@@ -75,7 +75,6 @@ polyStatsLevel2BVPM <- function(level2BVPM, func, id = NULL) {
   # https://github.com/Jean-Romain/lidR/blob/master/R/grid_metrics.r
 
   # Add data.table operator
-  `:=` <- data.table::`:=`
   call <- lazy_call(func)
 
   if (is.null(id)) {

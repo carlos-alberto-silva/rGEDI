@@ -9,9 +9,9 @@
 #' @param level2AM A GEDI Level2AM object (output of [getLevel2AM()] function).
 #' An S4 object of class "data.table".
 #' @param func The function(s) to be applied to each cell
-#' @param res Spatial resolution in decimal degrees for the output stars raster layer
+#' @param res Spatial resolution in decimal degrees for the output SpatRast raster layer
 #'
-#' @return Return a stars raster layer(s) of selected GEDI Elevation and Height Metric(s)
+#' @return Return a SpatRast raster layer(s) of selected GEDI Elevation and Height Metric(s)
 #'
 #' @seealso \url{https://lpdaac.usgs.gov/products/gedi02_av002/}
 #'
@@ -61,7 +61,6 @@
 #' plot(ZGmean)
 #'
 #' close(level2a)
-#' @importFrom stats setNames na.omit
 #' @export
 gridStatsLevel2AM <- function(level2AM, func, res = 0.5) {
   requireNamespace("data.table")
@@ -71,35 +70,32 @@ gridStatsLevel2AM <- function(level2AM, func, res = 0.5) {
 
   # Add data.table operator
   `:=` <- data.table::`:=`
-  `%>%` <- sf::`%>%`
 
   call <- lazy_call(func)
 
 
-  sf <- sf::st_as_sf(level2AM, coords = c("lon_lowestmode", "lat_lowestmode"))
-  layout <- sf::st_bbox(sf) %>%
-    stars::st_as_stars(dx = res, dy = res, values = NA, crs = "epsg:4326")
+  vect <- terra::vect(
+    level2AM,
+    geom = c("lon_lowestmode", "lat_lowestmode"),
+    crs = "epsg:4326"
+  )
+  layout <- terra::rast(terra::ext(vect), resolution = res, vals = NA, crs = "epsg:4326")
 
-  level2AM[, cells := stars::st_cells(layout, sf)]
+  level2AM[, cells := terra::cells(layout, vect)[, 2]]
   metrics <- lazy_apply_dt_call(level2AM, call, group.by = "by = cells")
   n_metrics <- ncol(metrics) - 1
-  output <- sf::st_bbox(sf) %>%
-    stars::st_as_stars(
-      dx = res,
-      dy = res,
-      values = as.numeric(NA),
-      nz = n_metrics,
+  bbox <- terra::ext(vect)
+  output <-
+    terra::rast(
+      bbox,
+      resolution = res,
+      nlyrs = n_metrics,
       crs = "epsg:4326"
     )
 
-  dim_data <- stars::st_dimensions(output) %>%
-    setNames(c("x", "y", "bands"))
-  dim_data$bands$values <- names(metrics)[-1]
 
-  stars::st_dimensions(output) <- dim_data
-
-  for (metric in seq_along(names(metrics)[-1])) {
-    output[[1]][, , metric][metrics$cells] <- metrics[[metric]]
+  for (metric in 1:n_metrics) {
+    output[[metric]][metrics$cells] <- metrics[[metric]]
   }
 
   return(output)

@@ -10,9 +10,9 @@ clipLevel2AMGeometry(level2AM, polygon, split_by = "id")
 \item{level2AM}{A GEDI Level2A object (output of \code{\link[=readLevel2A]{readLevel2A()}} function).
 An S4 object of class "data.table".}
 
-\item{polygon}{Polygon. An object of class \code{\link[sf:sf]{sf::sf}},
-which can be loaded as an ESRI shapefile using \link[sf:st_read]{sf::st_read} function in the
-\emph{sf} package.}
+\item{polygon}{Polygon. An object of class \code{SpatVect},
+which can be loaded as an ESRI shapefile using \link[terra:vect]{terra::vect} function in the
+\emph{terra} package.}
 
 \item{split_by}{Polygon id. If defined, GEDI data will be clipped by each polygon using
 the polygon id from table of attribute defined by the user}
@@ -45,9 +45,9 @@ level2AM <- getLevel2AM(level2a)
 # Specifying the path to shapefile
 polygon_filepath <- system.file("extdata", "stands_cerrado.shp", package = "rGEDI")
 
-# Reading shapefile as sf object
-library(sf)
-polygon <- sf::st_read(polygon_filepath)
+# Reading shapefile as SpatVect object
+library(terra)
+polygon <- terra::vect(polygon_filepath)
 
 # Clipping GEDI data by Geometry
 level2AM_clip <- clipLevel2AMGeometry(level2AM, polygon, split_by = "id")

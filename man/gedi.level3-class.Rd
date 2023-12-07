@@ -11,8 +11,9 @@ Class for GEDI level3
 \section{Slots}{
 
 \describe{
-\item{\code{raster}}{Object of class \code{\link[terra:SpatRaster-class]{SpatRaster}} from \code{terra} package containing the
-GEDI level3 products: rasterized metrics}
+\item{\code{raster}}{Object of class \code{\link[terra:SpatRaster-class]{SpatRaster}}
+from \code{terra} package, read by \code{terra::rast} containing the GEDI level3
+products: rasterized metrics}
 }}
 
 \seealso{

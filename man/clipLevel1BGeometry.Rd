@@ -10,7 +10,7 @@ clipLevel1BGeometry(level1b, polygon, output = "", split_by = NULL)
 \item{level1b}{A \code{\linkS4class{gedi.level1b}} object (output of \code{\link[=readLevel1B]{readLevel1B()}} function).
 An S4 object of class "gedi.level1b".}
 
-\item{polygon}{Polygon or Multipolygon. An object opened with \code{sf::st_read},}
+\item{polygon}{SpatVect. An object opened with \code{terra::vect},}
 
 \item{output}{Optional character path where to save the new
 \code{\link[hdf5r:H5File-class]{hdf5r::H5File}}. The default stores a temporary file only.}
@@ -45,9 +45,9 @@ level1b <- readLevel1B(level1Bpath = level1Bpath)
 # Specifying the path to shapefile
 polygon_filepath <- system.file("extdata", "stands_cerrado.shp", package = "rGEDI")
 
-# Reading shapefile as sf object
-library(sf)
-polygon <- sf::st_read(polygon_filepath)
+# Reading shapefile as SpatVect object
+library(terra)
+polygon <- terra::vect(polygon_filepath)
 
 # Spepecifing output file and path
 output <- file.path(outdir, "GEDI01_B_2019108080338_O01964_T05337_02_003_01_clip")

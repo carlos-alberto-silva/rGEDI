@@ -20,7 +20,7 @@ lazy_apply_dt_call <- function(dt, call, group.by = "") {
         inner.env[[fn.name]] <- parent.frame(2)[[fn.name]]
         stopifnot("Could not find function" = is.function(inner.env[[fn.name]]))
     }
-    inner.env[[dt.name]] <- as.data.table(dt)
+    inner.env[[dt.name]] <- data.table::as.data.table(dt)
     result <- eval(parse(text = paste0(dt.name, "[, ", deparse(call), ", ", group.by, "]")), inner.env)
     return(result)
 }

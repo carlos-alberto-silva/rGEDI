@@ -10,8 +10,8 @@ clipLevel2AGeometry(level2a, polygon, output = "", split_by = NULL)
 \item{level2a}{A GEDI Level2A object (output of \code{\link[=readLevel2A]{readLevel2A()}} function).
 An S4 object of class "gedi.level2a".}
 
-\item{polygon}{Polygon. An object of class \code{\link[sf:sf]{sf::sf}},
-which can be loaded as an ESRI shapefile using \code{\link[sf:st_read]{sf::st_read()}} function in the \emph{sf} package.}
+\item{polygon}{Polygon. An object of class \code{\link{SpatVector}},
+which can be loaded as an ESRI shapefile using \code{\link[terra:vect]{terra::vect()}} function in the \emph{terra} package.}
 
 \item{output}{optional character path where to save the new h5file. Default "" (temporary file).}
 
@@ -43,9 +43,9 @@ level2a <- readLevel2A(level2Apath = level2Apath)
 # Specifying the path to shapefile
 polygon_filepath <- system.file("extdata", "stands_cerrado.shp", package = "rGEDI")
 
-# Reading shapefile as sf object
-library(sf)
-polygon <- sf::st_read(polygon_filepath)
+# Reading shapefile as SpatVect object
+library(terra)
+polygon <- terra::vect(polygon_filepath)
 
 # Specifying output file and path
 output <- file.path(outdir, "GEDI02_A_2019108080338_O01964_T05337_02_001_01_clip")

@@ -43,8 +43,7 @@
 #'
 #' close(level1b)
 #' close(level2a)
-#' @importFrom stats quantile
-#' @importFrom graphics abline arrows axis mtext par text
+#' @import graphics
 #' @export
 plotWFMetrics <- function(level1b, level2a, shot_number, rh = c(25, 50, 75), ...) {
   # Avoid NOTEs from checking

@@ -65,13 +65,13 @@ clipLevel2BVPM <- function(level2BVPM, xmin, xmax, ymin, ymax) {
   # xmin ymin xmax ymax
   mask <-
     level2BVPM$longitude_bin0 >= xmin &
-      level2BVPM$longitude_bin0 <= xmax &
-      level2BVPM$latitude_bin0 >= ymin &
-      level2BVPM$latitude_bin0 <= ymax &
-      level2BVPM$longitude_lastbin >= xmin &
-      level2BVPM$longitude_lastbin <= xmax &
-      level2BVPM$latitude_lastbin >= ymin &
-      level2BVPM$latitude_lastbin <= ymax
+    level2BVPM$longitude_bin0 <= xmax &
+    level2BVPM$latitude_bin0 >= ymin &
+    level2BVPM$latitude_bin0 <= ymax &
+    level2BVPM$longitude_lastbin >= xmin &
+    level2BVPM$longitude_lastbin <= xmax &
+    level2BVPM$latitude_lastbin >= ymin &
+    level2BVPM$latitude_lastbin <= ymax
 
   mask[!stats::complete.cases(mask)] <- FALSE
   mask <- (seq_along(level2BVPM$longitude_bin0))[mask]
@@ -87,9 +87,10 @@ clipLevel2BVPM <- function(level2BVPM, xmin, xmax, ymin, ymax) {
 #'
 #' @param level2BVPM A GEDI Level2B object (output of [readLevel1B()] function).
 #' An S4 object of class "gedi.level2b".
-#' @param polygon Polygon. An object of class [`sf::sf`],
-#' which can be loaded as an ESRI shapefile using [sf::st_read] function in the \emph{sf} package.
-#' @param split_by Polygon id. If defined, GEDI data will be clipped by each polygon using the attribute specified by `split_by` from the attribute table.
+#' @param polygon Polygon. An object of class `SpatVect`,
+#' which can be loaded as an ESRI shapefile using [terra::vect] function in the \emph{terra} package.
+#' @param split_by Polygon id. If defined, GEDI data will be clipped by each polygon using the attribute
+#' specified by `split_by` from the attribute table.
 #'
 #' @return Returns an S4 object of class [data.table::data.table]
 #' containing the Canopy Cover and Vertical Profile metrics.
@@ -116,9 +117,9 @@ clipLevel2BVPM <- function(level2BVPM, xmin, xmax, ymin, ymax) {
 #' # Specifying the path to shapefile
 #' polygon_filepath <- system.file("extdata", "stands_cerrado.shp", package = "rGEDI")
 #'
-#' # Reading shapefile as sf object
-#' library(sf)
-#' polygon <- sf::st_read(polygon_filepath)
+#' # Reading shapefile as SpatVect object
+#' library(terra)
+#' polygon <- terra::vect(polygon_filepath)
 #'
 #' # Clipping level2BVPM by geometry
 #' level2b_clip_geometry <- clipLevel2BVPMGeometry(level2BVPM, polygon, split_by = "id")
@@ -144,7 +145,7 @@ clipLevel2BVPM <- function(level2BVPM, xmin, xmax, ymin, ymax) {
 #' close(level2b)
 #' @export
 clipLevel2BVPMGeometry <- function(level2BVPM, polygon, split_by = NULL) {
-  exshp <- sf::st_bbox(polygon)
+  exshp <- terra::ext(polygon)
   level2bdt <- clipLevel2BVPM(
     level2BVPM,
     xmin = exshp$xmin,
@@ -156,27 +157,24 @@ clipLevel2BVPMGeometry <- function(level2BVPM, polygon, split_by = NULL) {
   if (nrow(level2bdt) == 0) {
     print("The polygon does not overlap the GEDI data")
   } else {
-    points <- sf::st_as_sf(
-      level2BVPM,
-      coords = c("longitude_bin0", "latitude_bin0"),
-      crs = sf::st_crs(polygon)
+    points <- terra::vect(
+      level2bdt,
+      geom = c("longitude_bin0", "latitude_bin0"),
+      crs = terra::crs(polygon)
     )
 
-    names(points) <- gsub("^(?!geometry)", "x_\\1", names(points), perl = TRUE)
-    pts <- sf::st_intersection(sf::st_make_valid(points), sf::st_make_valid(polygon))
+    points$rowNumber <- as.integer(seq_along(points))
+    pts <- terra::intersect(terra::makeValid(points), terra::makeValid(polygon))
 
+    mask <- pts$rowNumber
+    newFile <- level2bdt[mask, ]
     if (!is.null(split_by)) {
       if (any(names(polygon) == split_by)) {
-        mask <- as.integer(pts$x_id)
-        newFile <- level2bdt[mask, ]
         newFile$poly_id <- pts[[split_by]]
       } else {
         stop(paste("The", split_by, "is not included in the attribute table.
                        Please check the names in the attribute table"))
       }
-    } else {
-      mask <- as.integer(rownames(pts))
-      newFile <- level2bdt[mask, ]
     }
     return(newFile)
   }

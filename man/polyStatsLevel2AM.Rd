@@ -39,9 +39,9 @@ level2a <- readLevel2A(level2Apath = level2Apath)
 # Specifying the path to shapefile
 polygon_filepath <- system.file("extdata", "stands_cerrado.shp", package = "rGEDI")
 
-# Reading shapefile as sf object
-library(sf)
-polygon <- sf::st_read(polygon_filepath)
+# Reading shapefile as SpatVect object
+library(terra)
+polygon <- terra::vect(polygon_filepath)
 
 # Extracting GEDI Eleveation and Relative Metrics (level2A)
 level2AM <- getLevel2AM(level2a)

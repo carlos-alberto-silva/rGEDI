@@ -32,9 +32,9 @@
 #' # Specifying the path to shapefile
 #' polygon_filepath <- system.file("extdata", "stands_cerrado.shp", package = "rGEDI")
 #'
-#' # Reading shapefile as sf object
-#' library(sf)
-#' polygon <- sf::st_read(polygon_filepath)
+#' # Reading shapefile as SpatVect object
+#' library(terra)
+#' polygon <- terra::vect(polygon_filepath)
 #'
 #' # Extracting GEDI Eleveation and Relative Metrics (level2A)
 #' level2AM <- getLevel2AM(level2a)
@@ -67,7 +67,7 @@
 #' )
 #'
 #' head(RH100metrics)
-#' 
+#'
 #' close(level2a)
 #' @import data.table lazyeval
 #' @export
@@ -76,9 +76,6 @@ polyStatsLevel2AM <- function(level2AM, func, id = NULL) {
   # https://github.com/Jean-Romain/lidR/blob/master/R/grid_metrics.r
 
   requireNamespace("data.table")
-
-  # Add data.table operator
-  `:=` <- data.table::`:=`
 
   call <- lazy_call(func)
 

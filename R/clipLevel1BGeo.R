@@ -59,19 +59,18 @@
 #' @export
 clipLevel1BGeo <- function(level1BGeo, xmin, xmax, ymin, ymax) {
   # xmin ymin xmax ymax
-  mask <-
-    level1BGeo$longitude_bin0 >= xmin &
-      level1BGeo$longitude_bin0 <= xmax &
-      level1BGeo$latitude_bin0 >= ymin &
-      level1BGeo$latitude_bin0 <= ymax &
-      level1BGeo$longitude_lastbin >= xmin &
-      level1BGeo$longitude_lastbin <= xmax &
-      level1BGeo$latitude_lastbin >= ymin &
-      level1BGeo$latitude_lastbin <= ymax
+  mask <- level1BGeo$longitude_bin0 >= xmin &
+    level1BGeo$longitude_bin0 <= xmax &
+    level1BGeo$latitude_bin0 >= ymin &
+    level1BGeo$latitude_bin0 <= ymax &
+    level1BGeo$longitude_lastbin >= xmin &
+    level1BGeo$longitude_lastbin <= xmax &
+    level1BGeo$latitude_lastbin >= ymin &
+    level1BGeo$latitude_lastbin <= ymax
   mask[!stats::complete.cases(mask)] <- FALSE
   mask <- (seq_along(level1BGeo$longitude_bin0))[mask]
   newFile <- level1BGeo[mask, ]
-  # newFile<- new("gedi.level1b.dt", dt = x[mask,])
+
   if (nrow(newFile) == 0) {
     print("The polygon does not overlap the GEDI data")
   } else {
@@ -85,8 +84,8 @@ clipLevel1BGeo <- function(level1BGeo, xmin, xmax, ymin, ymax) {
 #' data within a given geometry
 #'
 #' @param level1BGeo A [`data.table::data.table-class`] resulting from [getLevel1BGeo()] function.
-#' @param polygon Polygon. An object of class [`sf::sf`],
-#' which can be loaded as an ESRI shapefile using [sf::st_read] function in the \emph{sf} package.
+#' @param polygon SpatVect. An object of class `SpatVect`,
+#' which can be loaded as an ESRI shapefile using [terra::vect] function in the \emph{terra} package.
 #' @param split_by Polygon id. If defined, GEDI data will be clipped by each polygon using the
 #' polygon id from table of attribute defined by the user.
 #'
@@ -115,9 +114,9 @@ clipLevel1BGeo <- function(level1BGeo, xmin, xmax, ymin, ymax) {
 #' # Specifying the path to shapefile
 #' polygon_filepath <- system.file("extdata", "stands_cerrado.shp", package = "rGEDI")
 #'
-#' # Reading shapefile as sf object
-#' library(sf)
-#' polygon <- sf::st_read(polygon_filepath)
+#' # Reading shapefile as SpatVect object
+#' library(terra)
+#' polygon <- terra::vect(polygon_filepath)
 #'
 #' # Clipping GEDI Full Waveform Geolocations by Geometry
 #' level1BGeo_clip <- clipLevel1BGeoGeometry(level1BGeo, polygon, split_by = "id")
@@ -143,7 +142,7 @@ clipLevel1BGeo <- function(level1BGeo, xmin, xmax, ymin, ymax) {
 #' close(level1b)
 #' @export
 clipLevel1BGeoGeometry <- function(level1BGeo, polygon, split_by = "id") {
-  exshp <- sf::st_bbox(polygon)
+  exshp <- terra::ext(polygon)
   level1BGeo <- clipLevel1BGeo(
     level1BGeo,
     xmin = exshp$xmin,
@@ -155,27 +154,24 @@ clipLevel1BGeoGeometry <- function(level1BGeo, polygon, split_by = "id") {
   if (nrow(level1BGeo) == 0) {
     print("The polygon does not overlap the GEDI data")
   } else {
-    points <- sf::st_as_sf(
+    points <- terra::vect(
       level1BGeo,
-      coords = c("longitude_bin0", "latitude_bin0"),
-      crs = sf::st_crs(polygon)
+      geom = c("longitude_bin0", "latitude_bin0"),
+      crs = terra::crs(polygon)
     )
 
-    names(points) <- gsub("^(?!geometry)", "x_\\1", names(points), perl = TRUE)
-    pts <- sf::st_intersection(sf::st_make_valid(points), sf::st_make_valid(polygon))
+    points$rowNumber <- as.integer(seq_along(points))
+    pts <- terra::intersect(terra::makeValid(points), terra::makeValid(polygon))
 
+    mask <- pts$rowNumber
+    newFile <- level1BGeo[mask, ]
     if (!is.null(split_by)) {
       if (any(names(polygon) == split_by)) {
-        mask <- as.integer(pts$x_id)
-        newFile <- level1BGeo[mask, ]
         newFile$poly_id <- pts[[split_by]]
       } else {
         stop(paste("The", split_by, "is not included in the attribute table.
                        Please check the names in the attribute table"))
       }
-    } else {
-      mask <- as.integer(rownames(pts))
-      newFile <- level1BGeo[mask, ]
     }
 
     return(newFile)

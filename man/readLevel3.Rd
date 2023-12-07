@@ -14,21 +14,21 @@ Returns an S4 object of class \code{\linkS4class{gedi.level3}} containing GEDI l
 }
 \description{
 This function reads GEDI level3 products: rasterized metrics
+It will transform the projection to WSG84 (EPSG: 4326).
 }
 \examples{
 # Specifying the path to GEDI level3 data (zip file)
-outdir = tempdir()
+outdir <- tempdir()
 level3_fp_zip <- system.file("extdata",
-                  "GEDI01_B_2019108080338_O01964_T05337_02_003_01_sub.zip",
-                  package="rGEDI")
+  "GEDI01_B_2019108080338_O01964_T05337_02_003_01_sub.zip",
+  package = "rGEDI"
+)
 
 # Unzipping GEDI level3 data
-level3path <- unzip(level3_fp_zip,exdir = outdir)
+level3path <- unzip(level3_fp_zip, exdir = outdir)
 
 # Reading GEDI level3 data (h5 file)
-level3<-readLevel3(level3path=level3path)
-
-close(level3)
+level3 <- readLevel3(level3path = level3path)
 }
 \seealso{
 \code{\link[hdf5r:H5File-class]{hdf5r::H5File}} in the \emph{hdf5r} package and

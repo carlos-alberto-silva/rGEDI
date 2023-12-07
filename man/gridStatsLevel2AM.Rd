@@ -13,10 +13,10 @@ An S4 object of class "data.table".}
 
 \item{func}{The function(s) to be applied to each cell}
 
-\item{res}{Spatial resolution in decimal degrees for the output stars raster layer}
+\item{res}{Spatial resolution in decimal degrees for the output SpatRast raster layer}
 }
 \value{
-Return a stars raster layer(s) of selected GEDI Elevation and Height Metric(s)
+Return a SpatRast raster layer(s) of selected GEDI Elevation and Height Metric(s)
 }
 \description{
 This function computes a series of user defined descriptive statistics within

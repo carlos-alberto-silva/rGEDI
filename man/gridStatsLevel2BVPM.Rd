@@ -13,10 +13,10 @@ An S4 object of class "data.table".}
 
 \item{func}{The function(s) to be applied to each cell}
 
-\item{res}{Spatial resolution in decimal degrees for the output stars raster layer}
+\item{res}{Spatial resolution in decimal degrees for the output terra raster layer}
 }
 \value{
-Returns a stars raster layer(s) of selected GEDI Canopy Cover and Vertical Profile Metric(s)
+Returns a terra raster layer(s) of selected GEDI Canopy Cover and Vertical Profile Metric(s)
 }
 \description{
 This function computes a series of user defined descriptive statistics within

@@ -7,7 +7,7 @@
 clipLevel3(level3, xmin, xmax, ymin, ymax)
 }
 \arguments{
-\item{level3}{A \code{\linkS4class{gedi.level3}} resulting from \code{\link[=getLevel3]{getLevel3()}}.}
+\item{level3}{A \code{\linkS4class{gedi.level3}} resulting from \code{\link[=readLevel3]{readLevel3()}}.}
 
 \item{xmin}{Numeric. West longitude (x) coordinate of the bounding rectangle, in decimal degrees.}
 
@@ -21,48 +21,29 @@ clipLevel3(level3, xmin, xmax, ymin, ymax)
 Returns the clipped S4 object of class \code{\linkS4class{gedi.level3}}.
 }
 \description{
-This function clips GEDI level3 extracted geolocation (\code{\link[=getLevel3]{getLevel3()}})
+This function clips GEDI level3 extracted geolocation (\code{\link[=readLevel3]{readLevel3()}})
 data a within given bounding coordinates
 }
 \examples{
 # Specifying the path to GEDI level3 data (zip file)
 outdir <- tempdir()
-level3_fp_zip <- system.file("extdata",
-  "GEDI01_B_2019108080338_O01964_T05337_02_003_01_sub.zip",
-  package = "rGEDI"
-)
 
-# Unzipping GEDI level3 data
-level3path <- unzip(level3_fp_zip, exdir = outdir)
-
-# Reading GEDI level3 data (h5 file)
+level3path <- "C:/Users/caiohamamura/Downloads/GEDI03_rh100_mean_2019108_2020287_002_02.tif"
 level3 <- readLevel3(level3path = level3path)
-
-# Bounding rectangle coordinates
-xmin <- -44.15036
-xmax <- -44.10066
-ymin <- -13.75831
-ymax <- -13.71244
+xmin <- -5888627
+xmax <- -5878615
+ymin <- -990000
+ymax <- -976400
 
 # Clipping GEDI Full Waveform Geolocations by boundary box extent
-level3_clip <- clipLevel3(level3, xmin, xmax, ymin, ymax)
+level3_crop <- crop(level3, xmin, xmax, ymin, ymax)
 
-hasLeaflet <- require(leaflet)
-
-if (hasLeaflet) {
-  leaflet() \%>\%
-    addCircleMarkers(level3_clip$longitude_bin0,
-      level3_clip$latitude_bin0,
-      radius = 1,
-      opacity = 1,
-      color = "red"
-    ) \%>\%
-    addScaleBar(options = list(imperial = FALSE)) \%>\%
-    addProviderTiles(providers$Esri.WorldImagery)
+if (require(ggplot2)) {
+  ggplot() +
+    geom_spatraster(data = level3_crop)
 }
-
 
 }
 \seealso{
-\url{https://lpdaac.usgs.gov/products/gedi01_bv002/}
+\url{https://daac.ornl.gov/GEDI/guides/GEDI_L3_LandSurface_Metrics_V2.html}
 }

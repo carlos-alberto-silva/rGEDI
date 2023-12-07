@@ -32,9 +32,10 @@ Imports:
   jsonlite,
   lazyeval,
   RColorBrewer,
-  sp,
+  magrittr,
   stats,
-  stars
+  terra,
+  tidyterra
 Suggests:
   lattice,
   leaflet,
@@ -42,7 +43,6 @@ Suggests:
   lidR,
   plot3D,
   rasterVis,
-  sf,
   viridis
 RoxygenNote: 7.2.3
 Roxygen: list(markdown = TRUE)

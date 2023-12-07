@@ -4,19 +4,19 @@
 \alias{clipLevel3Geometry}
 \title{Clip GEDI Full Waveform Geolocations by geometry}
 \usage{
-clipLevel3Geometry(level3, polygon_sf, split_by = "id")
+clipLevel3Geometry(level3, polygon, split_by = "id")
 }
 \arguments{
-\item{level3}{A \code{\link[data.table:data.table-class]{data.table::data.table}} resulting from \code{\link[=getLevel3]{getLevel3()}} function.}
+\item{level3}{A \code{\linkS4class{gedi.level3}} resulting from \code{\link[=readLevel3]{readLevel3()}} function.}
 
-\item{polygon_sf}{Polygon. An object of class \code{\link{sf}},
-which can be loaded as an ESRI shapefile using \link[raster:shapefile]{raster::shapefile} function in the \emph{raster} package.}
+\item{polygon}{Polygon. An object of class \code{SpatVect},
+which can be loaded as an ESRI shapefile using \link[terra:vect]{terra::vect} function in the \emph{terra} package.}
 
 \item{split_by}{Polygon id. If defined, GEDI data will be clipped by each polygon using the polygon id from
 table of attribute defined by the user.}
 }
 \value{
-Returns a lilst of S4 object of class \code{\link[data.table:data.table-class]{data.table::data.table}} containing the
+Returns a list of S4 object of class \code{\link[data.table:data.table-class]{data.table::data.table}} containing the
 clipped GEDI level3 extracted geolocations.
 }
 \description{
@@ -26,49 +26,36 @@ data within a given geometry
 \examples{
 # Specifying the path to GEDI level3 data (zip file)
 outdir <- tempdir()
-level3_fp_zip <- system.file("extdata",
-  "GEDI01_B_2019108080338_O01964_T05337_02_003_01_sub.zip",
-  package = "rGEDI"
-)
 
-# Unzipping GEDI level3 data
-level3path <- unzip(level3_fp_zip, exdir = outdir)
-
-# Reading GEDI level3 data (h5 file)
+level3path <- "C:/Users/caiohamamura/Downloads/GEDI03_rh100_mean_2019108_2020287_002_02.tif"
 level3 <- readLevel3(level3path = level3path)
 
-# Extracting GEDI Full Waveform Geolocations
-level3 <- getLevel3(level3)
 
 # Specifying the path to shapefile
 polygon_filepath <- system.file("extdata", "stands_cerrado.shp", package = "rGEDI")
 
 # Reading shapefile as SpatialPolygonsDataFrame object
-library(sf)
-polygon_spdf <- sf::st_read(polygon_filepath)
+library(terra)
+polygon <- terra::vect(polygon_filepath)
 
 # Clipping GEDI Full Waveform Geolocations by Geometry
-level3_clip <- clipLevel3Geometry(level3, polygon_spdf, split_by = "id")
+level3_clip <- clipLevel3Geometry(level3, polygon, split_by = "id")
 
-hasLeaflet <- require(leaflet)
+# Calculate global means
+lapply(level3_clip, terra::global, mean)
 
-if (hasLeaflet) {
-  leaflet() \%>\%
-    addCircleMarkers(level3_clip$longitude_bin0,
-      level3_clip$latitude_bin0,
-      radius = 1,
-      opacity = 1,
-      color = "red"
-    ) \%>\%
-    addScaleBar(options = list(imperial = FALSE)) \%>\%
-    addPolygons(
-      data = polygon_spdf, weight = 1, col = "white",
-      opacity = 1, fillOpacity = 0
-    ) \%>\%
-    addProviderTiles(providers$Esri.WorldImagery)
+# Plot all in a grid
+n <- length(level3_clip)
+sqrt_n <- ceiling(sqrt(n))
+oldpar <- par()
+par(mfrow = c(sqrt_n, sqrt_n))
+
+for (l in level3_clip) {
+  plot(l)
 }
+par(oldpar)
 
 }
 \seealso{
-\url{https://lpdaac.usgs.gov/products/gedi01_bv002/}
+\url{https://daac.ornl.gov/GEDI/guides/GEDI_L3_LandSurface_Metrics_V2.html}
 }

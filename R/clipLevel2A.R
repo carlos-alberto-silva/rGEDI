@@ -80,8 +80,8 @@ clipLevel2A <- function(level2a, xmin, xmax, ymin, ymax, output = "") {
 #'
 #' @param level2a A GEDI Level2A object (output of [readLevel2A()] function).
 #' An S4 object of class "gedi.level2a".
-#' @param polygon Polygon. An object of class [`sf::sf`],
-#' which can be loaded as an ESRI shapefile using [sf::st_read()] function in the \emph{sf} package.
+#' @param polygon Polygon. An object of class [`SpatVector`],
+#' which can be loaded as an ESRI shapefile using [terra::vect()] function in the \emph{terra} package.
 #' @param output optional character path where to save the new h5file. Default "" (temporary file).
 #' @param split_by Polygon id. If defined, GEDI data will be clipped by each polygon using the
 #' attribute specified by `split_by` from the attribute table.
@@ -109,9 +109,9 @@ clipLevel2A <- function(level2a, xmin, xmax, ymin, ymax, output = "") {
 #' # Specifying the path to shapefile
 #' polygon_filepath <- system.file("extdata", "stands_cerrado.shp", package = "rGEDI")
 #'
-#' # Reading shapefile as sf object
-#' library(sf)
-#' polygon <- sf::st_read(polygon_filepath)
+#' # Reading shapefile as SpatVect object
+#' library(terra)
+#' polygon <- terra::vect(polygon_filepath)
 #'
 #' # Specifying output file and path
 #' output <- file.path(outdir, "GEDI02_A_2019108080338_O01964_T05337_02_001_01_clip")
@@ -132,7 +132,7 @@ clipLevel2AGeometry <- function(level2a, polygon, output = "", split_by = NULL) 
 
   spData <- getSpatialData2A(level2a)
 
-  bbox <- sf::st_bbox(polygon)
+  bbox <- terra::ext(polygon)
   xmin <- bbox$xmin
   xmax <- bbox$xmax
   ymin <- bbox$ymin

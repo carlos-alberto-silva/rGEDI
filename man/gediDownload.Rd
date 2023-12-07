@@ -34,33 +34,37 @@ Earth Explore login Information for downloading the data.
 \dontrun{
 # Set path to GEDI data
 # herein we will only download xml metedata
-filepath=c(paste0(
-                 "https://e4ftl01.cr.usgs.gov/GEDI/GEDI02_B.001",
-                 "/2019.04.18/GEDI02_B_2019108032534_O01961_T03911_02_001_01.h5.xml"
-                 ),
-          paste0("https://e4ftl01.cr.usgs.gov/GEDI/GEDI02_B.001",
-                 "/2019.04.18/GEDI02_B_2019108045815_O01962_T01066_02_001_01.h5.xml"
-                )
-         )
+filepath <- c(
+  paste0(
+    "https://e4ftl01.cr.usgs.gov/GEDI/GEDI02_B.001",
+    "/2019.04.18/GEDI02_B_2019108032534_O01961_T03911_02_001_01.h5.xml"
+  ),
+  paste0(
+    "https://e4ftl01.cr.usgs.gov/GEDI/GEDI02_B.001",
+    "/2019.04.18/GEDI02_B_2019108045815_O01962_T01066_02_001_01.h5.xml"
+  )
+)
 
 # Set dir to download files to
-outdir=tempdir()
+outdir <- tempdir()
 
 # Create .netrc file
-netrc = file.path(outdir, ".netrc")
+netrc <- file.path(outdir, ".netrc")
 netrc_conn <- file(netrc)
 
-writeLines(c("machine urs.earthdata.nasa.gov",
-            sprintf("login \%s", Sys.getenv("NASA_USER")),
-            sprintf("password \%s", Sys.getenv("NASA_PASSWORD"))
+writeLines(c(
+  "machine urs.earthdata.nasa.gov",
+  sprintf("login \%s", Sys.getenv("NASA_USER")),
+  sprintf("password \%s", Sys.getenv("NASA_PASSWORD"))
 ), netrc_conn)
 
 close(netrc_conn)
 
 #' Downloading GEDI data
-gediDownload(filepath,outdir)
+gediDownload(filepath, outdir)
 }
 }
 \references{
-Credits to Cole Krehbiel. Code adapted from \url{https://git.earthdata.nasa.gov/projects/LPDUR/repos/daac_data_download_r/browse/DAACDataDownload.R}
+Credits to Cole Krehbiel. Code adapted from
+\url{https://git.earthdata.nasa.gov/projects/LPDUR/repos/daac_data_download_r/browse/DAACDataDownload.R}
 }

@@ -1,6 +1,3 @@
-#' @import sp
-NULL
-
 # Function to create attributes within a group
 createAttributesWithinGroup <- function(h5, newFile, group = "/") {
   for (attr in hdf5r::list.attributes(h5[[group]])) {
@@ -101,7 +98,7 @@ getPolygonMaskLevel2A <- function(spData, masks, polygon, split_by) {
   if (is.null(split_by)) {
     masknames <- ""
   } else {
-    masknames <- unique(paste0(polygon[[split_by]]))
+    masknames <- as.character(unique(polygon[[split_by]][[1]]))
   }
 
   for (m in masknames) {
@@ -116,26 +113,23 @@ getPolygonMaskLevel2A <- function(spData, masks, polygon, split_by) {
       if (length(mask) == 0) next
 
       spDataMasked <- spData[[beam]][[i]][mask, ]
-      points <- sf::st_as_sf(
+      points <- terra::vect(
         spDataMasked,
-        coords = c("longitude_lowest", "latitude_lowest"),
-        crs = sf::st_crs(polygon)
+        geom = c("longitude_lowest", "latitude_lowest"),
+        crs = terra::crs(polygon)
       )
-      names(points) <- gsub("^(?!geometry)", "x_\\1", names(points), perl = TRUE)
+      points$rowNumber <- as.integer(seq_along(points))
       pts <- suppressWarnings(
-        sf::st_intersection(sf::st_make_valid(points), sf::st_make_valid(polygon))
+        terra::intersect(terra::makeValid(points), terra::makeValid(polygon))
       )
-
 
       mask_name <- names(masks2)[i]
       if (is.null(split_by)) {
-        polygon_masks[["1"]][[beam]][[mask_name]] <- as.integer(rownames(pts))
+        polygon_masks[["1"]][[beam]][[mask_name]] <- pts$rowNumber
       } else {
-        for (split_id in as.character(unique(pts[[split_by]]))) {
+        for (split_id in as.character(unique(pts[[split_by]])[[split_by]])) {
           split_mask <- pts[[split_by]] == split_id
-          polygon_masks[[split_id]][[beam]][[mask_name]] <- as.integer(
-            rownames(pts[split_mask, ])
-          )
+          polygon_masks[[split_id]][[beam]][[mask_name]] <- pts$rowNumber[split_mask]
         }
       }
 
@@ -193,31 +187,31 @@ getPolygonMaskLevelB <- function(spData, masks, polygon, split_by) {
   pb <- utils::txtProgressBar(min = 0, max = length(masks), style = 3)
   progress <- 0
   polygon_masks <- list()
+  maskNames <- names(masks)
 
-  for (beam in names(masks)) {
+  for (beam in maskNames) {
     mask <- masks[[beam]]
 
     if (length(mask) == 0) next
 
     spDataMasked <- spData[[beam]][mask, ]
-    points <- sf::st_as_sf(
+    points <- terra::vect(
       spDataMasked,
-      coords = c("longitude_bin0", "latitude_bin0"),
-      crs = sf::st_crs(polygon)
+      geom = c("longitude_bin0", "latitude_bin0"),
+      crs = terra::crs(polygon)
     )
-    names(points) <- gsub("^(?!geometry)", "x_\\1", names(points), perl = TRUE)
 
+    points$rowNumber <- as.integer(seq_along(points))
     pts <- suppressWarnings(
-      sf::st_intersection(sf::st_make_valid(points), sf::st_make_valid(polygon))
+      terra::intersect(terra::makeValid(points), terra::makeValid(polygon))
     )
+
     if (is.null(split_by)) {
-      polygon_masks[["1"]][[beam]] <- as.integer(rownames(pts))
+      polygon_masks[["1"]][[beam]] <- pts$rowNumber
     } else {
-      for (split_id in unique(as.character(paste0(pts[[split_by]])))) {
+      for (split_id in as.character(unique(pts[[split_by]])[[split_by]])) {
         split_mask <- pts[[split_by]] == split_id
-        polygon_masks[[split_id]][[beam]] <- as.integer(
-          rownames(pts[split_mask, ])
-        )
+        polygon_masks[[split_id]][[beam]] <- pts$rowNumber[split_mask]
       }
     }
 
@@ -242,10 +236,13 @@ clipByMasks <- function(h5file, polygon_masks, output, split_by, clipFun) {
     i <- i + 1
     message(sprintf("Writing %s='%s': %d of %d", split_by, pol_id, i, len_masks))
     output2 <- gsub("\\.h5$", paste0("_", pol_id, ".h5"), output)
-    results[[pol_id]] <- clipFun(h5file,
+    resultH5 <- clipFun(h5file,
       masks = polygon_masks[[pol_idx]],
       output = output2
     )
+    if (length(hdf5r::list.datasets(resultH5@h5)) > 0) {
+      results[[pol_id]] <- resultH5
+    }
   }
 
   return(results)
@@ -268,10 +265,10 @@ checkClipGeoInputs <- function(obj, className, polygon, split_by) {
   criterias <- list()
   criterias[paste0("Object is not from class", className)] <- class(obj) == className
   criterias <- c(criterias, list(
-    "is not a valid sf object" = all(c("sf", "data.frame") %in% class(polygon)),
-    "polygon is not an sf" = any(c("POLYGON", "MULTIPOLYGON") %in% sf::st_geometry_type(polygon)),
+    "is not a valid SpatVector object" = inherits(polygon, "SpatVector"),
+    "SpatVector is not polygon" = any(c("polygons", "polygon") %in% terra::geomtype(polygon)),
     "split_by is not a valid attribute of polygon_spdf" = is.null(split_by) ||
-      split_by %in% colnames(polygon)
+      split_by %in% names(polygon)
   ))
   do.call(stopifnotMessage, criterias)
 }

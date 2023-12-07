@@ -10,10 +10,11 @@ clipLevel2BVPMGeometry(level2BVPM, polygon, split_by = NULL)
 \item{level2BVPM}{A GEDI Level2B object (output of \code{\link[=readLevel1B]{readLevel1B()}} function).
 An S4 object of class "gedi.level2b".}
 
-\item{polygon}{Polygon. An object of class \code{\link[sf:sf]{sf::sf}},
-which can be loaded as an ESRI shapefile using \link[sf:st_read]{sf::st_read} function in the \emph{sf} package.}
+\item{polygon}{Polygon. An object of class \code{SpatVect},
+which can be loaded as an ESRI shapefile using \link[terra:vect]{terra::vect} function in the \emph{terra} package.}
 
-\item{split_by}{Polygon id. If defined, GEDI data will be clipped by each polygon using the attribute specified by \code{split_by} from the attribute table.}
+\item{split_by}{Polygon id. If defined, GEDI data will be clipped by each polygon using the attribute
+specified by \code{split_by} from the attribute table.}
 }
 \value{
 Returns an S4 object of class \link[data.table:data.table]{data.table::data.table}
@@ -43,9 +44,9 @@ level2BVPM <- getLevel2BVPM(level2b)
 # Specifying the path to shapefile
 polygon_filepath <- system.file("extdata", "stands_cerrado.shp", package = "rGEDI")
 
-# Reading shapefile as sf object
-library(sf)
-polygon <- sf::st_read(polygon_filepath)
+# Reading shapefile as SpatVect object
+library(terra)
+polygon <- terra::vect(polygon_filepath)
 
 # Clipping level2BVPM by geometry
 level2b_clip_geometry <- clipLevel2BVPMGeometry(level2BVPM, polygon, split_by = "id")

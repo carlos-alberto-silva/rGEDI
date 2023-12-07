@@ -46,7 +46,6 @@
 #'
 #'close(level2b)
 #'@import hdf5r
-#'@import utils
 #'@importFrom hdf5r H5File
 #'@export
 getLevel2BPAVDProfile<-function(level2b){

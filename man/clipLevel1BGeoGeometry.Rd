@@ -9,8 +9,8 @@ clipLevel1BGeoGeometry(level1BGeo, polygon, split_by = "id")
 \arguments{
 \item{level1BGeo}{A \code{\link[data.table:data.table-class]{data.table::data.table}} resulting from \code{\link[=getLevel1BGeo]{getLevel1BGeo()}} function.}
 
-\item{polygon}{Polygon. An object of class \code{\link[sf:sf]{sf::sf}},
-which can be loaded as an ESRI shapefile using \link[sf:st_read]{sf::st_read} function in the \emph{sf} package.}
+\item{polygon}{SpatVect. An object of class \code{SpatVect},
+which can be loaded as an ESRI shapefile using \link[terra:vect]{terra::vect} function in the \emph{terra} package.}
 
 \item{split_by}{Polygon id. If defined, GEDI data will be clipped by each polygon using the
 polygon id from table of attribute defined by the user.}
@@ -43,9 +43,9 @@ level1BGeo <- getLevel1BGeo(level1b)
 # Specifying the path to shapefile
 polygon_filepath <- system.file("extdata", "stands_cerrado.shp", package = "rGEDI")
 
-# Reading shapefile as sf object
-library(sf)
-polygon <- sf::st_read(polygon_filepath)
+# Reading shapefile as SpatVect object
+library(terra)
+polygon <- terra::vect(polygon_filepath)
 
 # Clipping GEDI Full Waveform Geolocations by Geometry
 level1BGeo_clip <- clipLevel1BGeoGeometry(level1BGeo, polygon, split_by = "id")
