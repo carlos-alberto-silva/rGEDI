@@ -96,7 +96,7 @@ level1bGeo_spdf<-SpatialPointsDataFrame(cbind(level1bGeo$longitude_bin0, level1b
                                         data=level1bGeo)
 
 # Exporting level1bGeo as ESRI Shapefile
-raster::shapefile(level1bGeo_spdf,file.path(outdir,"GEDI01_B_2019108080338_O01964_T05337_02_003_01_sub"))
+sf::st_read(level1bGeo_spdf,file.path(outdir,"GEDI01_B_2019108080338_O01964_T05337_02_003_01_sub"))
 ```
 <img align="right" src="https://github.com/carlos-alberto-silva/rGEDI/blob/master/readme/fig2.PNG"  width="400">
 
@@ -491,6 +491,10 @@ xcenter_amazon = mean(bbox(las_amazon)[1,])
 ycenter_amazon = mean(bbox(las_amazon)[2,])
 xcenter_savanna = mean(bbox(las_savanna)[1,])
 ycenter_savanna = mean(bbox(las_savanna)[2,])
+
+# The gedi simulator has been moved separately in rGEDIsimulator as following
+devtools::install_git("https://github.com/caiohamamura/Rgedisimulator", dependencies = TRUE)
+library(rGEDIsimulator)
 
 # Simulating GEDI full-waveform
 wf_amazon<-gediWFSimulator(input=lasfile_amazon,output=file.path(getwd(),"gediWF_amazon_simulation.h5"),coords = c(xcenter_amazon, ycenter_amazon))
