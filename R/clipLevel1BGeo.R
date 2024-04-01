@@ -155,6 +155,9 @@ clipLevel1BGeoGeometry <- function(level1BGeo, polygon, split_by = "id") {
   if (nrow(level1BGeo) == 0) {
     print("The polygon does not overlap the GEDI data")
   } else {
+    .I <- data.table::.I
+    level1BGeo[, id := .I]
+
     points <- sf::st_as_sf(
       level1BGeo,
       coords = c("longitude_bin0", "latitude_bin0"),

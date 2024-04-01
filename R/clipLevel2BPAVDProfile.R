@@ -126,8 +126,11 @@ clipLevel2BPAVDProfileGeometry <- function(level2BPAVDProfile, polygon, split_by
   if (nrow(level2bdt) == 0) {
     print("The polygon does not overlap the GEDI data")
   } else {
+    .I <- data.table::.I
+    level2bdt[, id := .I]
+
     points <- sf::st_as_sf(
-      level2BPAVDProfile,
+      level2bdt,
       coords = c("lon_lowestmode", "lat_lowestmode"),
       crs = sf::st_crs(polygon)
     )
