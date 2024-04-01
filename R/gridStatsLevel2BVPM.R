@@ -74,29 +74,26 @@ gridStatsLevel2BVPM <- function(level2BVPM, func, res) {
 
 
   sf <- sf::st_as_sf(level2BVPM, coords = c("longitude_bin0", "latitude_bin0"))
-  layout <- sf::st_bbox(sf) %>%
-    stars::st_as_stars(dx = res, dy = res, values = NA, crs = "epsg:4326")
+  bbox <- terra::ext(sf)
+  layout <- terra::rast(bbox, resolution = res, vals = NA, crs = "epsg:4326")
 
-  level2BVPM[, cells := stars::st_cells(layout, sf)]
+  level2BVPM[, cells := terra::cells(layout, terra::vect(sf))[, 2]]
   metrics <- lazy_apply_dt_call(level2BVPM, call, group.by = "by = cells")
+  metrics <- metrics[cells > -1]
   n_metrics <- ncol(metrics) - 1
-  output <- sf::st_bbox(sf) %>%
-    stars::st_as_stars(
-      dx = res,
-      dy = res,
-      values = as.numeric(NA),
-      nz = n_metrics,
-      crs = "epsg:4326"
-    )
 
-  dim_data <- stars::st_dimensions(output) %>%
-    setNames(c("x", "y", "bands"))
-  dim_data$bands$values <- names(metrics)[-1]
+  output <- terra::rast(
+    bbox,
+    resolution = res,
+    vals = as.numeric(NA),
+    nlyr = n_metrics,
+    crs = "epsg:4326"
+  )
 
-  stars::st_dimensions(output) <- dim_data
+  names(output) <- names(metrics)[-1]
 
   for (metric in seq_along(names(metrics)[-1])) {
-    output[[1]][, , metric][metrics$cells] <- metrics[[metric]]
+    output[[metric]][metrics$cells] <- metrics[[metric + 1]]
   }
 
   return(output)

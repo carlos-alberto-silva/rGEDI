@@ -139,8 +139,10 @@ clipLevel2AMGeometry <- function(level2AM, polygon, split_by = "id") {
   if (nrow(level2adt) == 0) {
     print("The polygon does not overlap the GEDI data")
   } else {
+    .I <- data.table::.I
+    level2adt[, id := .I]
     points <- sf::st_as_sf(
-      level2AM,
+      level2adt,
       coords = c("lon_lowestmode", "lat_lowestmode"),
       crs = sf::st_crs(polygon)
     )

@@ -16,7 +16,7 @@ The rGEDI package provides functions for i) downloading, ii) visualizing, iii) c
 # Getting Started
 
 ## Installation
-```r
+```{r}
 #The CRAN version:
 install.packages("rGEDI")
 
@@ -30,7 +30,7 @@ library(rGEDI)
 ```    
 
 ## Find GEDI data within your study area (GEDI finder tool)
-```r
+```{r}
 # Study area boundary box coordinates
 ul_lat<- -44.0654
 lr_lat<- -44.17246
@@ -46,7 +46,7 @@ gLevel2A<-gedifinder(product="GEDI02_A",ul_lat, ul_lon, lr_lat, lr_lon,version="
 gLevel2B<-gedifinder(product="GEDI02_B",ul_lat, ul_lon, lr_lat, lr_lon,version="002",daterange=daterange)
 ```
 ## Downloading GEDI data
-```r
+```{r}
 # Set output dir for downloading the files
 outdir=getwd()
 
@@ -67,7 +67,7 @@ unzip(file.path(outdir,"examples.zip"))
 ```
 
 ## Reading GEDI data
-```r
+```{r}
 # Reading GEDI data
 gedilevel1b<-readLevel1B(level1Bpath = file.path(outdir,"GEDI01_B_2019108080338_O01964_T05337_02_003_01_sub.h5"))
 gedilevel2a<-readLevel2A(level2Apath = file.path(outdir,"GEDI02_A_2019108080338_O01964_T05337_02_001_01_sub.h5"))
@@ -75,7 +75,7 @@ gedilevel2b<-readLevel2B(level2Bpath = file.path(outdir,"GEDI02_B_2019108080338_
 ```
 
 ## Get GEDI Pulse Geolocation (GEDI Level1B)
-```r
+```{r}
 level1bGeo<-getLevel1BGeo(level1b=gedilevel1b,select=c("elevation_bin0"))
 head(level1bGeo)
 
@@ -90,13 +90,15 @@ head(level1bGeo)
 # Converting shot_number as "integer64" to "character"
 level1bGeo$shot_number<-as.character(level1bGeo$shot_number)
 
-# Converting level1bGeo as data.table to SpatialPointsDataFrame
-library(sp)
-level1bGeo_spdf<-SpatialPointsDataFrame(cbind(level1bGeo$longitude_bin0, level1bGeo$latitude_bin0),
-                                        data=level1bGeo)
+# Converting level1bGeo as data.table to sf
+level1bGeo_spdf <-
+  sf::st_as_sf(
+    level1bGeo,
+    coords = c("longitude_bin0", "latitude_bin0"),
+    crs = "epsg:4326")
 
 # Exporting level1bGeo as ESRI Shapefile
-sf::st_read(level1bGeo_spdf,file.path(outdir,"GEDI01_B_2019108080338_O01964_T05337_02_003_01_sub"))
+sf::st_write(level1bGeo_spdf, file.path(outdir,"GEDI01_B_2019108080338_O01964_T05337_02_003_01_sub.shp"))
 ```
 <img align="right" src="https://github.com/carlos-alberto-silva/rGEDI/blob/master/readme/fig2.PNG"  width="400">
 
@@ -118,7 +120,7 @@ leaflet() %>%
 ```
 
 ## Get GEDI Full-waveform (GEDI Level1B)
-```r
+```{r}
 # Extracting GEDI full-waveform for a giving shotnumber
 wf <- getLevel1BWF(gedilevel1b, shot_number="19640521100108408")
 
@@ -134,7 +136,7 @@ grid()
 ![](https://github.com/carlos-alberto-silva/rGEDI/blob/master/readme/fig3.png)
 
 ## Get GEDI Elevation and Height Metrics (GEDI Level2A)
-```r
+```{r}
 # Get GEDI Elevation and Height Metrics
 level2AM<-getLevel2AM(gedilevel2a)
 head(level2AM[,c("beam","shot_number","elev_highestreturn","elev_lowestmode","rh100")])
@@ -150,16 +152,19 @@ head(level2AM[,c("beam","shot_number","elev_highestreturn","elev_lowestmode","rh
 # Converting shot_number as "integer64" to "character"
 level2AM$shot_number<-as.character(level2AM$shot_number)
 
-# Converting Elevation and Height Metrics as data.table to SpatialPointsDataFrame
-level2AM_spdf<-SpatialPointsDataFrame(cbind(level2AM$lon_lowestmode,level2AM$lat_lowestmode),
-                                        data=level2AM)
+# Converting Elevation and Height Metrics as data.table to sf
+level2AM_spdf <- sf::st_as_sf(
+  level2AM,
+  coords = c("lon_lowestmode", "lat_lowestmode"),
+  crs = "epsg:4326"
+)
 
 # Exporting Elevation and Height Metrics as ESRI Shapefile
-raster::shapefile(level2AM_spdf,file.path(outdir,"GEDI02_A_2019108080338_O01964_T05337_02_001_01_sub"))
+sf::write_sf(level2AM_spdf,file.path(outdir,"GEDI02_A_2019108080338_O01964_T05337_02_001_01_sub.shp"))
 ```
 
 ## Plot waveform with RH metrics
-```r
+```{r}
 shot_number = "19640521100108408"
 
 png("fig8.png", width = 8, height = 6, units = 'in', res = 300)
@@ -168,7 +173,7 @@ dev.off()
 ```
 ![](https://github.com/carlos-alberto-silva/rGEDI/blob/master/readme/fig8.png)
 ## Get GEDI Vegetation Biophysical Variables (GEDI Level2B)
-```r
+```{r}
 level2BVPM<-getLevel2BVPM(gedilevel2b)
 head(level2BVPM[,c("beam","shot_number","pai","fhd_normal","omega","pgap_theta","cover")])
 
@@ -183,16 +188,19 @@ head(level2BVPM[,c("beam","shot_number","pai","fhd_normal","omega","pgap_theta",
 # Converting shot_number as "integer64" to "character"
 level2BVPM$shot_number<-as.character(level2BVPM$shot_number)
 
-# Converting GEDI Vegetation Profile Biophysical Variables as data.table to SpatialPointsDataFrame
-level2BVPM_spdf<-SpatialPointsDataFrame(cbind(level2BVPM$longitude_lastbin,level2BVPM$latitude_lastbin),data=level2BVPM)
-
+# Converting GEDI Vegetation Profile Biophysical Variables as data.table to sf
+level2BVPM_spdf<-sf::st_as_sf(
+  level2BVPM,
+  coords = c("longitude_lastbin","latitude_lastbin"),
+  crs = "epsg:4326"
+)
 # Exporting GEDI Vegetation Profile Biophysical Variables as ESRI Shapefile
-raster::shapefile(level2BVPM_spdf,file.path(outdir,"GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub_VPM"))
+sf::st_write(level2BVPM_spdf,file.path(outdir,"GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub_VPM.shp"))
 
 ```
 
 ## Get Plant Area Index (PAI) and Plant Area Volume Density (PAVD) Profiles (GEDI Level2B)
-```r
+```{r}
 level2BPAIProfile<-getLevel2BPAIProfile(gedilevel2b)
 head(level2BPAIProfile[,c("beam","shot_number","pai_z0_5m","pai_z5_10m")])
 
@@ -219,20 +227,26 @@ head(level2BPAVDProfile[,c("beam","shot_number","pavd_z0_5m","pavd_z5_10m")])
 level2BPAIProfile$shot_number<-as.character(level2BPAIProfile$shot_number)
 level2BPAVDProfile$shot_number<-as.character(level2BPAVDProfile$shot_number)
 
-# Converting PAI and PAVD Profiles as data.table to SpatialPointsDataFrame
-level2BPAIProfile_spdf<-SpatialPointsDataFrame(cbind(level2BPAIProfile$lon_lowestmode,level2BPAIProfile$lat_lowestmode),
-                                        data=level2BPAIProfile)
-level2BPAVDProfile_spdf<-SpatialPointsDataFrame(cbind(level2BPAVDProfile$lon_lowestmode,level2BPAVDProfile$lat_lowestmode),
-                                               data=level2BPAVDProfile)
+# Converting PAI and PAVD Profiles as data.table to sf
+level2BPAIProfile_spdf <- sf::st_as_sf(
+  level2BPAIProfile,
+  coords = c("lon_lowestmode", "lat_lowestmode"),
+  crs = "epsg:4326"
+)
+level2BPAVDProfile_spdf <- sf::st_as_sf(
+  level2BPAVDProfile,
+  coords = c("lon_lowestmode", "lat_lowestmode"),
+  crs = "epsg:4326"
+)
 
 # Exporting PAI and PAVD Profiles as ESRI Shapefile
-raster::shapefile(level2BPAIProfile_spdf,file.path(outdir,"GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub_PAIProfile"))
-raster::shapefile(level2BPAVDProfile_spdf,file.path(outdir,"GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub_PAVDProfile"))
+sf::write_sf(level2BPAIProfile_spdf,file.path(outdir,"GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub_PAIProfile.shp"))
+sf::write_sf(level2BPAVDProfile_spdf,file.path(outdir,"GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub_PAVDProfile.shp"))
 
 ```
 
 ## Plot Plant Area Index (PAI) and Plant Area Volume Density (PAVD) Profiles 
-```r
+```{r}
 #specify GEDI beam
 beam="BEAM0101"
 
@@ -247,7 +261,7 @@ gPAVDprofile<-plotPAVDProfile(level2BPAVDProfile, beam=beam, elev=TRUE)
 
 
 ## Clip GEDI data (h5 files; gedi.level1b, gedi.level2a and gedi.level2b objects)
-```r
+```{r}
 ## Clip GEDI data by coordinates
 # Study area boundary box
 xmin = -44.15036
@@ -264,10 +278,10 @@ level2b_clip_bb <- clipLevel2B(gedilevel2b, xmin, xmax, ymin, ymax,output=file.p
 # specify the path to shapefile for the study area
 polygon_filepath <- system.file("extdata", "stands_cerrado.shp", package="rGEDI")
 
-# Reading shapefile as SpatialPolygonsDataFrame object
-polygon_spdf<-raster::shapefile(polygon_filepath)
-head(polygon_spdf@data) # column id name "id"
-split_by="id"
+# Reading shapefile as sf object
+polygon_spdf <- sf::st_read(polygon_filepath)
+head(polygon_spdf) # column id name "id"
+split_by <- "id"
 
 # Clipping h5 files
 level1b_clip_gb <- clipLevel1BGeometry(gedilevel1b,polygon_spdf,output=file.path(outdir,"level1b_clip_gb.h5"), split_by=split_by)
@@ -275,7 +289,7 @@ level2a_clip_gb <- clipLevel2AGeometry(gedilevel2a,polygon_spdf,output=file.path
 level2b_clip_gb <- clipLevel2BGeometry(gedilevel2b,polygon_spdf,output=file.path(outdir,"level2b_clip_gb.h5"), split_by=split_by)
 ```
 ## Clip GEDI data (data.table objects)
-```r
+```{r}
 ## Clipping GEDI data within boundary box
 level1bGeo_clip_bb <-clipLevel1BGeo(level1bGeo, xmin, xmax, ymin, ymax)
 level2AM_clip_bb <- clipLevel2AM(level2AM, xmin, xmax, ymin, ymax)
@@ -336,7 +350,7 @@ sync(m1, m2)
 ![](https://github.com/carlos-alberto-silva/rGEDI/blob/master/readme/fig4.png)
 
 ## Compute descriptive statistics of GEDI Level2A and Level2B data
-```r
+```{r}
 # Define your own function
 mySetOfMetrics = function(x)
 {
@@ -399,7 +413,7 @@ head(cover_metrics_st)
 
 <img align="right" src="https://github.com/carlos-alberto-silva/rGEDI/blob/master/readme/fig5.png" width="300">
 
-```r
+```{r}
 # Computing a serie of statistics of GEDI RH100 metric
 rh100metrics<-gridStatsLevel2AM(level2AM = level2AM, func=mySetOfMetrics(rh100), res=0.005)
 
@@ -439,7 +453,7 @@ dev.off()
 
 <img align="right" src="https://github.com/carlos-alberto-silva/rGEDI/blob/master/readme/fig6.png" width="300">
 
-```r
+```{r}
 # Computing a serie of statistics of Total Plant Area Index
 level2BVPM$pai[level2BVPM$pai==-9999]<-NA # assing NA to -9999
 pai_metrics<-gridStatsLevel2BVPM(level2BVPM = level2BVPM, func=mySetOfMetrics(pai), res=0.005)
@@ -475,7 +489,7 @@ dev.off()
 ```
 
 ## Simulating GEDI full-waveform data from Airborne Laser Scanning (ALS) 3-D point cloud and extracting canopy derived metrics
-```r
+```{r}
 # Specifying the path to ALS data
 lasfile_amazon <- file.path(outdir, "Amazon.las")
 lasfile_savanna <- file.path(outdir, "Savanna.las")
@@ -487,10 +501,10 @@ las_amazon<-readLAS(lasfile_amazon)
 las_savanna<-readLAS(lasfile_savanna)
 
 # Extracting plot center geolocations
-xcenter_amazon = mean(bbox(las_amazon)[1,])
-ycenter_amazon = mean(bbox(las_amazon)[2,])
-xcenter_savanna = mean(bbox(las_savanna)[1,])
-ycenter_savanna = mean(bbox(las_savanna)[2,])
+xcenter_amazon = mean(st_bbox(las_amazon)[c(1, 3)])
+ycenter_amazon = mean(st_bbox(las_amazon)[-c(1, 3)])
+xcenter_savanna = mean(st_bbox(las_savanna)[c(1, 3)])
+ycenter_savanna = mean(st_bbox(las_savanna)[-c(1, 3)])
 
 # The gedi simulator has been moved separately in rGEDIsimulator as following
 devtools::install_git("https://github.com/caiohamamura/Rgedisimulator", dependencies = TRUE)
