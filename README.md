@@ -96,7 +96,7 @@ level1bGeo_spdf<-SpatialPointsDataFrame(cbind(level1bGeo$longitude_bin0, level1b
                                         data=level1bGeo)
 
 # Exporting level1bGeo as ESRI Shapefile
-raster::shapefile(level1bGeo_spdf,file.path(outdir,"GEDI01_B_2019108080338_O01964_T05337_02_003_01_sub"))
+sf::st_read(level1bGeo_spdf,file.path(outdir,"GEDI01_B_2019108080338_O01964_T05337_02_003_01_sub"))
 ```
 <img align="right" src="https://github.com/carlos-alberto-silva/rGEDI/blob/master/readme/fig2.PNG"  width="400">
 
