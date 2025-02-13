@@ -1,0 +1,43 @@
+LIBCLIDAR_ROOT=libclidar
+LIBCLIDAR_O=$(LIBCLIDAR_ROOT)/libLasProcess.o $(LIBCLIDAR_ROOT)/libLasRead.o $(LIBCLIDAR_ROOT)/tiffWrite.o $(LIBCLIDAR_ROOT)/gaussFit.o $(LIBCLIDAR_ROOT)/libLidVoxel.o $(LIBCLIDAR_ROOT)/libTLSread.o $(LIBCLIDAR_ROOT)/libLidarHDF.o $(LIBCLIDAR_ROOT)/libOctree.o
+
+CMPFIT_ROOT=cmpfit-1.5
+CMPFIT_O=$(CMPFIT_ROOT)/mpfit.o 
+
+TOOLS_ROOT=tools
+TOOLS_O=$(TOOLS_ROOT)/tools.o
+
+GEDISIMULATOR_ROOT=gedisimulator
+GEDISIMULATOR_O=$(GEDISIMULATOR_ROOT)/gediNoise.o \
+    $(GEDISIMULATOR_ROOT)/photonCount.o \
+	$(GEDISIMULATOR_ROOT)/gediIO.o
+
+PKG_CFLAGS=-I$(CMPFIT_ROOT) -I$(LIBCLIDAR_ROOT) -I$(TOOLS_ROOT) -I$(GEDISIMULATOR_ROOT)
+PKG_LIBS=$(shell pkg-config --libs gdal gsl)
+
+.PHONY: all clean cp
+
+BIN_EXTENSION=.exe
+BIN_FILES=gediRat$(BIN_EXTENSION) gediMetric$(BIN_EXTENSION)
+LIBEXTENSION=.dll
+SHLIBS=tools$(LIBEXTENSION) libclidar$(LIBEXTENSION) cmpfit$(LIBEXTENSION)
+
+all:copy $(SHLIBS) $(BIN_FILES)
+
+gediMetric$(BIN_EXTENSION):$(SHLIBS) $(GEDISIMULATOR_O) gedisimulator/gediMetric.o
+	$(CC) $(CFLAGS) $(PKG_CFLAGS) -o $@ $^ libclidar.dll $(PKG_LIBS)
+
+gediRat$(BIN_EXTENSION):$(SHLIBS) $(GEDISIMULATOR_O) gedisimulator/gediRat.o
+	$(CC) $(CFLAGS) $(PKG_CFLAGS) -o $@ $^ libclidar.dll $(PKG_LIBS)
+
+tools$(LIBEXTENSION): $(TOOLS_O)
+libclidar$(LIBEXTENSION): $(LIBCLIDAR_O) tools$(LIBEXTENSION) cmpfit$(LIBEXTENSION)
+cmpfit$(LIBEXTENSION): $(CMPFIT_O)
+gedisimulator$(LIBEXTENSION): $(GEDISIMULATOR_O) 
+
+copy: gediRat$(BIN_EXTENSION) gediMetric$(BIN_EXTENSION)
+	$(MKDIR) -p ../inst/libs$(R_ARCH)
+	$(CP) *.exe ../inst/libs/$(R_ARCH)
+
+clean: 
+	rm -f *.o *.dll *.exe

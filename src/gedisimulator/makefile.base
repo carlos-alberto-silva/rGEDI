@@ -1,0 +1,38 @@
+# Makefile for iter_thresh
+#
+HOME =hOme
+LIBS = -lm -lgsl -lgslcblas -ltiff -lgeotiff
+MINDIR=gediDir/minpack
+GSLDIR=gediDir/GSL/gslDir
+LIBDIR=gediDir/libClidar
+INCLS = -I/usr/local/include -IgediDir/headers -I$(MINDIR) -I${GSLDIR} -I${GSLDIR}/fft -I${GSLDIR}/err -I${LIBDIR} -ItiffDir -I${GSLDIR}/gsl
+CFLAGS += -Wall
+#CFLAGS += -g
+CFLAGS += -O3
+LIBFILES = $(LIBDIR)/libLasProcess.o $(LIBDIR)/libLasRead.o $(LIBDIR)/tiffWrite.o $(LIBDIR)/gaussFit.o $(LIBDIR)/libLidVoxel.o 
+LOCLIB = libLasProcess.o libLasRead.o tiffWrite.o gaussFit.o libLidVoxel.o
+GSLFit=linear.o
+MIN=mpfit.o
+
+CC = gcc
+#CC= /opt/SUNWspro/bin/cc
+
+#CFLAGS += -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64
+
+THIS=gediRat
+
+$(THIS):	$(THIS).o $(GSLDIR)/fit/$(GSLFIT) ${MINDIR}/$(MIN) ${LIBFILES}
+		$(CC) $(CFLAGS) $(GSLFIT) $(MIN) $(LOCLIB) $@.o -o $@ $(LIBS) $(CFLAGS) $(INCLS)
+
+.c.o:		$<
+		$(CC) $(CFLAGS) -I. $(INCLS) -D$(ARCH)  -c $<
+
+clean:
+		\rm -f *% *~ *.o #$(TOOLDIR)/*.o
+
+install:
+		touch $(HOME)/bin/$(ARCH)/$(THIS)
+		mv $(HOME)/bin/$(ARCH)/$(THIS) $(HOME)/bin/$(ARCH)/$(THIS).old
+		cp $(THIS) $(HOME)/bin/$(ARCH)/$(THIS)
+
+

@@ -1,0 +1,97 @@
+Bootstrap: docker
+From: fedora:28
+IncludeCmd: yes
+
+%post
+
+
+yum install -y libgeotiff.x86_64
+yum install -y libgeotiff-devel.x86_64
+yum install -y mercurial.x86_64
+yum install -y git.x86_64
+yum install -y make.x86_64
+yum install -y gcc.x86_64
+yum install -y gsl.x86_64
+yum install -y gsl-devel.x86_64
+yum install -y wget.x86_64
+yum install -y gcc-c++.x86_64
+yum install -y unzip.x86_64
+yum install -y hdf5.x86_64
+yum install -y hdf5-devel.x86_64
+yum install -y gdal.x86_64
+yum install -y gdal-devel.x86_64
+yum install -y tcsh.x86_64
+
+srcDir="$HOME/src"
+if [ ! -e $srcDir ]; then
+  mkdir $srcDir
+fi
+cd $srcDir
+
+
+export ARCH=`uname -m`
+export GEDIRAT_ROOT="$srcDir/gedisimulator"
+export HANCOCKTOOLS_ROOT="$srcDir/tools"
+export LIBCLIDAR_ROOT="$srcDir/libclidar"
+export CMPFIT_ROOT="$srcDir/minpack"
+export GSL_ROOT="/usr/local/lib"
+
+
+binDir="$HOME/bin"
+if [ ! -e $binDir ]; then
+  mkdir $binDir
+fi
+if [ ! -e $binDir/$ARCH ]; then
+  mkdir $binDir/$ARCH
+fi
+if [ ! -e $binDir/csh ]; then
+  mkdir $binDir/csh
+fi
+
+
+if [ -e libclidar ]; then
+  rm -r libclidar
+fi
+if [ -e tools ]; then
+  rm -r tools
+fi
+if [ -e voxelate ]; then
+  rm -r voxelate
+fi
+
+
+git clone https://bitbucket.org/StevenHancock/libclidar.git
+git clone https://bitbucket.org/StevenHancock/tools.git
+
+if [ ! -e $CMPFIT_ROOT ]; then
+  mkdir $CMPFIT_ROOT
+fi
+pushd $CMPFIT_ROOT
+wget https://www.physics.wisc.edu/~craigm/idl/down/cmpfit-1.2.tar.gz
+tar -xvf cmpfit-1.2.tar.gz
+mv cmpfit-1.2/* $CMPFIT_ROOT/
+popd
+
+
+git clone https://StevenHancock@bitbucket.org/StevenHancock/gedisimulator.git
+pushd $GEDIRAT_ROOT/
+make THIS=gediRat
+mv gediRat /usr/bin/
+cp *.csh /usr/bin/
+cp *.bash /usr/bin/
+make THIS=gediMetric
+mv gediMetric /usr/bin/
+make THIS=mapLidar
+mv mapLidar /usr/bin/
+make THIS=collocateWaves
+mv collocateWaves /usr/bin/
+make THIS=lasPoints
+mv lasPoints /usr/bin/
+make THIS=addNoiseHDF
+mv addNoiseHDF /usr/bin/
+make THIS=lgw2hdf
+mv lgw2hdf /usr/bin/
+make THIS=fitTXpulse
+mv fitTXpulse /usr/bin/
+popd
+

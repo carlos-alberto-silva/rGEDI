@@ -16,3 +16,5 @@
 ^CRAN-SUBMISSION$
 ^cran-comments\.md$
 ^\.lintr$
+^configure.ac$
+^Dockerfile$

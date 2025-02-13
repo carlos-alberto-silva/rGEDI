@@ -21,3 +21,9 @@ inst/proj
 src/Makevars
 config.status
 test.R
+.gitmodules
+configure~
+autom4te.cache
+aclocal.m4
+inst/libs
+src/Makefile

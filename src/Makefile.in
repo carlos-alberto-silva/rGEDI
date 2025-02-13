@@ -1,0 +1,39 @@
+LIBCLIDAR_ROOT=libclidar
+LIBCLIDAR_O=$(LIBCLIDAR_ROOT)/libLasProcess.o $(LIBCLIDAR_ROOT)/libLasRead.o $(LIBCLIDAR_ROOT)/tiffWrite.o $(LIBCLIDAR_ROOT)/gaussFit.o $(LIBCLIDAR_ROOT)/libLidVoxel.o $(LIBCLIDAR_ROOT)/libTLSread.o $(LIBCLIDAR_ROOT)/libLidarHDF.o $(LIBCLIDAR_ROOT)/libOctree.o
+
+CMPFIT_ROOT=cmpfit-1.5
+CMPFIT_O=$(CMPFIT_ROOT)/mpfit.o 
+
+TOOLS_ROOT=tools
+
+GEDISIMULATOR_ROOT=gedisimulator
+GEDISIMULATOR_O=$(GEDISIMULATOR_ROOT)/gediNoise.o \
+	$(GEDISIMULATOR_ROOT)/photonCount.o \
+	$(GEDISIMULATOR_ROOT)/gediIO.o
+
+ALL_O=$(LIBCLIDAR_O) $(CMPFIT_O) $(TOOLS_O) $(GEDISIMULATOR_O)
+
+PKG_CFLAGS=-I$(CMPFIT_ROOT) -I$(LIBCLIDAR_ROOT) -I$(TOOLS_ROOT) -I$(GEDISIMULATOR_ROOT) @PKG_CFLAGS@ -I/usr/include/geotiff
+PKG_LIBS=@PKG_LIBS@
+
+
+BIN_FILES=gediRat gediMetric
+SHLIB=
+
+.PHONY: all clean cp copybins
+
+
+all: $(SHLIB) copybins
+
+gediMetric: $(ALL_O) gedisimulator/gediMetric.o
+	$(CC) $(CFLAGS) $(PKG_CFLAGS) -o $@ $^ $(PKG_LIBS)
+
+gediRat: $(ALL_O) gedisimulator/gediRat.o
+	$(CC) $(CFLAGS) $(PKG_CFLAGS) -o $@ $^ $(PKG_LIBS)
+
+copybins: gediRat gediMetric
+	mkdir -p ../inst/libs$(R_ARCH)
+	cp $^ ../inst/libs/$(R_ARCH)
+
+clean: 
+	rm -f *.o *.so $(BIN_FILES) 
