@@ -17,12 +17,11 @@ The rGEDI package provides functions for i) downloading, ii) visualizing, iii) c
 
 ## Installation
 ```{r}
-#The CRAN version:
+# The CRAN version:
 install.packages("rGEDI")
 
-#The development version:
-library(devtools)
-devtools::install_git("https://github.com/carlos-alberto-silva/rGEDI", dependencies = TRUE)
+# The development version:
+install.packages('rGEDI', repos = c('https://carlos-alberto-silva.r-universe.dev', 'https://cloud.r-project.org'))
 
 # loading rGEDI package
 library(rGEDI)
