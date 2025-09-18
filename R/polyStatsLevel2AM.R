@@ -63,7 +63,7 @@
 #' # Computing a serie statistics for GEDI metrics stratified by polygon
 #' RH100metrics <- polyStatsLevel2AM(level2AM_clip,
 #'   func = mySetOfMetrics(rh100),
-#'   id = level2AM_clip$id
+#'   id = "id"
 #' )
 #'
 #' head(RH100metrics)
@@ -97,3 +97,4 @@ polyStatsLevel2AM <- function(level2AM, func, id = NULL) {
 
   return(metrics)
 }
+
