@@ -31,12 +31,14 @@ Imports:
   stats,
   terra
 Suggests:
+    httr2,
     lattice,
     leaflet,
     leafsync,
     lidR,
     plot3D,
     rasterVis,
+    stringr,
     testthat (>= 3.0.0),
     viridis
 RoxygenNote: 7.3.3
