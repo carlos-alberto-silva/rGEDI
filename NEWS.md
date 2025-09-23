@@ -1,11 +1,5 @@
 <!-- NEWS.md is maintained by https://cynkra.github.io/fledge, do not edit -->
 
-# rGEDI 0.5.3 (2025-09-22)
-
-* Update documentation with tests
-* Update documentation with tests
-
-
 # rGEDI 0.5.2 (2025-09-22)
 
 * Update documentation with tests
