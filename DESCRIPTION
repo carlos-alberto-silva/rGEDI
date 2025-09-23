@@ -15,7 +15,6 @@ Authors@R: c(
 Description: Set of tools for downloading, reading, visualizing and processing GEDI Level1B, Level2A and Level2B data.
 License: GPL-3
 Encoding: UTF-8
-LazyData: true
 Depends: methods
 Imports: 
   bit64,
@@ -32,14 +31,16 @@ Imports:
   stats,
   terra
 Suggests:
-  lattice,
-  leaflet,
-  leafsync,
-  lidR,
-  plot3D,
-  rasterVis,
-  viridis
+    lattice,
+    leaflet,
+    leafsync,
+    lidR,
+    plot3D,
+    rasterVis,
+    testthat (>= 3.0.0),
+    viridis
 RoxygenNote: 7.3.3
 Roxygen: list(markdown = TRUE)
 BugReports: https://github.com/carlos-alberto-silva/rGEDI/issues
 URL: https://github.com/carlos-alberto-silva/rGEDI
+Config/testthat/edition: 3

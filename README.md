@@ -5,7 +5,6 @@
 ![Github](https://img.shields.io/badge/Github-0.1.12-green.svg)
 ![licence](https://img.shields.io/badge/Licence-GPL--3-blue.svg) 
 ![Downloads](https://cranlogs.r-pkg.org/badges/grand-total/rGEDI)
-[![Build Status](https://travis-ci.com/carlos-alberto-silva/rGEDI.svg?token=Jqizwyc6gBxNafNccTdU&branch=master)](https://travis-ci.com/carlos-alberto-silva/rGEDI)
 
 **rGEDI: An R Package for NASA's Global Ecosystem Dynamics Investigation (GEDI) Data Visualizing and Processing.**
 
@@ -603,11 +602,11 @@ Hancock, S., Armston, J., Hofton, M., Sun, X., Tang, H., Duncanson, L.I., Kellne
 Silva, C. A.; Saatchi, S.; Alonso, M. G. ; Labriere, N. ; Klauberg, C. ; Ferraz, A. ; Meyer, V. ;        Jeffery, K. J. ; Abernethy, K. ; White, L. ; Zhao, K. ; Lewis, S. L. ; Hudak, A. T. (2018)         Comparison of Small- and Large-Footprint Lidar Characterization of Tropical Forest                 Aboveground Structure and Biomass: A Case Study from Central Gabon. IEEE Journal of Selected       Topics in Applied Earth Observations and Remote Sensing, p. 1-15.
       https://ieeexplore.ieee.org/document/8331845
 
-GEDI webpage. Accessed on February 15 2020 https://gedi.umd.edu/   
-GEDI01_Bv001. Accessed on February 15 2020 https://lpdaac.usgs.gov/products/gedi01_bv001/   
-GEDI02_Av001. Accessed on February 15 2020 https://lpdaac.usgs.gov/products/gedi02_av001/  
-GEDI02_Bv001. Accessed on February 15 2020 https://lpdaac.usgs.gov/products/gedi02_bv001/  
-GEDI Finder. Accessed on February 15 2020 https://lpdaacsvc.cr.usgs.gov/services/gedifinder
+GEDI webpage. Accessed on September 23 2025 https://gedi.umd.edu/   
+GEDI L1B Geolocated Waveform Data Global Footprint Level V002. Accessed on September 23 2025 https://doi.org/10.5067/GEDI/GEDI01_B.002
+GEDI L2A Elevation and Height Metrics Data Global Footprint Level V002. Accessed on September 23 2025 https://doi.org/10.5067/GEDI/GEDI02_A.002
+GEDI L2B Canopy Cover and Vertical Profile Metrics Data Global Footprint Level V002. Accessed on September 23 2025 https://doi.org/10.5067/GEDI/GEDI02_B.002
+NASA EarthData search API. Accessed on September 23 2025 https://cmr.earthdata.nasa.gov/search/site/docs/search/api.html
 
 # Acknowledgements
 The University of Maryland and NASA's Goddard Space Flight Center for developing GEDI mission.
@@ -617,8 +616,14 @@ We gratefully acknowledge funding from NASA’s Carbon Monitoring Systems, grant
 The Brazilian National Council for Scientific and Technological Development (CNPq) for funding the project entitled "Mapping fuel load and simulation of fire behaviour and spread in the Cerrado biome using modeling and remote sensing technologies" and leaded by Prof. Dr. Carine Klauberg (carine_klauberg@hotmail.com) and Dr. Carlos Alberto Silva
 (carlos_engflorestal@outlook.com).
 
-# Reporting Issues 
-Please report any issue regarding the rGEDI package herein https://groups.yahoo.com/neo/groups/rGEDI
+# Getting Help
+The best place to get help from community is StackExchange:
+<https://gis.stackexchange.com/questions/tagged/gedi>. 
+Before posting there, make sure your question hasn't already been answered.
+Also don't forget to add relevant tags such as `gedi` and `rgedi`.
+
+# Reporting BugsIssues 
+Please report any issue regarding the rGEDI package herein https://github.com/carlos-alberto-silva/rGEDI/issues
 
 # Citing rGEDI
 Silva,C.A; Hamamura,C.; Valbuena, R.; Hancock,S.; Cardil,A.; Broadbent, E. N.; Almeida,D.R.A.; Silva Junior, C.H.L; Klauberg, C. rGEDI: NASA's Global Ecosystem Dynamics Investigation (GEDI) Data Visualization and Processing.

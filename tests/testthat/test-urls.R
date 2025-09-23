@@ -4,7 +4,7 @@ check_url <- function(url) {
     httr2::req_method("HEAD") %>%
     httr2::req_timeout(10) %>%
     httr2::req_options(followlocation = 0) %>%
-    httr2::req_user_agent("R (testthat url-check)")
+        httr2::req_user_agent("R (testthat url-check)")
 
   resp <- try(httr2::req_perform(req), silent = TRUE)
 
@@ -31,8 +31,8 @@ test_that("URLs in .R files do not redirect (i.e., are not moved)", {
   pkg_root <- testthat::test_path("..")
 
   # Collect all R/ source files
-  r_files <- list.files(file.path(pkg_root, "R"),
-                        pattern = "\\.R$",
+  r_files <- list.files(file.path(pkg_root),
+                        pattern = "\\.R|README\\.md|DESCRIPTION$",
                         full.names = TRUE,
                         recursive = TRUE)
 
@@ -56,7 +56,12 @@ test_that("URLs in .R files do not redirect (i.e., are not moved)", {
     skip("No URLs found in .R files.")
   }
 
+  skip_domains <- c("stackexchange.com")
   for (url in urls_found) {
+    if (any(grepl(paste(skip_domains, collapse="|"), url, ignore.case=TRUE))) {
+      succeed(sprintf("Skipped URL check for %s (domain blocks bots).", url))
+      next
+    }
     # Each URL gets its own expectation, not its own test_that()
     resp <- check_url(url)
 
@@ -68,6 +73,14 @@ test_that("URLs in .R files do not redirect (i.e., are not moved)", {
     status_code <- httr2::resp_status(resp)
 
     if (status_code >= 300 && status_code < 400) {
+      if (startsWith(url,'https://doi.org')) {
+        succeed(sprintf("URL '%s' is a DOI URL (status %d).", url, status_code))
+        next
+      }
+      if (startsWith(tolower(url),'https://cran.r-project.org/package=')) {
+        succeed(sprintf("URL '%s' is a CRAN package URL (status %d).", url, status_code))
+        next
+      }
       redirect_url <- httr2::resp_header(resp, "location")
       fail(sprintf("URL '%s' redirects to '%s' (status %d).",
                    url, redirect_url %||% "unknown", status_code))
