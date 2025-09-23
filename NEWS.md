@@ -1,5 +1,13 @@
 <!-- NEWS.md is maintained by https://cynkra.github.io/fledge, do not edit -->
 
+# rGEDI 0.5.5 (2025-09-23)
+
+* Removed unused script tools
+* Fixed redirected urls
+* Added testthat for testing urls
+* Fix minor problems with checks:
+
+
 # rGEDI 0.5.4 (2025-09-23)
 
 * Fixed redirected urls
