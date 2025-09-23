@@ -1,5 +1,18 @@
 <!-- NEWS.md is maintained by https://cynkra.github.io/fledge, do not edit -->
 
+# rGEDI 0.5.1 (2025-09-22)
+
+* Update polyStatsLevel2AM.R: fix example
+* Update gedifinder.R to new NASA EarthCloud IDs
+* Fix incompatibilities with sp and raster
+* Use sf instead of raster::shapefile
+* Replaced every usage of raster with stars
+* ClipLevel1B use only sf and terra
+* Split gedisimulator apart
+* Update gedifinder to find level3 and level4 products
+* Use user defined functions from parent env instead global
+
+
 # rGEDI 0.5.0 (2023-10-31)
 
 * Replaced every usage of raster with stars
