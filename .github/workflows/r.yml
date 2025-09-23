@@ -60,6 +60,8 @@ jobs:
           restore-keys: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-
       
       - uses: r-lib/actions/setup-r-dependencies@v2
+        env:
+          RENV_CONFIG_REPOS_OVERRIDE: ${{ env.RSPM }}
         with:
           extra-packages: any::rcmdcheck
           needs: check
