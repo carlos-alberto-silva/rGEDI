@@ -17,5 +17,5 @@ GEDI level1B products: geolocated Waveforms}
 
 \seealso{
 \code{\link[hdf5r:H5File-class]{H5File}} in the \code{hdf5r} package and
-\url{https://lpdaac.usgs.gov/products/gedi01_bv002/}
+\url{https://www.earthdata.nasa.gov/data/catalog/lpcloud-gedi01-b-002}
 }

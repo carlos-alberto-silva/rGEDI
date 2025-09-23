@@ -55,5 +55,5 @@ head(level2AM)
 close(level2a)
 }
 \seealso{
-\url{https://lpdaac.usgs.gov/products/gedi02_av002/}
+\url{https://www.earthdata.nasa.gov/data/catalog/lpcloud-gedi02-a-002}
 }

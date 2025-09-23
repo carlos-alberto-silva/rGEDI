@@ -13,7 +13,7 @@
 #' @return Returns an S4 object of class [data.table::data.table]
 #' Containing Statistics of GEDI level2A defined metrics
 #'
-#' @seealso \url{https://lpdaac.usgs.gov/products/gedi02_av002/}
+#' @seealso \url{https://www.earthdata.nasa.gov/data/catalog/lpcloud-gedi02-a-002}
 #'
 #' @examples
 #' # Specifying the path to GEDI level2A data (zip file)
@@ -73,7 +73,7 @@
 #' @export
 polyStatsLevel2AM <- function(level2AM, func, id = NULL) {
   # this code has been adapted from the grid_metrics function in lidR package (Roussel et al. 2019)
-  # https://github.com/Jean-Romain/lidR/blob/master/R/grid_metrics.r
+  # https://github.com/r-lidar/lidR/blob/master/R/metrics_point.R
 
   requireNamespace("data.table")
 

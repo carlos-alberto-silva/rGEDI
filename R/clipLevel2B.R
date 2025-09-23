@@ -13,7 +13,7 @@
 #'
 #' @return Returns a list of S4 object of class "gedi.level2b" containing clipped GEDI Level2B data.
 #'
-#' @seealso \url{https://lpdaac.usgs.gov/products/gedi01_bv002/}
+#' @seealso \url{https://www.earthdata.nasa.gov/data/catalog/lpcloud-gedi01-b-002}
 #'
 #' @examples
 #' \donttest{
@@ -84,7 +84,7 @@ clipLevel2B <- function(level2b, xmin, xmax, ymin, ymax, output = "") {
 #'
 #' @return Returns a list of S4 objects of class "gedi.level2b" containing clipped GEDI Level2B data.
 #'
-#' @seealso \url{https://lpdaac.usgs.gov/products/gedi01_bv002/}
+#' @seealso \url{https://www.earthdata.nasa.gov/data/catalog/lpcloud-gedi01-b-002}
 #'
 #' @examples
 #' \donttest{

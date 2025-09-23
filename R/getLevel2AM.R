@@ -10,7 +10,7 @@
 #'@return Returns an S4 object of class [data.table::data.table]
 #'containing the elevation and relative heights metrics.
 #'
-#'@seealso \url{https://lpdaac.usgs.gov/products/gedi02_av002/}
+#'@seealso \url{https://www.earthdata.nasa.gov/data/catalog/lpcloud-gedi02-a-002}
 #'
 #'@details Characteristics. Flag indicating likely invalid waveform (1=valid, 0=invalid).
 #'\itemize{

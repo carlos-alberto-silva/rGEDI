@@ -61,5 +61,5 @@ lapply(level2b_clip, close)
 }
 }
 \seealso{
-\url{https://lpdaac.usgs.gov/products/gedi01_bv002/}
+\url{https://www.earthdata.nasa.gov/data/catalog/lpcloud-gedi01-b-002}
 }

@@ -9,7 +9,7 @@
 #'@return Returns an S4 object of class [`gedi.level1b-class`] containing GEDI level1B data.
 #'
 #'@seealso [`hdf5r::H5File-class`] in the \emph{hdf5r} package and
-#'\url{https://lpdaac.usgs.gov/products/gedi01_bv002/}
+#'\url{https://www.earthdata.nasa.gov/data/catalog/lpcloud-gedi01-b-002}
 #'
 #'@examples
 #'# Specifying the path to GEDI level1B data (zip file)

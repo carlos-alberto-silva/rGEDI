@@ -115,7 +115,7 @@ gedifinder <- function(product,
 
     hrefs <- sapply(granules, function(x) x$links[[1]]$href)
     
-    ## Level3 has a bug, the links are different from CMR is different from https://daac.ornl.gov/cgi-bin/dsviewer.pl?ds_id=1952
+    ## Level3 has a bug, the links are different from CMR https://www.earthdata.nasa.gov/data/catalog/ornl-cloud-gedi-l3-landsurface-metrics-v2-1952-2
     if (product == 'GEDI03') {
       hrefs <- gsub(
         'data.ornldaac.earthdata.nasa.gov/protected',

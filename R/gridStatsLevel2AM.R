@@ -13,7 +13,7 @@
 #'
 #' @return Return a stars raster layer(s) of selected GEDI Elevation and Height Metric(s)
 #'
-#' @seealso \url{https://lpdaac.usgs.gov/products/gedi02_av002/}
+#' @seealso \url{https://www.earthdata.nasa.gov/data/catalog/lpcloud-gedi02-a-002}
 #'
 #' @examples
 #' # specify the path to GEDI level2A data (zip file)
@@ -67,7 +67,7 @@ gridStatsLevel2AM <- function(level2AM, func, res = 0.5) {
   requireNamespace("data.table")
   cells <- NA
   # this code has been adapted from the grid_metrics function in lidR package (Roussel et al. 2019)
-  # https://github.com/Jean-Romain/lidR/blob/master/R/grid_metrics.r
+  # https://github.com/r-lidar/lidR/blob/master/R/metrics_point.R
 
   # Add data.table operator
   `:=` <- data.table::`:=`

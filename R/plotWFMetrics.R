@@ -14,7 +14,7 @@
 #'
 #' @return Nothing
 #'
-#' @seealso \url{https://lpdaac.usgs.gov/products/gedi02_bv002/}
+#' @seealso \url{https://www.earthdata.nasa.gov/data/catalog/lpcloud-gedi02-b-002}
 #'
 #' @examples
 #' # specify the path to GEDI level1B and Level2A data (zip file)

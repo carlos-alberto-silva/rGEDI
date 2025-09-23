@@ -11,7 +11,7 @@
 #'@return Returns an S4 object of class [`data.table::data.table`] containing the GEDI Full Waveform Geolocations
 #'
 #'
-#'@seealso \url{https://lpdaac.usgs.gov/products/gedi01_bv002/}
+#'@seealso \url{https://www.earthdata.nasa.gov/data/catalog/lpcloud-gedi01-b-002}
 #'
 #'@details Additional fields to be extracted from GEDI level 1B:
 #'\itemize{

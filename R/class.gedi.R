@@ -9,7 +9,7 @@ requireNamespace("data.table")
 #' GEDI level1B products: geolocated Waveforms
 #'
 #' @seealso [`H5File`][hdf5r::H5File-class] in the `hdf5r` package and
-#' \url{https://lpdaac.usgs.gov/products/gedi01_bv002/}
+#' \url{https://www.earthdata.nasa.gov/data/catalog/lpcloud-gedi01-b-002}
 #'
 #' @import methods
 #' @export
@@ -24,7 +24,7 @@ gedi.level1b <- setClass(
 #' GEDI level2A products: ground elevation, canopy top height, and relative heights (RH).
 #'
 #' @seealso [`H5File`][hdf5r::H5File-class] in the `hdf5r` package and
-#' \url{https://lpdaac.usgs.gov/products/gedi02_av002/}
+#' \url{https://www.earthdata.nasa.gov/data/catalog/lpcloud-gedi02-a-002}
 #'
 #' @import methods
 #' @export
@@ -40,7 +40,7 @@ gedi.level2a <- setClass(
 #' and Foliage Height Diversity (FHD).
 #'
 #' @seealso [`H5File`][hdf5r::H5File-class] in the `hdf5r` package and
-#' \url{https://lpdaac.usgs.gov/products/gedi02_bv002/}
+#' \url{https://www.earthdata.nasa.gov/data/catalog/lpcloud-gedi02-b-002}
 #'
 #' @import methods
 #' @export
