@@ -1,0 +1,80 @@
+check_url <- function(url) {
+  # Try HEAD without following redirects
+  req <- httr2::request(url) %>%
+    httr2::req_method("HEAD") %>%
+    httr2::req_timeout(10) %>%
+    httr2::req_options(followlocation = 0) %>%
+    httr2::req_user_agent("R (testthat url-check)")
+
+  resp <- try(httr2::req_perform(req), silent = TRUE)
+
+  # If HEAD completely failed, try GET
+  if (inherits(resp, "try-error") ||
+        httr2::resp_status(resp) %in% c(403, 405)) {
+    req <- httr2::request(url) %>%
+      httr2::req_method("GET") %>%
+      httr2::req_timeout(10) %>%
+      httr2::req_options(followlocation = 0) %>%
+      httr2::req_user_agent("R (testthat url-check)")
+
+    resp <- try(httr2::req_perform(req), silent = TRUE)
+  }
+
+  resp
+}
+
+test_that("URLs in .R files do not redirect (i.e., are not moved)", {
+  skip_on_cran()       # CRAN machines don’t like network traffic
+  skip_if_offline()    # testthat helper, skips if no internet
+
+  # Use package root whether installed or source
+  pkg_root <- testthat::test_path("..")
+
+  # Collect all R/ source files
+  r_files <- list.files(file.path(pkg_root, "R"),
+                        pattern = "\\.R$",
+                        full.names = TRUE,
+                        recursive = TRUE)
+
+  if (length(r_files) == 0) {
+    skip("No .R files found to scan for URLs.")
+  }
+
+  # Regex for URLs (basic but avoids trailing punctuation)
+  url_pattern <- "(?<!'|\")https?://[^[:space:]'\"<>)}]+"
+
+  urls_found <- unique(unlist(lapply(r_files, function(file) {
+    content <- readLines(file, warn = FALSE)
+    stringr::str_extract_all(content, url_pattern) |> unlist()
+  })))
+
+  # Clean up trailing punctuation if any slipped through
+  urls_found <- gsub("[)}.,]+$", "", urls_found)
+
+
+  if (length(urls_found) == 0) {
+    skip("No URLs found in .R files.")
+  }
+
+  for (url in urls_found) {
+    # Each URL gets its own expectation, not its own test_that()
+    resp <- check_url(url)
+
+    if (inherits(resp, "try-error")) {
+      fail(sprintf("URL '%s' could not be reached.", url))
+      next
+    }
+
+    status_code <- httr2::resp_status(resp)
+
+    if (status_code >= 300 && status_code < 400) {
+      redirect_url <- httr2::resp_header(resp, "location")
+      fail(sprintf("URL '%s' redirects to '%s' (status %d).",
+                   url, redirect_url %||% "unknown", status_code))
+    } else if (status_code >= 400) {
+      fail(sprintf("URL '%s' returned error status %d.", url, status_code))
+    } else {
+      succeed(sprintf("URL '%s' is valid (status %d).", url, status_code))
+    }
+  }
+})
