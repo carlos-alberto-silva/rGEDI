@@ -10,6 +10,5 @@
 #'@seealso 
 #'For comprehensive examples refer to \url{https://github.com/carlos-alberto-silva/rGEDI/blob/master/README.md}
 #' 
-#'@docType package
 #'@name rGEDI-package
 NULL

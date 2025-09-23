@@ -72,7 +72,7 @@ head(pai_max_poly)
 # Computing the serie of statistics of canopy cover stratified by polygon
 cover_metrics <- polyStatsLevel2BVPM(level2BVPM_clip,
   func = mySetOfMetrics(cover),
-  id = level2BVPM_clip$id
+  id = "id"
 )
 head(cover_metrics)
 close(level2b)

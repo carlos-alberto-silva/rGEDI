@@ -1,5 +1,21 @@
 <!-- NEWS.md is maintained by https://cynkra.github.io/fledge, do not edit -->
 
+# rGEDI 0.5.3 (2025-09-22)
+
+* Update documentation with tests
+* Update documentation with tests
+
+
+# rGEDI 0.5.2 (2025-09-22)
+
+* Update documentation with tests
+
+
+# rGEDI 0.5.1.9000 (2025-09-22)
+
+- Same as previous version.
+
+
 # rGEDI 0.5.1 (2025-09-22)
 
 * Update polyStatsLevel2AM.R: fix example
