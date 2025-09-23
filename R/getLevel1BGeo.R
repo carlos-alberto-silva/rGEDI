@@ -144,11 +144,7 @@ getLevel1BGeo<-function(level1b,select=c("elevation_bin0", "elevation_lastbin"))
     i.s<-i.s+1
     utils::setTxtProgressBar(pb, i.s)
     name_i<-basename(i)
-    if ( name_i =="shot_number"){
-      assign(name_i, bit64::c.integer64(get(name_i),level1b[[i]][]))
-    } else {
-      assign(name_i, c(get(name_i), level1b[[i]][]))
-    }
+    assign(name_i, c(get(name_i), level1b[[i]][]))
   }
 
   level1b.dt<-data.table::data.table(as.data.frame(get("shot_number")[-1]))
