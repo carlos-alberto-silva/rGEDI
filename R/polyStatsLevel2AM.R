@@ -55,10 +55,10 @@
 #' }
 #'
 #' # Computing the maximum of RH100
-#' RH100max <- polyStatsLevel2AM(level2AM_clip, func = max(rh100), id = NULL)
+#' RH100max <- polyStatsLevel2AM(level2AM_clip, func = max(rh100))
 #'
 #' # Computing the maximum of RH100 stratified by polygon
-#' RH100max_poly <- polyStatsLevel2AM(level2AM_clip, func = max(rh100), id = NULL)
+#' RH100max_poly <- polyStatsLevel2AM(level2AM_clip, func = max(rh100), id = "id")
 #'
 #' # Computing a serie statistics for GEDI metrics stratified by polygon
 #' RH100metrics <- polyStatsLevel2AM(level2AM_clip,

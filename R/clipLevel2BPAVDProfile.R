@@ -114,6 +114,7 @@ clipLevel2BPAVDProfile <- function(level2BPAVDProfile, xmin, xmax, ymin, ymax) {
 #' close(level2b)
 #' @export
 clipLevel2BPAVDProfileGeometry <- function(level2BPAVDProfile, polygon, split_by = NULL) {
+  id <- NA
   exshp <- sf::st_bbox(polygon)
   level2bdt <- clipLevel2BPAIProfile(
     level2BPAVDProfile,

@@ -144,6 +144,7 @@ clipLevel2BVPM <- function(level2BVPM, xmin, xmax, ymin, ymax) {
 #' close(level2b)
 #' @export
 clipLevel2BVPMGeometry <- function(level2BVPM, polygon, split_by = NULL) {
+  id <- NA
   exshp <- sf::st_bbox(polygon)
   level2bdt <- clipLevel2BVPM(
     level2BVPM,

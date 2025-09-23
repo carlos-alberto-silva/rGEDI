@@ -1,6 +1,3 @@
-#' @import sp
-NULL
-
 # Function to create attributes within a group
 createAttributesWithinGroup <- function(h5, newFile, group = "/") {
   for (attr in hdf5r::list.attributes(h5[[group]])) {

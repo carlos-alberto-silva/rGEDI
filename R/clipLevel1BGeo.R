@@ -143,6 +143,7 @@ clipLevel1BGeo <- function(level1BGeo, xmin, xmax, ymin, ymax) {
 #' close(level1b)
 #' @export
 clipLevel1BGeoGeometry <- function(level1BGeo, polygon, split_by = "id") {
+  id <- NA
   exshp <- sf::st_bbox(polygon)
   level1BGeo <- clipLevel1BGeo(
     level1BGeo,

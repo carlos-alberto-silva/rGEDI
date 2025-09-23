@@ -128,6 +128,7 @@ clipLevel2AM <- function(level2AM, xmin, xmax, ymin, ymax) {
 #' close(level2a)
 #' @export
 clipLevel2AMGeometry <- function(level2AM, polygon, split_by = "id") {
+  id <- NA
   exshp <- sf::st_bbox(polygon)
   level2adt <- clipLevel2AM(
     level2AM,
