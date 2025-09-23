@@ -1,5 +1,12 @@
 <!-- NEWS.md is maintained by https://cynkra.github.io/fledge, do not edit -->
 
+# rGEDI 0.5.7 (2025-09-23)
+
+* Fixes #68: direct call to S3 method from bit64
+* Add testthat automatic testing
+* Update url links from README.md and add tests
+
+
 # rGEDI 0.5.6 (2025-09-23)
 
 * Update url links from README.md and add tests
