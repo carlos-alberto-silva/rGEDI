@@ -149,8 +149,8 @@ getNetRC = function(dl_dir) {
 
     # User will be prompted for NASA Earthdata Login Username and Password below
     writeLines(c("machine urs.earthdata.nasa.gov",
-                 sprintf("login %s", getPass::getPass(msg = "Enter NASA Earthdata Login Username \n (or create an account at urs.earthdata.nasa.gov) :")),
-                 sprintf("password %s", getPass::getPass(msg = "Enter NASA Earthdata Login Password:"))), netrc_conn)
+                 sprintf("login %s", getPass::getPass("Enter NASA Earthdata Login Username \n (or create an account at urs.earthdata.nasa.gov) :")),
+                 sprintf("password %s", getPass::getPass("Enter NASA Earthdata Login Password:"))), netrc_conn)
     close(netrc_conn)
     message("A .netrc file with your Earthdata Login credentials was stored in the output directory ")
   }
