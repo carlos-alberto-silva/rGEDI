@@ -62,7 +62,7 @@ gediDownload<-function(filepath, outdir = NULL, overwrite = FALSE, buffer_size =
   for (i in 1:n_files) {
     url = files[i]
     message("------------------------------")
-    message(sprintf("Downloading file %d/%d: %s", i, n_files, basename(url)))
+    message(sprintf("\rDownloading file %d/%d: %s", i, n_files, basename(url)), appendLF = FALSE)
     message("------------------------------")
 
     if (gediDownloadFile(
