@@ -4,7 +4,8 @@
 #'
 #'@usage readLevel2B(level2Bpath)
 #'
-#'@param level2Bpath File path pointing to GEDI level2B data. Data in HDF5 Hierarchical Data Format (.h5).
+#'@param level2Bpath Local file path or Earthdata Cloud URL pointing to a
+#'GEDI Level 2B HDF5 granule.
 #'
 #'@return Returns an S4 object of class [`gedi.level2b-class`] containing GEDI level2B data.
 #'
@@ -26,7 +27,11 @@
 #'@import hdf5r
 #'@export
 readLevel2B <-function(level2Bpath) {
-  level2b_h5 <- hdf5r::H5File$new(level2Bpath, mode = 'r')
+  level2b_h5 <- if (inherits(level2Bpath, "GEDICloudH5")) level2Bpath else if (.is_gedi_url(level2Bpath)) {
+    .open_cloud_h5(level2Bpath, product = "GEDI02_B")
+  } else {
+    hdf5r::H5File$new(level2Bpath, mode = 'r')
+  }
   level2b<-new("gedi.level2b", h5 = level2b_h5)
   return(level2b)
 }

@@ -26,7 +26,10 @@ ee_initialize <- function(project = Sys.getenv("EE_PROJECT", unset = ""), authen
 .as_ee_geom <- function(x) {
   ee <- .require_ee()
   if (inherits(x, "python.builtin.object")) return(x)
-  if (is.numeric(x) && length(x) == 4L) return(ee$Geometry$Rectangle(as.list(as.numeric(x))))
+  if (is.numeric(x) && length(x) == 4L) {
+    x <- as.numeric(x)
+    return(ee$Geometry$Rectangle(as.list(x[c(1L, 3L, 2L, 4L)])))
+  }
   obj <- if (inherits(x, "SpatVector")) sf::st_as_sf(x) else sf::st_as_sf(x)
   path <- tempfile(fileext = ".geojson")
   on.exit(unlink(path), add = TRUE)
@@ -49,7 +52,8 @@ vect_as_ee <- function(x) {
 }
 
 #' Convert an extent to an Earth Engine geometry
-#' @param x A `SpatExtent`, raster/vector object, or numeric extent.
+#' @param x A `SpatExtent`, raster/vector object, or numeric extent in
+#'   `c(xmin, xmax, ymin, ymax)` order.
 #' @return An Earth Engine geometry.
 #' @export
 ext_to_ee <- function(x) {
@@ -135,13 +139,57 @@ get_catalog_id <- function(x) {
 #' @param start_date,end_date Optional dates for image collections.
 #' @param aoi Optional spatial filter.
 #' @param quality Apply available quality masks.
-#' @return An Earth Engine image or image collection.
+#' @param max_granules Maximum number of vector granules to merge. Vector GEDI
+#'   products are stored as folders of per-granule feature collections in Earth
+#'   Engine, so use dates and/or an AOI to keep the request focused.
+#' @return An Earth Engine image, image collection, or feature collection.
 #' @export
 gediEE <- function(product = names(.gedi_ee_catalog), start_date = NULL,
-                   end_date = NULL, aoi = NULL, quality = TRUE) {
+                   end_date = NULL, aoi = NULL, quality = TRUE,
+                   max_granules = 200L) {
   product <- match.arg(product)
   ee <- .require_ee(); id <- unname(.gedi_ee_catalog[[product]])
   if (product == "GEDI04_B") return(ee$Image(id))
+
+  is_monthly <- grepl("_MONTHLY$", product)
+  if (!is_monthly) {
+    index <- ee$FeatureCollection(paste0(id, "_INDEX"))
+    if (!is.null(start_date)) {
+      index <- index$filter(ee$Filter$gte("time_end", as.character(start_date)))
+    }
+    if (!is.null(end_date)) {
+      index <- index$filter(ee$Filter$lt("time_start", as.character(end_date)))
+    }
+    geom <- NULL
+    if (!is.null(aoi)) {
+      geom <- .as_ee_geom(aoi)
+      index <- index$filterBounds(geom)
+    }
+    n <- reticulate::py_to_r(index$size()$getInfo())
+    if (!n) return(ee$FeatureCollection(list()))
+    max_granules <- as.integer(max_granules)[1L]
+    if (is.na(max_granules) || max_granules < 1L) {
+      stop("`max_granules` must be a positive integer.", call. = FALSE)
+    }
+    if (n > max_granules) {
+      stop(sprintf(
+        paste0("The query matches %s GEDI granules, above max_granules=%s. ",
+               "Use a smaller AOI/date range or increase max_granules."),
+        n, max_granules
+      ), call. = FALSE)
+    }
+    ids <- reticulate::py_to_r(index$aggregate_array("table_id")$getInfo())
+    collections <- lapply(ids, ee$FeatureCollection)
+    collection <- Reduce(function(x, y) x$merge(y), collections)
+    if (!is.null(geom)) collection <- collection$filterBounds(geom)
+    if (isTRUE(quality)) {
+      flag <- if (product == "GEDI04_A") "l4_quality_flag" else "quality_flag"
+      collection <- collection$filter(ee$Filter$eq(flag, 1L))$
+        filter(ee$Filter$eq("degrade_flag", 0L))
+    }
+    return(collection)
+  }
+
   collection <- ee$ImageCollection(id)
   if (!is.null(start_date) && !is.null(end_date)) collection <- collection$filterDate(start_date, end_date)
   if (!is.null(aoi)) collection <- collection$filterBounds(.as_ee_geom(aoi))
@@ -168,7 +216,10 @@ gediEE <- function(product = names(.gedi_ee_catalog), start_date = NULL,
 #' @export
 extractEE <- function(stack, geom, scale = 30, chunk_size = 1000L) {
   ee <- .require_ee()
-  if (inherits(geom, c("data.frame", "data.table"))) geom <- to_vect(geom)
+  if (inherits(geom, c("data.frame", "data.table")) &&
+      !inherits(geom, c("sf", "sfc", "SpatVector"))) {
+    geom <- to_vect(geom)
+  }
   fc <- vect_as_ee(geom)
   image <- if (is.list(stack)) Reduce(function(a, b) a$addBands(b), stack) else stack
   n <- reticulate::py_to_r(fc$size()$getInfo())

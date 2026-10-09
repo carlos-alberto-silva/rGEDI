@@ -74,6 +74,7 @@ var.map[["surface_flag"]]            = "surface_flag"
 #'@param level2b A GEDI Level2B object (output of [readLevel2B()]
 #'function). An S4 object of class "gedi.level2b".
 #'@param cols A character vector containing the list of columns to be extracted. See the default columns in the description.
+#'@param beams Optional beam names. `NULL` reads every beam.
 #'
 #'@return Returns an S4 object of class [data.table::data.table]
 #'containing the Vegetation Profile Biophysical Variables.
@@ -142,10 +143,12 @@ getLevel2BVPM<-function(level2b, cols=c(
   "omega",
   "pgap_theta",
   "cover"
-)){
+), beams = NULL){
   level2b<-level2b@h5
   groups_id<-grep("BEAM\\d{4}$",gsub("/","",
-                                     hdf5r::list.groups(level2b, recursive = F)), value = T)
+                                     .gedi_list_groups(level2b, recursive = FALSE)), value = T)
+  if (!is.null(beams)) groups_id <- intersect(groups_id, beams)
+  if (!length(groups_id)) return(data.table::data.table())
   m.dt<-data.table::data.table()
   pb <- utils::txtProgressBar(min = 0, max = length(groups_id), style = 3)
   i.s=0

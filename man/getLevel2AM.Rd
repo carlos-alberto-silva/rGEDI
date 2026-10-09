@@ -4,11 +4,16 @@
 \alias{getLevel2AM}
 \title{Get GEDI Elevation and Height Metrics (GEDI Level2A)}
 \usage{
-getLevel2AM(level2a)
+getLevel2AM(level2a, beams = NULL, include_rh = TRUE)
 }
 \arguments{
 \item{level2a}{A GEDI Level2A object (output of \code{\link[=readLevel2A]{readLevel2A()}} function).
 An S4 object of class "gedi.level2a".}
+
+\item{beams}{Optional beam names. \code{NULL} reads every beam.}
+
+\item{include_rh}{Logical. Include the 101 relative-height columns. Set to
+\code{FALSE} for a faster metadata-only cloud read.}
 }
 \value{
 Returns an S4 object of class \link[data.table:data.table]{data.table::data.table}

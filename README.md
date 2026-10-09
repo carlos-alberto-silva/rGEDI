@@ -12,114 +12,376 @@ Authors: Carlos Alberto Silva, Caio Hamamura, Ruben Valbuena, Steven Hancock, Ad
 
 The rGEDI package provides functions for i) downloading, ii) visualizing, iii) clipping, iv) gridding, iv) simulating and v) exporting GEDI data.
 
-# Getting Started
+# Getting started
+
+The workflow below follows the same order used by the original rGEDI README:
+find the GEDI observations, download or stream them, open the product, extract
+science variables, clip and summarize the footprints, and finally sample
+Earth Engine predictors to build a wall-to-wall map. The displayed outputs and
+figures were produced from the V003 granule returned by the search shown here.
 
 ## Installation
-```{r}
-# The CRAN version:
+
+```r
+# Current CRAN release
 install.packages("rGEDI")
 
-# The development version:
-install.packages('rGEDI', repos = c('https://carlos-alberto-silva.r-universe.dev', 'https://cloud.r-project.org'))
+# Development release
+install.packages(
+  "rGEDI",
+  repos = c(
+    "https://carlos-alberto-silva.r-universe.dev",
+    "https://cloud.r-project.org"
+  )
+)
 
-# loading rGEDI package
 library(rGEDI)
-
-```    
-
-## Find GEDI data within your study area (GEDI finder tool)
-```{r}
-# Study area boundary box coordinates
-ul_lat<- -44.0654
-lr_lat<- -44.17246
-ul_lon<- -13.76913
-lr_lon<- -13.67646
-
-# Specifying the date range
-daterange=c("2019-07-01","2020-05-22")
-
-# Get path to GEDI data
-gLevel1B<-gedifinder(product="GEDI01_B",ul_lat, ul_lon, lr_lat, lr_lon,version="003",daterange=daterange)
-gLevel2A<-gedifinder(product="GEDI02_A",ul_lat, ul_lon, lr_lat, lr_lon,version="003",daterange=daterange)
-gLevel2B<-gedifinder(product="GEDI02_B",ul_lat, ul_lon, lr_lat, lr_lon,version="003",daterange=daterange)
-gLevel3 <-gedifinder(product="GEDI03",  ul_lat, ul_lon, lr_lat, lr_lon)
-gLevel4A<-gedifinder(product="GEDI04_A",ul_lat, ul_lon, lr_lat, lr_lon)
-gLevel4B<-gedifinder(product="GEDI04_B",ul_lat, ul_lon, lr_lat, lr_lon)
 ```
 
-## GEDI Level 3, Level 4A, and Level 4B
-```{r}
-# Level 3 and Level 4B are gridded GeoTIFF products
-l3  <- readLevel3("GEDI03_counts_...tif")
-l4b <- readLevel4B("GEDI04_B_...tif")
-l4b_clip <- clipLevel4B(l4b, c(xmin, xmax, ymin, ymax))
-l4b_stats <- polyStatsLevel4B(l4b, study_area)
+Cloud HDF5 access uses Python packages `earthaccess` and `h5py`. Earth Engine
+uses `earthengine-api`. rGEDI can configure these optional modules:
 
-# Level 4A contains footprint biomass estimates in HDF5
-l4a <- readLevel4A("GEDI04_A_...h5")
-biomass <- getLevel4A(l4a, quality = TRUE)
-biomass_raster <- rasterizeLevel4A(biomass, metric = "agbd", res = 0.01)
-close(l4a)
+```r
+rGEDI_configure(install = TRUE)
 ```
 
-## Cloud access, Earth Engine, sampling, and modeling
-```{r}
-# Discover direct S3 links. Direct S3 processing runs in AWS us-west-2.
-s3_urls <- gedifinder("GEDI04_B", ul_lat, ul_lon, lr_lat, lr_lon,
-                      access = "s3")
-# earthdata_login()                         # authenticate once
-# earthdata_s3_credentials()                # temporary GDAL/terra credentials
-# cloud_raster <- openGEDI(s3_urls[1])
+## Study area
 
-# Sample footprint metrics and fit a biomass model
-sampled <- sampleGEDI(biomass, spacedSampling(size = 500, radius = 1000))
-model <- fit_model(sampled[c("sensitivity", "elev_lowestmode")], sampled$agbd,
-                   method = "randomForest", test = "kfold")
+The example is a small area in Bahia, Brazil, crossed by GEDI orbit 01964 on
+18 April 2019. `gedifinder()` retains the original rGEDI upper-left and
+lower-right argument order.
 
-# Optional Earth Engine workflow
-# ee_initialize("your-google-cloud-project")
-# stack <- ee_build_hls_s1c_terrain_stack(study_area, "2024-01-01", "2024-12-31")
-# predictors <- extractEE(stack, sampled)
+```r
+xmin <- -44.18
+xmax <- -44.05
+ymin <- -13.78
+ymax <- -13.67
+
+ul_lat <- ymax
+ul_lon <- xmin
+lr_lat <- ymin
+lr_lon <- xmax
+daterange <- c("2019-04-18", "2019-04-19")
+
+study_area <- sf::st_as_sf(sf::st_as_sfc(sf::st_bbox(
+  c(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax),
+  crs = sf::st_crs(4326)
+)))
 ```
 
-## Orbit animation and waveform simulation
-```{r}
-plot_gedi_orbit_animation(biomass, output_file = "gedi-orbit.html")
+## 1. Find GEDI granules
 
-# Portable simulator: tables and LAS/LAZ (with lidR) are supported
-simulated <- gediWFSimulator(als_points, output = "simulated-GEDI.h5",
-                             coords = c(-82.35, 29.65))
-waveform_metrics <- gediWFMetrics(simulated)
-close(simulated)
+Search NASA CMR for the current point products. `cloud_computing = FALSE`
+returns normal HTTPS download links.
+
+```r
+gLevel1B <- gedifinder(
+  "GEDI01_B", ul_lat, ul_lon, lr_lat, lr_lon,
+  version = "003", daterange = daterange,
+  cloud_computing = FALSE
+)
+gLevel2A <- gedifinder(
+  "GEDI02_A", ul_lat, ul_lon, lr_lat, lr_lon,
+  version = "003", daterange = daterange,
+  cloud_computing = FALSE
+)
+gLevel2B <- gedifinder(
+  "GEDI02_B", ul_lat, ul_lon, lr_lat, lr_lon,
+  version = "003", daterange = daterange,
+  cloud_computing = FALSE
+)
+gLevel4A <- gedifinder(
+  "GEDI04_A", ul_lat, ul_lon, lr_lat, lr_lon,
+  version = "003", daterange = daterange,
+  cloud_computing = FALSE
+)
+
+basename(gLevel1B[1])
+#> [1] "GEDI01_B_2019108080339_O01964_01_T05337_02_006_02_V003.h5"
+basename(gLevel2A[1])
+#> [1] "GEDI02_A_2019108080339_O01964_01_T05337_02_004_02_V003.h5"
+basename(gLevel2B[1])
+#> [1] "GEDI02_B_2019108080339_O01964_01_T05337_02_004_01_V003.h5"
+basename(gLevel4A[1])
+#> [1] "GEDI04_A_2019108080339_O01964_01_T05337_02_004_01_V003.h5"
 ```
-## Downloading GEDI data
-```{r}
-# Set output dir for downloading the files
-outdir=getwd()
 
-# Downloading GEDI data
-gediDownload(filepath=gLevel1B,outdir=outdir)
-gediDownload(filepath=gLevel2A,outdir=outdir)
-gediDownload(filepath=gLevel2B,outdir=outdir)
+The raster products can be searched in the same way. Their spatial and temporal
+coverage is broader, so choose the version and date range needed by the study.
 
-#######
-# Herein, we are using only a GEDI sample dataset for this tutorial.
-#######
-# downloading zip file
-download.file("https://github.com/carlos-alberto-silva/rGEDI/releases/download/datasets/examples.zip",destfile=file.path(outdir, "examples.zip"))
-
-# unzip file 
-unzip(file.path(outdir,"examples.zip"))
-
+```r
+gLevel3  <- gedifinder("GEDI03", ul_lat, ul_lon, lr_lat, lr_lon,
+                       version = "003", daterange = daterange)
+gLevel4B <- gedifinder("GEDI04_B", ul_lat, ul_lon, lr_lat, lr_lon,
+                       version = "002.1")
 ```
 
-## Reading GEDI data
-```{r}
-# Reading GEDI data
-gedilevel1b<-readLevel1B(level1Bpath = file.path(outdir,"GEDI01_B_2019108080338_O01964_T05337_02_003_01_sub.h5"))
-gedilevel2a<-readLevel2A(level2Apath = file.path(outdir,"GEDI02_A_2019108080338_O01964_T05337_02_001_01_sub.h5"))
-gedilevel2b<-readLevel2B(level2Bpath = file.path(outdir,"GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub.h5"))
+## 2. Download the granules
+
+Create a NASA Earthdata account, store its machine entry in a private `.netrc`
+file, and point the `NETRC` environment variable to it. Never commit that file.
+
+```r
+Sys.setenv(NETRC = path.expand("~/.netrc"))
+earthdata_login(netrc = Sys.getenv("NETRC"))
+
+outdir <- file.path(getwd(), "gedi-data")
+dir.create(outdir, showWarnings = FALSE)
+
+gediDownload(gLevel1B, outdir = outdir, netrc = Sys.getenv("NETRC"))
+gediDownload(gLevel2A, outdir = outdir, netrc = Sys.getenv("NETRC"))
+gediDownload(gLevel2B, outdir = outdir, netrc = Sys.getenv("NETRC"))
+gediDownload(gLevel4A, outdir = outdir, netrc = Sys.getenv("NETRC"))
 ```
+
+## 3. Read the downloaded products
+
+The product readers expose the same typed rGEDI objects used throughout the
+original package.
+
+```r
+level1b_file <- list.files(outdir, "^GEDI01_B.*\\.h5$", full.names = TRUE)[1]
+level2a_file <- list.files(outdir, "^GEDI02_A.*\\.h5$", full.names = TRUE)[1]
+level2b_file <- list.files(outdir, "^GEDI02_B.*\\.h5$", full.names = TRUE)[1]
+level4a_file <- list.files(outdir, "^GEDI04_A.*\\.h5$", full.names = TRUE)[1]
+
+gedilevel1b <- readLevel1B(level1b_file)
+gedilevel2a <- readLevel2A(level2a_file)
+gedilevel2b <- readLevel2B(level2b_file)
+gedilevel4a <- readLevel4A(level4a_file)
+
+(gedilevel4a@h5)$ls()$name
+#> [1] "BEAM0000" "BEAM0001" "BEAM0010" "BEAM0011"
+#> [5] "BEAM0101" "BEAM0110" "BEAM1000" "BEAM1011" "METADATA"
+```
+
+## 4. Stream GEDI HDF5 data from Earthdata Cloud
+
+Set `cloud_computing = TRUE` to use Earthaccess discovery and pass the returned
+HTTPS URL directly to the usual product reader. There is no download step.
+
+```r
+gLevel4A_cloud <- gedifinder(
+  "GEDI04_A", ul_lat, ul_lon, lr_lat, lr_lon,
+  version = "003", daterange = daterange,
+  cloud_computing = TRUE, persist = TRUE
+)
+
+gedilevel4a_cloud <- readLevel4A(gLevel4A_cloud[1])
+names(gedilevel4a_cloud@h5)
+#> [1] "BEAM0000" "BEAM0001" "BEAM0010" "BEAM0011"
+#> [5] "BEAM0101" "BEAM0110" "BEAM1000" "BEAM1011" "METADATA"
+```
+
+The same pattern works with `readLevel1B()`, `readLevel2A()`, and
+`readLevel2B()`. Limit the beams and columns when streaming a full orbit:
+
+```r
+level2a_cloud <- readLevel2A(
+  gedifinder("GEDI02_A", ul_lat, ul_lon, lr_lat, lr_lon,
+             version = "003", daterange = daterange,
+             cloud_computing = TRUE)[1]
+)
+
+rh <- getLevel2AM(
+  level2a_cloud,
+  beams = "BEAM0000", include_rh = FALSE
+)
+rh <- rh[, c("beam", "shot_number", "elev_highestreturn",
+             "elev_lowestmode")]
+close(level2a_cloud)
+```
+
+HTTPS streaming works on Windows, Linux, and macOS. Native `s3://` access is a
+separate option intended for compute running in AWS `us-west-2`, where NASA's
+bucket policy permits direct S3 requests.
+
+## 5. Extract, quality-filter, clip, rasterize, and summarize Level 4A
+
+The current V003 extractor recognizes the Release 3 quality fields. This run
+read 43,194 valid BEAM0000 footprints from the cloud and retained 170 inside
+the study area.
+
+```r
+biomass_orbit <- getLevel4A(
+  gedilevel4a_cloud,
+  cols = c(
+    "beam", "shot_number", "delta_time", "lat_lowestmode",
+    "lon_lowestmode", "agbd", "agbd_se", "sensitivity",
+    "l4a_quality_flag_rel3", "degrade_include_flag",
+    "elev_highestreturn_outlier_flag"
+  ),
+  quality = TRUE,
+  beams = "BEAM0000"
+)
+close(gedilevel4a_cloud)
+
+biomass <- clipLevel4A(biomass_orbit, xmin, xmax, ymin, ymax)
+nrow(biomass_orbit)
+#> [1] 43194
+nrow(biomass)
+#> [1] 170
+
+head(biomass[, c("beam", "shot_number", "lat_lowestmode",
+                 "lon_lowestmode", "agbd", "agbd_se")], 3)
+#>        beam       shot_number lat_lowestmode lon_lowestmode     agbd  agbd_se
+#> 1: BEAM0000 19640000100109358      -13.76884      -44.17980 20.00446 17.49480
+
+agbd_raster <- rasterizeLevel4A(
+  biomass, metric = "agbd", res = 0.002, fun = mean
+)
+agbd_stats <- polyStatsLevel4A(
+  biomass, study_area, metric = "agbd", fun = mean
+)
+```
+
+![A real GEDI Level 4A V003 orbit and the quality-filtered biomass footprints](readme/fig-gedi-cloud-l4a.png)
+
+![GEDI Level 4A footprint biomass rasterized over the example area](readme/fig-gedi-l4a-raster.png)
+
+The same real orbit can be explored in the self-contained
+[GEDI orbit animation](readme/gedi-orbit-animation.html). Rebuild it with:
+
+```r
+plot_gedi_orbit_animation(
+  biomass_orbit,
+  output_file = "readme/gedi-orbit-animation.html",
+  title = "GEDI Level 4A V3 biomass orbit - BEAM0000"
+)
+```
+
+## 6. Read, clip, and summarize Level 3 and Level 4B rasters
+
+Level 3 and Level 4B are opened as `terra::SpatRaster` objects. On a workstation,
+download only the required global metric layers and then open the local files.
+The CMR searches above returned a `counts` layer for Level 3 and a mean AGBD
+(`MU`) layer for Level 4B.
+
+```r
+level3_url <- gLevel3[grepl("GEDI03_counts_", gLevel3)][1]
+level4b_url <- gLevel4B[grepl("_MU\\.tif$", gLevel4B)][1]
+
+gediDownload(level3_url, outdir = outdir, netrc = Sys.getenv("NETRC"))
+gediDownload(level4b_url, outdir = outdir, netrc = Sys.getenv("NETRC"))
+
+level3 <- readLevel3(file.path(outdir, basename(level3_url)))
+level4b <- readLevel4B(file.path(outdir, basename(level4b_url)))
+
+level3_clip <- clipLevel3(level3, c(xmin, xmax, ymin, ymax))
+level4b_clip <- clipLevel4B(level4b, c(xmin, xmax, ymin, ymax))
+
+level3_stats <- polyStatsLevel3(level3_clip, study_area)
+level4b_stats <- polyStatsLevel4B(level4b_clip, study_area)
+
+plotLevel3(level3_clip)
+plotLevel4B(level4b_clip)
+```
+
+## 7. Sample GEDI and build an Earth Engine predictor stack
+
+The example below was run with the Google Cloud project shown in the code. It
+selects 100 spatially separated GEDI observations, samples eight AlphaEarth
+embedding bands and three terrain variables, and fits a five-fold random forest.
+
+```r
+ee_initialize(project = "ee-carlossilvaengflorestal")
+
+set.seed(42)
+samples <- sampleGEDI(
+  biomass,
+  spacedSampling(size = 100, radius = 25)
+)
+samples$shot_number <- as.character(samples$shot_number)
+samples$sample_id <- seq_len(nrow(samples))
+
+study_extent <- c(xmin, xmax, ymin, ymax)
+stack <- ee_build_AlphaEarth_embedding_terrain_stack(
+  study_extent, start_year = 2019, end_year = 2019
+)
+
+predictor_names <- c(
+  sprintf("A%02d", 0:7), "elevation", "slope", "aspect"
+)
+stack <- stack$select(as.list(predictor_names))
+
+training <- extractEE(stack, samples, scale = 30, chunk_size = 50)
+training <- training[complete.cases(
+  training[, c("agbd", predictor_names), with = FALSE]
+)]
+
+# Add coordinates when the Earth Engine response contains only attributes.
+if (!all(c("lon_lowestmode", "lat_lowestmode") %in% names(training))) {
+  coordinates <- data.table::as.data.table(samples)[, .(
+    sample_id, lon_lowestmode, lat_lowestmode
+  )]
+  training <- merge(training, coordinates, by = "sample_id", sort = FALSE)
+}
+
+model <- fit_model(
+  training[, predictor_names, with = FALSE],
+  training$agbd,
+  method = "randomForest", test = "kfold", k = 5,
+  seed = 42, ntree = 100
+)
+model$stats_test
+#>      stat       value unit
+#> 1    rmse  7.73761573
+#> 2   rmseR 78.74648145    %
+#> 3     mae  4.61219103
+#> 4    maeR 46.93872487    %
+#> 5    bias  0.31576412
+#> 6   biasR  3.21356275    %
+#> 7       r  0.28496335
+#> 8  adj_r2  0.07182864
+```
+
+![Observed GEDI biomass and five-fold predictions from the real example run](readme/fig-gedi-model-validation.png)
+
+This small run demonstrates the software path; 100 footprints from one beam
+are insufficient for a defensible biomass model.
+
+## 8. Train in Earth Engine and create a wall-to-wall map
+
+Convert the complete samples to an Earth Engine feature collection, train the
+server-side forest, apply it to the predictor image, and download or display the
+result.
+
+```r
+training_points <- to_vect(
+  training, lon = "lon_lowestmode", lat = "lat_lowestmode"
+)
+training_ee <- vect_as_ee(training_points)
+
+ee_model <- build_ee_forest(
+  training_ee, response = "agbd", predictors = predictor_names,
+  trees = 100, seed = 42
+)
+agbd_map <- map_create(ee_model, stack, study_extent, name = "agbd")
+
+map_view(
+  layers = list(`Predicted AGBD` = agbd_map),
+  vis = list(`Predicted AGBD` = list(
+    min = 0, max = 60,
+    palette = c("2c115f", "1fa187", "fde725")
+  )),
+  aoi = study_extent
+)
+
+map_download(
+  agbd_map, "readme/gedi-wall-to-wall-agbd.tif",
+  region = study_extent, scale = 30, overwrite = TRUE
+)
+```
+
+![Wall-to-wall biomass prediction generated in Google Earth Engine, with GEDI footprints overlaid](readme/fig-gedi-wall-to-wall.png)
+
+All assets above can be regenerated with
+[`readme/build-modern-examples.R`](readme/build-modern-examples.R).
+
+## Product-specific processing examples
+
+The sections below retain the detailed organization and examples from the
+original rGEDI README.
 
 ## Get GEDI Pulse Geolocation (GEDI Level1B)
 ```{r}

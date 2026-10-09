@@ -9,7 +9,8 @@ gediEE(
   start_date = NULL,
   end_date = NULL,
   aoi = NULL,
-  quality = TRUE
+  quality = TRUE,
+  max_granules = 200L
 )
 }
 \arguments{
@@ -20,9 +21,13 @@ gediEE(
 \item{aoi}{Optional spatial filter.}
 
 \item{quality}{Apply available quality masks.}
+
+\item{max_granules}{Maximum number of vector granules to merge. Vector GEDI
+products are stored as folders of per-granule feature collections in Earth
+Engine, so use dates and/or an AOI to keep the request focused.}
 }
 \value{
-An Earth Engine image or image collection.
+An Earth Engine image, image collection, or feature collection.
 }
 \description{
 Open a GEDI product in Google Earth Engine

@@ -7,7 +7,8 @@
 readLevel1B(level1Bpath)
 }
 \arguments{
-\item{level1Bpath}{File path pointing to GEDI level1B data. Data in HDF5 Hierarchical Data Format (.h5).}
+\item{level1Bpath}{Local file path or Earthdata Cloud URL pointing to a
+GEDI Level 1B HDF5 granule.}
 }
 \value{
 Returns an S4 object of class \code{\link[=gedi.level1b-class]{gedi.level1b}} containing GEDI level1B data.

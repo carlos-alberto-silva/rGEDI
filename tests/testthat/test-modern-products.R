@@ -68,3 +68,25 @@ test_that("Level 4A HDF5 workflows operate end to end", {
   png(tempfile(fileext = ".png")); expect_equal(plotLevel4A(all), all); dev.off()
 })
 
+test_that("Level 4A Release 3 quality fields are applied", {
+  f <- tempfile(pattern = "GEDI04_A_", fileext = ".h5")
+  h5 <- hdf5r::H5File$new(f, mode = "w")
+  b <- h5$create_group("BEAM0000")
+  values <- list(
+    shot_number = 1:5,
+    lat_lowestmode = seq(0, .04, .01),
+    lon_lowestmode = seq(0, .04, .01),
+    agbd = 11:15,
+    l4a_quality_flag_rel3 = c(1, 1, 0, 1, 1),
+    degrade_include_flag = c(1, 0, 1, 1, 1),
+    elev_highestreturn_outlier_flag = c(0, 0, 0, 1, 0)
+  )
+  for (nm in names(values)) b[[nm]] <- values[[nm]]
+  h5$close_all()
+
+  x <- readLevel4A(f)
+  on.exit(close(x), add = TRUE)
+  good <- getLevel4A(x, cols = c("beam", names(values)), quality = TRUE)
+  expect_equal(good$shot_number, c(1, 5))
+})
+

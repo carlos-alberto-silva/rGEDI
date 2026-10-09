@@ -4,11 +4,13 @@
 \alias{getLevel2BPAIProfile}
 \title{Get GEDI Plant Area Index (PAI) Profile (GEDI Level2B)}
 \usage{
-getLevel2BPAIProfile(level2b)
+getLevel2BPAIProfile(level2b, beams = NULL)
 }
 \arguments{
 \item{level2b}{A GEDI Level2B object (output of \code{\link[=readLevel2B]{readLevel2B()}} function).
 An S4 object of class "gedi.level2b".}
+
+\item{beams}{Optional beam names. \code{NULL} reads every beam.}
 }
 \value{
 Returns an S4 object of class \link[data.table:data.table]{data.table::data.table}

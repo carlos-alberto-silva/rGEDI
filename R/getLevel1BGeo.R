@@ -2,11 +2,10 @@
 #'
 #'@description This function extracts Pulse Full Waveform Geolocations from GEDI [`gedi.level1b-class`] data
 #'
-#'@usage getLevel1BGeo(level1b, select)
-#'
 #'@param level1b A [`gedi.level1b-class`] object (output of [getLevel1BGeo()] function).
 #'@param select A character vector specifying the fields to extract from GEDI Level1B data. If NULL,
 #'by default it will extract \emph{latitude_bin0}, \emph{latitude_lastbin}, \emph{longitude_bin0}, \emph{longitude_lastbin}, and \emph{shot_number}. See details for more options.
+#'@param beams Optional beam names. `NULL` reads every beam.
 #'
 #'@return Returns an S4 object of class [`data.table::data.table`] containing the GEDI Full Waveform Geolocations
 #'
@@ -115,47 +114,31 @@
 #'
 #'close(level1b)
 #'@export
-getLevel1BGeo<-function(level1b,select=c("elevation_bin0", "elevation_lastbin")) {
+getLevel1BGeo<-function(level1b,select=c("elevation_bin0", "elevation_lastbin"), beams = NULL) {
 
   select<-unique(c("latitude_bin0", "latitude_lastbin", "longitude_bin0", "longitude_lastbin","shot_number",select))
   level1b<-level1b@h5
+  available_beams <- grep("^BEAM[0-9]{4}$", .gedi_list_groups(level1b, FALSE), value = TRUE)
+  if (is.null(beams)) beams <- available_beams
+  unknown <- setdiff(beams, available_beams)
+  if (length(unknown)) stop("Unknown beam(s): ", paste(unknown, collapse = ", "))
 
-  datasets<-hdf5r::list.datasets(level1b, recursive = T)
-  datasets_names<-basename(datasets)
-
-  selected<-datasets_names %in% select
-
-  for ( i in select){
-    if  ( i =="shot_number"){
-      assign(i,bit64::as.integer64(NaN))
-    } else {
-      assign(i,numeric())
+  out <- lapply(beams, function(beam) {
+    values <- list()
+    for (field in select) {
+      candidates <- c(paste0(beam, "/", field), paste0(beam, "/geolocation/", field))
+      path <- candidates[vapply(candidates, level1b$exists, logical(1))][1L]
+      if (!is.na(path)) values[[field]] <- level1b[[path]][]
     }
-  }
-
-  dtse2<-datasets[selected][!grepl("geolocation/shot_number",datasets[selected])]
-
-
-  # Set progress bar
-  pb <- utils::txtProgressBar(min = 0, max = length(dtse2), style = 3)
-  i.s=0
-
-  for ( i in dtse2){
-    i.s<-i.s+1
-    utils::setTxtProgressBar(pb, i.s)
-    name_i<-basename(i)
-    assign(name_i, c(get(name_i), level1b[[i]][]))
-  }
-
-  level1b.dt<-data.table::data.table(as.data.frame(get("shot_number")[-1]))
-  select2<-select[!select[]=="shot_number"]
-
-  for ( i in select2){
-    level1b.dt[,i]<-get(i)
-  }
-
-  colnames(level1b.dt)<-c("shot_number",select2)
-  close(pb)
-  return(level1b.dt)
+    if (!length(values) || is.null(values$shot_number)) return(data.table::data.table())
+    n <- length(values$shot_number)
+    bad <- names(values)[lengths(values) != n]
+    if (length(bad)) values[bad] <- NULL
+    data.table::as.data.table(values)
+  })
+  ans <- data.table::rbindlist(out, use.names = TRUE, fill = TRUE)
+  missing_fields <- setdiff(select, names(ans))
+  if (length(missing_fields)) warning("Unavailable Level 1B field(s): ", paste(missing_fields, collapse = ", "))
+  ans[]
 }
 

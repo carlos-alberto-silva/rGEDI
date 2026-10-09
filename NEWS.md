@@ -4,6 +4,12 @@
 
 * Add Level 3, Level 4A, and Level 4B readers and spatial processing tools
 * Add Earthdata Cloud and Google Earth Engine integration
+* Stream GEDI01_B, GEDI02_A, GEDI02_B, and GEDI04_A HDF5 granules through
+  Earthaccess with the same typed readers used for local files
+* Update Level 2A and Level 4A extraction for the current Release 3 quality
+  fields and add beam/column controls for efficient cloud reads
+* Resolve Earth Engine vector products through their granule indexes and add a
+  complete real-data README workflow with reproducible figures and animation
 * Add spatial sampling, modeling, prediction, and mapping helpers
 * Add an interactive GEDI orbit animation
 * Restore waveform simulation and waveform metrics with a portable R/HDF5

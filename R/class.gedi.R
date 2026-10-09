@@ -5,8 +5,8 @@ requireNamespace("data.table")
 
 #' Class for GEDI level1B
 #'
-#' @slot h5 Object of class [`H5File`][hdf5r::H5File-class] from `hdf5r` package containing the
-#' GEDI level1B products: geolocated Waveforms
+#' @slot h5 A local [`H5File`][hdf5r::H5File-class] or a cloud-backed GEDI
+#' HDF5 connection containing geolocated waveforms.
 #'
 #' @seealso [`H5File`][hdf5r::H5File-class] in the `hdf5r` package and
 #' \url{https://www.earthdata.nasa.gov/data/catalog/lpcloud-gedi01-b-002}
@@ -15,13 +15,13 @@ requireNamespace("data.table")
 #' @export
 gedi.level1b <- setClass(
   Class = "gedi.level1b",
-  slots = list(h5 = "H5File")
+  slots = list(h5 = "ANY")
 )
 
 #' Class for GEDI level2A
 #'
-#' @slot h5 Object of class H5File from `hdf5r` package containing the
-#' GEDI level2A products: ground elevation, canopy top height, and relative heights (RH).
+#' @slot h5 A local `H5File` or cloud-backed GEDI HDF5 connection containing
+#' ground elevation, canopy top height, and relative heights (RH).
 #'
 #' @seealso [`H5File`][hdf5r::H5File-class] in the `hdf5r` package and
 #' \url{https://www.earthdata.nasa.gov/data/catalog/lpcloud-gedi02-a-002}
@@ -30,14 +30,13 @@ gedi.level1b <- setClass(
 #' @export
 gedi.level2a <- setClass(
   Class = "gedi.level2a",
-  slots = list(h5 = "H5File")
+  slots = list(h5 = "ANY")
 )
 
 #' Class for GEDI level2B
 #'
-#' @slot h5 Object of class [`H5File`][hdf5r::H5File-class] from `hdf5r` package containing the
-#' GEDI level2B products: canopy cover, Plant Area Index (PAI), Plant Area Volume Density (PAVD),
-#' and Foliage Height Diversity (FHD).
+#' @slot h5 A local [`H5File`][hdf5r::H5File-class] or cloud-backed GEDI HDF5
+#' connection containing canopy cover, PAI, PAVD, and FHD.
 #'
 #' @seealso [`H5File`][hdf5r::H5File-class] in the `hdf5r` package and
 #' \url{https://www.earthdata.nasa.gov/data/catalog/lpcloud-gedi02-b-002}
@@ -46,17 +45,18 @@ gedi.level2a <- setClass(
 #' @export
 gedi.level2b <- setClass(
   Class = "gedi.level2b",
-  slots = list(h5 = "H5File")
+  slots = list(h5 = "ANY")
 )
 
 #' Class for GEDI Level 4A footprint biomass data
 #'
-#' @slot h5 An open [`hdf5r::H5File-class`] containing a GEDI04_A granule.
+#' @slot h5 An open local or cloud-backed HDF5 connection containing a
+#' GEDI04_A granule.
 #' @seealso \url{https://daac.ornl.gov/GEDI/guides/GEDI_L4A_AGB_Density_V3.html}
 #' @export
 gedi.level4a <- setClass(
   Class = "gedi.level4a",
-  slots = list(h5 = "H5File")
+  slots = list(h5 = "ANY")
 )
 
 

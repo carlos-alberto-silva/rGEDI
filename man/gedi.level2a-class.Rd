@@ -11,8 +11,8 @@ Class for GEDI level2A
 \section{Slots}{
 
 \describe{
-\item{\code{h5}}{Object of class H5File from \code{hdf5r} package containing the
-GEDI level2A products: ground elevation, canopy top height, and relative heights (RH).}
+\item{\code{h5}}{A local \code{H5File} or cloud-backed GEDI HDF5 connection containing
+ground elevation, canopy top height, and relative heights (RH).}
 }}
 
 \seealso{

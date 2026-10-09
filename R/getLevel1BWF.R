@@ -46,7 +46,7 @@ getLevel1BWF<-function(level1b,shot_number){
 
   level1b<-level1b@h5
   groups_id<-grep("BEAM\\d{4}$",gsub("/","",
-                                     hdf5r::list.groups(level1b, recursive = F)), value = T)
+                                     .gedi_list_groups(level1b, recursive = FALSE)), value = T)
 
   i=NULL
   for ( k in groups_id){

@@ -39,7 +39,7 @@ readLevel3 <- function(x, metrics = NULL) .read_gedi_raster(x, "GEDI03", metrics
 #'
 #' @inheritParams readLevel3
 #' @return A [`terra::SpatRaster-class`].
-#' @seealso \url{https://daac.ornl.gov/GEDI/guides/GEDI_L4B_Gridded_Biomass_V2_1.html}
+#' @seealso \doi{10.3334/ORNLDAAC/2299}
 #' @export
 readLevel4B <- function(x, metrics = NULL) .read_gedi_raster(x, "GEDI04_B", metrics)
 

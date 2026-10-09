@@ -10,7 +10,8 @@ gediDownload(
   outdir = NULL,
   overwrite = FALSE,
   buffer_size = 512,
-  timeout = 10
+  timeout = 10,
+  netrc = Sys.getenv("NETRC", unset = "")
 )
 
 downloadGEDI(
@@ -18,7 +19,8 @@ downloadGEDI(
   outdir = NULL,
   overwrite = FALSE,
   buffer_size = 512,
-  timeout = 10
+  timeout = 10,
+  netrc = Sys.getenv("NETRC", unset = "")
 )
 }
 \arguments{
@@ -31,6 +33,9 @@ downloadGEDI(
 \item{buffer_size}{integer; the size of download chunk in KB to hold in memory before writing to file, default 512.}
 
 \item{timeout}{integer; connection timeout in seconds.}
+
+\item{netrc}{Optional path to an existing NASA Earthdata \code{.netrc} file. By
+default, uses the \code{NETRC} environment variable before prompting.}
 }
 \value{
 No return value on success, on failure it will \code{\link[=stop]{stop()}}

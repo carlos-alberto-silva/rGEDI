@@ -15,7 +15,9 @@ gedifinder(
   access = c("https", "s3", "opendap", "all"),
   cloud_hosted = TRUE,
   return = c("url", "table"),
-  page_size = 2000L
+  page_size = 2000L,
+  cloud_computing = FALSE,
+  persist = TRUE
 )
 }
 \arguments{
@@ -30,11 +32,19 @@ gedifinder(
 
 \item{access}{Requested link type: \code{"https"}, \code{"s3"}, \code{"opendap"}, or \code{"all"}.}
 
-\item{cloud_hosted}{Logical; restrict collection discovery to Earthdata Cloud.}
+\item{cloud_hosted}{Logical retained for backward compatibility. The current
+GEDI collection identifiers resolve to their Earthdata Cloud holdings.}
 
 \item{return}{Return a URL vector or a metadata table.}
 
 \item{page_size}{CMR page size.}
+
+\item{cloud_computing}{Logical. When \code{TRUE}, authenticate with Earthdata and
+return HTTPS granules marked for direct cloud streaming by \code{\link[=openGEDI]{openGEDI()}} or
+the product-specific \verb{readLevel*()} function.}
+
+\item{persist}{Logical; allow Earthaccess to persist an interactive login
+when \code{cloud_computing = TRUE}.}
 }
 \value{
 A character vector or \link[data.table:data.table]{data.table::data.table}.

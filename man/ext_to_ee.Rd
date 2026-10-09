@@ -7,7 +7,8 @@
 ext_to_ee(x)
 }
 \arguments{
-\item{x}{A \code{SpatExtent}, raster/vector object, or numeric extent.}
+\item{x}{A \code{SpatExtent}, raster/vector object, or numeric extent in
+\code{c(xmin, xmax, ymin, ymax)} order.}
 }
 \value{
 An Earth Engine geometry.

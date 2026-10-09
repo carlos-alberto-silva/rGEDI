@@ -2,10 +2,9 @@
 #'
 #'@description This function extracts the Plant Area Volume Density (PAVD) Profile from GEDI Level2B data.
 #'
-#'@usage getLevel2BPAVDProfile(level2b)
-#'
 #'@param level2b A GEDI Level2B object (output of [readLevel2B()] function).
 #'An S4 object of class "gedi.level2b".
+#'@param beams Optional beam names. `NULL` reads every beam.
 #'
 #'@return Returns an S4 object of class [data.table::data.table]
 #'containing the Plant Area Volume Density Index.
@@ -49,10 +48,12 @@
 #'@import utils
 #'@importFrom hdf5r H5File
 #'@export
-getLevel2BPAVDProfile<-function(level2b){
+getLevel2BPAVDProfile<-function(level2b, beams = NULL){
   level2b<-level2b@h5
   groups_id<-grep("BEAM\\d{4}$",gsub("/","",
-                                     hdf5r::list.groups(level2b, recursive = F)), value = T)
+                                     .gedi_list_groups(level2b, recursive = FALSE)), value = T)
+  if (!is.null(beams)) groups_id <- intersect(groups_id, beams)
+  if (!length(groups_id)) return(data.table::data.table())
   m.dt<-data.table::data.table()
   pb <- utils::txtProgressBar(min = 0, max = length(groups_id), style = 3)
   i.s=0

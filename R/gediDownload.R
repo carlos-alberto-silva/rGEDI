@@ -8,6 +8,8 @@
 #'@param overwrite logical; overwrite file if they already exists in destination, default FALSE
 #'@param buffer_size integer; the size of download chunk in KB to hold in memory before writing to file, default 512.
 #'@param timeout integer; connection timeout in seconds.
+#'@param netrc Optional path to an existing NASA Earthdata `.netrc` file. By
+#'default, uses the `NETRC` environment variable before prompting.
 #'
 #'@return No return value on success, on failure it will [stop()]
 #'@references Credits to Cole Krehbiel. Code adapted from \url{https://git.earthdata.nasa.gov/projects/LPDUR/repos/daac_data_download_r/browse/DAACDataDownload.R}
@@ -43,7 +45,8 @@
 #'}
 #'@import curl
 #'@export
-gediDownload<-function(filepath, outdir = NULL, overwrite = FALSE, buffer_size = 512, timeout=10){
+gediDownload<-function(filepath, outdir = NULL, overwrite = FALSE, buffer_size = 512, timeout=10,
+                       netrc = Sys.getenv("NETRC", unset = "")){
   if (is.null(outdir)) {
     outdir <- tempdir()
   }
@@ -54,7 +57,8 @@ gediDownload<-function(filepath, outdir = NULL, overwrite = FALSE, buffer_size =
     "buffer_size is not an integer" = checkInteger(buffer_size)
   )
   buffer_size = as.integer(buffer_size)
-  netrc <- getNetRC(outdir)
+  if (!nzchar(netrc) || !file.exists(netrc)) netrc <- getNetRC(outdir)
+  netrc <- normalizePath(netrc, winslash = "/", mustWork = TRUE)
 
   files<-filepath
   n_files = length(files)
@@ -108,7 +112,6 @@ gediDownloadFile = function(url, outdir, overwrite, buffer_size, netrc, timeout)
     fileHandle=file(resume, open="ab", raw = T)
     message("Connecting...")
     conn = tryCatch(curl::curl(url, handle=h, open="rb"), error = function(e) {
-          file.remove(netrc)
           stop(e)
         })
     message("Connected successfully, downloading...")

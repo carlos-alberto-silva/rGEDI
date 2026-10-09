@@ -7,7 +7,8 @@
 readLevel4A(level4Apath)
 }
 \arguments{
-\item{level4Apath}{Path to a GEDI04_A HDF5 file.}
+\item{level4Apath}{Local file path or Earthdata Cloud URL pointing to a
+GEDI04_A HDF5 granule.}
 }
 \value{
 A \code{\link[=gedi.level4a-class]{gedi.level4a}} object. Close it with \code{\link[=close]{close()}}.

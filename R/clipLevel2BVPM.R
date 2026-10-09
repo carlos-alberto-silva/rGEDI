@@ -34,7 +34,9 @@
 #' level2b <- readLevel2B(level2Bpath = level2Bpath)
 #'
 #' # Extracting canopy cover and vertical profile metrics
-#' level2BVPM <- getLevel2BVPM(level2b)
+#' beam <- grep("^BEAM", (level2b@h5)$ls(recursive = FALSE)$name,
+#'              value = TRUE)[1]
+#' level2BVPM <- getLevel2BVPM(level2b, beams = beam)
 #'
 #' # Bounding rectangle coordinates
 #' xmin <- -44.15036
@@ -111,7 +113,9 @@ clipLevel2BVPM <- function(level2BVPM, xmin, xmax, ymin, ymax) {
 #' level2b <- readLevel2B(level2Bpath = level2Bpath)
 #'
 #' # Extracting canopy cover and vertical profile metrics
-#' level2BVPM <- getLevel2BVPM(level2b)
+#' beam <- grep("^BEAM", (level2b@h5)$ls(recursive = FALSE)$name,
+#'              value = TRUE)[1]
+#' level2BVPM <- getLevel2BVPM(level2b, beams = beam)
 #'
 #' # Specifying the path to shapefile
 #' polygon_filepath <- system.file("extdata", "stands_cerrado.shp", package = "rGEDI")

@@ -17,8 +17,10 @@ getLevel4A(
 \item{cols}{Character vector of fields to return. \code{NULL} returns all
 datasets shared by the selected beams.}
 
-\item{quality}{Logical. If \code{TRUE}, retain observations with
-\code{l4_quality_flag == 1} and \code{degrade_flag == 0} when those fields exist.}
+\item{quality}{Logical. If \code{TRUE}, retain observations accepted by the
+current Release 3 quality fields (\code{l4a_quality_flag_rel3},
+\code{degrade_include_flag}, and \code{elev_highestreturn_outlier_flag}) when
+present. Legacy Release 2 quality fields remain supported.}
 
 \item{beams}{Optional character vector of GEDI beam names.}
 }

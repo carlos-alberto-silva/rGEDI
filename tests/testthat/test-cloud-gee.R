@@ -14,3 +14,14 @@ test_that("cloud helpers validate unsupported local files and optional modules",
   expect_error(openGEDI(f), "Cannot infer")
   expect_error(earthdata_login(netrc = tempfile()), "path|configure|Install")
 })
+
+test_that("cloud product inference and URL subsets retain product semantics", {
+  urls <- structure(
+    c("https://example.test/GEDI04_A_example_V003.h5",
+      "https://example.test/GEDI04_A_second_V003.h5"),
+    class = c("gedi.granules_cloud", "character")
+  )
+  expect_equal(rGEDI:::.infer_gedi_product(urls[1]), "GEDI04_A")
+  expect_s3_class(urls[1], "gedi.granule_cloud")
+  expect_s3_class(urls[1:2], "gedi.granules_cloud")
+})

@@ -9,7 +9,8 @@ getLevel2BVPM(
   cols = c("beam", "shot_number", "algorithmrun_flag", "l2b_quality_flag", "delta_time",
     "sensitivity", "solar_elevation", "latitude_lastbin", "latitude_bin0",
     "longitude_bin0", "longitude_lastbin", "elev_highestreturn", "elev_lowestmode",
-    "rh100", "pai", "fhd_normal", "omega", "pgap_theta", "cover")
+    "rh100", "pai", "fhd_normal", "omega", "pgap_theta", "cover"),
+  beams = NULL
 )
 }
 \arguments{
@@ -17,6 +18,8 @@ getLevel2BVPM(
 function). An S4 object of class "gedi.level2b".}
 
 \item{cols}{A character vector containing the list of columns to be extracted. See the default columns in the description.}
+
+\item{beams}{Optional beam names. \code{NULL} reads every beam.}
 }
 \value{
 Returns an S4 object of class \link[data.table:data.table]{data.table::data.table}

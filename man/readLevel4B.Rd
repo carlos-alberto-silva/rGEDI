@@ -18,5 +18,5 @@ A \code{\link[terra:SpatRaster-class]{terra::SpatRaster}}.
 Read GEDI Level 4B gridded biomass
 }
 \seealso{
-\url{https://daac.ornl.gov/GEDI/guides/GEDI_L4B_Gridded_Biomass_V2_1.html}
+\doi{10.3334/ORNLDAAC/2299}
 }

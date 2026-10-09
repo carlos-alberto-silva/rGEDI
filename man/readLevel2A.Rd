@@ -7,7 +7,8 @@
 readLevel2A(level2Apath)
 }
 \arguments{
-\item{level2Apath}{File path pointing to GEDI level2A data. Data in HDF5 Hierarchical Data Format (.h5).}
+\item{level2Apath}{Local file path or Earthdata Cloud URL pointing to a
+GEDI Level 2A HDF5 granule.}
 }
 \value{
 Returns an S4 object of class \code{\link[=gedi.level2a-class]{gedi.level2a}} containing GEDI level2A data.

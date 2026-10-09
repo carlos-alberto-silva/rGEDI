@@ -11,7 +11,8 @@ Class for GEDI Level 4A footprint biomass data
 \section{Slots}{
 
 \describe{
-\item{\code{h5}}{An open \code{\link[hdf5r:H5File-class]{hdf5r::H5File}} containing a GEDI04_A granule.}
+\item{\code{h5}}{An open local or cloud-backed HDF5 connection containing a
+GEDI04_A granule.}
 }}
 
 \seealso{

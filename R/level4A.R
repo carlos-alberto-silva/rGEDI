@@ -1,8 +1,9 @@
 # GEDI Level 4A -----------------------------------------------------------
 
 .level4a_default_columns <- c(
-  "beam", "shot_number", "algorithm_run_flag", "l2_quality_flag",
-  "l4_quality_flag", "degrade_flag", "delta_time", "sensitivity",
+  "beam", "shot_number", "l2_algrunflag", "l2a_quality_flag_rel3",
+  "l4a_quality_flag_rel3", "degrade_include_flag",
+  "elev_highestreturn_outlier_flag", "degrade_flag", "delta_time", "sensitivity",
   "solar_elevation", "surface_flag", "lat_lowestmode", "lon_lowestmode",
   "elev_lowestmode", "agbd", "agbd_se", "agbd_pi_lower",
   "agbd_pi_upper", "predict_stratum", "selected_algorithm"
@@ -13,15 +14,23 @@
 #' Opens a GEDI04_A HDF5 granule containing footprint-level aboveground
 #' biomass density estimates.
 #'
-#' @param level4Apath Path to a GEDI04_A HDF5 file.
+#' @param level4Apath Local file path or Earthdata Cloud URL pointing to a
+#'   GEDI04_A HDF5 granule.
 #' @return A [`gedi.level4a-class`] object. Close it with [close()].
 #' @seealso \url{https://daac.ornl.gov/GEDI/guides/GEDI_L4A_AGB_Density_V3.html}
 #' @export
 readLevel4A <- function(level4Apath) {
-  if (!is.character(level4Apath) || length(level4Apath) != 1L || !file.exists(level4Apath)) {
-    stop("'level4Apath' must be an existing GEDI04_A HDF5 file.", call. = FALSE)
+  if (inherits(level4Apath, "GEDICloudH5")) {
+    h5 <- level4Apath
+  } else if (.is_gedi_url(level4Apath)) {
+    h5 <- .open_cloud_h5(level4Apath, product = "GEDI04_A")
+  } else {
+    if (!is.character(level4Apath) || length(level4Apath) != 1L || !file.exists(level4Apath)) {
+      stop("'level4Apath' must be an existing file or Earthdata Cloud URL.", call. = FALSE)
+    }
+    h5 <- hdf5r::H5File$new(level4Apath, mode = "r")
   }
-  new("gedi.level4a", h5 = hdf5r::H5File$new(level4Apath, mode = "r"))
+  new("gedi.level4a", h5 = h5)
 }
 
 .gedi_beams <- function(h5) {
@@ -39,8 +48,10 @@ readLevel4A <- function(level4Apath) {
 #' @param level4a A [`gedi.level4a-class`] object returned by [readLevel4A()].
 #' @param cols Character vector of fields to return. `NULL` returns all
 #'   datasets shared by the selected beams.
-#' @param quality Logical. If `TRUE`, retain observations with
-#'   `l4_quality_flag == 1` and `degrade_flag == 0` when those fields exist.
+#' @param quality Logical. If `TRUE`, retain observations accepted by the
+#'   current Release 3 quality fields (`l4a_quality_flag_rel3`,
+#'   `degrade_include_flag`, and `elev_highestreturn_outlier_flag`) when
+#'   present. Legacy Release 2 quality fields remain supported.
 #' @param beams Optional character vector of GEDI beam names.
 #' @return A [data.table::data.table] with one row per footprint.
 #' @export
@@ -89,8 +100,19 @@ getLevel4A <- function(level4a, cols = .level4a_default_columns,
   }
   if (isTRUE(quality) && nrow(ans)) {
     keep <- rep(TRUE, nrow(ans))
-    if ("l4_quality_flag" %in% names(ans)) keep <- keep & ans$l4_quality_flag == 1
-    if ("degrade_flag" %in% names(ans)) keep <- keep & ans$degrade_flag == 0
+    if ("l4a_quality_flag_rel3" %in% names(ans)) {
+      keep <- keep & ans$l4a_quality_flag_rel3 == 1
+    } else if ("l4_quality_flag" %in% names(ans)) {
+      keep <- keep & ans$l4_quality_flag == 1
+    }
+    if ("degrade_include_flag" %in% names(ans)) {
+      keep <- keep & ans$degrade_include_flag == 1
+    } else if ("degrade_flag" %in% names(ans)) {
+      keep <- keep & ans$degrade_flag == 0
+    }
+    if ("elev_highestreturn_outlier_flag" %in% names(ans)) {
+      keep <- keep & ans$elev_highestreturn_outlier_flag == 0
+    }
     keep[is.na(keep)] <- FALSE
     ans <- ans[keep]
   }
