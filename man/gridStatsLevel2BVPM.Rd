@@ -23,6 +23,7 @@ This function computes a series of user defined descriptive statistics within
 each grid cell for GEDI derived Canopy Cover and Vertical Profile Metrics (Level2B)
 }
 \examples{
+\donttest{
 # specify the path to GEDI level2B data (zip file)
 outdir <- tempdir()
 level2B_fp_zip <- system.file("extdata",
@@ -68,6 +69,7 @@ fhd_mean <- gridStatsLevel2BVPM(level2BVPM = level2BVPM, func = mean(fhd_normal)
 plot(fhd_mean)
 
 close(level2b)
+}
 }
 \seealso{
 \url{https://www.earthdata.nasa.gov/data/catalog/lpcloud-gedi02-b-002}

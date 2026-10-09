@@ -23,6 +23,7 @@ This function computes a series of user defined descriptive statistics within
 each grid cell for GEDI derived Elevation and Height Metrics (Level2A)
 }
 \examples{
+\donttest{
 # specify the path to GEDI level2A data (zip file)
 outdir <- tempdir()
 level2A_fp_zip <- system.file("extdata",
@@ -70,6 +71,7 @@ if (interactive()) {
 }
 
 close(level2a)
+}
 }
 \seealso{
 \url{https://www.earthdata.nasa.gov/data/catalog/lpcloud-gedi02-a-002}

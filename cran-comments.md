@@ -6,6 +6,9 @@
   problems were not corrected in time. Those problems have been corrected.
   The package has been updated for current dependencies and tested with
   R 4.6.1 on Windows 11.
+* The designated maintainer has changed from Caio Hamamura to Carlos Alberto
+  Silva, using c.silva@ufl.edu. This resubmission ensures the maintainer can
+  receive and confirm CRAN correspondence.
 
 ## Additional checks
 

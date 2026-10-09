@@ -1,5 +1,11 @@
 <!-- NEWS.md is maintained by https://cynkra.github.io/fledge, do not edit -->
 
+# rGEDI 0.5.8 (2026-10-09)
+
+* Update the designated maintainer and contact email
+* Mark the long-running grid statistics example for optional example checks
+
+
 # rGEDI 0.5.7 (2026-10-09)
 
 * Fixes #68: direct call to S3 method from bit64
