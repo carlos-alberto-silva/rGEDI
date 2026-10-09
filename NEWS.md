@@ -8,6 +8,7 @@
 * Fix grid statistics functions after sf stopped exporting the pipe operator
 * Update the GEDI data products URL after its permanent redirect
 * Keep optional visualizations out of non-interactive example checks
+* Make URL tests tolerate transient network and server failures
 
 
 # rGEDI 0.5.6 (2025-09-23)

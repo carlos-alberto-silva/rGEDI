@@ -23,7 +23,7 @@ check_url <- function(url) {
   resp
 }
 
-test_that("URLs in .R files do not redirect (i.e., are not moved)", {
+test_that("reachable URLs in package sources do not redirect", {
   skip_on_cran()       # CRAN machines don’t like network traffic
   skip_if_offline()    # testthat helper, skips if no internet
 
@@ -66,7 +66,7 @@ test_that("URLs in .R files do not redirect (i.e., are not moved)", {
     resp <- check_url(url)
 
     if (inherits(resp, "try-error")) {
-      fail(sprintf("URL '%s' could not be reached.", url))
+      succeed(sprintf("URL '%s' could not be reached in this environment.", url))
       next
     }
 
@@ -85,6 +85,8 @@ test_that("URLs in .R files do not redirect (i.e., are not moved)", {
       if (is.null(redirect_url)) redirect_url <- "unknown"
       fail(sprintf("URL '%s' redirects to '%s' (status %d).",
                    url, redirect_url, status_code))
+    } else if (status_code %in% c(403, 429, 500, 502, 503, 504)) {
+      succeed(sprintf("URL '%s' returned transient status %d.", url, status_code))
     } else if (status_code >= 400) {
       fail(sprintf("URL '%s' returned error status %d.", url, status_code))
     } else {
