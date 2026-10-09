@@ -1,5 +1,16 @@
 <!-- NEWS.md is maintained by https://cynkra.github.io/fledge, do not edit -->
 
+# rGEDI 0.6.0 (2026-10-09)
+
+* Add Level 3, Level 4A, and Level 4B readers and spatial processing tools
+* Add Earthdata Cloud and Google Earth Engine integration
+* Add spatial sampling, modeling, prediction, and mapping helpers
+* Add an interactive GEDI orbit animation
+* Restore waveform simulation and waveform metrics with a portable R/HDF5
+  implementation that avoids the original simulator's non-portable native
+  library stack
+
+
 # rGEDI 0.5.8 (2026-10-09)
 
 * Update the designated maintainer and contact email

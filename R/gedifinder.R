@@ -1,135 +1,125 @@
-concept_ids <- list(
-  GEDI01_B.002 = "C2142749196-LPCLOUD",
-  GEDI02_A.002 = "C2142771958-LPCLOUD",
-  GEDI02_B.002 = "C2142776747-LPCLOUD",
-  GEDI03.002 = "C2153683336-ORNL_CLOUD",
-  GEDI04_A.001 = "C2734289572-ORNL_CLOUD",
-  GEDI04_A.002 = "C2237824918-ORNL_CLOUD",
-  GEDI04_B.002 = "C2244602422-ORNL_CLOUD"
+.gedi_products <- data.frame(
+  product = c("GEDI01_B", "GEDI02_A", "GEDI02_B", "GEDI03", "GEDI04_A", "GEDI04_B"),
+  current_version = c("003", "003", "003", "003", "003", "002.1"),
+  short_name = c(
+    "GEDI01_B", "GEDI02_A", "GEDI02_B",
+    "GEDI_L3_LandSurface_Metrics_V3_2525",
+    "GEDI_L4A_AGB_Density_V3_2508",
+    "GEDI_L4B_Gridded_Biomass_V2_1_2299"
+  ), stringsAsFactors = FALSE
 )
 
-#' GEDI finder
+.gedi_short_name <- function(product, version) {
+  row <- .gedi_products[.gedi_products$product == product, , drop = FALSE]
+  if (!nrow(row)) stop("Unsupported GEDI product: ", product, call. = FALSE)
+  if (is.null(version)) version <- row$current_version
+  normalized <- gsub("^V", "", as.character(version), ignore.case = TRUE)
+  normalized <- sub("^([0-9])$", "00\\1", normalized)
+  normalized <- sub("^([0-9]{2})$", "0\\1", normalized)
+  if (product == "GEDI03") {
+    if (normalized %in% c("002", "2")) return(list(short_name = "GEDI_L3_LandSurface_Metrics_V2_1952", version = "2"))
+    return(list(short_name = row$short_name, version = "3"))
+  }
+  if (product == "GEDI04_A") {
+    if (normalized %in% c("002.1", "2.1", "002")) return(list(short_name = "GEDI_L4A_AGB_Density_V2_1_2056", version = "2.1"))
+    return(list(short_name = row$short_name, version = "3"))
+  }
+  if (product == "GEDI04_B") return(list(short_name = row$short_name, version = "2.1"))
+  list(short_name = row$short_name, version = normalized)
+}
+
+.cmr_get <- function(url) {
+  response <- curl::curl_fetch_memory(url)
+  content <- jsonlite::fromJSON(rawToChar(response$content), simplifyVector = FALSE)
+  if (response$status_code >= 300L) stop(paste(unlist(content$errors), collapse = "\n"), call. = FALSE)
+  content
+}
+
+.gedi_link_type <- function(url) {
+  if (grepl("^s3://", url)) return("s3")
+  if (grepl("opendap", url, ignore.case = TRUE)) return("opendap")
+  "https"
+}
+
+.select_gedi_link <- function(links, access) {
+  href <- vapply(links, function(x) if (is.null(x$href)) NA_character_ else x$href, character(1))
+  href <- href[!is.na(href)]
+  href <- href[!grepl("(\\.xml|\\.sha256|\\.json)$", href, ignore.case = TRUE)]
+  if (access == "all") return(href)
+  types <- vapply(href, .gedi_link_type, character(1))
+  candidates <- href[types == access]
+  if (access == "https") {
+    data_like <- grepl("\\.(h5|hdf5|tif|tiff|csv|zip)(\\?|$)", candidates, ignore.case = TRUE)
+    if (any(data_like)) candidates <- candidates[data_like]
+  }
+  if (length(candidates)) candidates[[1L]] else NA_character_
+}
+
+#' Find GEDI granules through NASA CMR
 #'
-#' @description This function finds the exact granule(s) that contain GEDI data
-#' for a given region of interest and date range
-#'
-#' @param product GEDI data level; Options: "GEDI01_B", "GEDI02_A",
-#' "GEDI02_B", "GEDI03", "GEDI04_A", "GEDI04_A", "GEDI04_B"
-#' @param ul_lat Numeric. Upper left (ul) corner coordinates, in lat
-#' (decimal degrees) for the bounding box of the area of interest.
-#' @param ul_lon Numeric. Upper left (ul) corner coordinates, in lon
-#' (decimal degrees) for the bounding box of the area of interest.
-#' @param lr_lat Numeric. Lower right (ul) corner coordinates, in lat
-#' (decimal degrees) for the bounding box of the area of interest.
-#' @param lr_lon Numeric. Lower right (ul) corner coordinates, in lon
-#' (decimal degrees) for the bounding box of the area of interest.
-#' @param version Character. The version of the GEDI product files to be
-#' returned. Default "002".
-#' @param daterange Vector. Date range. Specify your start and end dates
-#' using ISO 8601 \[YYYY\]-\[MM\]-\[DD\]T\[hh\]:\[mm\]:\[ss\]Z. Ex.:
-#' c("2019-07-01T00:00:00Z","2020-05-22T23:59:59Z"). If NULL (default),
-#' the date range filter will be not applied.
-#'
-#' @return Return a vector object pointing out the path saving the downloaded
-#' GEDI data within the boundary box coordinates provided
-#'
-#' @seealso bbox: Defined by the upper left and lower right corner coordinates,
-#' in lat,lon ordering, for the bounding box of the area of interest
-#' (e.g. \[ul_lat,ul_lon,lr_lat,lr_lon\]).
-#'
-#' This function relies on the existing CMR tool:
-#' \url{https://cmr.earthdata.nasa.gov/search/site/docs/search/api.html}
-#'
-#' @examples
-#' \donttest{
-#' # gedifinder is a web service provided by NASA
-#' # usually the request takes more than 5 seconds
-#'
-#' # Specifying bounding box coordinates
-#' ul_lat <- 42.0
-#' ul_lon <- -100
-#' lr_lat <- 40.0
-#' lr_lon <- -96.0
-#'
-#' # Specifying the date range
-#' daterange <- c("2019-07-01", "2020-05-22")
-#'
-#' # Extracting the path to GEDI data for the specified boundary box coordinates
-#' gedi02b_list <- gedifinder(
-#'   product = "GEDI02_B",
-#'   ul_lat,
-#'   ul_lon,
-#'   lr_lat,
-#'   lr_lon,
-#'   version = "002",
-#'   daterange = daterange
-#' )
-#' }
-#' @import jsonlite curl
+#' @param product One of `GEDI01_B`, `GEDI02_A`, `GEDI02_B`, `GEDI03`,
+#'   `GEDI04_A`, or `GEDI04_B`.
+#' @param ul_lat,ul_lon,lr_lat,lr_lon Bounding coordinates in decimal degrees.
+#' @param version Product version. `NULL` selects the current supported version.
+#' @param daterange Optional two-element date or date-time vector.
+#' @param access Requested link type: `"https"`, `"s3"`, `"opendap"`, or `"all"`.
+#' @param cloud_hosted Logical; restrict collection discovery to Earthdata Cloud.
+#' @param return Return a URL vector or a metadata table.
+#' @param page_size CMR page size.
+#' @return A character vector or [data.table::data.table].
+#' @seealso \url{https://cmr.earthdata.nasa.gov/search/site/docs/search/api.html}
 #' @export
-gedifinder <- function(product,
-                       ul_lat,
-                       ul_lon,
-                       lr_lat,
-                       lr_lon,
-                       version = "002",
-                       daterange = NULL) {
-  page <- 1
+gedifinder <- function(product, ul_lat, ul_lon, lr_lat, lr_lon,
+                       version = NULL, daterange = NULL,
+                       access = c("https", "s3", "opendap", "all"),
+                       cloud_hosted = TRUE, return = c("url", "table"),
+                       page_size = 2000L) {
+  access <- match.arg(access)
+  return <- match.arg(return)
+  product <- toupper(product)
+  info <- .gedi_short_name(product, version)
   bbox <- paste(ul_lon, lr_lat, lr_lon, ul_lat, sep = ",")
-
-  # Granules search url pattern
-  url_format <- paste0(
-    "https://cmr.earthdata.nasa.gov/search/granules.json?",
-    "pretty=true&project=GEDI&page_size=2000&concept_id=%s",
-    "&bounding_box=%s"
-  )
-  request_url <- sprintf(
-    url_format,
-    concept_ids[paste0(product, ".", version)],
-    bbox
-  )
-
-  # Add temporal search if not null
-  if (!is.null(daterange)) {
-    url_format <- paste0(request_url, "&temporal=%s,%s")
-    request_url <- sprintf(url_format, daterange[1], daterange[2])
-  }
-
-  granules_href <- c()
-  # Append fetched granules to granules_href
-  # recursively, for each page (max 2000 per page)
-  repeat {
-    response <- curl::curl_fetch_memory(paste0(
-      request_url,
-      "&pageNum=",
-      page
-    ))
-    content <- rawToChar(response$content)
-    result <- jsonlite::parse_json(content)
-    if (response$status_code != 200) {
-      stop(paste("\n", result$errors, collapse = "\n"))
+  collection_url <- paste0(
+    "https://cmr.earthdata.nasa.gov/search/collections.json?short_name=",
+    curl::curl_escape(info$short_name), "&version=", curl::curl_escape(info$version),
+    "&cloud_hosted=", tolower(as.character(isTRUE(cloud_hosted))))
+  collections <- .cmr_get(collection_url)$feed$entry
+  if (!length(collections)) stop("No matching GEDI collection was found in CMR.", call. = FALSE)
+  collection_ids <- vapply(collections, `[[`, character(1), "id")
+  rows <- list()
+  k <- 0L
+  for (collection_id in collection_ids) {
+    page <- 1L
+    repeat {
+      url <- paste0(
+        "https://cmr.earthdata.nasa.gov/search/granules.json?pretty=false&page_size=",
+        as.integer(page_size), "&page_num=", page,
+        "&collection_concept_id=", curl::curl_escape(collection_id),
+        "&bounding_box=", curl::curl_escape(bbox))
+      if (!is.null(daterange)) {
+        if (length(daterange) != 2L) stop("'daterange' must have two values.")
+        url <- paste0(url, "&temporal=", curl::curl_escape(paste(daterange, collapse = ",")))
+      }
+      entries <- .cmr_get(url)$feed$entry
+      if (!length(entries)) break
+      for (entry in entries) {
+        selected <- .select_gedi_link(entry$links, access)
+        if (!length(selected)) next
+        for (href in selected) {
+          if (is.na(href)) next
+          k <- k + 1L
+          rows[[k]] <- data.table::data.table(
+            product = product, version = info$version, collection_id = collection_id,
+            granule_id = if (is.null(entry$producer_granule_id)) basename(href) else entry$producer_granule_id,
+            time_start = if (is.null(entry$time_start)) NA_character_ else entry$time_start,
+            time_end = if (is.null(entry$time_end)) NA_character_ else entry$time_end,
+            access = .gedi_link_type(href), url = href)
+        }
+      }
+      if (length(entries) < page_size) break
+      page <- page + 1L
     }
-    granules <- result$feed$entry
-
-    if (length(granules) == 0) break
-
-    hrefs <- sapply(granules, function(x) x$links[[1]]$href)
-    
-    ## Level3 has a bug, the links are different from CMR https://www.earthdata.nasa.gov/data/catalog/ornl-cloud-gedi-l3-landsurface-metrics-v2-1952-2
-    if (product == 'GEDI03') {
-      hrefs <- gsub(
-        'data.ornldaac.earthdata.nasa.gov/protected',
-        'daac.ornl.gov/daacdata',
-        hrefs
-        )
-    }
-
-    granules_href <- c(
-      granules_href,
-      hrefs
-    )
-    page <- page + 1
   }
-
-  return(granules_href)
+  ans <- data.table::rbindlist(rows, use.names = TRUE, fill = TRUE)
+  if (return == "url") ans$url else ans
 }

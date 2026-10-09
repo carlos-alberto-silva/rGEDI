@@ -2,9 +2,18 @@
 % Please edit documentation in R/gediDownload.R
 \name{gediDownload}
 \alias{gediDownload}
+\alias{downloadGEDI}
 \title{Download GEDI data}
 \usage{
 gediDownload(
+  filepath,
+  outdir = NULL,
+  overwrite = FALSE,
+  buffer_size = 512,
+  timeout = 10
+)
+
+downloadGEDI(
   filepath,
   outdir = NULL,
   overwrite = FALSE,

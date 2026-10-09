@@ -45,15 +45,16 @@
 #'@export
 gediDownload<-function(filepath, outdir = NULL, overwrite = FALSE, buffer_size = 512, timeout=10){
   if (is.null(outdir)) {
-    outdir == tempdir()
+    outdir <- tempdir()
   }
+  if (!dir.exists(outdir)) dir.create(outdir, recursive = TRUE)
   stopifnotMessage(
     "outdir is not a valid path" = checkParentDir(outdir),
     "overwrite is not logical" = checkLogical(overwrite),
     "buffer_size is not an integer" = checkInteger(buffer_size)
   )
   buffer_size = as.integer(buffer_size)
-  netrc = getNetRC(outdir)
+  netrc <- getNetRC(outdir)
 
   files<-filepath
   n_files = length(files)
@@ -79,6 +80,10 @@ gediDownload<-function(filepath, outdir = NULL, overwrite = FALSE, buffer_size =
     }
   }
 }
+
+#' @rdname gediDownload
+#' @export
+downloadGEDI <- gediDownload
 
 gediDownloadFile = function(url, outdir, overwrite, buffer_size, netrc, timeout) {
   filename <- file.path(outdir, basename(url)) # Keep original filename

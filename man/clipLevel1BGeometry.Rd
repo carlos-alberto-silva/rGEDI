@@ -7,7 +7,7 @@
 clipLevel1BGeometry(level1b, polygon, output = "", split_by = NULL)
 }
 \arguments{
-\item{level1b}{A \code{\linkS4class{gedi.level1b}} object (output of \code{\link[=readLevel1B]{readLevel1B()}} function).
+\item{level1b}{A \code{\link[=gedi.level1b-class]{gedi.level1b}} object (output of \code{\link[=readLevel1B]{readLevel1B()}} function).
 An S4 object of class "gedi.level1b".}
 
 \item{polygon}{Polygon or Multipolygon. An object opened with \code{sf::st_read},}
@@ -19,7 +19,7 @@ An S4 object of class "gedi.level1b".}
 the attribute specified by \code{split_by} from the attribute table.}
 }
 \value{
-Returns a list of S4 object of class \code{\linkS4class{gedi.level1b}} containing clipped
+Returns a list of S4 object of class \code{\link[=gedi.level1b-class]{gedi.level1b}} containing clipped
 GEDI Level1B data.
 }
 \description{
@@ -27,7 +27,7 @@ This function clips GEDI Level1B (geolocated waveforms) data within a
 given bounding geometry
 }
 \examples{
-\donttest{
+\dontrun{
 outdir <- tempdir()
 
 # Specifying the path to GEDI level1B data (zip file)

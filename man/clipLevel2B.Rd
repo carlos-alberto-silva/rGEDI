@@ -27,7 +27,7 @@ Returns a list of S4 object of class "gedi.level2b" containing clipped GEDI Leve
 This function extracts GEDI Level1B data a within given bounding coordinates
 }
 \examples{
-\donttest{
+\dontrun{
 outdir <- tempdir()
 
 # Specifying the path to GEDI level2B data (zip file)

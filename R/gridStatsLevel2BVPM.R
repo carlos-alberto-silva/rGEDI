@@ -14,7 +14,7 @@
 #' @seealso \url{https://www.earthdata.nasa.gov/data/catalog/lpcloud-gedi02-b-002}
 #'
 #' @examples
-#' \donttest{
+#' \dontrun{
 #' # specify the path to GEDI level2B data (zip file)
 #' outdir <- tempdir()
 #' level2B_fp_zip <- system.file("extdata",

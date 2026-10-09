@@ -1,0 +1,202 @@
+# GEDI Level 4A -----------------------------------------------------------
+
+.level4a_default_columns <- c(
+  "beam", "shot_number", "algorithm_run_flag", "l2_quality_flag",
+  "l4_quality_flag", "degrade_flag", "delta_time", "sensitivity",
+  "solar_elevation", "surface_flag", "lat_lowestmode", "lon_lowestmode",
+  "elev_lowestmode", "agbd", "agbd_se", "agbd_pi_lower",
+  "agbd_pi_upper", "predict_stratum", "selected_algorithm"
+)
+
+#' Read a GEDI Level 4A granule
+#'
+#' Opens a GEDI04_A HDF5 granule containing footprint-level aboveground
+#' biomass density estimates.
+#'
+#' @param level4Apath Path to a GEDI04_A HDF5 file.
+#' @return A [`gedi.level4a-class`] object. Close it with [close()].
+#' @seealso \url{https://daac.ornl.gov/GEDI/guides/GEDI_L4A_AGB_Density_V3.html}
+#' @export
+readLevel4A <- function(level4Apath) {
+  if (!is.character(level4Apath) || length(level4Apath) != 1L || !file.exists(level4Apath)) {
+    stop("'level4Apath' must be an existing GEDI04_A HDF5 file.", call. = FALSE)
+  }
+  new("gedi.level4a", h5 = hdf5r::H5File$new(level4Apath, mode = "r"))
+}
+
+.gedi_beams <- function(h5) {
+  grep("^BEAM[0-9]{4}$", h5$ls()$name, value = TRUE)
+}
+
+.h5_read_if_present <- function(group, name) {
+  if (!group$exists(name)) return(NULL)
+  value <- group[[name]][]
+  if (is.factor(value)) as.character(value) else value
+}
+
+#' Extract GEDI Level 4A footprint metrics
+#'
+#' @param level4a A [`gedi.level4a-class`] object returned by [readLevel4A()].
+#' @param cols Character vector of fields to return. `NULL` returns all
+#'   datasets shared by the selected beams.
+#' @param quality Logical. If `TRUE`, retain observations with
+#'   `l4_quality_flag == 1` and `degrade_flag == 0` when those fields exist.
+#' @param beams Optional character vector of GEDI beam names.
+#' @return A [data.table::data.table] with one row per footprint.
+#' @export
+getLevel4A <- function(level4a, cols = .level4a_default_columns,
+                       quality = FALSE, beams = NULL) {
+  if (!is(level4a, "gedi.level4a")) {
+    stop("'level4a' must be returned by readLevel4A().", call. = FALSE)
+  }
+  h5 <- level4a@h5
+  available_beams <- .gedi_beams(h5)
+  if (is.null(beams)) beams <- available_beams
+  unknown <- setdiff(beams, available_beams)
+  if (length(unknown)) stop("Unknown beam(s): ", paste(unknown, collapse = ", "), call. = FALSE)
+
+  out <- lapply(beams, function(beam) {
+    group <- h5[[beam]]
+    available <- group$ls()$name
+    requested <- cols
+    if (is.null(requested)) requested <- available
+    requested <- unique(requested)
+    values <- list()
+    for (field in setdiff(requested, "beam")) {
+      value <- .h5_read_if_present(group, field)
+      if (!is.null(value)) values[[field]] <- value
+    }
+    lengths <- lengths(values)
+    n <- if (length(lengths)) max(lengths) else 0L
+    if (!n) return(data.table::data.table())
+    values <- lapply(values, function(value) {
+      if (length(value) == 1L && n > 1L) rep(value, n) else value
+    })
+    bad <- names(values)[lengths(values) != n]
+    if (length(bad)) {
+      warning("Skipping non-footprint dataset(s) in ", beam, ": ", paste(bad, collapse = ", "))
+      values[bad] <- NULL
+    }
+    dt <- data.table::as.data.table(values)
+    dt[, beam := beam]
+    data.table::setcolorder(dt, c("beam", setdiff(names(dt), "beam")))
+    dt
+  })
+  ans <- data.table::rbindlist(out, use.names = TRUE, fill = TRUE)
+  missing_cols <- setdiff(if (is.null(cols)) character() else cols, names(ans))
+  if (length(missing_cols)) {
+    warning("Unavailable Level 4A field(s): ", paste(missing_cols, collapse = ", "))
+  }
+  if (isTRUE(quality) && nrow(ans)) {
+    keep <- rep(TRUE, nrow(ans))
+    if ("l4_quality_flag" %in% names(ans)) keep <- keep & ans$l4_quality_flag == 1
+    if ("degrade_flag" %in% names(ans)) keep <- keep & ans$degrade_flag == 0
+    keep[is.na(keep)] <- FALSE
+    ans <- ans[keep]
+  }
+  ans[]
+}
+
+#' Clip GEDI Level 4A footprints by an extent
+#'
+#' @param level4A A table returned by [getLevel4A()].
+#' @param xmin,xmax,ymin,ymax Bounding coordinates in longitude/latitude.
+#' @return A [data.table::data.table].
+#' @export
+clipLevel4A <- function(level4A, xmin, xmax, ymin, ymax) {
+  if (!inherits(level4A, c("data.table", "data.frame"))) stop("'level4A' must be a table.")
+  bounds <- c(xmin, xmax, ymin, ymax)
+  if (!is.numeric(bounds) || length(bounds) != 4L || any(!is.finite(bounds))) stop("Bounds must be finite numbers.")
+  lon <- level4A$lon_lowestmode
+  lat <- level4A$lat_lowestmode
+  keep <- lon >= xmin & lon <= xmax & lat >= ymin & lat <= ymax
+  keep[is.na(keep)] <- FALSE
+  data.table::as.data.table(level4A)[keep]
+}
+
+#' Clip GEDI Level 4A footprints by polygons
+#'
+#' @param level4A A table returned by [getLevel4A()].
+#' @param polygon An `sf`, `sfc`, or `SpatVector` polygon object.
+#' @param split_by Optional polygon attribute copied to `poly_id`.
+#' @return A [data.table::data.table].
+#' @export
+clipLevel4AGeometry <- function(level4A, polygon, split_by = NULL) {
+  if (!inherits(level4A, c("data.table", "data.frame"))) stop("'level4A' must be a table.")
+  poly <- if (inherits(polygon, "SpatVector")) sf::st_as_sf(polygon) else sf::st_as_sf(polygon)
+  poly <- sf::st_transform(sf::st_make_valid(poly), 4326)
+  pts <- sf::st_as_sf(as.data.frame(level4A),
+    coords = c("lon_lowestmode", "lat_lowestmode"), crs = 4326, remove = FALSE)
+  hits <- sf::st_intersects(pts, poly)
+  keep <- lengths(hits) > 0L
+  ans <- data.table::as.data.table(level4A)[keep]
+  if (!is.null(split_by)) {
+    if (!split_by %in% names(poly)) stop("'split_by' is not a polygon attribute.")
+    ans[["poly_id"]] <- poly[[split_by]][vapply(hits[keep], `[`, integer(1), 1L)]
+  }
+  ans
+}
+
+#' Grid GEDI Level 4A footprint metrics
+#'
+#' @param level4A A table returned by [getLevel4A()].
+#' @param metric Metric column name.
+#' @param fun Aggregation function.
+#' @param res Output resolution in decimal degrees.
+#' @param ... Additional arguments passed to `fun`.
+#' @return A [`terra::SpatRaster-class`].
+#' @export
+gridStatsLevel4A <- function(level4A, metric = "agbd", fun = mean, res = 0.01, ...) {
+  .grid_gedi_points(level4A, "lon_lowestmode", "lat_lowestmode", metric, fun, res, ...)
+}
+
+#' Polygon statistics for GEDI Level 4A footprints
+#'
+#' @param level4A A table returned by [getLevel4A()].
+#' @param polygon An `sf`, `sfc`, or `SpatVector` polygon object.
+#' @param metric Metric column name.
+#' @param fun Aggregation function.
+#' @param id Optional polygon ID field.
+#' @param ... Additional arguments passed to `fun`.
+#' @return A data table with one row per polygon.
+#' @export
+polyStatsLevel4A <- function(level4A, polygon, metric = "agbd", fun = mean,
+                             id = NULL, ...) {
+  .poly_gedi_points(level4A, polygon, "lon_lowestmode", "lat_lowestmode", metric, fun, id, ...)
+}
+
+#' Rasterize GEDI Level 4A footprints
+#'
+#' @inheritParams gridStatsLevel4A
+#' @param filename Optional output GeoTIFF path.
+#' @param overwrite Logical; overwrite `filename` when it exists.
+#' @return A [`terra::SpatRaster-class`].
+#' @export
+rasterizeLevel4A <- function(level4A, metric = "agbd", fun = mean, res = 0.01,
+                             filename = "", overwrite = FALSE, ...) {
+  r <- gridStatsLevel4A(level4A, metric, fun, res, ...)
+  if (nzchar(filename)) terra::writeRaster(r, filename, overwrite = overwrite) else r
+}
+
+#' Plot GEDI Level 4A footprint biomass
+#'
+#' @param level4A A table returned by [getLevel4A()].
+#' @param metric Metric column to display.
+#' @param ... Additional arguments passed to [graphics::plot()].
+#' @return Invisibly returns `level4A`.
+#' @export
+plotLevel4A <- function(level4A, metric = "agbd", ...) {
+  if (!all(c("lon_lowestmode", "lat_lowestmode", metric) %in% names(level4A))) {
+    stop("Required coordinate or metric columns are missing.")
+  }
+  metric_values <- as.numeric(level4A[[metric]])
+  bins <- if (length(unique(metric_values[is.finite(metric_values)])) < 2L) {
+    rep(50L, length(metric_values))
+  } else {
+    as.integer(cut(metric_values, 100, include.lowest = TRUE))
+  }
+  graphics::plot(level4A$lon_lowestmode, level4A$lat_lowestmode,
+    col = grDevices::hcl.colors(100, "Viridis")[bins],
+    xlab = "Longitude", ylab = "Latitude", ...)
+  invisible(level4A)
+}

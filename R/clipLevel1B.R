@@ -20,7 +20,7 @@
 #' @seealso \url{https://www.earthdata.nasa.gov/data/catalog/lpcloud-gedi01-b-002}
 #'
 #' @examples
-#' \donttest{
+#' \dontrun{
 #' # Specifying the path to GEDI level1B data (zip file)
 #' outdir <- tempdir()
 #'
@@ -91,7 +91,7 @@ clipLevel1B <- function(level1b, xmin, xmax, ymin, ymax, output = "") {
 #' GEDI Level1B data.
 #'
 #' @examples
-#' \donttest{
+#' \dontrun{
 #' outdir <- tempdir()
 #'
 #' # Specifying the path to GEDI level1B data (zip file)

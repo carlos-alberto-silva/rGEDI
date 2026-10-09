@@ -7,7 +7,7 @@
 \S4method{plot}{gedi.fullwaveform,missing}(x, relative = FALSE, polygon = FALSE, ...)
 }
 \arguments{
-\item{x}{An object of class \code{\linkS4class{gedi.fullwaveform}} (output of \code{\link[=getLevel1BWF]{getLevel1BWF()}} function)}
+\item{x}{An object of class \code{\link[=gedi.fullwaveform-class]{gedi.fullwaveform}} (output of \code{\link[=getLevel1BWF]{getLevel1BWF()}} function)}
 
 \item{relative}{if TRUE, the Waveform Amplitude will be showed in percentage (\%)}
 
@@ -19,7 +19,7 @@
 No return value
 }
 \description{
-For \code{\linkS4class{gedi.fullwaveform}}: will plot the full waveform
+For \code{\link[=gedi.fullwaveform-class]{gedi.fullwaveform}}: will plot the full waveform
 }
 \examples{
 # Specifying the path to GEDI level1B data (zip file)

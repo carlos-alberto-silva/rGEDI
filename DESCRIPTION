@@ -1,7 +1,7 @@
 Package: rGEDI
 Type: Package
 Title: NASA's Global Ecosystem Dynamics Investigation (GEDI) Data Visualization and Processing
-Version: 0.5.8
+Version: 0.6.0
 Authors@R: c(
     person("Carlos Alberto", "Silva", email = "c.silva@ufl.edu", role = c("aut", "cph", "cre")),
     person("Caio", "Hamamura", email = "caiohamamura@gmail.com", role = c("aut", "cph")),
@@ -12,7 +12,11 @@ Authors@R: c(
     person("Danilo Roberti Alves de", "Almeida", email = "daniloflorestas@gmail.com", role = c("aut","ctb")),
     person("Celso H. L.", "Silva Junior", email = "celso.junior@inpe.br", role = c("aut","ctb")),
     person("Carine", "Klauberg", email = "carine_klauberg@hotmail.com", role = c("aut","ctb")))
-Description: Set of tools for downloading, reading, visualizing and processing GEDI Level1B, Level2A and Level2B data.
+Description: Tools for finding, downloading, reading, visualizing, sampling,
+  modeling, and processing NASA Global Ecosystem Dynamics Investigation
+  (GEDI) Level 1B, Level 2A, Level 2B, Level 3, Level 4A, and Level 4B data.
+  Supports local files, NASA Earthdata Cloud access, and optional Google Earth
+  Engine workflows for ancillary-data extraction and wall-to-wall mapping.
 License: GPL-3
 Encoding: UTF-8
 Depends: methods
@@ -38,11 +42,13 @@ Suggests:
     lidR,
     plot3D,
     rasterVis,
+    randomForest,
+    reticulate,
     stringr,
     testthat (>= 3.0.0),
     viridis
-RoxygenNote: 7.3.3
 Roxygen: list(markdown = TRUE)
 BugReports: https://github.com/carlos-alberto-silva/rGEDI/issues
 URL: https://github.com/carlos-alberto-silva/rGEDI
 Config/testthat/edition: 3
+Config/roxygen2/version: 8.1.0

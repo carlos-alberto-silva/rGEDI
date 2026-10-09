@@ -29,7 +29,7 @@ GEDI Level2A data.
 This function clips GEDI Level2A data within a given bounding coordinates
 }
 \examples{
-\donttest{
+\dontrun{
 outdir <- tempdir()
 
 # Specifying the path to GEDI level2A data (zip file)

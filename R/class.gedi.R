@@ -49,6 +49,16 @@ gedi.level2b <- setClass(
   slots = list(h5 = "H5File")
 )
 
+#' Class for GEDI Level 4A footprint biomass data
+#'
+#' @slot h5 An open [`hdf5r::H5File-class`] containing a GEDI04_A granule.
+#' @seealso \url{https://daac.ornl.gov/GEDI/guides/GEDI_L4A_AGB_Density_V3.html}
+#' @export
+gedi.level4a <- setClass(
+  Class = "gedi.level4a",
+  slots = list(h5 = "H5File")
+)
+
 
 #' Class for GEDI level1B Full Waveform
 #'
@@ -190,3 +200,7 @@ setMethod("close", signature = c("gedi.level2a"), h5closeall)
 #' @method close gedi.level2b
 #' @rdname close
 setMethod("close", signature = c("gedi.level2b"), h5closeall)
+
+#' @rdname close
+#' @method close gedi.level4a
+setMethod("close", signature = c("gedi.level4a"), h5closeall)

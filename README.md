@@ -2,7 +2,7 @@
 
 [![R-CMD-check](https://github.com/carlos-alberto-silva/rGEDI/actions/workflows/r.yml/badge.svg?branch=master)](https://github.com/carlos-alberto-silva/rGEDI/actions/workflows/r.yml)
 [![CRAN](https://www.r-pkg.org/badges/version/rGEDI)](https://cran.r-project.org/package=rGEDI)
-![Github](https://img.shields.io/badge/Github-0.1.12-green.svg)
+![Github](https://img.shields.io/badge/Github-0.6.0-green.svg)
 ![licence](https://img.shields.io/badge/Licence-GPL--3-blue.svg) 
 ![Downloads](https://cranlogs.r-pkg.org/badges/grand-total/rGEDI)
 
@@ -39,9 +39,58 @@ lr_lon<- -13.67646
 daterange=c("2019-07-01","2020-05-22")
 
 # Get path to GEDI data
-gLevel1B<-gedifinder(product="GEDI01_B",ul_lat, ul_lon, lr_lat, lr_lon,version="002",daterange=daterange)
-gLevel2A<-gedifinder(product="GEDI02_A",ul_lat, ul_lon, lr_lat, lr_lon,version="002",daterange=daterange)
-gLevel2B<-gedifinder(product="GEDI02_B",ul_lat, ul_lon, lr_lat, lr_lon,version="002",daterange=daterange)
+gLevel1B<-gedifinder(product="GEDI01_B",ul_lat, ul_lon, lr_lat, lr_lon,version="003",daterange=daterange)
+gLevel2A<-gedifinder(product="GEDI02_A",ul_lat, ul_lon, lr_lat, lr_lon,version="003",daterange=daterange)
+gLevel2B<-gedifinder(product="GEDI02_B",ul_lat, ul_lon, lr_lat, lr_lon,version="003",daterange=daterange)
+gLevel3 <-gedifinder(product="GEDI03",  ul_lat, ul_lon, lr_lat, lr_lon)
+gLevel4A<-gedifinder(product="GEDI04_A",ul_lat, ul_lon, lr_lat, lr_lon)
+gLevel4B<-gedifinder(product="GEDI04_B",ul_lat, ul_lon, lr_lat, lr_lon)
+```
+
+## GEDI Level 3, Level 4A, and Level 4B
+```{r}
+# Level 3 and Level 4B are gridded GeoTIFF products
+l3  <- readLevel3("GEDI03_counts_...tif")
+l4b <- readLevel4B("GEDI04_B_...tif")
+l4b_clip <- clipLevel4B(l4b, c(xmin, xmax, ymin, ymax))
+l4b_stats <- polyStatsLevel4B(l4b, study_area)
+
+# Level 4A contains footprint biomass estimates in HDF5
+l4a <- readLevel4A("GEDI04_A_...h5")
+biomass <- getLevel4A(l4a, quality = TRUE)
+biomass_raster <- rasterizeLevel4A(biomass, metric = "agbd", res = 0.01)
+close(l4a)
+```
+
+## Cloud access, Earth Engine, sampling, and modeling
+```{r}
+# Discover direct S3 links. Direct S3 processing runs in AWS us-west-2.
+s3_urls <- gedifinder("GEDI04_B", ul_lat, ul_lon, lr_lat, lr_lon,
+                      access = "s3")
+# earthdata_login()                         # authenticate once
+# earthdata_s3_credentials()                # temporary GDAL/terra credentials
+# cloud_raster <- openGEDI(s3_urls[1])
+
+# Sample footprint metrics and fit a biomass model
+sampled <- sampleGEDI(biomass, spacedSampling(size = 500, radius = 1000))
+model <- fit_model(sampled[c("sensitivity", "elev_lowestmode")], sampled$agbd,
+                   method = "randomForest", test = "kfold")
+
+# Optional Earth Engine workflow
+# ee_initialize("your-google-cloud-project")
+# stack <- ee_build_hls_s1c_terrain_stack(study_area, "2024-01-01", "2024-12-31")
+# predictors <- extractEE(stack, sampled)
+```
+
+## Orbit animation and waveform simulation
+```{r}
+plot_gedi_orbit_animation(biomass, output_file = "gedi-orbit.html")
+
+# Portable simulator: tables and LAS/LAZ (with lidR) are supported
+simulated <- gediWFSimulator(als_points, output = "simulated-GEDI.h5",
+                             coords = c(-82.35, 29.65))
+waveform_metrics <- gediWFMetrics(simulated)
+close(simulated)
 ```
 ## Downloading GEDI data
 ```{r}

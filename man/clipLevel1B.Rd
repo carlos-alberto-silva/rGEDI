@@ -7,8 +7,8 @@
 clipLevel1B(level1b, xmin, xmax, ymin, ymax, output)
 }
 \arguments{
-\item{level1b}{A \code{\linkS4class{gedi.level1b}} object (output of \code{\link[=readLevel1B]{readLevel1B()}} function).
-An S4 object of class \code{\linkS4class{gedi.level1b}}.}
+\item{level1b}{A \code{\link[=gedi.level1b-class]{gedi.level1b}} object (output of \code{\link[=readLevel1B]{readLevel1B()}} function).
+An S4 object of class \code{\link[=gedi.level1b-class]{gedi.level1b}}.}
 
 \item{xmin}{Numeric. West longitude (x) coordinate of the bounding rectangle, in decimal degrees.}
 
@@ -22,7 +22,7 @@ An S4 object of class \code{\linkS4class{gedi.level1b}}.}
 temporary file only.}
 }
 \value{
-Returns a list of S4 objects of class \code{\linkS4class{gedi.level1b}} containing
+Returns a list of S4 objects of class \code{\link[=gedi.level1b-class]{gedi.level1b}} containing
 clipped GEDI Level1B data.
 }
 \description{
@@ -30,7 +30,7 @@ This function clips GEDI Level1B data (geolocated waveforms) within a given
 bounding coordinates
 }
 \examples{
-\donttest{
+\dontrun{
 # Specifying the path to GEDI level1B data (zip file)
 outdir <- tempdir()
 
