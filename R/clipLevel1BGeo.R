@@ -41,9 +41,8 @@
 #' # Clipping GEDI Full Waveform Geolocations by boundary box extent
 #' level1bGeo_clip <- clipLevel1BGeo(level1bGeo, xmin, xmax, ymin, ymax)
 #'
-#' hasLeaflet <- require(leaflet)
-#'
-#' if (hasLeaflet) {
+#' if (interactive() && requireNamespace("leaflet", quietly = TRUE)) {
+#'   library(leaflet)
 #'   leaflet() %>%
 #'     addCircleMarkers(level1bGeo_clip$longitude_bin0,
 #'       level1bGeo_clip$latitude_bin0,
@@ -122,9 +121,8 @@ clipLevel1BGeo <- function(level1BGeo, xmin, xmax, ymin, ymax) {
 #' # Clipping GEDI Full Waveform Geolocations by Geometry
 #' level1BGeo_clip <- clipLevel1BGeoGeometry(level1BGeo, polygon, split_by = "id")
 #'
-#' hasLeaflet <- require(leaflet)
-#'
-#' if (hasLeaflet) {
+#' if (interactive() && requireNamespace("leaflet", quietly = TRUE)) {
+#'   library(leaflet)
 #'   leaflet() %>%
 #'     addCircleMarkers(level1BGeo_clip$longitude_bin0,
 #'       level1BGeo_clip$latitude_bin0,

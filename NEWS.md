@@ -1,10 +1,13 @@
 <!-- NEWS.md is maintained by https://cynkra.github.io/fledge, do not edit -->
 
-# rGEDI 0.5.7 (2025-09-23)
+# rGEDI 0.5.7 (2026-10-09)
 
 * Fixes #68: direct call to S3 method from bit64
 * Add testthat automatic testing
 * Update url links from README.md and add tests
+* Fix grid statistics functions after sf stopped exporting the pipe operator
+* Update the GEDI data products URL after its permanent redirect
+* Keep optional visualizations out of non-interactive example checks
 
 
 # rGEDI 0.5.6 (2025-09-23)

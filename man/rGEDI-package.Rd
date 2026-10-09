@@ -7,7 +7,7 @@
 The rGEDI package provides functions for i) downloading, ii) visualizing, iii) clipping, iv) gridding, iv) simulating and v) exporting GEDI data.
 }
 \note{
-See more details about GEDI data in \url{https://gedi.umd.edu/data/products/}.
+See more details about GEDI data in \url{https://gedi.umd.edu/dataproducts/products/}.
 }
 \seealso{
 For comprehensive examples refer to \url{https://github.com/carlos-alberto-silva/rGEDI/blob/master/README.md}

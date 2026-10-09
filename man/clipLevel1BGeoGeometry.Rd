@@ -50,9 +50,8 @@ polygon <- sf::st_read(polygon_filepath)
 # Clipping GEDI Full Waveform Geolocations by Geometry
 level1BGeo_clip <- clipLevel1BGeoGeometry(level1BGeo, polygon, split_by = "id")
 
-hasLeaflet <- require(leaflet)
-
-if (hasLeaflet) {
+if (interactive() && requireNamespace("leaflet", quietly = TRUE)) {
+  library(leaflet)
   leaflet() \%>\%
     addCircleMarkers(level1BGeo_clip$longitude_bin0,
       level1BGeo_clip$latitude_bin0,

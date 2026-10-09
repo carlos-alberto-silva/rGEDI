@@ -68,7 +68,6 @@ gridStatsLevel2BVPM <- function(level2BVPM, func, res) {
 
   # Add data.table operator
   `:=` <- data.table::`:=`
-  `%>%` <- sf::`%>%`
 
   call <- lazy_call(func)
 

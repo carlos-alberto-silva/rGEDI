@@ -1,21 +1,21 @@
 check_url <- function(url) {
   # Try HEAD without following redirects
-  req <- httr2::request(url) %>%
-    httr2::req_method("HEAD") %>%
-    httr2::req_timeout(10) %>%
-    httr2::req_options(followlocation = 0) %>%
-        httr2::req_user_agent("R (testthat url-check)")
+  req <- httr2::request(url)
+  req <- httr2::req_method(req, "HEAD")
+  req <- httr2::req_timeout(req, 10)
+  req <- httr2::req_options(req, followlocation = 0)
+  req <- httr2::req_user_agent(req, "R (testthat url-check)")
 
   resp <- try(httr2::req_perform(req), silent = TRUE)
 
   # If HEAD completely failed, try GET
   if (inherits(resp, "try-error") ||
         httr2::resp_status(resp) %in% c(403, 405)) {
-    req <- httr2::request(url) %>%
-      httr2::req_method("GET") %>%
-      httr2::req_timeout(10) %>%
-      httr2::req_options(followlocation = 0) %>%
-      httr2::req_user_agent("R (testthat url-check)")
+    req <- httr2::request(url)
+    req <- httr2::req_method(req, "GET")
+    req <- httr2::req_timeout(req, 10)
+    req <- httr2::req_options(req, followlocation = 0)
+    req <- httr2::req_user_agent(req, "R (testthat url-check)")
 
     resp <- try(httr2::req_perform(req), silent = TRUE)
   }
@@ -28,7 +28,7 @@ test_that("URLs in .R files do not redirect (i.e., are not moved)", {
   skip_if_offline()    # testthat helper, skips if no internet
 
   # Use package root whether installed or source
-  pkg_root <- testthat::test_path("..")
+  pkg_root <- testthat::test_path("..", "..")
 
   # Collect all R/ source files
   r_files <- list.files(file.path(pkg_root),
@@ -82,8 +82,9 @@ test_that("URLs in .R files do not redirect (i.e., are not moved)", {
         next
       }
       redirect_url <- httr2::resp_header(resp, "location")
+      if (is.null(redirect_url)) redirect_url <- "unknown"
       fail(sprintf("URL '%s' redirects to '%s' (status %d).",
-                   url, redirect_url %||% "unknown", status_code))
+                   url, redirect_url, status_code))
     } else if (status_code >= 400) {
       fail(sprintf("URL '%s' returned error status %d.", url, status_code))
     } else {

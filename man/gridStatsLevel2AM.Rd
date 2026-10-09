@@ -57,15 +57,17 @@ ZTstats <- gridStatsLevel2AM(
   func = mySetOfMetrics(elev_highestreturn),
   res = 0.005
 )
-plot(ZTstats)
+if (interactive()) plot(ZTstats)
 
-#' Computing the maximum of RH100 only
-maxRH100 <- gridStatsLevel2AM(level2AM = level2AM, func = mySetOfMetrics(rh100), res = 0.0005)
-plot(maxRH100)
+if (interactive()) {
+  # Computing the maximum of RH100 only
+  maxRH100 <- gridStatsLevel2AM(level2AM, mySetOfMetrics(rh100), res = 0.0005)
+  plot(maxRH100)
 
-#' Computing the mean of ZG only
-ZGmean <- gridStatsLevel2AM(level2AM = level2AM, func = mean(elev_lowestmode), res = 0.005)
-plot(ZGmean)
+  # Computing the mean of ZG only
+  ZGmean <- gridStatsLevel2AM(level2AM, mean(elev_lowestmode), res = 0.005)
+  plot(ZGmean)
+}
 
 close(level2a)
 }
