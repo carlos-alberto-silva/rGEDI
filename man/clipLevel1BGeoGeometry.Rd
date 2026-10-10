@@ -38,7 +38,7 @@ level1Bpath <- unzip(level1B_fp_zip, exdir = outdir)
 level1b <- readLevel1B(level1Bpath = level1Bpath)
 
 # Extracting GEDI Full Waveform Geolocations
-level1BGeo <- getLevel1BGeo(level1b)
+level1BGeo <- getLevel1BGeo(level1b, beams = "BEAM0001")
 
 # Specifying the path to shapefile
 polygon_filepath <- system.file("extdata", "stands_cerrado.shp", package = "rGEDI")

@@ -122,15 +122,28 @@ samples$shot_number <- as.character(samples$shot_number)
 samples$sample_id <- seq_len(nrow(samples))
 
 ee <- ee_initialize(ee_project, authenticate = FALSE, quiet = TRUE)
-stack <- ee_build_AlphaEarth_embedding_terrain_stack(
+full_stack <- ee_build_AlphaEarth_embedding_terrain_stack(
   study_extent, start_year = 2019, end_year = 2019
 )
-available_bands <- reticulate::py_to_r(stack$bandNames()$getInfo())
+available_bands <- reticulate::py_to_r(full_stack$bandNames()$getInfo())
 predictor_names <- c(
   head(grep("^A", available_bands, value = TRUE), 8),
   intersect(c("elevation", "slope", "aspect"), available_bands)
 )
-stack <- stack$select(as.list(predictor_names))
+stack <- full_stack$select(as.list(predictor_names))
+
+rgb_image <- full_stack$select(c("A00", "A20", "A40"))$visualize(
+  bands = c("A00", "A20", "A40"), min = -0.06, max = 0.12
+)
+map_download(
+  rgb_image, "readme/alphaearth-rgb.tif",
+  region = study_extent, scale = 30, overwrite = TRUE
+)
+rgb_raster <- terra::rast("readme/alphaearth-rgb.tif")
+grDevices::png("readme/fig-alphaearth-rgb.png", 1200, 900, res = 150)
+terra::plotRGB(rgb_raster, r = 1, g = 2, b = 3, stretch = "lin",
+               main = "AlphaEarth embedding false-color composite")
+grDevices::dev.off()
 
 training <- extractEE(stack, samples, scale = 30, chunk_size = 50)
 training <- training[stats::complete.cases(
@@ -142,6 +155,18 @@ if (!all(c("lon_lowestmode", "lat_lowestmode") %in% names(training))) {
   )]
   training <- merge(training, coordinates, by = "sample_id", sort = FALSE)
 }
+data.table::fwrite(training, "readme/gedi-alphaearth-training.csv")
+
+selection <- varSel(
+  training[, predictor_names, with = FALSE], training$agbd,
+  method = "rfe", threshold = 0, seed = 42, ntree = 200
+)
+predictor_names <- selection$selvars
+grDevices::png("readme/fig-gedi-rfe.png", 1500, 750, res = 150)
+graphics::par(mfrow = c(1, 2), mar = c(4.4, 7.5, 3, 1))
+plot(selection, which = "importance", main = "Predictor importance")
+plot(selection, which = "rfe", main = "Recursive feature elimination")
+grDevices::dev.off()
 
 model <- fit_model(
   training[, predictor_names, with = FALSE], training$agbd,
@@ -167,7 +192,8 @@ graphics::abline(0, 1, lwd = 2, col = "#d1495b")
 graphics::grid()
 graphics::legend(
   "topleft", bty = "n",
-  legend = c("RMSE = 7.74 Mg/ha", "Adjusted R-squared = 0.072")
+  legend = sprintf("%s = %.3f", model$stats_test$stat,
+                   model$stats_test$value)
 )
 grDevices::dev.off()
 

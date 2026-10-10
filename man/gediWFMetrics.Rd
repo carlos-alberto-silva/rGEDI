@@ -11,6 +11,7 @@ gediWFMetrics(
   ground = TRUE,
   rhoG = 0.4,
   rhoC = 0.57,
+  ground_method = c("auto", "truth", "lowest_peak", "quantile"),
   ...
 )
 }
@@ -24,6 +25,9 @@ gediWFMetrics(
 \item{ground}{Logical; include the estimated ground elevation.}
 
 \item{rhoG, rhoC}{Ground and canopy reflectance.}
+
+\item{ground_method}{Ground estimator. \code{"auto"} uses the classified ground
+waveform when present and otherwise the lowest smoothed waveform peak.}
 
 \item{...}{Compatibility arguments from the original native implementation.}
 }

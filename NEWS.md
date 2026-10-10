@@ -12,9 +12,12 @@
   complete real-data README workflow with reproducible figures and animation
 * Add spatial sampling, modeling, prediction, and mapping helpers
 * Add an interactive GEDI orbit animation
+* Add static and GIF orbit products, recursive feature elimination diagnostics,
+  Earth Engine Drive export, and a fully ordered end-to-end README workflow
 * Restore waveform simulation and waveform metrics with a portable R/HDF5
-  implementation that avoids the original simulator's non-portable native
-  library stack
+  implementation aligned with the focused Gaussian-footprint workflow in
+  Steven Hancock's simulator while avoiding its non-portable native library
+  stack
 
 
 # rGEDI 0.5.8 (2026-10-09)

@@ -30,7 +30,8 @@ track. GEDI \code{delta_time} and \code{shot_number} columns are detected by def
 \item{track}{Optional name of a beam or track column. Separate tracks are
 colored independently.}
 
-\item{output_file}{Path of the HTML file to create.}
+\item{output_file}{Path of the \code{.html} or \code{.gif} file to create. GIF output
+requires the suggested \code{gifski} package.}
 
 \item{title}{Title shown above the animation.}
 
@@ -42,10 +43,9 @@ colored independently.}
 The normalized path to the HTML file, invisibly.
 }
 \description{
-Creates a self-contained HTML animation from GEDI footprint coordinates.
-The display uses an orthographic globe, draws the observed ground track, and
-moves a GEDI marker along the track. No web service or JavaScript library is
-required to view the saved file.
+Creates a self-contained HTML animation or an animated GIF from GEDI
+footprint coordinates. HTML output uses an interactive orthographic globe;
+GIF output shows progressive reference-ground-track playback.
 }
 \examples{
 orbit <- data.frame(

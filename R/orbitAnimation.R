@@ -1,9 +1,8 @@
 #' Animate a GEDI ground track around the Earth
 #'
-#' Creates a self-contained HTML animation from GEDI footprint coordinates.
-#' The display uses an orthographic globe, draws the observed ground track, and
-#' moves a GEDI marker along the track. No web service or JavaScript library is
-#' required to view the saved file.
+#' Creates a self-contained HTML animation or an animated GIF from GEDI
+#' footprint coordinates. HTML output uses an interactive orthographic globe;
+#' GIF output shows progressive reference-ground-track playback.
 #'
 #' @param x A data frame, `data.table`, `sf` or `SpatVector` containing GEDI
 #'   footprint coordinates, or an open `gedi.level1b`, `gedi.level2a`,
@@ -14,7 +13,8 @@
 #'   track. GEDI `delta_time` and `shot_number` columns are detected by default.
 #' @param track Optional name of a beam or track column. Separate tracks are
 #'   colored independently.
-#' @param output_file Path of the HTML file to create.
+#' @param output_file Path of the `.html` or `.gif` file to create. GIF output
+#'   requires the suggested `gifski` package.
 #' @param title Title shown above the animation.
 #' @param duration Duration of one animation cycle in seconds.
 #' @param launch Open the animation in the default browser after it is written.
@@ -47,41 +47,20 @@ plot_gedi_orbit_animation <- function(
     stop("`duration` must be a positive number of seconds.", call. = FALSE)
   }
 
-  points <- .gedi_orbit_points(x)
-  choices <- names(points)
-  lon <- lon %||orbit% .first_orbit_name(
-    choices, c("longitude", "lon_lowestmode", "longitude_bin0", "lon")
-  )
-  lat <- lat %||orbit% .first_orbit_name(
-    choices, c("latitude", "lat_lowestmode", "latitude_bin0", "lat")
-  )
-  if (is.null(lon) || is.null(lat) || !all(c(lon, lat) %in% choices)) {
-    stop("Could not identify longitude and latitude columns.", call. = FALSE)
-  }
-
-  time <- time %||orbit% .first_orbit_name(
-    choices, c("delta_time", "shot_number", "time", "datetime")
-  )
-  track <- track %||orbit% .first_orbit_name(
-    choices, c("beam", "track", "track_id", "orbit")
-  )
-  keep <- is.finite(as.numeric(points[[lon]])) &
-    is.finite(as.numeric(points[[lat]]))
-  points <- points[keep, , drop = FALSE]
-  if (!nrow(points)) {
-    stop("No finite GEDI coordinates were supplied.", call. = FALSE)
-  }
-
-  output <- data.frame(
-    lon = as.numeric(points[[lon]]),
-    lat = as.numeric(points[[lat]]),
-    order = if (is.null(time)) seq_len(nrow(points)) else points[[time]],
-    track = if (is.null(track)) "GEDI" else as.character(points[[track]]),
-    stringsAsFactors = FALSE
-  )
-  output$track[is.na(output$track) | !nzchar(output$track)] <- "GEDI"
-  output <- output[order(output$track, output$order, na.last = TRUE), ]
+  output <- as.data.frame(getGEDITrack(
+    x, lon = lon, lat = lat, time = time, track = track
+  ))
+  names(output)[match(c("longitude", "latitude", "sequence"), names(output))] <-
+    c("lon", "lat", "order")
   output$index <- seq_len(nrow(output))
+
+  extension <- tolower(tools::file_ext(output_file))
+  if (identical(extension, "gif")) {
+    return(.write_gedi_orbit_gif(output, output_file, title, duration, launch))
+  }
+  if (!identical(extension, "html")) {
+    stop("`output_file` must end in .html or .gif.", call. = FALSE)
+  }
 
   payload <- jsonlite::toJSON(
     output[c("lon", "lat", "track", "index")],
@@ -99,6 +78,79 @@ plot_gedi_orbit_animation <- function(
   invisible(result)
 }
 
+#' Extract a GEDI reference ground track
+#'
+#' Standardizes footprint coordinates, acquisition order, and beam identifiers
+#' from any open point-level GEDI product or an extracted footprint table. The
+#' result can be plotted directly or passed to [plot_gedi_orbit_animation()].
+#'
+#' @inheritParams plot_gedi_orbit_animation
+#' @param beams Optional beam names to read from an open GEDI object.
+#' @param every Keep every nth footprint after ordering. This is useful when
+#'   plotting a complete orbit.
+#' @return A [data.table::data.table] with `longitude`, `latitude`, `sequence`,
+#'   `track`, and available time and shot identifiers.
+#' @export
+#' @examples
+#' shots <- data.frame(
+#'   lon_lowestmode = seq(-44.2, -44.1, length.out = 10),
+#'   lat_lowestmode = seq(-13.8, -13.7, length.out = 10),
+#'   delta_time = seq_len(10), beam = "BEAM0000"
+#' )
+#' getGEDITrack(shots, every = 2)
+getGEDITrack <- function(x, lon = NULL, lat = NULL, time = NULL, track = NULL,
+                         beams = NULL, every = 1L) {
+  points <- .gedi_orbit_points(x, beams = beams)
+  choices <- names(points)
+  lon <- lon %||orbit% .first_orbit_name(
+    choices, c("longitude", "lon_lowestmode", "longitude_bin0", "lon")
+  )
+  lat <- lat %||orbit% .first_orbit_name(
+    choices, c("latitude", "lat_lowestmode", "latitude_bin0", "lat")
+  )
+  if (is.null(lon) || is.null(lat) || !all(c(lon, lat) %in% choices)) {
+    stop("Could not identify longitude and latitude columns.", call. = FALSE)
+  }
+  time <- time %||orbit% .first_orbit_name(
+    choices, c("delta_time", "shot_number", "time", "datetime")
+  )
+  track <- track %||orbit% .first_orbit_name(
+    choices, c("beam", "track", "track_id", "orbit")
+  )
+  every <- as.integer(every)[1L]
+  if (!is.finite(every) || every < 1L) stop("`every` must be a positive integer.")
+  keep <- is.finite(suppressWarnings(as.numeric(points[[lon]]))) &
+    is.finite(suppressWarnings(as.numeric(points[[lat]])))
+  points <- points[keep, , drop = FALSE]
+  if (!nrow(points)) stop("No finite GEDI coordinates were supplied.", call. = FALSE)
+  order_value <- if (is.null(time)) seq_len(nrow(points)) else points[[time]]
+  track_value <- if (is.null(track)) rep("GEDI", nrow(points)) else as.character(points[[track]])
+  track_value[is.na(track_value) | !nzchar(track_value)] <- "GEDI"
+  index <- order(track_value, order_value, na.last = TRUE)
+  index <- index[seq.int(1L, length(index), by = every)]
+  ans <- data.table::data.table(
+    longitude = as.numeric(points[[lon]][index]),
+    latitude = as.numeric(points[[lat]][index]),
+    sequence = order_value[index],
+    track = track_value[index]
+  )
+  for (field in intersect(c("delta_time", "shot_number", "beam"), choices)) {
+    if (!field %in% names(ans)) ans[[field]] <- points[[field]][index]
+  }
+  # A granule can contain separated passes with the same beam identifier. Split
+  # large spatial jumps so plotting does not draw artificial cross-track lines.
+  for (label in unique(ans$track)) {
+    rows <- which(ans$track == label)
+    if (length(rows) < 3L) next
+    distance <- sqrt(diff(ans$longitude[rows])^2 + diff(ans$latitude[rows])^2)
+    local_step <- stats::median(distance[is.finite(distance) & distance > 0], na.rm = TRUE)
+    if (!is.finite(local_step) || local_step <= 0) next
+    segment <- cumsum(c(TRUE, distance > 5 * local_step))
+    if (max(segment) > 1L) ans$track[rows] <- paste0(label, ".", segment)
+  }
+  ans
+}
+
 `%||orbit%` <- function(x, y) if (is.null(x)) y else x
 
 .first_orbit_name <- function(nms, candidates) {
@@ -106,23 +158,23 @@ plot_gedi_orbit_animation <- function(
   if (length(found)) found[[1L]] else NULL
 }
 
-.gedi_orbit_points <- function(x) {
+.gedi_orbit_points <- function(x, beams = NULL) {
   if (methods::is(x, "gedi.level1b")) {
-    return(as.data.frame(getLevel1BGeo(x, select = "delta_time")))
+    return(as.data.frame(getLevel1BGeo(x, select = "delta_time", beams = beams)))
   }
   if (methods::is(x, "gedi.level2a")) {
-    return(as.data.frame(getLevel2AM(x)))
+    return(as.data.frame(getLevel2AM(x, beams = beams)))
   }
   if (methods::is(x, "gedi.level2b")) {
     return(as.data.frame(getLevel2BVPM(
       x, cols = c("beam", "shot_number", "delta_time",
-                  "latitude_bin0", "longitude_bin0")
+                  "latitude_bin0", "longitude_bin0"), beams = beams
     )))
   }
   if (methods::is(x, "gedi.level4a")) {
     return(as.data.frame(getLevel4A(
       x, cols = c("shot_number", "delta_time", "lat_lowestmode",
-                  "lon_lowestmode")
+                  "lon_lowestmode"), beams = beams
     )))
   }
   if (inherits(x, "SpatVector")) {
@@ -141,6 +193,47 @@ plot_gedi_orbit_animation <- function(
     stop("`x` must contain GEDI coordinates or be an open GEDI object.", call. = FALSE)
   }
   as.data.frame(x)
+}
+
+.write_gedi_orbit_gif <- function(output, output_file, title, duration, launch) {
+  if (!requireNamespace("gifski", quietly = TRUE)) {
+    stop("GIF output requires the suggested 'gifski' package.", call. = FALSE)
+  }
+  nframes <- min(80L, nrow(output))
+  frame_rows <- unique(round(seq(1, nrow(output), length.out = nframes)))
+  frames <- file.path(tempdir(), sprintf("rGEDI-orbit-%03d.png", seq_along(frame_rows)))
+  on.exit(unlink(frames, force = TRUE), add = TRUE)
+  xlim <- range(output$lon, finite = TRUE)
+  ylim <- range(output$lat, finite = TRUE)
+  colors <- grDevices::hcl.colors(length(unique(output$track)), "Dark 3")
+  names(colors) <- unique(output$track)
+  for (i in seq_along(frame_rows)) {
+    row <- frame_rows[[i]]
+    grDevices::png(frames[[i]], width = 900, height = 600, bg = "#07131d")
+    graphics::par(mar = c(4.5, 4.8, 3.5, 1.5), fg = "white",
+                  col.axis = "white", col.lab = "white", col.main = "white")
+    graphics::plot(NA, xlim = xlim, ylim = ylim, asp = 1,
+                   xlab = "Longitude", ylab = "Latitude", main = title)
+    graphics::grid(col = "#ffffff28")
+    shown <- output[seq_len(row), , drop = FALSE]
+    for (beam in unique(shown$track)) {
+      part <- shown[shown$track == beam, , drop = FALSE]
+      graphics::lines(part$lon, part$lat, col = colors[[beam]], lwd = 2)
+    }
+    graphics::points(shown$lon[nrow(shown)], shown$lat[nrow(shown)],
+                     pch = 21, bg = "#ff5b45", col = "white", cex = 1.8)
+    graphics::mtext(sprintf("Footprint %s of %s", row, nrow(output)),
+                    side = 3, adj = 1, col = "#a9c5bd")
+    grDevices::dev.off()
+  }
+  dir.create(dirname(output_file), recursive = TRUE, showWarnings = FALSE)
+  gifski::gifski(
+    frames, gif_file = output_file, width = 900, height = 600,
+    delay = duration / length(frames), loop = TRUE, progress = FALSE
+  )
+  result <- normalizePath(output_file, winslash = "/", mustWork = TRUE)
+  if (isTRUE(launch)) utils::browseURL(result)
+  invisible(result)
 }
 
 .html_escape <- function(x) {

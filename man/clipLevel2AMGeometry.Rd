@@ -40,7 +40,7 @@ level2Apath <- unzip(level2A_fp_zip, exdir = outdir)
 level2a <- readLevel2A(level2Apath = level2Apath)
 
 # Extracting GEDI Elevation and Height Metrics
-level2AM <- getLevel2AM(level2a)
+level2AM <- getLevel2AM(level2a, beams = "BEAM0001")
 
 # Specifying the path to shapefile
 polygon_filepath <- system.file("extdata", "stands_cerrado.shp", package = "rGEDI")

@@ -4,16 +4,29 @@
 \alias{varSel}
 \title{Select predictor variables for a GEDI model}
 \usage{
-varSel(x, y, method = c("correlation", "randomForest"), threshold = 0.1, ...)
+varSel(
+  x,
+  y,
+  method = c("correlation", "randomForest", "rfe"),
+  threshold = 0.1,
+  seed = NULL,
+  ...
+)
 }
 \arguments{
 \item{x}{Predictor data frame.}
 
 \item{y}{Response vector.}
 
-\item{method}{Selection method.}
+\item{method}{Selection method. \code{"rfe"} recursively removes the least
+important predictor and selects the smallest model whose out-of-bag error
+is within one standard error of the minimum.}
 
-\item{threshold}{Minimum absolute correlation for correlation selection.}
+\item{threshold}{Minimum absolute correlation or scaled Random Forest
+importance. For \code{method = "rfe"}, it is applied after model selection;
+use \code{0} to retain the RFE-selected subset.}
+
+\item{seed}{Optional random seed.}
 
 \item{...}{Passed to \code{randomForest} when requested.}
 }

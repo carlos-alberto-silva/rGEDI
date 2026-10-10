@@ -101,23 +101,100 @@ predict.gedi_model <- function(object, newdata, ...) stats::predict(object$model
 #' Select predictor variables for a GEDI model
 #' @param x Predictor data frame.
 #' @param y Response vector.
-#' @param method Selection method.
-#' @param threshold Minimum absolute correlation for correlation selection.
+#' @param method Selection method. `"rfe"` recursively removes the least
+#'   important predictor and selects the smallest model whose out-of-bag error
+#'   is within one standard error of the minimum.
+#' @param threshold Minimum absolute correlation or scaled Random Forest
+#'   importance. For `method = "rfe"`, it is applied after model selection;
+#'   use `0` to retain the RFE-selected subset.
+#' @param seed Optional random seed.
 #' @param ... Passed to `randomForest` when requested.
 #' @return An object of class `gedi_var_selection`.
 #' @export
-varSel <- function(x, y, method = c("correlation", "randomForest"), threshold = 0.1, ...) {
+varSel <- function(x, y, method = c("correlation", "randomForest", "rfe"),
+                   threshold = 0.1, seed = NULL, ...) {
   method <- match.arg(method); x <- as.data.frame(x)
+  ok <- stats::complete.cases(x, y)
+  x <- x[ok, , drop = FALSE]; y <- y[ok]
+  if (!nrow(x) || !ncol(x)) stop("Complete predictors and a response are required.")
+  if (!is.null(seed)) set.seed(seed)
   if (method == "correlation") {
     scores <- vapply(x, function(z) abs(stats::cor(z, y, use = "complete.obs")), numeric(1))
-  } else {
+    selected <- names(scores)[is.finite(scores) & scores >= threshold]
+    diagnostics <- NULL
+  } else if (method == "randomForest") {
     if (!requireNamespace("randomForest", quietly = TRUE)) stop("Install 'randomForest'.")
     fit <- randomForest::randomForest(x = x, y = y, importance = TRUE, ...)
     imp <- randomForest::importance(fit)
     scores <- imp[, ncol(imp)]
     scores <- scores / max(scores, na.rm = TRUE)
+    selected <- names(scores)[is.finite(scores) & scores >= threshold]
+    diagnostics <- NULL
+  } else {
+    if (!requireNamespace("randomForest", quietly = TRUE)) stop("Install 'randomForest'.")
+    remaining <- names(x)
+    runs <- vector("list", length(remaining))
+    full_scores <- NULL
+    for (i in seq_along(runs)) {
+      fit <- randomForest::randomForest(
+        x = x[, remaining, drop = FALSE], y = y, importance = TRUE, ...
+      )
+      imp <- randomForest::importance(fit)
+      importance <- imp[, ncol(imp)]
+      importance[!is.finite(importance)] <- 0
+      scaled <- if (max(abs(importance)) > 0) {
+        importance / max(abs(importance))
+      } else rep(0, length(importance))
+      if (is.null(full_scores)) full_scores <- scaled
+      mse <- tail(fit$mse, 1L)
+      mse_se <- stats::sd((fit$predicted - y)^2, na.rm = TRUE) / sqrt(length(y))
+      runs[[i]] <- data.frame(
+        nvariables = length(remaining), oob_mse = mse,
+        oob_rmse = sqrt(mse), mse_se = mse_se,
+        variables = paste(remaining, collapse = ","), stringsAsFactors = FALSE
+      )
+      if (length(remaining) == 1L) break
+      remaining <- setdiff(remaining, names(which.min(scaled)))
+    }
+    diagnostics <- do.call(rbind, runs)
+    best <- which.min(diagnostics$oob_mse)
+    cutoff <- diagnostics$oob_mse[best] + diagnostics$mse_se[best]
+    eligible <- which(diagnostics$oob_mse <= cutoff)
+    chosen <- eligible[which.min(diagnostics$nvariables[eligible])]
+    selected <- strsplit(diagnostics$variables[chosen], ",", fixed = TRUE)[[1L]]
+    scores <- full_scores
+    selected <- selected[is.finite(scores[selected]) & scores[selected] >= threshold]
   }
-  structure(list(selected = names(scores)[is.finite(scores) & scores >= threshold], scores = sort(scores, decreasing = TRUE), method = method), class = "gedi_var_selection")
+  importance <- data.frame(
+    parameter = names(scores), importance = as.numeric(scores),
+    selected = names(scores) %in% selected, row.names = NULL
+  )
+  structure(list(
+    selected = selected, selvars = selected,
+    scores = sort(scores, decreasing = TRUE), importance = importance,
+    test = diagnostics, method = method
+  ), class = "gedi_var_selection")
+}
+
+#' Plot GEDI variable selection results
+#' @param x A `gedi_var_selection` object.
+#' @param which Plot variable importance or RFE error.
+#' @param ... Additional graphical parameters.
+#' @return The object, invisibly.
+#' @method plot gedi_var_selection
+#' @export
+plot.gedi_var_selection <- function(x, which = c("importance", "rfe"), ...) {
+  which <- match.arg(which)
+  if (which == "rfe") {
+    if (is.null(x$test)) stop("RFE diagnostics are only available for method = 'rfe'.")
+    graphics::plot(x$test$nvariables, x$test$oob_rmse, type = "b",
+      xlab = "Number of predictors", ylab = "Out-of-bag RMSE", ...)
+  } else {
+    tab <- x$importance[order(x$importance$importance), , drop = FALSE]
+    graphics::barplot(tab$importance, names.arg = tab$parameter,
+      horiz = TRUE, las = 1, col = ifelse(tab$selected, "#1B7837", "grey75"), ...)
+  }
+  invisible(x)
 }
 
 #' Predict GEDI footprint values

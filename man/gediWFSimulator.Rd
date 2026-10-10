@@ -21,6 +21,11 @@ gediWFSimulator(
   decimate = 1,
   maxBins = 1024L,
   countOnly = FALSE,
+  method = c("count", "intensity", "fraction"),
+  normalize = TRUE,
+  density_res = 1,
+  intensity_threshold = 6e-04,
+  noise = 0,
   keepOld = FALSE,
   seed = NULL,
   ...
@@ -57,7 +62,22 @@ gediWFSimulator(
 
 \item{maxBins}{Maximum number of waveform bins.}
 
-\item{countOnly}{Use unweighted return counts inside the footprint.}
+\item{countOnly}{Use count-based returns rather than ALS intensity. Gaussian
+footprint weights are still applied.}
+
+\item{method}{Waveform contribution: \code{"count"}, \code{"intensity"}, or
+\code{"fraction"}. \code{countOnly = TRUE} selects \code{"count"} for compatibility.}
+
+\item{normalize}{Correct for local ALS sampling density, as in the original
+simulator's default behavior.}
+
+\item{density_res}{Cell size used for sampling-density normalization.}
+
+\item{intensity_threshold}{Smallest retained Gaussian footprint weight.}
+
+\item{noise}{Relative Gaussian noise standard deviation. For example,
+\code{noise = 0.03} adds noise with a standard deviation equal to three percent
+of the waveform maximum. Zero leaves the waveform unchanged.}
 
 \item{keepOld}{Do not overwrite an existing output file.}
 
@@ -69,9 +89,11 @@ gediWFSimulator(
 A \code{\link[=gedi.level1b-class]{gedi.level1b}} object, or a waveform table when \code{ascii=TRUE}.
 }
 \description{
-This portable implementation uses Gaussian footprint weighting and pulse
-convolution. It restores waveform simulation without bundling the original
-native simulator's GSL, GDAL, GeoTIFF, HDF5, SZIP, and zlib build stack.
+This portable implementation follows the core \code{gediRat} algorithm: Gaussian
+footprint weighting, optional return-density normalization, vertical
+binning, pulse convolution, separation of LAS class 2 ground returns, and
+unit-integral normalization. Vectorized binning replaces the original point
+loop while avoiding its native GSL/GDAL build stack.
 }
 \references{
 Hancock et al. (2019) \doi{10.1029/2018EA000506}

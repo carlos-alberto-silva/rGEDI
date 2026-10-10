@@ -322,6 +322,39 @@ map_download <- function(image, filename, region, scale = 30, crs = "EPSG:4326",
   invisible(filename)
 }
 
+#' Export an Earth Engine image to Google Drive
+#'
+#' Creates a Google Earth Engine batch export task for a GeoTIFF in Google
+#' Drive. This is useful for images that exceed the direct download limit.
+#'
+#' @param image Earth Engine image.
+#' @param description Task description shown in Earth Engine.
+#' @param folder Google Drive folder.
+#' @param file_name_prefix Output file prefix.
+#' @param region Area of interest accepted by [ext_to_ee()].
+#' @param scale Pixel size in meters.
+#' @param crs Output CRS.
+#' @param max_pixels Maximum number of pixels allowed by Earth Engine.
+#' @param start Start the task immediately.
+#' @param ... Additional arguments passed to Earth Engine's `toDrive` method.
+#' @return An Earth Engine batch task. Use [ee_check_task_status()] to monitor it.
+#' @export
+ee_image_to_drive <- function(image, description = "rGEDI_export",
+                              folder = "EE_Exports",
+                              file_name_prefix = description,
+                              region, scale = 30, crs = "EPSG:4326",
+                              max_pixels = 1e13, start = TRUE, ...) {
+  ee <- .require_ee()
+  task <- ee$batch$Export$image$toDrive(
+    image = image, description = description, folder = folder,
+    fileNamePrefix = file_name_prefix, region = .as_ee_geom(region),
+    scale = as.numeric(scale), crs = crs, maxPixels = max_pixels,
+    fileFormat = "GeoTIFF", ...
+  )
+  if (isTRUE(start)) task$start()
+  task
+}
+
 #' Check an Earth Engine task
 #' @param task Earth Engine batch task.
 #' @param quiet Logical.

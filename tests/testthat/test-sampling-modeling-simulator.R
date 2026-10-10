@@ -48,13 +48,20 @@ test_that("random-forest GEDI modeling works when installed", {
   expect_length(predict(model, x), 35)
   expect_true(length(varSel(x, y, method = "randomForest", threshold = 0,
                             ntree = 20)$selected) > 0)
+  selected <- varSel(x, y, method = "rfe", threshold = 0,
+                     seed = 4, ntree = 20)
+  expect_s3_class(selected, "gedi_var_selection")
+  expect_true(length(selected$selvars) > 0)
+  expect_equal(nrow(selected$test), ncol(x))
+  png(tempfile(fileext = ".png")); plot(selected); dev.off()
 })
 
 test_that("portable waveform simulation and metrics work", {
   set.seed(3)
   cloud <- data.frame(
     X = rnorm(500, sd = 3), Y = rnorm(500, sd = 3),
-    Z = c(rnorm(250, 1, .3), rnorm(250, 18, 2))
+    Z = c(rnorm(250, 1, .3), rnorm(250, 18, 2)),
+    Classification = c(rep(2L, 250), rep(5L, 250))
   )
   f <- tempfile(fileext = ".h5")
   sim <- gediWFSimulator(cloud, output = f, coords = c(0, 0), seed = 1)
@@ -64,11 +71,37 @@ test_that("portable waveform simulation and metrics work", {
   metrics <- gediWFMetrics(sim)
   expect_equal(nrow(metrics), 1)
   expect_true(all(c("cover", "rh100", "waveEnergy") %in% names(metrics)))
+  expect_equal(metrics$ground_method, "classified_ground")
+  expect_equal(metrics$waveEnergy, 1, tolerance = 0.01)
+  expect_equal(metrics$gHeight, 1, tolerance = 0.5)
+  expect_true(metrics$cover > 0 && metrics$cover < 1)
+
+  trimmed_file <- tempfile(fileext = ".h5")
+  trimmed <- gediWFSimulator(cloud, output = trimmed_file, coords = c(0, 0),
+                             maxBins = 64, res = 0.15, seed = 1)
+  on.exit(close(trimmed), add = TRUE)
+  trimmed_wave <- getLevel1BWF(trimmed, 0)@dt
+  expect_equal(nrow(trimmed_wave), 64)
+  expect_equal(abs(diff(trimmed_wave$elevation)), rep(0.15, 63),
+               tolerance = 1e-10)
+
+  noisy_file <- tempfile(fileext = ".h5")
+  noisy <- gediWFSimulator(cloud, output = noisy_file, coords = c(0, 0),
+                           noise = 0.03, seed = 9)
+  on.exit(close(noisy), add = TRUE)
+  expect_false(isTRUE(all.equal(
+    getLevel1BWF(sim, 0)@dt$rxwaveform,
+    getLevel1BWF(noisy, 0)@dt$rxwaveform
+  )))
 
   txt <- tempfile(fileext = ".txt")
   ascii <- gediWFSimulator(cloud, output = txt, coords = c(0, 0), ascii = TRUE)
   expect_true(file.exists(txt))
   expect_s3_class(ascii, "data.table")
+  expect_error(gediWFSimulator(cloud, coords = c(0, 0), density_res = 0),
+               "density_res")
+  expect_error(gediWFSimulator(cloud, coords = c(0, 0), intensity_threshold = 2),
+               "intensity_threshold")
 })
 
 test_that("orbit animation writes self-contained HTML", {
@@ -81,4 +114,21 @@ test_that("orbit animation writes self-contained HTML", {
   html <- paste(readLines(f, warn = FALSE), collapse = "\n")
   expect_match(html, "Interactive GEDI ground-track playback", fixed = TRUE)
   expect_false(grepl("<script src=", html, fixed = TRUE))
+})
+
+test_that("GEDI tracks are standardized and thinned", {
+  x <- data.frame(lon_lowestmode = 1:10, lat_lowestmode = 11:20,
+                  delta_time = 10:1, beam = "BEAM0000")
+  track <- getGEDITrack(x, every = 2)
+  expect_s3_class(track, "data.table")
+  expect_named(track, c("longitude", "latitude", "sequence", "track",
+                        "delta_time", "beam"))
+  expect_equal(nrow(track), 5)
+  expect_true(all(diff(track$sequence) >= 0))
+
+  split <- getGEDITrack(data.frame(
+    longitude = c(0, .001, .002, 1, 1.001, 1.002),
+    latitude = rep(0, 6), delta_time = 1:6, beam = "BEAM0000"
+  ))
+  expect_equal(length(unique(split$track)), 2)
 })

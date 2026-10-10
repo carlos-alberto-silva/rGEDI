@@ -6,6 +6,7 @@
 .travis.yml
 ^windows$
 ^readme$
+^output$
 ^.vscode$
 ^Meta$
 ^doc$

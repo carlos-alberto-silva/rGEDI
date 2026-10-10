@@ -36,6 +36,7 @@ Imports:
   stats,
   terra
 Suggests:
+    gifski,
     httr2,
     lattice,
     leaflet,
