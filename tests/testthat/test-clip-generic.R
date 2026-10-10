@@ -54,6 +54,13 @@ test_that("clip dispatches for GEDI rasters", {
   expect_equal(unname(as.vector(terra::ext(ans))), c(2, 6, 3, 8))
 })
 
+test_that("clip preserves the table return contract", {
+  x <- data.frame(longitude = c(0, 2), latitude = c(0, 2))
+  ans <- clip(x, c(-1, 1, -1, 1))
+  expect_s3_class(ans, "data.table")
+  expect_false(methods::is(ans, "gedi.level4a"))
+})
+
 test_that("clip registers methods for open GEDI products", {
   expect_s4_class(methods::selectMethod("clip", c("gedi.level1b", "numeric")), "MethodDefinition")
   expect_s4_class(methods::selectMethod("clip", c("gedi.level2a", "SpatExtent")), "MethodDefinition")

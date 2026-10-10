@@ -2,18 +2,23 @@
 % Please edit documentation in R/level4A.R
 \name{clipLevel4A}
 \alias{clipLevel4A}
-\title{Clip GEDI Level 4A footprints by an extent}
+\title{Clip GEDI Level 4A data by an extent}
 \usage{
-clipLevel4A(level4A, xmin, xmax, ymin, ymax)
+clipLevel4A(level4A, xmin, xmax, ymin, ymax, output = "")
 }
 \arguments{
-\item{level4A}{A table returned by \code{\link[=getLevel4A]{getLevel4A()}}.}
+\item{level4A}{A \code{\link[=gedi.level4a-class]{gedi.level4a}} object returned by \code{\link[=readLevel4A]{readLevel4A()}}
+or a table returned by \code{\link[=getLevel4A]{getLevel4A()}}.}
 
 \item{xmin, xmax, ymin, ymax}{Bounding coordinates in longitude/latitude.}
+
+\item{output}{Optional output HDF5 path when \code{level4A} is a
+\code{gedi.level4a} object. A temporary file is used by default.}
 }
 \value{
-A \link[data.table:data.table]{data.table::data.table}.
+A clipped \code{\link[=gedi.level4a-class]{gedi.level4a}} object for HDF5 input, or a
+\link[data.table:data.table]{data.table::data.table} for table input.
 }
 \description{
-Clip GEDI Level 4A footprints by an extent
+Clip GEDI Level 4A data by an extent
 }

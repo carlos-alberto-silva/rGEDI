@@ -15,12 +15,11 @@
 #'   methods accept `split_by`. Raster methods accept `filename` and
 #'   `overwrite`.
 #'
-#' @return The return type follows `x`. Level 1B, 2A, and 2B HDF5 inputs
-#'   return clipped open GEDI objects; footprint tables return a
-#'   [data.table::data.table]; rasters return a
-#'   [`terra::SpatRaster-class`]. A `gedi.level4a` input returns an extracted
-#'   and clipped footprint table because Level 4A clipping is performed at
-#'   footprint level.
+#' @return The return type follows `x`. Open Level 1B, 2A, 2B, and 4A HDF5
+#'   inputs return clipped open GEDI objects; footprint tables return a
+#'   [data.table::data.table]; and Level 3/4B rasters return a
+#'   [`terra::SpatRaster-class`]. Geometry clipping with `split_by` returns a
+#'   named list of HDF5-backed GEDI objects, one per polygon ID.
 #'
 #' @details
 #' Extracted tables are recognized from standard GEDI coordinates:
@@ -142,7 +141,10 @@ setGeneric("clip", function(x, clip_obj, ...) standardGeneric("clip"))
       stop("'clip_obj' must be an sf, sfc, or SpatVector polygon object.", call. = FALSE)
     })
   }
-  fun(x, polygon, ...)
+  dots <- list(...)
+  result <- do.call(fun, c(list(x, polygon), dots))
+  split_by <- if ("split_by" %in% names(dots)) dots$split_by else NULL
+  if (is.null(split_by) && is.list(result) && length(result) == 1L) result[[1L]] else result
 }
 
 #' @rdname clip
@@ -193,17 +195,17 @@ setMethod("clip", c(x = "gedi.level2b", clip_obj = "ANY"),
 #' @rdname clip
 #' @export
 setMethod("clip", c(x = "gedi.level4a", clip_obj = "numeric"),
-  function(x, clip_obj, ...) .clip_gedi_table_extent(getLevel4A(x), clip_obj))
+  function(x, clip_obj, ...) .clip_h5_extent(x, clip_obj, clipLevel4A, ...))
 
 #' @rdname clip
 #' @export
 setMethod("clip", c(x = "gedi.level4a", clip_obj = "SpatExtent"),
-  function(x, clip_obj, ...) .clip_gedi_table_extent(getLevel4A(x), clip_obj))
+  function(x, clip_obj, ...) .clip_h5_extent(x, clip_obj, clipLevel4A, ...))
 
 #' @rdname clip
 #' @export
 setMethod("clip", c(x = "gedi.level4a", clip_obj = "ANY"),
-  function(x, clip_obj, ...) .clip_gedi_table_geometry(getLevel4A(x), clip_obj, ...))
+  function(x, clip_obj, ...) .clip_h5_geometry(x, clip_obj, clipLevel4AGeometry, ...))
 
 #' @rdname clip
 #' @export

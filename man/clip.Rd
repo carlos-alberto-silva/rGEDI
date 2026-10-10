@@ -69,12 +69,11 @@ methods accept \code{split_by}. Raster methods accept \code{filename} and
 \code{overwrite}.}
 }
 \value{
-The return type follows \code{x}. Level 1B, 2A, and 2B HDF5 inputs
-return clipped open GEDI objects; footprint tables return a
-\link[data.table:data.table]{data.table::data.table}; rasters return a
-\code{\link[terra:SpatRaster-class]{terra::SpatRaster}}. A \code{gedi.level4a} input returns an extracted
-and clipped footprint table because Level 4A clipping is performed at
-footprint level.
+The return type follows \code{x}. Open Level 1B, 2A, 2B, and 4A HDF5
+inputs return clipped open GEDI objects; footprint tables return a
+\link[data.table:data.table]{data.table::data.table}; and Level 3/4B rasters return a
+\code{\link[terra:SpatRaster-class]{terra::SpatRaster}}. Geometry clipping with \code{split_by} returns a
+named list of HDF5-backed GEDI objects, one per polygon ID.
 }
 \description{
 \code{clip()} provides one clipping interface for open GEDI HDF5 products,

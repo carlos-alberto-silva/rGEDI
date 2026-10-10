@@ -2,20 +2,28 @@
 % Please edit documentation in R/level4A.R
 \name{clipLevel4AGeometry}
 \alias{clipLevel4AGeometry}
-\title{Clip GEDI Level 4A footprints by polygons}
+\title{Clip GEDI Level 4A data by polygons}
 \usage{
-clipLevel4AGeometry(level4A, polygon, split_by = NULL)
+clipLevel4AGeometry(level4A, polygon, split_by = NULL, output = "")
 }
 \arguments{
-\item{level4A}{A table returned by \code{\link[=getLevel4A]{getLevel4A()}}.}
+\item{level4A}{A \code{\link[=gedi.level4a-class]{gedi.level4a}} object returned by \code{\link[=readLevel4A]{readLevel4A()}}
+or a table returned by \code{\link[=getLevel4A]{getLevel4A()}}.}
 
 \item{polygon}{An \code{sf}, \code{sfc}, or \code{SpatVector} polygon object.}
 
-\item{split_by}{Optional polygon attribute copied to \code{poly_id}.}
+\item{split_by}{Optional polygon attribute. For HDF5 input, one clipped
+file is returned per unique value. For table input, the value is copied
+to \code{poly_id}.}
+
+\item{output}{Optional output HDF5 path when \code{level4A} is a
+\code{gedi.level4a} object. A temporary file is used by default.}
 }
 \value{
-A \link[data.table:data.table]{data.table::data.table}.
+A clipped \code{\link[=gedi.level4a-class]{gedi.level4a}} object (or a named list when
+\code{split_by} is used) for HDF5 input, or a \link[data.table:data.table]{data.table::data.table} for
+table input.
 }
 \description{
-Clip GEDI Level 4A footprints by polygons
+Clip GEDI Level 4A data by polygons
 }

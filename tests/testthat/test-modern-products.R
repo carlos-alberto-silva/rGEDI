@@ -48,6 +48,10 @@ test_that("Level 4A HDF5 workflows operate end to end", {
     lon_lowestmode = seq(0, .05, .01), agbd = 10:15, agbd_se = rep(1, 6)
   )
   for (nm in names(values)) b[[nm]] <- values[[nm]]
+  ancillary <- b$create_group("ancillary")
+  ancillary[["metric"]] <- 101:106
+  metadata <- h5$create_group("METADATA")
+  metadata[["version"]] <- "3"
   h5$close_all()
 
   x <- readLevel4A(f)
@@ -58,10 +62,32 @@ test_that("Level 4A HDF5 workflows operate end to end", {
   expect_equal(nrow(good), 4)
   expect_equal(nrow(clipLevel4A(all, 0, .03, 0, .03)), 4)
 
+  h5_extent <- clip(x, c(0, .03, 0, .03), output = tempfile(fileext = ".h5"))
+  expect_s4_class(h5_extent, "gedi.level4a")
+  expect_equal(
+    getLevel4A(h5_extent, cols = c("beam", names(values)))$shot_number,
+    1:4
+  )
+  expect_equal(h5_extent@h5[["BEAM0101/ancillary/metric"]][], 101:104)
+  expect_equal(as.character(h5_extent@h5[["METADATA/version"]][]), "3")
+  close(h5_extent)
+
   poly <- sf::st_as_sf(data.frame(zone = "a", wkt =
     "POLYGON((-0.01 -0.01,0.031 -0.01,0.031 0.031,-0.01 0.031,-0.01 -0.01))"),
     wkt = "wkt", crs = 4326)
   expect_equal(nrow(clipLevel4AGeometry(all, poly, "zone")), 4)
+  h5_geometry <- clip(x, poly, output = tempfile(fileext = ".h5"))
+  expect_s4_class(h5_geometry, "gedi.level4a")
+  expect_equal(
+    getLevel4A(h5_geometry, cols = c("beam", names(values)))$shot_number,
+    1:4
+  )
+  close(h5_geometry)
+  h5_split <- clip(x, poly, split_by = "zone", output = tempfile(fileext = ".h5"))
+  expect_type(h5_split, "list")
+  expect_s4_class(h5_split[["a"]], "gedi.level4a")
+  expect_equal(getLevel4A(h5_split[["a"]], cols = "shot_number")$shot_number, 1:4)
+  lapply(h5_split, close)
   expect_equal(nrow(polyStatsLevel4A(all, poly, id = "zone")), 1)
   expect_s4_class(gridStatsLevel4A(all, res = .01), "SpatRaster")
   expect_s4_class(rasterizeLevel4A(all, res = .01), "SpatRaster")

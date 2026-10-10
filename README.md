@@ -389,7 +389,8 @@ level2a_clip <- clip(level2a, bbox,
   output = file.path(outdir, "level2a-clip.h5"))
 level2b_clip <- clip(level2b, study_area,
   output = file.path(outdir, "level2b-clip.h5"))
-level4a_clip <- clip(level4a, bbox)
+level4a_clip <- clip(level4a, bbox,
+  output = file.path(outdir, "level4a-clip.h5"))
 
 # Extracted footprint tables and rasters
 level2a_bbox <- clip(level2a_metrics, bbox)
@@ -398,14 +399,15 @@ level3_aoi <- clip(level3, vect(study_area))
 level4b_bbox <- clip(level4b, bbox)
 ```
 
-The product-specific functions shown below remain available when an explicit
-function name is useful in a script.
+The output type follows the input type: open HDF5 objects return open clipped
+HDF5 objects, extracted tables return `data.table` objects, and Level 3/4B
+rasters return `SpatRaster` objects. The product-specific functions shown below
+remain available when an explicit function name is useful in a script.
 
 #### Clip open GEDI HDF5 objects
 
-Level 1B, 2A, and 2B clippers write valid subset HDF5 files and return open
-GEDI objects. Level 4A uses the extracted footprint table because its public
-API works at footprint level.
+Level 1B, 2A, 2B, and 4A clippers write valid subset HDF5 files and return
+open GEDI objects. Passing an extracted table instead returns a `data.table`.
 
 ```r
 level1b_clip <- clipLevel1B(level1b, xmin, xmax, ymin, ymax,
@@ -414,7 +416,9 @@ level2a_clip <- clipLevel2A(level2a, xmin, xmax, ymin, ymax,
                             output = file.path(outdir, "level2a-clip.h5"))
 level2b_clip <- clipLevel2B(level2b, xmin, xmax, ymin, ymax,
                             output = file.path(outdir, "level2b-clip.h5"))
-level4a_clip <- clipLevel4A(level4a_footprints, xmin, xmax, ymin, ymax)
+level4a_clip <- clipLevel4A(level4a, xmin, xmax, ymin, ymax,
+                            output = file.path(outdir, "level4a-clip.h5"))
+level4a_table_clip <- clipLevel4A(level4a_footprints, xmin, xmax, ymin, ymax)
 ```
 
 Clip the HDF5 products by geometry:
@@ -426,7 +430,9 @@ level2a_geom <- clipLevel2AGeometry(level2a, study_area,
   output = file.path(outdir, "level2a-geometry"))
 level2b_geom <- clipLevel2BGeometry(level2b, study_area,
   output = file.path(outdir, "level2b-geometry"))
-level4a_geom <- clipLevel4AGeometry(level4a_footprints, study_area)
+level4a_geom <- clipLevel4AGeometry(level4a, study_area,
+  output = file.path(outdir, "level4a-geometry.h5"))
+level4a_table_geom <- clipLevel4AGeometry(level4a_footprints, study_area)
 ```
 
 #### Clip extracted `data.table` objects
