@@ -64,7 +64,8 @@ plot_gedi_orbit_animation <- function(
   }
 
   output <- as.data.frame(getGEDITrack(
-    x, lon = lon, lat = lat, time = time, track = track
+    x, lon = lon, lat = lat, time = time, track = track,
+    segment_gaps = FALSE
   ))
   names(output)[match(c("longitude", "latitude", "sequence"), names(output))] <-
     c("lon", "lat", "order")
@@ -110,6 +111,9 @@ plot_gedi_orbit_animation <- function(
 #' @param beams Optional beam names to read from an open GEDI object.
 #' @param every Keep every nth footprint after ordering. This is useful when
 #'   plotting a complete orbit.
+#' @param segment_gaps Append segment numbers to track names when unusually
+#'   large spatial gaps occur. Animation keeps this disabled so consecutive
+#'   GEDI production granules remain one beam for a complete orbit.
 #' @return A [data.table::data.table] with `longitude`, `latitude`, `sequence`,
 #'   `track`, and available time and shot identifiers.
 #' @export
@@ -121,7 +125,7 @@ plot_gedi_orbit_animation <- function(
 #' )
 #' getGEDITrack(shots, every = 2)
 getGEDITrack <- function(x, lon = NULL, lat = NULL, time = NULL, track = NULL,
-                         beams = NULL, every = 1L) {
+                         beams = NULL, every = 1L, segment_gaps = TRUE) {
   points <- .gedi_orbit_points(x, beams = beams)
   choices <- names(points)
   lon <- lon %||orbit% .first_orbit_name(
@@ -161,10 +165,12 @@ getGEDITrack <- function(x, lon = NULL, lat = NULL, time = NULL, track = NULL,
   }
   # A granule can contain separated passes with the same beam identifier. Split
   # large spatial jumps so plotting does not draw artificial cross-track lines.
-  for (label in unique(ans$track)) {
+  if (isTRUE(segment_gaps)) for (label in unique(ans$track)) {
     rows <- which(ans$track == label)
     if (length(rows) < 3L) next
-    distance <- sqrt(diff(ans$longitude[rows])^2 + diff(ans$latitude[rows])^2)
+    delta_lon <- abs(diff(ans$longitude[rows]))
+    delta_lon <- pmin(delta_lon, 360 - delta_lon)
+    distance <- sqrt(delta_lon^2 + diff(ans$latitude[rows])^2)
     local_step <- stats::median(distance[is.finite(distance) & distance > 0], na.rm = TRUE)
     if (!is.finite(local_step) || local_step <= 0) next
     segment <- cumsum(c(TRUE, distance > 5 * local_step))
@@ -247,7 +253,7 @@ getGEDITrack <- function(x, lon = NULL, lat = NULL, time = NULL, track = NULL,
   on.exit(unlink(frames, force = TRUE), add = TRUE)
   colors <- stats::setNames(rep("#ff1744", length(unique(output$track))),
                             unique(output$track))
-  center_lon <- stats::median(output$lon, na.rm = TRUE)
+  center_lon <- orbit$lon[[1L]]
   center_lat <- max(-35, min(35, stats::median(output$lat, na.rm = TRUE)))
   world <- if (requireNamespace("maps", quietly = TRUE)) {
     maps::map("world", plot = FALSE, fill = TRUE)

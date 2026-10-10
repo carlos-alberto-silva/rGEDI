@@ -11,7 +11,8 @@ getGEDITrack(
   time = NULL,
   track = NULL,
   beams = NULL,
-  every = 1L
+  every = 1L,
+  segment_gaps = TRUE
 )
 }
 \arguments{
@@ -32,6 +33,10 @@ colored independently.}
 
 \item{every}{Keep every nth footprint after ordering. This is useful when
 plotting a complete orbit.}
+
+\item{segment_gaps}{Append segment numbers to track names when unusually
+large spatial gaps occur. Animation keeps this disabled so consecutive
+GEDI production granules remain one beam for a complete orbit.}
 }
 \value{
 A \link[data.table:data.table]{data.table::data.table} with \code{longitude}, \code{latitude}, \code{sequence},

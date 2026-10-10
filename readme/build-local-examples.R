@@ -32,8 +32,9 @@ legend("bottomleft", c("Forest stands", "GEDI Level 2A footprints"),
        pch = c(15, 16), col = c("#20603d", "#6a2c70"), bty = "n")
 grDevices::dev.off()
 
-# Extracted with getGEDITrack(..., every = 200) from the full README Level 2A
-# granule. The CSV stores coordinates and beam/time identifiers only.
+# Extracted with getGEDITrack(..., every = 200) from all four Level 2A
+# production granules for orbit O01964. The CSV stores coordinates and
+# beam/time/granule identifiers only.
 track <- if (file.exists("readme/gedi-orbit-track.csv")) {
   data.table::fread("readme/gedi-orbit-track.csv")
 } else {

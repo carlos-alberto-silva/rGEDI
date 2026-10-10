@@ -104,7 +104,7 @@ test_that("portable waveform simulation and metrics work", {
                "intensity_threshold")
 })
 
-test_that("orbit animation writes self-contained HTML", {
+test_that("orbit animation writes ICESat2-style interactive HTML", {
   orbit <- data.frame(longitude = seq(-60, -50, length.out = 12),
                       latitude = seq(-5, 5, length.out = 12),
                       delta_time = 1:12, beam = rep(c("A", "B"), each = 6))
@@ -146,4 +146,17 @@ test_that("GEDI tracks are standardized and thinned", {
     latitude = rep(0, 6), delta_time = 1:6, beam = "BEAM0000"
   ))
   expect_equal(length(unique(split$track)), 2)
+
+  unsplit <- getGEDITrack(data.frame(
+    longitude = c(0, .001, .002, 1, 1.001, 1.002),
+    latitude = rep(0, 6), delta_time = 1:6, beam = "BEAM0000"
+  ), segment_gaps = FALSE)
+  expect_equal(unique(unsplit$track), "BEAM0000")
+
+  dateline <- getGEDITrack(data.frame(
+    longitude = c(179.8, 179.9, -179.9, -179.8),
+    latitude = c(0, .01, .02, .03), delta_time = 1:4,
+    beam = "BEAM0000"
+  ))
+  expect_equal(unique(dateline$track), "BEAM0000")
 })

@@ -225,12 +225,20 @@ Earthdata redirect restrictions encountered by GDAL virtual-file reads.
 ### 5.1 Extract the Reference Ground Track and plot the GIF animation
 
 `getGEDITrack()` standardizes coordinates, beam names, and acquisition order
-from a Level 1B, 2A, 2B, or 4A object or an extracted table. Use the complete
-downloaded granule here; `every` thins the display without changing the source
-orbit or its order.
+from a Level 1B, 2A, 2B, or 4A object or an extracted table. NASA partitions
+one GEDI orbit into four consecutive production granules (`_01` through
+`_04`). Combine all four files with the same orbit identifier for a complete
+orbit; `every` thins the display without changing acquisition order.
 
 ```r
-rgt <- getGEDITrack(level2a_full, every = 200)
+orbit_files <- list.files(
+  outdir, "GEDI02_A.*_O01964_.*\\.h5$", full.names = TRUE
+)
+stopifnot(length(orbit_files) == 4L)
+
+orbit_h5 <- lapply(sort(orbit_files), readLevel2A)
+rgt <- data.table::rbindlist(lapply(orbit_h5, getGEDITrack, every = 200))
+rgt[, track := beam] # keep the four production granules as one beam
 head(rgt)
 
 plot_gedi_orbit_animation(
@@ -247,6 +255,12 @@ plot_gedi_orbit_animation(
   launch = interactive()
 )
 ```
+
+The displayed example was generated from the four complete Level 2A V002
+granules for orbit `O01964`. Its 22,350 sampled footprints span all eight GEDI
+beams, four granule parts, 81.6 minutes, and latitudes from -50.346 to 51.825
+degrees. The reproducible cloud-reading and animation script is
+[`readme/build-complete-orbit.R`](readme/build-complete-orbit.R).
 
 The GIF follows the ICESat2VegR presentation while showing the correct GEDI
 platform: GEDI is mounted on the International Space Station. GEDI operates at
@@ -851,6 +865,7 @@ close(level2a_full)
 close(level2b_full)
 close(level4a_full)
 close(level4a_cloud)
+invisible(lapply(orbit_h5, close))
 close(level1b_clip)
 close(level2a_clip)
 close(level2b_clip)
