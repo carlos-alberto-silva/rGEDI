@@ -112,13 +112,23 @@ test_that("orbit animation writes self-contained HTML", {
   expect_equal(plot_gedi_orbit_animation(orbit, output_file = f, launch = FALSE),
                normalizePath(f, winslash = "/"))
   html <- paste(readLines(f, warn = FALSE), collapse = "\n")
-  expect_match(html, "Interactive GEDI ground-track playback", fixed = TRUE)
   expect_match(html, "ISS + GEDI", fixed = TRUE)
-  expect_match(html, "#ff1744", fixed = TRUE)
-  expect_match(html, "HDF5 reference beam", fixed = TRUE)
+  expect_match(html, "0xff1744", fixed = TRUE)
+  expect_match(html, "Earth rotation speed", fixed = TRUE)
+  expect_match(html, "OrbitControls", fixed = TRUE)
+  expect_match(html, "data:image/png;base64", fixed = TRUE)
+  expect_match(html, "data:image/jpeg;base64", fixed = TRUE)
   expect_match(html, '"reference":true', fixed = TRUE)
-  expect_false(grepl("center=(focus", html, fixed = TRUE))
-  expect_false(grepl("<script src=", html, fixed = TRUE))
+  expect_match(html, "cdn.jsdelivr.net/npm/three", fixed = TRUE)
+  expect_error(
+    plot_gedi_orbit_animation(orbit, output_file = f, track_speed = 0),
+    "between 1 and 15"
+  )
+  expect_error(
+    plot_gedi_orbit_animation(orbit, output_file = f,
+                              earth_rotation_speed = 21),
+    "between 0 and 20"
+  )
 })
 
 test_that("GEDI tracks are standardized and thinned", {

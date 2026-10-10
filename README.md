@@ -240,9 +240,10 @@ plot_gedi_orbit_animation(
   duration = 8, launch = FALSE
 )
 
-# Use .html for the self-contained interactive globe.
+# Use .html for the interactive 3D globe.
 plot_gedi_orbit_animation(
   rgt, output_file = file.path(outdir, "gedi-orbit-animation.html"),
+  track_speed = 2, earth_rotation_speed = 2,
   launch = interactive()
 )
 ```
@@ -252,9 +253,10 @@ platform: GEDI is mounted on the International Space Station. GEDI operates at
 1064 nm in the near infrared; the red beam and track visualize that invisible
 laser pulse and connect the ISS payload to the accumulating reference ground
 track. Every displayed ISS position follows the time-ordered geolocation from
-the most complete beam in the open HDF5 granule. The globe stays fixed, so the
-movement comes from the granule rather than from a simulated orbit or camera
-rotation. The remaining HDF5 beams accumulate at the same relative progress.
+the most complete beam in the open HDF5 granule. Following the ICESat2VegR
+animation, the textured Earth rotates independently while the NASA ISS image,
+GEDI payload label, red laser, and red orbit track move together in 3D. The
+HTML controls adjust both track playback and Earth rotation speed.
 
 <p align="center"><img src="readme/gedi-orbit-animation.gif" width="650" alt="GEDI aboard the ISS orbiting an animated globe"></p>
 

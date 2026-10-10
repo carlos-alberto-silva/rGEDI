@@ -13,7 +13,9 @@ plot_gedi_orbit_animation(
   output_file = tempfile("rGEDI-orbit-", fileext = ".html"),
   title = "GEDI orbit animation",
   duration = 18,
-  launch = interactive()
+  launch = interactive(),
+  track_speed = 2,
+  earth_rotation_speed = 2
 )
 }
 \arguments{
@@ -38,17 +40,21 @@ requires the suggested \code{gifski} package.}
 \item{duration}{Duration of one animation cycle in seconds.}
 
 \item{launch}{Open the animation in the default browser after it is written.}
+
+\item{track_speed}{Initial HTML track playback speed from 1 to 15.}
+
+\item{earth_rotation_speed}{Initial Earth rotation speed from 0 to 20.}
 }
 \value{
 The normalized path to the HTML file, invisibly.
 }
 \description{
-Creates a self-contained HTML animation or an animated GIF from GEDI
-footprint coordinates. Both formats show GEDI aboard the International
-Space Station (ISS), its laser, and the accumulating ground track on an
-orthographic globe. ISS motion follows the time-ordered geolocation of the
-most complete beam extracted from the supplied HDF5 object; it is not a
-generic or simulated orbit.
+Creates an interactive 3D HTML animation or an animated GIF from GEDI
+footprint coordinates. The presentation follows the ICESat2VegR orbit
+animation, with a rotating Earth, a NASA ISS illustration carrying GEDI,
+and a red near-infrared laser and ground track. ISS motion follows the
+time-ordered geolocation of the most complete beam extracted from the
+supplied HDF5 object.
 }
 \examples{
 orbit <- data.frame(

@@ -1,11 +1,11 @@
 #' Animate a GEDI ground track around the Earth
 #'
-#' Creates a self-contained HTML animation or an animated GIF from GEDI
-#' footprint coordinates. Both formats show GEDI aboard the International
-#' Space Station (ISS), its laser, and the accumulating ground track on an
-#' orthographic globe. ISS motion follows the time-ordered geolocation of the
-#' most complete beam extracted from the supplied HDF5 object; it is not a
-#' generic or simulated orbit.
+#' Creates an interactive 3D HTML animation or an animated GIF from GEDI
+#' footprint coordinates. The presentation follows the ICESat2VegR orbit
+#' animation, with a rotating Earth, a NASA ISS illustration carrying GEDI,
+#' and a red near-infrared laser and ground track. ISS motion follows the
+#' time-ordered geolocation of the most complete beam extracted from the
+#' supplied HDF5 object.
 #'
 #' @param x A data frame, `data.table`, `sf` or `SpatVector` containing GEDI
 #'   footprint coordinates, or an open `gedi.level1b`, `gedi.level2a`,
@@ -21,6 +21,8 @@
 #' @param title Title shown above the animation.
 #' @param duration Duration of one animation cycle in seconds.
 #' @param launch Open the animation in the default browser after it is written.
+#' @param track_speed Initial HTML track playback speed from 1 to 15.
+#' @param earth_rotation_speed Initial Earth rotation speed from 0 to 20.
 #'
 #' @return The normalized path to the HTML file, invisibly.
 #' @export
@@ -44,10 +46,21 @@ plot_gedi_orbit_animation <- function(
     output_file = tempfile("rGEDI-orbit-", fileext = ".html"),
     title = "GEDI orbit animation",
     duration = 18,
-    launch = interactive()) {
+    launch = interactive(),
+    track_speed = 2,
+    earth_rotation_speed = 2) {
   duration <- as.numeric(duration)[1L]
   if (!is.finite(duration) || duration <= 0) {
     stop("`duration` must be a positive number of seconds.", call. = FALSE)
+  }
+  track_speed <- as.numeric(track_speed)[1L]
+  earth_rotation_speed <- as.numeric(earth_rotation_speed)[1L]
+  if (!is.finite(track_speed) || track_speed < 1 || track_speed > 15) {
+    stop("`track_speed` must be between 1 and 15.", call. = FALSE)
+  }
+  if (!is.finite(earth_rotation_speed) || earth_rotation_speed < 0 ||
+      earth_rotation_speed > 20) {
+    stop("`earth_rotation_speed` must be between 0 and 20.", call. = FALSE)
   }
 
   output <- as.data.frame(getGEDITrack(
@@ -61,7 +74,9 @@ plot_gedi_orbit_animation <- function(
 
   extension <- tolower(tools::file_ext(output_file))
   if (identical(extension, "gif")) {
-    return(.write_gedi_orbit_gif(output, output_file, title, duration, launch))
+    return(.write_gedi_orbit_gif(
+      output, output_file, title, duration, launch, earth_rotation_speed
+    ))
   }
   if (!identical(extension, "html")) {
     stop("`output_file` must end in .html or .gif.", call. = FALSE)
@@ -73,7 +88,9 @@ plot_gedi_orbit_animation <- function(
   )
   payload <- gsub("</", "<\\\\/", payload, fixed = TRUE)
   safe_title <- .html_escape(title)
-  html <- .orbit_html(payload, safe_title, duration)
+  html <- .orbit_html(
+    payload, safe_title, duration, track_speed, earth_rotation_speed
+  )
   dir.create(dirname(output_file), recursive = TRUE, showWarnings = FALSE)
   writeLines(html, output_file, useBytes = TRUE)
   result <- normalizePath(output_file, winslash = "/", mustWork = TRUE)
@@ -200,7 +217,25 @@ getGEDITrack <- function(x, lon = NULL, lat = NULL, time = NULL, track = NULL,
   as.data.frame(x)
 }
 
-.write_gedi_orbit_gif <- function(output, output_file, title, duration, launch) {
+.orbit_asset <- function(name) {
+  installed <- system.file("extdata", "orbit", name, package = "rGEDI")
+  if (nzchar(installed) && file.exists(installed)) return(installed)
+  source <- file.path("inst", "extdata", "orbit", name)
+  if (file.exists(source)) return(normalizePath(source, mustWork = TRUE))
+  stop("Orbit animation asset not found: ", name, call. = FALSE)
+}
+
+.orbit_data_uri <- function(path, mime) {
+  bytes <- readBin(path, what = "raw", n = file.info(path)$size)
+  encoded <- jsonlite::base64_enc(bytes)
+  encoded <- paste(encoded, collapse = "")
+  encoded <- gsub(intToUtf8(10), "", encoded, fixed = TRUE)
+  encoded <- gsub(intToUtf8(13), "", encoded, fixed = TRUE)
+  paste0("data:", mime, ";base64,", encoded)
+}
+
+.write_gedi_orbit_gif <- function(output, output_file, title, duration, launch,
+                                  earth_rotation_speed = 2) {
   if (!requireNamespace("gifski", quietly = TRUE)) {
     stop("GIF output requires the suggested 'gifski' package.", call. = FALSE)
   }
@@ -210,10 +245,8 @@ getGEDITrack <- function(x, lon = NULL, lat = NULL, time = NULL, track = NULL,
   frame_rows <- unique(round(seq(1, nrow(orbit), length.out = nframes)))
   frames <- file.path(tempdir(), sprintf("rGEDI-orbit-%03d.png", seq_along(frame_rows)))
   on.exit(unlink(frames, force = TRUE), add = TRUE)
-  infrared_palette <- c("#ff355e", "#ff7043", "#d946ef", "#ffb000",
-                        "#e63946", "#f72585", "#ff8c42", "#c1121f")
-  colors <- rep(infrared_palette, length.out = length(unique(output$track)))
-  names(colors) <- unique(output$track)
+  colors <- stats::setNames(rep("#ff1744", length(unique(output$track))),
+                            unique(output$track))
   center_lon <- stats::median(output$lon, na.rm = TRUE)
   center_lat <- max(-35, min(35, stats::median(output$lat, na.rm = TRUE)))
   world <- if (requireNamespace("maps", quietly = TRUE)) {
@@ -221,10 +254,13 @@ getGEDITrack <- function(x, lon = NULL, lat = NULL, time = NULL, track = NULL,
   } else NULL
   set.seed(42)
   stars <- data.frame(x = runif(180, -1.55, 1.55), y = runif(180, -1.1, 1.1))
+  iss_image <- if (requireNamespace("png", quietly = TRUE)) {
+    png::readPNG(.orbit_asset("ISS-NASA-transparent.png"))
+  } else NULL
   for (i in seq_along(frame_rows)) {
     row <- frame_rows[[i]]
     progress <- if (nrow(orbit) == 1L) 1 else (row - 1) / (nrow(orbit) - 1)
-    rotation <- center_lon
+    rotation <- center_lon + 360 * progress * earth_rotation_speed / 2
     grDevices::png(frames[[i]], width = 1000, height = 650, bg = "#02060b")
     graphics::par(mar = c(0, 0, 2.2, 0), fg = "white")
     graphics::plot.new()
@@ -249,7 +285,14 @@ getGEDITrack <- function(x, lon = NULL, lat = NULL, time = NULL, track = NULL,
     if (isTRUE(focus$visible)) {
       graphics::segments(focus$x, focus$y, ground$x, ground$y,
                          col = "#ff1744", lwd = 2)
-      .draw_iss(focus$x, focus$y)
+      if (is.null(iss_image)) {
+        .draw_iss(focus$x, focus$y)
+      } else {
+        graphics::rasterImage(
+          iss_image, focus$x - 0.15, focus$y - 0.09,
+          focus$x + 0.15, focus$y + 0.09, interpolate = TRUE
+        )
+      }
       graphics::text(focus$x, focus$y + 0.12, "ISS + GEDI", col = "white",
                      cex = 0.9, font = 2)
     }
@@ -335,65 +378,73 @@ getGEDITrack <- function(x, lon = NULL, lat = NULL, time = NULL, track = NULL,
   gsub("'", "&#39;", x, fixed = TRUE)
 }
 
-.orbit_html <- function(payload, title, duration) {
-  template <- .orbit_template()
+.orbit_html <- function(payload, title, duration, track_speed = 2,
+                        earth_rotation_speed = 2) {
+  template <- .orbit_template_three()
   template <- sub("__GEDI_DATA__", payload, template, fixed = TRUE)
   template <- sub("__GEDI_TITLE__", title, template, fixed = TRUE)
-  sub("__GEDI_DURATION__", format(duration, scientific = FALSE), template,
-      fixed = TRUE)
+  template <- sub("__GEDI_DURATION__", format(duration, scientific = FALSE),
+                  template, fixed = TRUE)
+  template <- sub("__TRACK_SPEED__", format(track_speed, scientific = FALSE),
+                  template, fixed = TRUE)
+  template <- sub("__ROTATION_SPEED__",
+                  format(earth_rotation_speed, scientific = FALSE), template,
+                  fixed = TRUE)
+  earth_uri <- .orbit_data_uri(
+    .orbit_asset("Stylized_World_Topo_5400x2700.jpeg"), "image/jpeg"
+  )
+  iss_uri <- .orbit_data_uri(
+    .orbit_asset("ISS-NASA-transparent.png"), "image/png"
+  )
+  template <- sub("__EARTH_TEXTURE__", earth_uri, template, fixed = TRUE)
+  sub("__ISS_IMAGE__", iss_uri, template, fixed = TRUE)
 }
 
-.orbit_template <- function() '<!doctype html>
+.orbit_template_three <- function() '<!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>__GEDI_TITLE__</title>
 <style>
-html,body{margin:0;height:100%;background:#07131d;color:#eef7f2;font-family:system-ui,sans-serif}
-main{height:100%;display:grid;grid-template-rows:auto 1fr auto;overflow:hidden}
-h1{font-size:clamp(18px,2.4vw,30px);font-weight:600;margin:18px 24px 4px}
-p{margin:0 24px 12px;color:#a9c5bd}.stage{min-height:0;position:relative}
-canvas{width:100%;height:100%;display:block}.panel{position:absolute;right:20px;top:10px;
-background:#0b2230dd;border:1px solid #315568;border-radius:10px;padding:10px 14px;font-size:13px}
-footer{display:flex;gap:12px;align-items:center;padding:10px 24px 18px}
-button{background:#22b573;color:#fff;border:0;border-radius:7px;padding:7px 14px;cursor:pointer}
-input{width:min(520px,60vw);accent-color:#22b573}
-</style></head><body><main><header><h1>__GEDI_TITLE__</h1>
-<p>Interactive GEDI ground-track playback</p></header><section class="stage">
-<canvas id="globe"></canvas><div class="panel" id="readout"></div></section>
-<footer><button id="play">Pause</button><input id="progress" type="range" min="0" max="1000" value="0"></footer>
-</main><script>
-const points=__GEDI_DATA__,duration=__GEDI_DURATION__*1000;
-const canvas=document.getElementById("globe"),ctx=canvas.getContext("2d");
-const slider=document.getElementById("progress"),button=document.getElementById("play"),readout=document.getElementById("readout");
-let playing=true,start=performance.now(),manual=0;
-const colors=["#ff355e","#ff7043","#d946ef","#ffb000","#e63946","#f72585","#ff8c42","#c1121f"];
-const tracks=[...new Set(points.map(d=>d.track))],color=t=>colors[Math.max(0,tracks.indexOf(t))%colors.length];
-const orbitPoints=points.filter(d=>d.reference),sortedLon=points.map(d=>d.lon).sort((a,b)=>a-b);
-const center=sortedLon.length?sortedLon[Math.floor(sortedLon.length/2)]:0;
-function resize(){const d=devicePixelRatio||1,r=canvas.getBoundingClientRect();canvas.width=r.width*d;canvas.height=r.height*d;ctx.setTransform(d,0,0,d,0,0)}
-addEventListener("resize",resize);resize();
-function project(lon,lat,center,R,cx,cy){const a=(lon-center)*Math.PI/180,b=lat*Math.PI/180;
- const visible=Math.cos(b)*Math.cos(a)>=0;return{x:cx+R*Math.cos(b)*Math.sin(a),y:cy-R*Math.sin(b),visible};}
-function draw(ts){const w=canvas.clientWidth,h=canvas.clientHeight,cx=w/2,cy=h/2,R=Math.max(40,Math.min(w,h)*.4);
- ctx.clearRect(0,0,w,h);const elapsed=playing?(ts-start)%duration:manual*duration;const p=elapsed/duration;
- if(playing)slider.value=Math.round(p*1000);const k=Math.min(orbitPoints.length-1,Math.floor(p*orbitPoints.length));
- const focus=orbitPoints[k]||points[0];
- const grad=ctx.createRadialGradient(cx-R*.3,cy-R*.4,R*.05,cx,cy,R);grad.addColorStop(0,"#2d8291");grad.addColorStop(.55,"#174e62");grad.addColorStop(1,"#071a29");
- ctx.beginPath();ctx.arc(cx,cy,R,0,Math.PI*2);ctx.fillStyle=grad;ctx.fill();ctx.save();ctx.beginPath();ctx.arc(cx,cy,R,0,Math.PI*2);ctx.clip();
- ctx.strokeStyle="#8bc5c52e";ctx.lineWidth=1;
- for(let lat=-60;lat<=60;lat+=30){ctx.beginPath();let pen=false;for(let lon=-180;lon<=180;lon+=3){const q=project(lon,lat,center,R,cx,cy);if(q.visible){pen?ctx.lineTo(q.x,q.y):ctx.moveTo(q.x,q.y);pen=true}else pen=false}ctx.stroke()}
- for(let lon=-180;lon<180;lon+=30){ctx.beginPath();let pen=false;for(let lat=-90;lat<=90;lat+=3){const q=project(lon,lat,center,R,cx,cy);if(q.visible){pen?ctx.lineTo(q.x,q.y):ctx.moveTo(q.x,q.y);pen=true}else pen=false}ctx.stroke()}
- for(const track of tracks){ctx.strokeStyle=color(track);ctx.lineWidth=2;ctx.beginPath();let pen=false;
-  const trackPoints=points.filter(d=>d.track===track),shown=trackPoints.slice(0,Math.max(1,Math.round(p*trackPoints.length)));
-  shown.forEach(d=>{const q=project(d.lon,d.lat,center,R,cx,cy);if(q.visible){pen?ctx.lineTo(q.x,q.y):ctx.moveTo(q.x,q.y);pen=true}else pen=false});ctx.stroke()}
- ctx.restore();ctx.beginPath();ctx.arc(cx,cy,R,0,Math.PI*2);ctx.strokeStyle="#b4ece0aa";ctx.lineWidth=1.5;ctx.stroke();
- if(focus){const q=project(focus.lon,focus.lat,center,R,cx,cy);if(q.visible){const sy=q.y-42;
- ctx.beginPath();ctx.moveTo(q.x,q.y);ctx.lineTo(q.x,sy);ctx.strokeStyle="#ff1744";ctx.lineWidth=2;ctx.stroke();
- ctx.fillStyle="#2878b8";ctx.strokeStyle="#fff";ctx.lineWidth=1;ctx.fillRect(q.x-34,sy-5,24,10);ctx.strokeRect(q.x-34,sy-5,24,10);ctx.fillRect(q.x+10,sy-5,24,10);ctx.strokeRect(q.x+10,sy-5,24,10);
- ctx.strokeStyle="#e8edf0";ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(q.x-40,sy);ctx.lineTo(q.x+40,sy);ctx.stroke();ctx.fillStyle="#e8edf0";ctx.fillRect(q.x-8,sy-8,16,16);
- ctx.fillStyle="#fff";ctx.font="bold 13px system-ui";ctx.textAlign="center";ctx.fillText("ISS + GEDI",q.x,sy-15)}
- readout.innerHTML="HDF5 reference beam: <b>"+focus.track+"</b><br>Orbit point: "+(k+1)+" of "+orbitPoints.length+"<br>Longitude: "+focus.lon.toFixed(4)+"&deg;<br>Latitude: "+focus.lat.toFixed(4)+"&deg;"}
- requestAnimationFrame(draw)}
-button.onclick=()=>{playing=!playing;button.textContent=playing?"Pause":"Play";if(playing)start=performance.now()-manual*duration};
-slider.oninput=()=>{manual=slider.value/1000;playing=false;button.textContent="Play"};requestAnimationFrame(draw);
+html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:#000;font-family:Arial,sans-serif}
+canvas{display:block}#controls{position:absolute;top:15px;left:15px;z-index:10;background:rgba(0,0,0,.78);color:#fff;padding:14px;border-radius:10px;width:450px;max-width:calc(100vw - 58px);font-size:14px;border:1px solid #ffffff30}
+button{margin:3px;padding:6px 10px;border:0;border-radius:5px;cursor:pointer}input[type=range]{width:330px;max-width:70vw;accent-color:#ff1744}
+#timeLabel,#trackLabel,#status{margin-top:8px}.credit{margin-top:10px;color:#b7c9d8;font-size:11px}
+</style></head><body>
+<div id="controls"><b>__GEDI_TITLE__</b><br><br>
+<button onclick="playAnimation()">Play</button><button onclick="pauseAnimation()">Pause</button><button onclick="resetAnimation()">Reset</button><br><br>
+Track speed:<br><input type="range" min="1" max="15" value="__TRACK_SPEED__" id="trackSpeed"> <span id="trackSpeedValue">__TRACK_SPEED__</span><br><br>
+Earth rotation speed:<br><input type="range" min="0" max="20" value="__ROTATION_SPEED__" id="rotationSpeed"> <span id="rotationSpeedValue">__ROTATION_SPEED__</span>
+<div id="trackLabel">Track:</div><div id="timeLabel">Coordinates:</div><div id="status">Loading...</div>
+<div class="credit">ISS illustration: NASA | GEDI wavelength: 1064 nm near infrared</div></div>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+const allGEDIData=__GEDI_DATA__;
+const trackData=allGEDIData.filter(function(d){return d.reference;}).sort(function(a,b){return a.index-b.index;});
+const earthTexture="__EARTH_TEXTURE__",issImage="__ISS_IMAGE__";
+const scene=new THREE.Scene();scene.background=new THREE.Color(0x000000);
+const camera=new THREE.PerspectiveCamera(45,window.innerWidth/window.innerHeight,.1,1000);camera.position.set(0,0,5);
+const renderer=new THREE.WebGLRenderer({antialias:true,alpha:false});renderer.setSize(window.innerWidth,window.innerHeight);renderer.setPixelRatio(window.devicePixelRatio);document.body.appendChild(renderer.domElement);
+const controls=new THREE.OrbitControls(camera,renderer.domElement);controls.enableDamping=true;controls.dampingFactor=.05;controls.enableZoom=true;
+scene.add(new THREE.AmbientLight(0xffffff,2));
+const earthGroup=new THREE.Group();scene.add(earthGroup);const earthRadius=1.5,orbitRadius=earthRadius+.35;
+const earth=new THREE.Mesh(new THREE.SphereGeometry(earthRadius,256,256),new THREE.MeshBasicMaterial({color:0x1e66b1}));earthGroup.add(earth);
+new THREE.TextureLoader().load(earthTexture,function(texture){texture.minFilter=THREE.LinearFilter;texture.magFilter=THREE.LinearFilter;texture.generateMipmaps=false;earth.material.dispose();earth.material=new THREE.MeshBasicMaterial({map:texture});document.getElementById("status").innerHTML="Earth texture and GEDI orbit loaded";});
+const starGeometry=new THREE.BufferGeometry(),starPositions=[];for(let i=0;i<7000;i++){starPositions.push((Math.random()-.5)*120,(Math.random()-.5)*120,(Math.random()-.5)*120);}starGeometry.setAttribute("position",new THREE.Float32BufferAttribute(starPositions,3));scene.add(new THREE.Points(starGeometry,new THREE.PointsMaterial({color:0xffffff,size:.04})));
+function latLonToVector3(lat,lon,radius){const phi=(90-lat)*Math.PI/180,theta=(lon+180)*Math.PI/180;return new THREE.Vector3(-radius*Math.sin(phi)*Math.cos(theta),radius*Math.cos(phi),radius*Math.sin(phi)*Math.sin(theta));}
+const issTexture=new THREE.TextureLoader().load(issImage),satellite=new THREE.Sprite(new THREE.SpriteMaterial({map:issTexture,transparent:true,depthWrite:false}));satellite.scale.set(.58,.34,1);earthGroup.add(satellite);
+const labelCanvas=document.createElement("canvas");labelCanvas.width=1024;labelCanvas.height=256;const labelContext=labelCanvas.getContext("2d");labelContext.font="bold 90px Arial";labelContext.textAlign="center";labelContext.textBaseline="middle";labelContext.lineWidth=10;labelContext.strokeStyle="black";labelContext.strokeText("ISS + GEDI",512,128);labelContext.fillStyle="white";labelContext.fillText("ISS + GEDI",512,128);
+const satelliteLabel=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(labelCanvas),transparent:true,depthWrite:false,depthTest:false}));satelliteLabel.scale.set(.8,.2,1);earthGroup.add(satelliteLabel);
+let laserBeam=null,activeTrackLine=null,pointIndex=0,running=true,trackPoints=[];const trackColor=0xff1744;
+function updateLaserBeam(satPos){if(laserBeam){earthGroup.remove(laserBeam);laserBeam.geometry.dispose();laserBeam.material.dispose();}const ground=satPos.clone().normalize().multiplyScalar(earthRadius+.01);laserBeam=new THREE.Line(new THREE.BufferGeometry().setFromPoints([satPos,ground]),new THREE.LineBasicMaterial({color:0xff1744,transparent:true,opacity:1}));earthGroup.add(laserBeam);}
+function clearTrackLine(){if(activeTrackLine){earthGroup.remove(activeTrackLine);activeTrackLine.geometry.dispose();activeTrackLine.material.dispose();activeTrackLine=null;}}
+function updateTrackLine(){clearTrackLine();if(trackPoints.length<2)return;activeTrackLine=new THREE.Line(new THREE.BufferGeometry().setFromPoints(trackPoints),new THREE.LineBasicMaterial({color:trackColor}));earthGroup.add(activeTrackLine);}
+function updateSatellitePosition(pos){satellite.position.copy(pos);satelliteLabel.position.copy(pos.clone().add(pos.clone().normalize().multiplyScalar(.28)));updateLaserBeam(pos);}
+function addCurrentPoint(){if(pointIndex>=trackData.length){running=false;document.getElementById("status").innerHTML="GEDI track completed";return;}const p=trackData[pointIndex],pos=latLonToVector3(p.lat,p.lon,orbitRadius);trackPoints.push(pos);updateSatellitePosition(pos);document.getElementById("trackLabel").innerHTML="HDF5 orbit point: "+(pointIndex+1)+" of "+trackData.length+" | Beam: "+p.track;document.getElementById("timeLabel").innerHTML="Longitude: "+p.lon.toFixed(4)+"&deg; | Latitude: "+p.lat.toFixed(4)+"&deg;";pointIndex++;updateTrackLine();}
+function playAnimation(){running=true;document.getElementById("status").innerHTML="Animation running";}
+function pauseAnimation(){running=false;document.getElementById("status").innerHTML="Animation paused";}
+function resetAnimation(){running=false;pointIndex=0;trackPoints=[];clearTrackLine();if(laserBeam){earthGroup.remove(laserBeam);laserBeam.geometry.dispose();laserBeam.material.dispose();laserBeam=null;}if(trackData.length)addCurrentPoint();document.getElementById("status").innerHTML="Animation reset";}
+document.getElementById("trackSpeed").addEventListener("input",function(){document.getElementById("trackSpeedValue").innerHTML=this.value;});document.getElementById("rotationSpeed").addEventListener("input",function(){document.getElementById("rotationSpeedValue").innerHTML=this.value;});if(trackData.length)addCurrentPoint();else document.getElementById("status").innerHTML="No GEDI orbit points found";
+function animate(){requestAnimationFrame(animate);const rotationSpeed=Number(document.getElementById("rotationSpeed").value);earthGroup.rotation.y+=.0008*rotationSpeed;if(running&&pointIndex<trackData.length){const trackSpeed=Number(document.getElementById("trackSpeed").value);for(let s=0;s<trackSpeed;s++){if(running&&pointIndex<trackData.length)addCurrentPoint();}}controls.update();renderer.render(scene,camera);}
+animate();window.addEventListener("resize",function(){camera.aspect=window.innerWidth/window.innerHeight;camera.updateProjectionMatrix();renderer.setSize(window.innerWidth,window.innerHeight);});
 </script></body></html>'
