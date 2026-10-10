@@ -680,7 +680,7 @@ close(sim_noisy)
   lidar simulator for calibration and validation of spaceborne missions.
   *Earth and Space Science*, 6, 294–310.
 - Steven Hancock's reference implementation: <https://bitbucket.org/StevenHancock/gedisimulator/src/master/>
-- GEDI product guides: <https://daac.ornl.gov/gedi/>
+- GEDI project and product guides: <https://www.earthdata.nasa.gov/data/projects/gedi>
 
 # Acknowledgements
 
