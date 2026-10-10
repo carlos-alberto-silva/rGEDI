@@ -16,32 +16,13 @@
 #' @seealso \url{https://www.earthdata.nasa.gov/data/catalog/lpcloud-gedi02-b-002}
 #'
 #' @examples
-#' # Specifying the path to GEDI level2B data (zip file)
-#' outdir <- tempdir()
-#' level2B_fp_zip <- system.file("extdata",
-#'   "GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub.zip",
-#'   package = "rGEDI"
+#' # A small extracted Level 2B table
+#' level2BVPM <- data.table::data.table(
+#'   pai = c(1.1, 1.8, 2.2, 0.9, 1.5, 2.4),
+#'   cover = c(0.31, 0.44, 0.52, 0.27, 0.39, 0.58),
+#'   poly_id = rep(c("stand_1", "stand_2"), each = 3)
 #' )
-#'
-#' # Unzipping GEDI level2A data
-#' level2Bpath <- unzip(level2B_fp_zip, exdir = outdir)
-#'
-#' # Reading GEDI level2B data (h5 file)
-#' level2b <- readLevel2B(level2Bpath = level2Bpath)
-#'
-#' # Specifying the path to shapefile
-#' polygon_filepath <- system.file("extdata", "stands_cerrado.shp", package = "rGEDI")
-#'
-#' # Reading shapefile as sf object
-#' library(sf)
-#' polygon <- sf::st_read(polygon_filepath)
-#'
-#' # Extracting GEDI Canopy Cover and Vertical Profile Metrics
-#' level2BVPM <- getLevel2BVPM(level2b)
 #' head(level2BVPM)
-#'
-#' # Clipping GEDI data by geometry
-#' level2BVPM_clip <- clipLevel2BVPMGeometry(level2BVPM, polygon, split_by = "id")
 #'
 #' # Define your own function
 #' mySetOfMetrics <- function(x) {
@@ -55,20 +36,19 @@
 #' }
 #'
 #' # Computing the max of the Total Plant Area Index
-#' pai_max <- polyStatsLevel2BVPM(level2BVPM_clip, func = max(pai), id = NULL)
+#' pai_max <- polyStatsLevel2BVPM(level2BVPM, func = max(pai), id = NULL)
 #' pai_max
 #'
 #' # Computing the max of the Total Plant Area Index stratified by polygon
-#' pai_max_poly <- polyStatsLevel2BVPM(level2BVPM_clip, func = max(pai), id = "poly_id")
+#' pai_max_poly <- polyStatsLevel2BVPM(level2BVPM, func = max(pai), id = "poly_id")
 #' head(pai_max_poly)
 #'
 #' # Computing the serie of statistics of canopy cover stratified by polygon
-#' cover_metrics <- polyStatsLevel2BVPM(level2BVPM_clip,
+#' cover_metrics <- polyStatsLevel2BVPM(level2BVPM,
 #'   func = mySetOfMetrics(cover),
-#'   id = "id"
+#'   id = "poly_id"
 #' )
 #' head(cover_metrics)
-#' close(level2b)
 #' @export
 polyStatsLevel2BVPM <- function(level2BVPM, func, id = NULL) {
   # this code has been adapted from the grid_metrics function in lidR package (Roussel et al. 2019)

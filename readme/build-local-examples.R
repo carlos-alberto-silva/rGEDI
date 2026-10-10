@@ -34,7 +34,11 @@ grDevices::dev.off()
 
 track <- getGEDITrack(level2a)
 plot_gedi_orbit_animation(track, output_file = "readme/gedi-orbit-animation.gif",
-  title = "GEDI reference ground track", duration = 8, launch = FALSE)
+  title = "GEDI aboard the International Space Station", duration = 8,
+  launch = FALSE)
+plot_gedi_orbit_animation(track, output_file = "readme/gedi-orbit-animation.html",
+  title = "GEDI aboard the International Space Station", duration = 8,
+  launch = FALSE)
 
 grDevices::png("readme/fig-gedi-rgt.png", 1200, 850, res = 150)
 plot(track$longitude, track$latitude, type = "n",

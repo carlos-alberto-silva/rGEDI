@@ -1,9 +1,23 @@
-# rGEDI
+![](https://github.com/carlos-alberto-silva/rGEDI/blob/master/readme/fig1.png)<br/>
 
 <!-- badges: start -->
 [![CRAN status](https://www.r-pkg.org/badges/version/rGEDI)](https://CRAN.R-project.org/package=rGEDI)
 [![R-CMD-check](https://github.com/carlos-alberto-silva/rGEDI/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/carlos-alberto-silva/rGEDI/actions/workflows/R-CMD-check.yaml)
+![GitHub](https://img.shields.io/badge/GitHub-master-green.svg)
+![Licence](https://img.shields.io/badge/Licence-GPL--3-blue.svg)
+[![Downloads](https://cranlogs.r-pkg.org/badges/grand-total/rGEDI)](https://cran.r-project.org/package=rGEDI)
 <!-- badges: end -->
+
+**rGEDI: An R Package for NASA's Global Ecosystem Dynamics Investigation
+(GEDI) Data Visualizing and Processing.**
+
+Authors: Carlos Alberto Silva, Caio Hamamura, Ruben Valbuena, Steven Hancock,
+Adrian Cardil, Eben N. Broadbent, Danilo R. A. de Almeida, Celso H. L. Silva
+Junior, and Carine Klauberg.
+
+The original rGEDI workflow provides functions for downloading, visualizing,
+clipping, gridding, simulating, and exporting GEDI data. The expanded package
+also searches, streams, filters, summarizes, models, and maps NASA GEDI data.
 
 `rGEDI` searches, downloads, streams, reads, filters, clips, summarizes,
 simulates, models, and maps NASA Global Ecosystem Dynamics Investigation
@@ -18,7 +32,7 @@ are [`readme/build-local-examples.R`](readme/build-local-examples.R) and
 [rGEDI function reference manual](output/pdf/rGEDI-reference-manual.pdf) is also
 available for review.
 
-# Getting started
+# Getting Started
 
 ## 1 Installation
 
@@ -40,12 +54,44 @@ library(sf)
 library(terra)
 ```
 
-Cloud HDF5 access and Google Earth Engine use Python modules installed through
-`reticulate`. Run the configuration once, then restart R.
+### Configure Python and Google Earth Engine
+
+As in the ICESat2VegR workflow, rGEDI uses three Python packages through
+`reticulate`:
+
+1. [`earthaccess`](https://github.com/earthaccess-dev/earthaccess) finds and
+   authenticates Earthdata Cloud objects.
+2. [`h5py`](https://github.com/h5py/h5py) reads HDF5 content streamed from the
+   cloud.
+3. [`earthengine-api`](https://github.com/google/earthengine-api) samples
+   predictors and creates wall-to-wall maps in Google Earth Engine.
+
+Run the configuration once. It installs Miniconda when needed and creates the
+package Python environment. Restart R if the installer asks you to do so.
 
 ```r
 rGEDI_configure(install = TRUE)
 ee_initialize(project = "ee-carlossilvaengflorestal")
+```
+
+Verify the active Python and required modules:
+
+```r
+safely <- function(expr, default = NA) tryCatch(expr, error = function(e) default)
+have_reticulate <- requireNamespace("reticulate", quietly = TRUE)
+py_ready <- have_reticulate &&
+  !inherits(try(reticulate::py_config(), silent = TRUE), "try-error")
+
+status <- list(
+  rGEDI_loaded = "package:rGEDI" %in% search(),
+  python_used = if (have_reticulate)
+    safely(reticulate::py_discover_config()$python) else NA,
+  h5py = if (py_ready) reticulate::py_module_available("h5py") else FALSE,
+  earthaccess = if (py_ready)
+    reticulate::py_module_available("earthaccess") else FALSE,
+  ee = if (py_ready) reticulate::py_module_available("ee") else FALSE
+)
+print(status)
 ```
 
 ## 2 Example study site
@@ -188,7 +234,8 @@ head(rgt)
 plot_gedi_orbit_animation(
   rgt,
   output_file = file.path(outdir, "gedi-orbit-animation.gif"),
-  title = "GEDI reference ground track", duration = 8, launch = FALSE
+  title = "GEDI aboard the International Space Station",
+  duration = 8, launch = FALSE
 )
 
 # Use .html for the self-contained interactive globe.
@@ -198,7 +245,13 @@ plot_gedi_orbit_animation(
 )
 ```
 
-<p align="center"><img src="readme/gedi-orbit-animation.gif" width="650" alt="Animated GEDI reference ground track"></p>
+The GIF follows the ICESat2VegR presentation while showing the correct GEDI
+platform: GEDI is mounted on the International Space Station. GEDI operates at
+1064 nm in the near infrared; the red beam and track visualize that invisible
+laser pulse and connect the ISS payload to the accumulating reference ground
+track.
+
+<p align="center"><img src="readme/gedi-orbit-animation.gif" width="650" alt="GEDI aboard the ISS orbiting an animated globe"></p>
 
 ### 5.2 Extract the data
 
@@ -209,6 +262,11 @@ level1b_geo <- getLevel1BGeo(level1b)
 head(level1b_geo)
 ```
 
+The original rGEDI map is retained below. It shows the Level 1B footprints
+over high-resolution imagery.
+
+<p align="center"><img src="readme/fig2.PNG" width="650" alt="Original rGEDI Level 1B footprint map"></p>
+
 #### Get GEDI full waveform (GEDI Level 1B)
 
 ```r
@@ -216,6 +274,8 @@ shot <- level1b_geo$shot_number[1]
 waveform <- getLevel1BWF(level1b, shot_number = shot)
 plot(waveform)
 ```
+
+<p align="center"><img src="readme/fig3.png" width="650" alt="Original rGEDI Level 1B full waveform"></p>
 
 #### Get GEDI elevation and height metrics (GEDI Level 2A)
 
@@ -233,6 +293,8 @@ level2a_good[, .(beam, shot_number, elev_lowestmode, rh50, rh90, rh98, rh100)]
 plotWFMetrics(level1b, level2a, shot_number = shot,
               rh = c(25, 50, 75, 90, 98))
 ```
+
+<p align="center"><img src="readme/fig8.png" width="650" alt="Original rGEDI waveform with relative-height metrics"></p>
 
 <p align="center"><img src="readme/fig-waveform-rh.png" width="650" alt="GEDI waveform with relative height metrics"></p>
 
@@ -253,6 +315,8 @@ profile_beam <- unique(pai_profile$beam)[1]
 plotPAIProfile(pai_profile, beam = profile_beam)
 plotPAVDProfile(pavd_profile, beam = profile_beam)
 ```
+
+<p align="center"><img src="readme/fig9.png" width="650" alt="Original rGEDI PAI and PAVD profiles"></p>
 
 <p align="center"><img src="readme/fig-pai-pavd.png" width="750" alt="GEDI PAI and PAVD profiles"></p>
 
@@ -318,6 +382,8 @@ points(level2a_geom_dt$lon_lowestmode, level2a_geom_dt$lat_lowestmode,
        pch = 16, col = "#762A83")
 ```
 
+<p align="center"><img src="readme/fig4.png" width="700" alt="Original rGEDI clipping and footprint visualization"></p>
+
 ### 5.4 Compute descriptive statistics
 
 ```r
@@ -352,6 +418,11 @@ agbd_grid <- gridStatsLevel4A(
   res = 0.002, na.rm = TRUE
 )
 ```
+
+<p align="center">
+  <img src="readme/fig5.png" width="390" alt="Original Level 2A grid statistics">
+  <img src="readme/fig6.png" width="390" alt="Original Level 2B grid statistics">
+</p>
 
 <p align="center"><img src="readme/fig-clip-grids.png" width="850" alt="GEDI Level 2A and Level 2B grids"></p>
 
@@ -494,6 +565,8 @@ sim_noisy <- gediWFSimulator(
 metrics_noisy <- gediWFMetrics(sim_noisy)
 metrics_noisy[, .(cover, rh50, rh90, rh100, waveEnergy)]
 ```
+
+<p align="center"><img src="readme/fig7.png" width="750" alt="Original rGEDI ALS point cloud and simulated waveform"></p>
 
 <p align="center"><img src="readme/fig-simulator.png" width="800" alt="Simulated GEDI waveforms without and with noise"></p>
 

@@ -113,6 +113,8 @@ test_that("orbit animation writes self-contained HTML", {
                normalizePath(f, winslash = "/"))
   html <- paste(readLines(f, warn = FALSE), collapse = "\n")
   expect_match(html, "Interactive GEDI ground-track playback", fixed = TRUE)
+  expect_match(html, "ISS + GEDI", fixed = TRUE)
+  expect_match(html, "#ff1744", fixed = TRUE)
   expect_false(grepl("<script src=", html, fixed = TRUE))
 })
 

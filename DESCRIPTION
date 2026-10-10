@@ -42,6 +42,7 @@ Suggests:
     leaflet,
     leafsync,
     lidR,
+    maps,
     plot3D,
     rasterVis,
     randomForest,
