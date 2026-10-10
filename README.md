@@ -375,6 +375,32 @@ head(level4a_footprints)
 
 ### 5.3 Clip
 
+Use the generic `clip()` function for every GEDI product. A bounding box uses
+the rGEDI/terra coordinate order `c(xmin, xmax, ymin, ymax)`; polygons can be
+`sf`, `sfc`, or `SpatVector` objects.
+
+```r
+bbox <- c(xmin, xmax, ymin, ymax)
+
+# Open HDF5 products
+level1b_clip <- clip(level1b, bbox,
+  output = file.path(outdir, "level1b-clip.h5"))
+level2a_clip <- clip(level2a, bbox,
+  output = file.path(outdir, "level2a-clip.h5"))
+level2b_clip <- clip(level2b, study_area,
+  output = file.path(outdir, "level2b-clip.h5"))
+level4a_clip <- clip(level4a, bbox)
+
+# Extracted footprint tables and rasters
+level2a_bbox <- clip(level2a_metrics, bbox)
+level4a_geom <- clip(level4a_footprints, study_area)
+level3_aoi <- clip(level3, vect(study_area))
+level4b_bbox <- clip(level4b, bbox)
+```
+
+The product-specific functions shown below remain available when an explicit
+function name is useful in a script.
+
 #### Clip open GEDI HDF5 objects
 
 Level 1B, 2A, and 2B clippers write valid subset HDF5 files and return open

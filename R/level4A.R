@@ -49,9 +49,13 @@ readLevel4A <- function(level4Apath) {
 #' @param cols Character vector of fields to return. `NULL` returns all
 #'   datasets shared by the selected beams.
 #' @param quality Logical. If `TRUE`, retain observations accepted by the
-#'   current Release 3 quality fields (`l4a_quality_flag_rel3`,
-#'   `degrade_include_flag`, and `elev_highestreturn_outlier_flag`) when
-#'   present. Legacy Release 2 quality fields remain supported.
+#'   current Release 3 quality fields when present:
+#'
+#'   * `l4a_quality_flag_rel3`
+#'   * `degrade_include_flag`
+#'   * `elev_highestreturn_outlier_flag`
+#'
+#'   Legacy Release 2 quality fields remain supported.
 #' @param beams Optional character vector of GEDI beam names.
 #' @return A [data.table::data.table] with one row per footprint.
 #' @export
