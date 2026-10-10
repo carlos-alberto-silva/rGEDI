@@ -46,7 +46,9 @@ The normalized path to the HTML file, invisibly.
 Creates a self-contained HTML animation or an animated GIF from GEDI
 footprint coordinates. Both formats show GEDI aboard the International
 Space Station (ISS), its laser, and the accumulating ground track on an
-orthographic globe.
+orthographic globe. ISS motion follows the time-ordered geolocation of the
+most complete beam extracted from the supplied HDF5 object; it is not a
+generic or simulated orbit.
 }
 \examples{
 orbit <- data.frame(

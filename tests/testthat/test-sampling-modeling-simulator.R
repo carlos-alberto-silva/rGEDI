@@ -115,6 +115,9 @@ test_that("orbit animation writes self-contained HTML", {
   expect_match(html, "Interactive GEDI ground-track playback", fixed = TRUE)
   expect_match(html, "ISS + GEDI", fixed = TRUE)
   expect_match(html, "#ff1744", fixed = TRUE)
+  expect_match(html, "HDF5 reference beam", fixed = TRUE)
+  expect_match(html, '"reference":true', fixed = TRUE)
+  expect_false(grepl("center=(focus", html, fixed = TRUE))
   expect_false(grepl("<script src=", html, fixed = TRUE))
 })
 

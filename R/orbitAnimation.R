@@ -3,7 +3,9 @@
 #' Creates a self-contained HTML animation or an animated GIF from GEDI
 #' footprint coordinates. Both formats show GEDI aboard the International
 #' Space Station (ISS), its laser, and the accumulating ground track on an
-#' orthographic globe.
+#' orthographic globe. ISS motion follows the time-ordered geolocation of the
+#' most complete beam extracted from the supplied HDF5 object; it is not a
+#' generic or simulated orbit.
 #'
 #' @param x A data frame, `data.table`, `sf` or `SpatVector` containing GEDI
 #'   footprint coordinates, or an open `gedi.level1b`, `gedi.level2a`,
@@ -53,6 +55,8 @@ plot_gedi_orbit_animation <- function(
   ))
   names(output)[match(c("longitude", "latitude", "sequence"), names(output))] <-
     c("lon", "lat", "order")
+  reference_track <- names(which.max(table(output$track)))[1L]
+  output$reference <- output$track == reference_track
   output$index <- seq_len(nrow(output))
 
   extension <- tolower(tools::file_ext(output_file))
@@ -64,7 +68,7 @@ plot_gedi_orbit_animation <- function(
   }
 
   payload <- jsonlite::toJSON(
-    output[c("lon", "lat", "track", "index")],
+    output[c("lon", "lat", "track", "reference", "index")],
     dataframe = "rows", auto_unbox = TRUE, na = "null", digits = 8
   )
   payload <- gsub("</", "<\\\\/", payload, fixed = TRUE)
@@ -164,7 +168,7 @@ getGEDITrack <- function(x, lon = NULL, lat = NULL, time = NULL, track = NULL,
     return(as.data.frame(getLevel1BGeo(x, select = "delta_time", beams = beams)))
   }
   if (methods::is(x, "gedi.level2a")) {
-    return(as.data.frame(getLevel2AM(x, beams = beams)))
+    return(as.data.frame(getLevel2AM(x, beams = beams, include_rh = FALSE)))
   }
   if (methods::is(x, "gedi.level2b")) {
     return(as.data.frame(getLevel2BVPM(
@@ -200,8 +204,10 @@ getGEDITrack <- function(x, lon = NULL, lat = NULL, time = NULL, track = NULL,
   if (!requireNamespace("gifski", quietly = TRUE)) {
     stop("GIF output requires the suggested 'gifski' package.", call. = FALSE)
   }
-  nframes <- min(48L, nrow(output))
-  frame_rows <- unique(round(seq(1, nrow(output), length.out = nframes)))
+  orbit <- output[output$reference, , drop = FALSE]
+  orbit <- orbit[order(orbit$order, na.last = TRUE), , drop = FALSE]
+  nframes <- min(48L, nrow(orbit))
+  frame_rows <- unique(round(seq(1, nrow(orbit), length.out = nframes)))
   frames <- file.path(tempdir(), sprintf("rGEDI-orbit-%03d.png", seq_along(frame_rows)))
   on.exit(unlink(frames, force = TRUE), add = TRUE)
   infrared_palette <- c("#ff355e", "#ff7043", "#d946ef", "#ffb000",
@@ -217,7 +223,8 @@ getGEDITrack <- function(x, lon = NULL, lat = NULL, time = NULL, track = NULL,
   stars <- data.frame(x = runif(180, -1.55, 1.55), y = runif(180, -1.1, 1.1))
   for (i in seq_along(frame_rows)) {
     row <- frame_rows[[i]]
-    rotation <- center_lon + 18 * sin(2 * pi * (i - 1) / length(frame_rows))
+    progress <- if (nrow(orbit) == 1L) 1 else (row - 1) / (nrow(orbit) - 1)
+    rotation <- center_lon
     grDevices::png(frames[[i]], width = 1000, height = 650, bg = "#02060b")
     graphics::par(mar = c(0, 0, 2.2, 0), fg = "white")
     graphics::plot.new()
@@ -227,15 +234,17 @@ getGEDITrack <- function(x, lon = NULL, lat = NULL, time = NULL, track = NULL,
                       bg = "#2387a4", fg = "#9edce8", lwd = 2)
     .draw_orbit_graticule(rotation, center_lat)
     if (!is.null(world)) .draw_orbit_land(world, rotation, center_lat)
-    shown <- output[seq_len(row), , drop = FALSE]
-    for (beam in unique(shown$track)) {
-      part <- shown[shown$track == beam, , drop = FALSE]
+    for (beam in unique(output$track)) {
+      part <- output[output$track == beam, , drop = FALSE]
+      part <- part[order(part$order, na.last = TRUE), , drop = FALSE]
+      part <- part[seq_len(max(1L, round(progress * nrow(part)))), , drop = FALSE]
       projected <- .orbit_project(part$lon, part$lat, rotation, center_lat, 1.018)
       .draw_visible_orbit_line(projected, colors[[beam]], 3)
     }
-    focus <- .orbit_project(shown$lon[nrow(shown)], shown$lat[nrow(shown)],
+    focus_row <- orbit[row, , drop = FALSE]
+    focus <- .orbit_project(focus_row$lon, focus_row$lat,
                             rotation, center_lat, 1.12)
-    ground <- .orbit_project(shown$lon[nrow(shown)], shown$lat[nrow(shown)],
+    ground <- .orbit_project(focus_row$lon, focus_row$lat,
                              rotation, center_lat, 1)
     if (isTRUE(focus$visible)) {
       graphics::segments(focus$x, focus$y, ground$x, ground$y,
@@ -246,7 +255,7 @@ getGEDITrack <- function(x, lon = NULL, lat = NULL, time = NULL, track = NULL,
     }
     graphics::title(main = title, col.main = "white", cex.main = 1.35)
     graphics::text(1.48, -1.01,
-                   sprintf("Footprint %s of %s", row, nrow(output)),
+                   sprintf("HDF5 orbit point %s of %s", row, nrow(orbit)),
                    adj = 1, col = "#b6d6df", cex = 0.82)
     grDevices::dev.off()
   }
@@ -359,28 +368,31 @@ const slider=document.getElementById("progress"),button=document.getElementById(
 let playing=true,start=performance.now(),manual=0;
 const colors=["#ff355e","#ff7043","#d946ef","#ffb000","#e63946","#f72585","#ff8c42","#c1121f"];
 const tracks=[...new Set(points.map(d=>d.track))],color=t=>colors[Math.max(0,tracks.indexOf(t))%colors.length];
+const orbitPoints=points.filter(d=>d.reference),sortedLon=points.map(d=>d.lon).sort((a,b)=>a-b);
+const center=sortedLon.length?sortedLon[Math.floor(sortedLon.length/2)]:0;
 function resize(){const d=devicePixelRatio||1,r=canvas.getBoundingClientRect();canvas.width=r.width*d;canvas.height=r.height*d;ctx.setTransform(d,0,0,d,0,0)}
 addEventListener("resize",resize);resize();
 function project(lon,lat,center,R,cx,cy){const a=(lon-center)*Math.PI/180,b=lat*Math.PI/180;
  const visible=Math.cos(b)*Math.cos(a)>=0;return{x:cx+R*Math.cos(b)*Math.sin(a),y:cy-R*Math.sin(b),visible};}
 function draw(ts){const w=canvas.clientWidth,h=canvas.clientHeight,cx=w/2,cy=h/2,R=Math.max(40,Math.min(w,h)*.4);
  ctx.clearRect(0,0,w,h);const elapsed=playing?(ts-start)%duration:manual*duration;const p=elapsed/duration;
- if(playing)slider.value=Math.round(p*1000);const k=Math.min(points.length-1,Math.floor(p*points.length));
- const focus=points[k]||points[0],center=(focus?focus.lon:0)-25;
+ if(playing)slider.value=Math.round(p*1000);const k=Math.min(orbitPoints.length-1,Math.floor(p*orbitPoints.length));
+ const focus=orbitPoints[k]||points[0];
  const grad=ctx.createRadialGradient(cx-R*.3,cy-R*.4,R*.05,cx,cy,R);grad.addColorStop(0,"#2d8291");grad.addColorStop(.55,"#174e62");grad.addColorStop(1,"#071a29");
  ctx.beginPath();ctx.arc(cx,cy,R,0,Math.PI*2);ctx.fillStyle=grad;ctx.fill();ctx.save();ctx.beginPath();ctx.arc(cx,cy,R,0,Math.PI*2);ctx.clip();
  ctx.strokeStyle="#8bc5c52e";ctx.lineWidth=1;
  for(let lat=-60;lat<=60;lat+=30){ctx.beginPath();let pen=false;for(let lon=-180;lon<=180;lon+=3){const q=project(lon,lat,center,R,cx,cy);if(q.visible){pen?ctx.lineTo(q.x,q.y):ctx.moveTo(q.x,q.y);pen=true}else pen=false}ctx.stroke()}
  for(let lon=-180;lon<180;lon+=30){ctx.beginPath();let pen=false;for(let lat=-90;lat<=90;lat+=3){const q=project(lon,lat,center,R,cx,cy);if(q.visible){pen?ctx.lineTo(q.x,q.y):ctx.moveTo(q.x,q.y);pen=true}else pen=false}ctx.stroke()}
  for(const track of tracks){ctx.strokeStyle=color(track);ctx.lineWidth=2;ctx.beginPath();let pen=false;
-  points.filter(d=>d.track===track).forEach(d=>{const q=project(d.lon,d.lat,center,R,cx,cy);if(q.visible){pen?ctx.lineTo(q.x,q.y):ctx.moveTo(q.x,q.y);pen=true}else pen=false});ctx.stroke()}
+  const trackPoints=points.filter(d=>d.track===track),shown=trackPoints.slice(0,Math.max(1,Math.round(p*trackPoints.length)));
+  shown.forEach(d=>{const q=project(d.lon,d.lat,center,R,cx,cy);if(q.visible){pen?ctx.lineTo(q.x,q.y):ctx.moveTo(q.x,q.y);pen=true}else pen=false});ctx.stroke()}
  ctx.restore();ctx.beginPath();ctx.arc(cx,cy,R,0,Math.PI*2);ctx.strokeStyle="#b4ece0aa";ctx.lineWidth=1.5;ctx.stroke();
  if(focus){const q=project(focus.lon,focus.lat,center,R,cx,cy);if(q.visible){const sy=q.y-42;
  ctx.beginPath();ctx.moveTo(q.x,q.y);ctx.lineTo(q.x,sy);ctx.strokeStyle="#ff1744";ctx.lineWidth=2;ctx.stroke();
  ctx.fillStyle="#2878b8";ctx.strokeStyle="#fff";ctx.lineWidth=1;ctx.fillRect(q.x-34,sy-5,24,10);ctx.strokeRect(q.x-34,sy-5,24,10);ctx.fillRect(q.x+10,sy-5,24,10);ctx.strokeRect(q.x+10,sy-5,24,10);
  ctx.strokeStyle="#e8edf0";ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(q.x-40,sy);ctx.lineTo(q.x+40,sy);ctx.stroke();ctx.fillStyle="#e8edf0";ctx.fillRect(q.x-8,sy-8,16,16);
  ctx.fillStyle="#fff";ctx.font="bold 13px system-ui";ctx.textAlign="center";ctx.fillText("ISS + GEDI",q.x,sy-15)}
- readout.innerHTML="Track: <b>"+focus.track+"</b><br>Longitude: "+focus.lon.toFixed(4)+"&deg;<br>Latitude: "+focus.lat.toFixed(4)+"&deg;"}
+ readout.innerHTML="HDF5 reference beam: <b>"+focus.track+"</b><br>Orbit point: "+(k+1)+" of "+orbitPoints.length+"<br>Longitude: "+focus.lon.toFixed(4)+"&deg;<br>Latitude: "+focus.lat.toFixed(4)+"&deg;"}
  requestAnimationFrame(draw)}
 button.onclick=()=>{playing=!playing;button.textContent=playing?"Pause":"Play";if(playing)start=performance.now()-manual*duration};
 slider.oninput=()=>{manual=slider.value/1000;playing=false;button.textContent="Play"};requestAnimationFrame(draw);

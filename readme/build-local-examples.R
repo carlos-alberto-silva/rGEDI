@@ -32,7 +32,13 @@ legend("bottomleft", c("Forest stands", "GEDI Level 2A footprints"),
        pch = c(15, 16), col = c("#20603d", "#6a2c70"), bty = "n")
 grDevices::dev.off()
 
-track <- getGEDITrack(level2a)
+# Extracted with getGEDITrack(..., every = 200) from the full README Level 2A
+# granule. The CSV stores coordinates and beam/time identifiers only.
+track <- if (file.exists("readme/gedi-orbit-track.csv")) {
+  data.table::fread("readme/gedi-orbit-track.csv")
+} else {
+  getGEDITrack(level2a)
+}
 plot_gedi_orbit_animation(track, output_file = "readme/gedi-orbit-animation.gif",
   title = "GEDI aboard the International Space Station", duration = 8,
   launch = FALSE)

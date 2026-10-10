@@ -11,15 +11,11 @@ if (file.exists("DESCRIPTION") && requireNamespace("devtools", quietly = TRUE)) 
   library(rGEDI)
 }
 
-ee_project <- Sys.getenv(
-  "EE_PROJECT", unset = "ee-carlossilvaengflorestal"
-)
-netrc <- Sys.getenv("NETRC", unset = "")
-if (nzchar(netrc)) {
-  earthdata_login(netrc = netrc)
-} else {
-  earthdata_login()
+ee_project <- Sys.getenv("EE_PROJECT", unset = "")
+if (!nzchar(ee_project)) {
+  stop("Set EE_PROJECT to your Google Cloud project before running this script.")
 }
+earthdata_login() # reads NETRC or ~/.netrc; credentials are never stored here
 
 xmin <- -44.18
 xmax <- -44.05

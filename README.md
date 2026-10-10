@@ -71,7 +71,7 @@ package Python environment. Restart R if the installer asks you to do so.
 
 ```r
 rGEDI_configure(install = TRUE)
-ee_initialize(project = "ee-carlossilvaengflorestal")
+ee_initialize(project = "your-google-cloud-project")
 ```
 
 Verify the active Python and required modules:
@@ -175,11 +175,11 @@ level4a_file <- list.files(outdir, "GEDI04_A.*\\.h5$", full.names = TRUE)[1]
 level3_file  <- list.files(outdir, "GEDI03.*\\.tif$", full.names = TRUE)[1]
 level4b_file <- list.files(outdir, "GEDI04_B.*\\.tif$", full.names = TRUE)[1]
 
-level1b <- readLevel1B(level1b_file)
-level2a <- readLevel2A(level2a_file)
-level2b <- readLevel2B(level2b_file)
+level1b_full <- readLevel1B(level1b_file)
+level2a_full <- readLevel2A(level2a_file)
+level2b_full <- readLevel2B(level2b_file)
 level3  <- readLevel3(level3_file)
-level4a <- readLevel4A(level4a_file)
+level4a_full <- readLevel4A(level4a_file)
 level4b <- readLevel4B(level4b_file)
 ```
 
@@ -225,10 +225,12 @@ Earthdata redirect restrictions encountered by GDAL virtual-file reads.
 ### 5.1 Extract the Reference Ground Track and plot the GIF animation
 
 `getGEDITrack()` standardizes coordinates, beam names, and acquisition order
-from a Level 1B, 2A, 2B, or 4A object or an extracted table.
+from a Level 1B, 2A, 2B, or 4A object or an extracted table. Use the complete
+downloaded granule here; `every` thins the display without changing the source
+orbit or its order.
 
 ```r
-rgt <- getGEDITrack(level2a)
+rgt <- getGEDITrack(level2a_full, every = 200)
 head(rgt)
 
 plot_gedi_orbit_animation(
@@ -249,7 +251,10 @@ The GIF follows the ICESat2VegR presentation while showing the correct GEDI
 platform: GEDI is mounted on the International Space Station. GEDI operates at
 1064 nm in the near infrared; the red beam and track visualize that invisible
 laser pulse and connect the ISS payload to the accumulating reference ground
-track.
+track. Every displayed ISS position follows the time-ordered geolocation from
+the most complete beam in the open HDF5 granule. The globe stays fixed, so the
+movement comes from the granule rather than from a simulated orbit or camera
+rotation. The remaining HDF5 beams accumulate at the same relative progress.
 
 <p align="center"><img src="readme/gedi-orbit-animation.gif" width="650" alt="GEDI aboard the ISS orbiting an animated globe"></p>
 
@@ -577,89 +582,176 @@ metrics_noisy[, .(cover, rh50, rh90, rh100, waveEnergy)]
 This workflow models real quality-filtered GEDI Level 4A aboveground biomass
 density (`agbd`) with the 64-band AlphaEarth annual embedding plus terrain
 predictors in Google Earth Engine (GEE). It follows the ICESat2VegR sequence,
-with GEDI footprints and biomass as the response.
+adapted to GEDI footprints: discover Level 4A data, apply product quality
+flags, create a spatially balanced footprint sample, extract AlphaEarth and
+terrain values, select predictors, validate a Random Forest model, train the
+equivalent GEE regressor, predict the AOI, visualize it, and export GeoTIFF.
+
+AlphaEarth bands `A00`–`A63` are general-purpose satellite embeddings. The
+terrain variables (`elevation`, `slope`, and `aspect`) provide explicit
+topographic context. Longitude and latitude can also be included, but their
+importance should be interpreted carefully because they may encode geographic
+location rather than transferable ecological relationships.
 
 ### 9.2 Code availability
 
-The complete executable workflow is in
-[`readme/build-modern-examples.R`](readme/build-modern-examples.R). Its outputs
-include the sampled training data, validation figure, GeoTIFF, and map below.
+A clean end-to-end script is installed with the package and can also be opened
+directly from the repository:
+
+**[Download the GEDI AlphaEarth upscaling workflow](inst/scripts/upscaling_alphaearth_workflow.R)**
+
+The script covers GEDI discovery and cloud reading, Level 4A quality filtering,
+spatial sampling, ancillary extraction, RFE, independent validation,
+wall-to-wall prediction, visualization, and Drive export. The separate
+[`readme/build-modern-examples.R`](readme/build-modern-examples.R) script
+regenerates the figures and data artifacts displayed on this page.
 
 ### 9.3 Install and load required packages
 
 ```r
-need <- c("rGEDI", "reticulate", "sf", "terra", "data.table", "randomForest")
+repos <- c(
+  rgedi = "https://carlos-alberto-silva.r-universe.dev",
+  CRAN = "https://cloud.r-project.org"
+)
+need <- c(
+  "rGEDI", "reticulate", "sf", "terra", "data.table",
+  "randomForest", "leaflet"
+)
 missing <- need[!vapply(need, requireNamespace, logical(1), quietly = TRUE)]
-if (length(missing)) install.packages(missing)
+if (length(missing)) install.packages(missing, repos = repos, dependencies = TRUE)
 
-library(rGEDI)
-library(data.table)
-library(terra)
+suppressPackageStartupMessages({
+  library(rGEDI)
+  library(data.table)
+  library(sf)
+  library(terra)
+})
 ```
 
 ### 9.4 Read AOI and define the date range
 
 ```r
-study_extent <- c(xmin, xmax, ymin, ymax)
+aoi <- sf::st_make_valid(sf::st_transform(study_area, 4326))
+aoi_box <- sf::st_bbox(aoi)
+study_extent <- unname(aoi_box[c("xmin", "xmax", "ymin", "ymax")])
+daterange <- c("2019-04-18", "2019-04-19")
 start_year <- 2019
 end_year <- 2019
 ```
 
 ### 9.5 Package configuration
 
+Configure the Python environment once. Authentication remains in the standard
+user-level stores managed by Earthdata and the Earth Engine API; it is never
+placed in this README or the workflow script.
+
 ```r
-earthdata_login() # reads NETRC or ~/.netrc; credentials are never stored here
-ee <- ee_initialize(project = "ee-carlossilvaengflorestal")
+rGEDI_configure(install = TRUE)
+
+# Reads NETRC or ~/.netrc. Do not put usernames or passwords in scripts.
+earthdata_login()
+
+# Set this in the R session or the user's environment, outside the repository.
+# Sys.setenv(EE_PROJECT = "your-google-cloud-project")
+ee_project <- Sys.getenv("EE_PROJECT", unset = "")
+if (!nzchar(ee_project)) stop("Set EE_PROJECT to your Google Cloud project ID.")
+ee <- ee_initialize(project = ee_project)
 ```
 
 ### 9.6 Build the AlphaEarth predictor stack and extract footprint values
 
+Start from the quality-filtered Level 4A footprints extracted in Section 5.2.
+The `spacedSampling()` step reduces spatial clustering before predictors are
+sampled from the 10 m AlphaEarth embedding at a 30 m working scale.
+
 ```r
-stack <- ee_build_AlphaEarth_embedding_terrain_stack(
-  study_extent, start_year, end_year
-)
-bands <- reticulate::py_to_r(stack$bandNames()$getInfo())
-predictor_names <- c(grep("^A", bands, value = TRUE),
-                     intersect(c("elevation", "slope", "aspect"), bands))
+level4a_aoi <- clipLevel4AGeometry(level4a_footprints, aoi)
+level4a_aoi <- level4a_aoi[is.finite(agbd) & agbd >= 0]
 
 set.seed(42)
 footprint_sample <- sampleGEDI(
-  level4a_footprints, spacedSampling(size = 100, radius = 25)
+  level4a_aoi,
+  spacedSampling(size = min(500L, nrow(level4a_aoi)), radius = 25)
 )
 footprint_sample$sample_id <- seq_len(nrow(footprint_sample))
-training <- extractEE(stack, footprint_sample, scale = 30, chunk_size = 50)
+
+stack <- ee_build_AlphaEarth_embedding_terrain_stack(
+  aoi, start_year, end_year, add_lonlat = TRUE
+)
+bands <- reticulate::py_to_r(stack$bandNames()$getInfo())
+predictor_names <- c(
+  grep("^A[0-9]{2}$", bands, value = TRUE),
+  intersect(
+    c("elevation", "slope", "aspect", "longitude", "latitude"),
+    bands
+  )
+)
+
+training <- extractEE(
+  stack$select(as.list(predictor_names)),
+  footprint_sample, scale = 30, chunk_size = 250
+)
+
+# Restore coordinates if Earth Engine returned only feature properties.
+coordinates <- as.data.table(footprint_sample)[, .(
+  sample_id, lon_lowestmode, lat_lowestmode
+)]
+if (!all(c("lon_lowestmode", "lat_lowestmode") %in% names(training))) {
+  training <- merge(training, coordinates, by = "sample_id",
+                    all.x = TRUE, sort = FALSE)
+}
+
+complete <- training[
+  complete.cases(training[, c("agbd", predictor_names), with = FALSE])
+]
+fwrite(complete, file.path(outdir, "gedi-alphaearth-training.csv"))
+head(complete[, c("agbd", head(predictor_names, 6)), with = FALSE])
 ```
 
 ### 9.7 Visualize the predictor stack as false-color RGB
 
 ```r
 rgb <- stack$select(c("A00", "A20", "A40"))
-map_view(
+rgb_map <- map_view(
   list(`AlphaEarth RGB` = rgb),
   vis = list(`AlphaEarth RGB` = list(
     bands = c("A00", "A20", "A40"), min = -0.06, max = 0.12
-  )), aoi = study_area
+  )), aoi = aoi
 )
+rgb_map
 ```
 
 <p align="center"><img src="readme/fig-alphaearth-rgb.png" width="700" alt="AlphaEarth embedding false-color composite"></p>
 
 ### 9.8 Variable selection with RFE
 
+RFE repeatedly removes the least useful predictor and chooses the smallest
+subset within one standard error of the minimum out-of-bag error. Green bars
+in the importance plot identify the retained variables.
+
 ```r
-complete <- training[complete.cases(training[, c("agbd", predictor_names), with = FALSE])]
 selection <- varSel(
   complete[, ..predictor_names], complete$agbd,
-  method = "rfe", threshold = 0.05, seed = 42, ntree = 200
+  method = "rfe", threshold = 0, seed = 42,
+  ntree = 200
 )
 best_predictors <- selection$selvars
+print(best_predictors)
+
+par(mfrow = c(1, 2), mar = c(4.2, 7, 3, 1))
 plot(selection, which = "importance")
 plot(selection, which = "rfe")
+par(mfrow = c(1, 1))
 ```
 
 <p align="center"><img src="readme/fig-gedi-rfe.png" width="800" alt="GEDI AlphaEarth variable importance and recursive feature elimination"></p>
 
 ### 9.9 Train/test split and fit a Random Forest model
+
+Use a reproducible 70%/30% train/test split to estimate performance on GEDI
+footprints that were not used to fit each validation model. The final model
+stored in `fit$model` is refitted with all complete observations for subsequent
+prediction.
 
 ```r
 fit <- fit_model(
@@ -669,16 +761,34 @@ fit <- fit_model(
 )
 fit$stats_train
 fit$stats_test
+
+ok <- is.finite(fit$validation)
+plot(
+  fit$response[ok], fit$validation[ok],
+  pch = 21, bg = "#1fa187", col = "#173f5f",
+  xlab = "Observed GEDI AGBD (Mg/ha)",
+  ylab = "Holdout prediction (Mg/ha)"
+)
+abline(0, 1, col = "#d1495b", lwd = 2)
 ```
 
 <p align="center"><img src="readme/fig-gedi-model-validation.png" width="600" alt="GEDI AlphaEarth biomass model validation"></p>
 
 ### 9.10 Create a wall-to-wall aboveground biomass map in GEE
 
+The local holdout model above provides accuracy diagnostics. For scalable
+wall-to-wall prediction, train an equivalent regression forest inside Earth
+Engine using the same response and selected predictors.
+
 ```r
-training_ee <- vect_as_ee(to_vect(
-  complete, lon = "lon_lowestmode", lat = "lat_lowestmode"
-))
+ee_columns <- c(
+  "agbd", "lon_lowestmode", "lat_lowestmode", best_predictors
+)
+training_vect <- to_vect(
+  complete[, ..ee_columns],
+  lon = "lon_lowestmode", lat = "lat_lowestmode"
+)
+training_ee <- vect_as_ee(training_vect)
 training_ee <- training_ee$filter(
   ee$Filter$notNull(as.list(c("agbd", best_predictors)))
 )
@@ -687,19 +797,20 @@ forest <- build_ee_forest(
   trees = 500, seed = 42
 )
 agbd_map <- map_create(forest, stack$select(as.list(best_predictors)),
-                       study_extent, name = "agbd")
+                       aoi = aoi, name = "agbd")
 ```
 
 ### 9.11 Visualize the aboveground biomass map
 
 ```r
-map_view(
+agbd_view <- map_view(
   list(`Predicted AGBD` = agbd_map),
   vis = list(`Predicted AGBD` = list(
     min = 0, max = 200,
     palette = c("#f7fcf5", "#74c476", "#00441b")
-  )), aoi = study_area
+  )), aoi = aoi
 )
+agbd_view
 ```
 
 <p align="center"><img src="readme/fig-gedi-wall-to-wall.png" width="700" alt="GEE wall-to-wall GEDI aboveground biomass map"></p>
@@ -713,7 +824,7 @@ Use a Drive task for large exports. `start = TRUE` starts it immediately and
 drive_task <- ee_image_to_drive(
   agbd_map,
   description = "rGEDI_AGBD_2019", folder = "EE_Exports",
-  file_name_prefix = "rGEDI_AGBD_2019", region = study_extent,
+  file_name_prefix = "rGEDI_AGBD_2019", region = aoi,
   scale = 30, start = TRUE
 )
 ee_check_task_status(drive_task, quiet = FALSE)
@@ -721,7 +832,7 @@ ee_check_task_status(drive_task, quiet = FALSE)
 # Small images can be downloaded directly:
 map_download(
   agbd_map, file.path(outdir, "rGEDI_AGBD_2019.tif"),
-  region = study_extent, scale = 30, overwrite = TRUE
+  region = aoi, scale = 30, overwrite = TRUE
 )
 ```
 
@@ -733,6 +844,10 @@ Close every local or streamed HDF5 object after use.
 close(level1b)
 close(level2a)
 close(level2b)
+close(level1b_full)
+close(level2a_full)
+close(level2b_full)
+close(level4a_full)
 close(level4a_cloud)
 close(level1b_clip)
 close(level2a_clip)
