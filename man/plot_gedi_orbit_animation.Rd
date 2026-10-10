@@ -15,13 +15,16 @@ plot_gedi_orbit_animation(
   duration = 18,
   launch = interactive(),
   track_speed = 2,
-  earth_rotation_speed = 2
+  earth_rotation_speed = 2,
+  beams = NULL,
+  every = 1L
 )
 }
 \arguments{
 \item{x}{A data frame, \code{data.table}, \code{sf} or \code{SpatVector} containing GEDI
-footprint coordinates, or an open \code{gedi.level1b}, \code{gedi.level2a},
-\code{gedi.level2b}, or \code{gedi.level4a} object.}
+footprint coordinates; an open \code{gedi.level1b}, \code{gedi.level2a},
+\code{gedi.level2b}, or \code{gedi.level4a} object; or a list of these objects from
+consecutive production granules in one orbit.}
 
 \item{lon, lat}{Names of longitude and latitude columns. When \code{NULL}, common
 GEDI coordinate names are detected automatically.}
@@ -44,6 +47,11 @@ requires the suggested \code{gifski} package.}
 \item{track_speed}{Initial HTML track playback speed from 1 to 15.}
 
 \item{earth_rotation_speed}{Initial Earth rotation speed from 0 to 20.}
+
+\item{beams}{Optional beam names to read from open GEDI objects.}
+
+\item{every}{Keep every nth footprint after ordering. Increase this for a
+complete orbit to reduce animation size and rendering time.}
 }
 \value{
 The normalized path to the HTML file, invisibly.

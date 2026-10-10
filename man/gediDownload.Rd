@@ -38,7 +38,8 @@ downloadGEDI(
 default, uses the \code{NETRC} environment variable before prompting.}
 }
 \value{
-No return value on success, on failure it will \code{\link[=stop]{stop()}}
+The normalized paths of the downloaded files, invisibly. On failure
+the function stops with an error.
 }
 \description{
 Download GEDI data from LP DAAC Data Pool. Users will need to enter their

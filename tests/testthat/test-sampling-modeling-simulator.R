@@ -159,4 +159,9 @@ test_that("GEDI tracks are standardized and thinned", {
     beam = "BEAM0000"
   ))
   expect_equal(unique(dateline$track), "BEAM0000")
+
+  combined <- getGEDITrack(list(x[1:5, ], x[6:10, ]),
+                           every = 2, segment_gaps = FALSE)
+  expect_equal(nrow(combined), 5)
+  expect_equal(combined$sequence, c(1, 3, 5, 7, 9))
 })

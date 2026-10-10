@@ -139,6 +139,17 @@ names(granules) <- names(products)
 head(granules$GEDI02_A)
 ```
 
+To retrieve every production granule in one orbit, supply its orbit number
+instead of a bounding box. CMR returns the four parts in acquisition order.
+
+```r
+orbit_granules <- gedifinder(
+  "GEDI02_A", version = "002", orbit = "O01964", return = "table"
+)
+orbit_granules[, c("granule_id", "orbit", "granule_part")]
+stopifnot(nrow(orbit_granules) == 4L)
+```
+
 Set `cloud_computing = TRUE` for cloud-hosted links suitable for streaming.
 An HTTPS Earthdata Cloud URL works on Windows, macOS, and Linux. Direct
 `s3://` reads require code running in AWS `us-west-2`, which is a NASA bucket
@@ -161,6 +172,14 @@ gediDownload(granules$GEDI04_A[1], outdir)
 # GEDI03 and GEDI04_B searches may return several metric GeoTIFFs.
 gediDownload(granules$GEDI03[1], outdir)
 gediDownload(granules$GEDI04_B[1], outdir)
+```
+
+`gediDownload()` accepts the complete URL vector and invisibly returns the
+downloaded paths. Orbit `O01964` is about 9.2 GB, so ensure sufficient disk
+space before running this example.
+
+```r
+orbit_files <- gediDownload(orbit_granules$url, outdir)
 ```
 
 ## 4 Read GEDI products
@@ -225,32 +244,29 @@ Earthdata redirect restrictions encountered by GDAL virtual-file reads.
 ### 5.1 Extract the Reference Ground Track and plot the GIF animation
 
 `getGEDITrack()` standardizes coordinates, beam names, and acquisition order
-from a Level 1B, 2A, 2B, or 4A object or an extracted table. NASA partitions
-one GEDI orbit into four consecutive production granules (`_01` through
-`_04`). Combine all four files with the same orbit identifier for a complete
-orbit; `every` thins the display without changing acquisition order.
+from a Level 1B, 2A, 2B, or 4A object, an extracted table, or a list of open
+granules. NASA partitions one GEDI orbit into four consecutive production
+granules (`_01` through `_04`). `gedifinder(orbit = ...)` retrieves every part;
+`every` thins the display without changing acquisition order.
 
 ```r
-orbit_files <- list.files(
-  outdir, "GEDI02_A.*_O01964_.*\\.h5$", full.names = TRUE
-)
 stopifnot(length(orbit_files) == 4L)
 
 orbit_h5 <- lapply(sort(orbit_files), readLevel2A)
-rgt <- data.table::rbindlist(lapply(orbit_h5, getGEDITrack, every = 200))
-rgt[, track := beam] # keep the four production granules as one beam
+rgt <- getGEDITrack(orbit_h5, every = 200, segment_gaps = FALSE)
 head(rgt)
 
 plot_gedi_orbit_animation(
-  rgt,
+  orbit_h5,
   output_file = file.path(outdir, "gedi-orbit-animation.gif"),
   title = "GEDI aboard the International Space Station",
-  duration = 8, launch = FALSE
+  duration = 8, every = 200, launch = FALSE
 )
 
 # Use .html for the interactive 3D globe.
 plot_gedi_orbit_animation(
-  rgt, output_file = file.path(outdir, "gedi-orbit-animation.html"),
+  orbit_h5, output_file = file.path(outdir, "gedi-orbit-animation.html"),
+  every = 200,
   track_speed = 2, earth_rotation_speed = 2,
   launch = interactive()
 )

@@ -125,6 +125,9 @@
 #' @param ul_lat,ul_lon,lr_lat,lr_lon Bounding coordinates in decimal degrees.
 #' @param version Product version. `NULL` selects the current supported version.
 #' @param daterange Optional two-element date or date-time vector.
+#' @param orbit Optional GEDI orbit number, such as `1964` or `"O01964"`.
+#'   When supplied, the spatial bounding box is omitted so CMR returns every
+#'   production granule belonging to that orbit.
 #' @param access Requested link type: `"https"`, `"s3"`, `"opendap"`, or `"all"`.
 #' @param cloud_hosted Logical retained for backward compatibility. The current
 #'   GEDI collection identifiers resolve to their Earthdata Cloud holdings.
@@ -138,23 +141,38 @@
 #' @return A character vector or [data.table::data.table].
 #' @seealso \url{https://cmr.earthdata.nasa.gov/search/site/docs/search/api.html}
 #' @export
-gedifinder <- function(product, ul_lat, ul_lon, lr_lat, lr_lon,
+gedifinder <- function(product, ul_lat = NULL, ul_lon = NULL,
+                       lr_lat = NULL, lr_lon = NULL,
                        version = NULL, daterange = NULL,
                        access = c("https", "s3", "opendap", "all"),
                        cloud_hosted = TRUE, return = c("url", "table"),
                        page_size = 2000L, cloud_computing = FALSE,
-                       persist = TRUE) {
+                       persist = TRUE, orbit = NULL) {
   access <- match.arg(access)
   return <- match.arg(return)
   product <- toupper(product)
   info <- .gedi_short_name(product, version)
-  if (isTRUE(cloud_computing)) {
+  if (isTRUE(cloud_computing) && is.null(orbit)) {
     return(.gedifinder_earthaccess(
       product, info, ul_lat, ul_lon, lr_lat, lr_lon,
       daterange, return, persist
     ))
   }
-  bbox <- paste(ul_lon, lr_lat, lr_lon, ul_lat, sep = ",")
+  if (is.null(orbit)) {
+    bbox_values <- c(ul_lat, ul_lon, lr_lat, lr_lon)
+    if (length(bbox_values) != 4L || any(!is.finite(as.numeric(bbox_values)))) {
+      stop("Supply all four bounding coordinates, or supply `orbit`.", call. = FALSE)
+    }
+    bbox <- paste(ul_lon, lr_lat, lr_lon, ul_lat, sep = ",")
+  } else {
+    if (length(orbit) != 1L) stop("`orbit` must contain one orbit number.", call. = FALSE)
+    orbit_number <- suppressWarnings(as.integer(sub("^[Oo]", "", as.character(orbit))))
+    if (!is.finite(orbit_number) || orbit_number < 1L) {
+      stop("`orbit` must be a positive orbit number, such as 1964 or 'O01964'.",
+           call. = FALSE)
+    }
+    if (isTRUE(cloud_computing)) access <- "https"
+  }
   rows <- list()
   k <- 0L
   page <- 1L
@@ -163,8 +181,13 @@ gedifinder <- function(product, ul_lat, ul_lon, lr_lat, lr_lon,
       "https://cmr.earthdata.nasa.gov/search/granules.json?pretty=false&page_size=",
       as.integer(page_size), "&page_num=", page,
       "&short_name=", curl::curl_escape(info$short_name),
-      "&version=", curl::curl_escape(info$version),
-      "&bounding_box=", curl::curl_escape(bbox))
+      "&version=", curl::curl_escape(info$version))
+    if (is.null(orbit)) {
+      url <- paste0(url, "&bounding_box=", curl::curl_escape(bbox))
+    } else {
+      url <- paste0(url, "&orbit_number=", orbit_number,
+                    "&sort_key[]=producer_granule_id")
+    }
     if (!is.null(daterange)) {
       if (length(daterange) != 2L) stop("'daterange' must have two values.")
       url <- paste0(url, "&temporal=", curl::curl_escape(paste(daterange, collapse = ",")))
@@ -190,6 +213,16 @@ gedifinder <- function(product, ul_lat, ul_lon, lr_lat, lr_lon,
     page <- page + 1L
   }
   ans <- data.table::rbindlist(rows, use.names = TRUE, fill = TRUE)
+  if (nrow(ans)) {
+    ids <- ans[["granule_id"]]
+    ans[["orbit"]] <- sub(".*_O([0-9]+)_.*", "\\1", ids)
+    ans[["orbit"]][!grepl("_O[0-9]+_", ids)] <- NA_character_
+    ans[["granule_part"]] <- suppressWarnings(as.integer(
+      sub(".*_O[0-9]+_([0-9]{2})_.*", "\\1", ids)
+    ))
+    ans[["granule_part"]][!grepl("_O[0-9]+_[0-9]{2}_", ids)] <- NA_integer_
+    data.table::setorderv(ans, c("orbit", "granule_part", "time_start", "granule_id"))
+  }
   if (return == "url") {
     urls <- ans$url
     if (isTRUE(cloud_computing)) class(urls) <- c("gedi.granules_cloud", "character")

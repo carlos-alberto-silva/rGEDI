@@ -8,8 +8,9 @@
 #' supplied HDF5 object.
 #'
 #' @param x A data frame, `data.table`, `sf` or `SpatVector` containing GEDI
-#'   footprint coordinates, or an open `gedi.level1b`, `gedi.level2a`,
-#'   `gedi.level2b`, or `gedi.level4a` object.
+#'   footprint coordinates; an open `gedi.level1b`, `gedi.level2a`,
+#'   `gedi.level2b`, or `gedi.level4a` object; or a list of these objects from
+#'   consecutive production granules in one orbit.
 #' @param lon,lat Names of longitude and latitude columns. When `NULL`, common
 #'   GEDI coordinate names are detected automatically.
 #' @param time Optional name of a column used to order footprints within each
@@ -23,6 +24,9 @@
 #' @param launch Open the animation in the default browser after it is written.
 #' @param track_speed Initial HTML track playback speed from 1 to 15.
 #' @param earth_rotation_speed Initial Earth rotation speed from 0 to 20.
+#' @param beams Optional beam names to read from open GEDI objects.
+#' @param every Keep every nth footprint after ordering. Increase this for a
+#'   complete orbit to reduce animation size and rendering time.
 #'
 #' @return The normalized path to the HTML file, invisibly.
 #' @export
@@ -48,7 +52,9 @@ plot_gedi_orbit_animation <- function(
     duration = 18,
     launch = interactive(),
     track_speed = 2,
-    earth_rotation_speed = 2) {
+    earth_rotation_speed = 2,
+    beams = NULL,
+    every = 1L) {
   duration <- as.numeric(duration)[1L]
   if (!is.finite(duration) || duration <= 0) {
     stop("`duration` must be a positive number of seconds.", call. = FALSE)
@@ -65,7 +71,7 @@ plot_gedi_orbit_animation <- function(
 
   output <- as.data.frame(getGEDITrack(
     x, lon = lon, lat = lat, time = time, track = track,
-    segment_gaps = FALSE
+    beams = beams, every = every, segment_gaps = FALSE
   ))
   names(output)[match(c("longitude", "latitude", "sequence"), names(output))] <-
     c("lon", "lat", "order")
@@ -204,6 +210,11 @@ getGEDITrack <- function(x, lon = NULL, lat = NULL, time = NULL, track = NULL,
       x, cols = c("shot_number", "delta_time", "lat_lowestmode",
                   "lon_lowestmode"), beams = beams
     )))
+  }
+  if (is.list(x) && !is.data.frame(x)) {
+    if (!length(x)) stop("`x` is an empty list.", call. = FALSE)
+    parts <- lapply(x, .gedi_orbit_points, beams = beams)
+    return(as.data.frame(data.table::rbindlist(parts, use.names = TRUE, fill = TRUE)))
   }
   if (inherits(x, "SpatVector")) {
     crds <- terra::crds(terra::project(x, "EPSG:4326"))

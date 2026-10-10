@@ -17,8 +17,9 @@ getGEDITrack(
 }
 \arguments{
 \item{x}{A data frame, \code{data.table}, \code{sf} or \code{SpatVector} containing GEDI
-footprint coordinates, or an open \code{gedi.level1b}, \code{gedi.level2a},
-\code{gedi.level2b}, or \code{gedi.level4a} object.}
+footprint coordinates; an open \code{gedi.level1b}, \code{gedi.level2a},
+\code{gedi.level2b}, or \code{gedi.level4a} object; or a list of these objects from
+consecutive production granules in one orbit.}
 
 \item{lon, lat}{Names of longitude and latitude columns. When \code{NULL}, common
 GEDI coordinate names are detected automatically.}

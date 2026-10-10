@@ -11,7 +11,8 @@
 #'@param netrc Optional path to an existing NASA Earthdata `.netrc` file. By
 #'default, uses the `NETRC` environment variable before prompting.
 #'
-#'@return No return value on success, on failure it will [stop()]
+#'@return The normalized paths of the downloaded files, invisibly. On failure
+#'  the function stops with an error.
 #'@references Credits to Cole Krehbiel. Code adapted from \url{https://git.earthdata.nasa.gov/projects/LPDUR/repos/daac_data_download_r/browse/DAACDataDownload.R}
 #'@examples
 #'\dontrun{
@@ -62,10 +63,13 @@ gediDownload<-function(filepath, outdir = NULL, overwrite = FALSE, buffer_size =
 
   files<-filepath
   n_files = length(files)
+  if (!n_files) stop("`filepath` must contain at least one GEDI URL.", call. = FALSE)
+  downloaded <- character(n_files)
 
   # Download all files in filepath vector
-  for (i in 1:n_files) {
+  for (i in seq_along(files)) {
     url = files[i]
+    downloaded[i] <- file.path(outdir, basename(sub("[?#].*$", "", url)))
     message("------------------------------")
     message(sprintf("Downloading file %d/%d: %s", i, n_files, basename(url)))
     message("------------------------------")
@@ -83,6 +87,7 @@ gediDownload<-function(filepath, outdir = NULL, overwrite = FALSE, buffer_size =
       stop(sprintf("File %s has not been downloaded properly!", basename(url)))
     }
   }
+  invisible(normalizePath(downloaded, winslash = "/", mustWork = TRUE))
 }
 
 #' @rdname gediDownload
@@ -90,7 +95,7 @@ gediDownload<-function(filepath, outdir = NULL, overwrite = FALSE, buffer_size =
 downloadGEDI <- gediDownload
 
 gediDownloadFile = function(url, outdir, overwrite, buffer_size, netrc, timeout) {
-  filename <- file.path(outdir, basename(url)) # Keep original filename
+  filename <- file.path(outdir, basename(sub("[?#].*$", "", url))) # Keep original filename
   if((! overwrite) && file.exists(filename)) {
     message("Skipping this file, already downloaded!")
     return(0)

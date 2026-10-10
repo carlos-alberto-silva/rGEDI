@@ -6,10 +6,10 @@
 \usage{
 gedifinder(
   product,
-  ul_lat,
-  ul_lon,
-  lr_lat,
-  lr_lon,
+  ul_lat = NULL,
+  ul_lon = NULL,
+  lr_lat = NULL,
+  lr_lon = NULL,
   version = NULL,
   daterange = NULL,
   access = c("https", "s3", "opendap", "all"),
@@ -17,7 +17,8 @@ gedifinder(
   return = c("url", "table"),
   page_size = 2000L,
   cloud_computing = FALSE,
-  persist = TRUE
+  persist = TRUE,
+  orbit = NULL
 )
 }
 \arguments{
@@ -45,6 +46,10 @@ the product-specific \verb{readLevel*()} function.}
 
 \item{persist}{Logical; allow Earthaccess to persist an interactive login
 when \code{cloud_computing = TRUE}.}
+
+\item{orbit}{Optional GEDI orbit number, such as \code{1964} or \code{"O01964"}.
+When supplied, the spatial bounding box is omitted so CMR returns every
+production granule belonging to that orbit.}
 }
 \value{
 A character vector or \link[data.table:data.table]{data.table::data.table}.
