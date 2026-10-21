@@ -58,7 +58,7 @@ clipLevel2BPAVDProfile <- function(level2BPAVDProfile, xmin, xmax, ymin, ymax) {
   newFile <- level2BPAVDProfile[mask, ]
   # newFile<- new("gedi.level1b.dt", dt = level2bdt[mask,])
   if (nrow(newFile) == 0) {
-    print("The polygon does not overlap the GEDI data")
+    return(newFile)
   } else {
     return(newFile)
   }
@@ -125,7 +125,7 @@ clipLevel2BPAVDProfileGeometry <- function(level2BPAVDProfile, polygon, split_by
   )
 
   if (nrow(level2bdt) == 0) {
-    print("The polygon does not overlap the GEDI data")
+    return(level2bdt)
   } else {
     .I <- data.table::.I
     level2bdt[, id := .I]

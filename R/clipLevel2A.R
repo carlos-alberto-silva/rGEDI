@@ -19,7 +19,7 @@
 #' @seealso \url{https://www.earthdata.nasa.gov/data/catalog/lpcloud-gedi02-a-002}
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' outdir <- tempdir()
 #'
 #' # Specifying the path to GEDI level2A data (zip file)
@@ -60,8 +60,6 @@ clipLevel2A <- function(level2a, xmin, xmax, ymin, ymax, output = "") {
   spData <- getSpatialData2A(level2a)
 
   masks <- clipSpDataByExtentLevel2A(spData, xmin, xmax, ymin, ymax)
-  print(masks)
-
   newFile <- clipByMask2A(
     level2a,
     masks,
@@ -91,7 +89,7 @@ clipLevel2A <- function(level2a, xmin, xmax, ymin, ymax, output = "") {
 #' @seealso \url{https://www.earthdata.nasa.gov/data/catalog/lpcloud-gedi02-a-002}
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' outdir <- tempdir()
 #'
 #' # Specifying the path to GEDI level2A data (zip file)
@@ -112,6 +110,7 @@ clipLevel2A <- function(level2a, xmin, xmax, ymin, ymax, output = "") {
 #' # Reading shapefile as sf object
 #' library(sf)
 #' polygon <- sf::st_read(polygon_filepath)
+#' polygon <- polygon[1, , drop = FALSE]
 #'
 #' # Specifying output file and path
 #' output <- file.path(outdir, "GEDI02_A_2019108080338_O01964_T05337_02_001_01_clip")
@@ -119,8 +118,7 @@ clipLevel2A <- function(level2a, xmin, xmax, ymin, ymax, output = "") {
 #' # Clipping GEDI Level2A data by geometry
 #' level2a_clip <- clipLevel2AGeometry(level2a,
 #'   polygon = polygon,
-#'   output = output,
-#'   split_by = "id"
+#'   output = output
 #' )
 #' close(level2a)
 #' lapply(level2a_clip, close)

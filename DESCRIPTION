@@ -12,11 +12,18 @@ Authors@R: c(
     person("Danilo Roberti Alves de", "Almeida", email = "daniloflorestas@gmail.com", role = c("aut","ctb")),
     person("Celso H. L.", "Silva Junior", email = "celso.junior@inpe.br", role = c("aut","ctb")),
     person("Carine", "Klauberg", email = "carine_klauberg@hotmail.com", role = c("aut","ctb")))
-Description: Tools for finding, downloading, reading, visualizing, sampling,
-  modeling, and processing NASA Global Ecosystem Dynamics Investigation
-  (GEDI) Level 1B, Level 2A, Level 2B, Level 3, Level 4A, and Level 4B data.
-  Supports local files, NASA Earthdata Cloud access, and optional Google Earth
-  Engine workflows for ancillary-data extraction and wall-to-wall mapping.
+Description: Provides an end-to-end workflow for NASA Global Ecosystem
+  Dynamics Investigation (GEDI) Level 1B, Level 2A, Level 2B, Level 3, Level
+  4A, and Level 4B data. Functions search NASA catalogues, download granules,
+  stream HDF5 products from Earthdata Cloud, and extract geolocations,
+  waveforms, elevation and relative-height metrics, canopy cover, plant area
+  profiles, and aboveground biomass. Methods quality-filter and spatially clip
+  HDF5, tabular, and raster products; calculate footprint and polygon
+  statistics; create gridded summaries; and visualize orbital tracks and
+  measurements. The package also simulates GEDI-like waveforms from airborne
+  laser-scanning point clouds and supports spatial sampling, predictive
+  modelling, ancillary-data extraction, and wall-to-wall upscaling with
+  optional Google Earth Engine workflows.
 License: GPL-3
 Encoding: UTF-8
 Depends: methods

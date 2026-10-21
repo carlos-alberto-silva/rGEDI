@@ -13,6 +13,10 @@ stratifiedSampling(size, variable, breaks = NULL)
 
 \item{breaks}{Optional breaks for a numeric variable.}
 }
+\value{
+A \code{gedi_sampling_method} object containing the attribute-stratified
+sampling parameters for use with \code{\link[=sampleGEDI]{sampleGEDI()}}.
+}
 \description{
 GEDI attribute-stratified sampling specification
 }

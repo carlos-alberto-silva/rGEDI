@@ -13,6 +13,10 @@ spacedSampling(size, radius, lon = NULL, lat = NULL)
 
 \item{lon, lat}{Optional coordinate column names.}
 }
+\value{
+A \code{gedi_sampling_method} object containing the minimum-distance
+sampling parameters for use with \code{\link[=sampleGEDI]{sampleGEDI()}}.
+}
 \description{
 GEDI minimum-distance sampling specification
 }

@@ -159,7 +159,7 @@ clipLevel2BVPMGeometry <- function(level2BVPM, polygon, split_by = NULL) {
   )
 
   if (nrow(level2bdt) == 0) {
-    print("The polygon does not overlap the GEDI data")
+    return(level2bdt)
   } else {
     .I <- data.table::.I
     level2bdt[, id := .I]

@@ -15,6 +15,10 @@ geomSampling(size, geom, split_id = NULL, lon = NULL, lat = NULL)
 
 \item{lon, lat}{Optional coordinate column names.}
 }
+\value{
+A \code{gedi_sampling_method} object containing the polygon-stratified
+sampling parameters for use with \code{\link[=sampleGEDI]{sampleGEDI()}}.
+}
 \description{
 GEDI polygon-stratified sampling specification
 }

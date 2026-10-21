@@ -9,6 +9,10 @@ randomSampling(size)
 \arguments{
 \item{size}{Number or fraction of observations to select.}
 }
+\value{
+A \code{gedi_sampling_method} object containing the method name and
+requested sample size for use with \code{\link[=sampleGEDI]{sampleGEDI()}}.
+}
 \description{
 GEDI random sampling specification
 }

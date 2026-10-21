@@ -15,7 +15,7 @@
 #'  the function stops with an error.
 #'@references Credits to Cole Krehbiel. Code adapted from \url{https://git.earthdata.nasa.gov/projects/LPDUR/repos/daac_data_download_r/browse/DAACDataDownload.R}
 #'@examples
-#'\dontrun{
+#'\donttest{
 #'# Set path to GEDI data
 #'# herein we will only download xml metedata
 #'filepath=c(paste0(
@@ -30,6 +30,7 @@
 #'# Set dir to download files to
 #'outdir=tempdir()
 #'
+#'if (nzchar(Sys.getenv("NASA_USER")) && nzchar(Sys.getenv("NASA_PASSWORD"))) {
 #'# Create .netrc file
 #'netrc = file.path(outdir, ".netrc")
 #'netrc_conn <- file(netrc)
@@ -43,6 +44,7 @@
 #'
 #'#' Downloading GEDI data
 #'gediDownload(filepath,outdir)
+#'}
 #'}
 #'@import curl
 #'@export

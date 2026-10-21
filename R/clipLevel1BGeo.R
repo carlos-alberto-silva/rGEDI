@@ -72,7 +72,7 @@ clipLevel1BGeo <- function(level1BGeo, xmin, xmax, ymin, ymax) {
   newFile <- level1BGeo[mask, ]
   # newFile<- new("gedi.level1b.dt", dt = x[mask,])
   if (nrow(newFile) == 0) {
-    print("The polygon does not overlap the GEDI data")
+    return(newFile)
   } else {
     return(newFile)
   }
@@ -152,7 +152,7 @@ clipLevel1BGeoGeometry <- function(level1BGeo, polygon, split_by = "id") {
   )
 
   if (nrow(level1BGeo) == 0) {
-    print("The polygon does not overlap the GEDI data")
+    return(level1BGeo)
   } else {
     .I <- data.table::.I
     level1BGeo[, id := .I]

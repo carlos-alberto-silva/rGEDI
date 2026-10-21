@@ -25,7 +25,7 @@ Returns a list of S4 object of class "gedi.level2a" containing clipped GEDI Leve
 This function clips GEDI Level2A data within a given geometry
 }
 \examples{
-\dontrun{
+\donttest{
 outdir <- tempdir()
 
 # Specifying the path to GEDI level2A data (zip file)
@@ -46,6 +46,7 @@ polygon_filepath <- system.file("extdata", "stands_cerrado.shp", package = "rGED
 # Reading shapefile as sf object
 library(sf)
 polygon <- sf::st_read(polygon_filepath)
+polygon <- polygon[1, , drop = FALSE]
 
 # Specifying output file and path
 output <- file.path(outdir, "GEDI02_A_2019108080338_O01964_T05337_02_001_01_clip")
@@ -53,8 +54,7 @@ output <- file.path(outdir, "GEDI02_A_2019108080338_O01964_T05337_02_001_01_clip
 # Clipping GEDI Level2A data by geometry
 level2a_clip <- clipLevel2AGeometry(level2a,
   polygon = polygon,
-  output = output,
-  split_by = "id"
+  output = output
 )
 close(level2a)
 lapply(level2a_clip, close)

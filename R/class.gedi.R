@@ -124,7 +124,7 @@ setMethod(
   signature("gedi.fullwaveform", y = "missing"),
   definition = function(x, relative = FALSE, polygon = FALSE, ...) {
     if (!is(x, "gedi.fullwaveform")) {
-      print("Invalid input file. It should be an object of class 'gedi.fullwaveform' ")
+      stop("'x' must be an object of class 'gedi.fullwaveform'.", call. = FALSE)
     } else {
       x0 <- as.data.frame(x@dt)
       x <- x0[, 1]
@@ -161,6 +161,7 @@ setMethod(
 
 h5closeall <- function(con, ...) {
   try(con@h5$close_all(), silent = TRUE)
+  invisible(NULL)
 }
 
 
@@ -171,6 +172,8 @@ h5closeall <- function(con, ...) {
 #'
 #' @param con An object of class `gedi.level1b`
 #' @param ... Inherited from base
+#' @return No return value, called for the side effect of closing the
+#'   underlying HDF5 connection.
 #' 
 #' @export
 #' @rdname close

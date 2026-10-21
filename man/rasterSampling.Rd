@@ -13,6 +13,10 @@ rasterSampling(size, raster, lon = NULL, lat = NULL)
 
 \item{lon, lat}{Optional coordinate column names.}
 }
+\value{
+A \code{gedi_sampling_method} object containing the raster-stratified
+sampling parameters for use with \code{\link[=sampleGEDI]{sampleGEDI()}}.
+}
 \description{
 GEDI raster-stratified sampling specification
 }

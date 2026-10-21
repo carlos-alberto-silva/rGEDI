@@ -14,6 +14,8 @@
 
 #' GEDI random sampling specification
 #' @param size Number or fraction of observations to select.
+#' @return A `gedi_sampling_method` object containing the method name and
+#'   requested sample size for use with [sampleGEDI()].
 #' @export
 randomSampling <- function(size) .sampling_method("random", size = size)
 
@@ -21,6 +23,8 @@ randomSampling <- function(size) .sampling_method("random", size = size)
 #' @param size Number or fraction of observations to select.
 #' @param radius Minimum separation in meters.
 #' @param lon,lat Optional coordinate column names.
+#' @return A `gedi_sampling_method` object containing the minimum-distance
+#'   sampling parameters for use with [sampleGEDI()].
 #' @export
 spacedSampling <- function(size, radius, lon = NULL, lat = NULL) .sampling_method("spaced", size = size, radius = radius, lon = lon, lat = lat)
 
@@ -28,6 +32,8 @@ spacedSampling <- function(size, radius, lon = NULL, lat = NULL) .sampling_metho
 #' @param size Number or fraction per cell.
 #' @param grid_size Grid size in decimal degrees.
 #' @param lon,lat Optional coordinate column names.
+#' @return A `gedi_sampling_method` object containing the grid-stratified
+#'   sampling parameters for use with [sampleGEDI()].
 #' @export
 gridSampling <- function(size, grid_size, lon = NULL, lat = NULL) .sampling_method("grid", size = size, grid_size = grid_size, lon = lon, lat = lat)
 
@@ -35,6 +41,8 @@ gridSampling <- function(size, grid_size, lon = NULL, lat = NULL) .sampling_meth
 #' @param size Number or fraction per stratum.
 #' @param variable Column used as strata, or a numeric column to bin.
 #' @param breaks Optional breaks for a numeric variable.
+#' @return A `gedi_sampling_method` object containing the attribute-stratified
+#'   sampling parameters for use with [sampleGEDI()].
 #' @export
 stratifiedSampling <- function(size, variable, breaks = NULL) .sampling_method("stratified", size = size, variable = variable, breaks = breaks)
 
@@ -43,6 +51,8 @@ stratifiedSampling <- function(size, variable, breaks = NULL) .sampling_method("
 #' @param geom Polygon object.
 #' @param split_id Optional polygon ID column.
 #' @param lon,lat Optional coordinate column names.
+#' @return A `gedi_sampling_method` object containing the polygon-stratified
+#'   sampling parameters for use with [sampleGEDI()].
 #' @export
 geomSampling <- function(size, geom, split_id = NULL, lon = NULL, lat = NULL) .sampling_method("geometry", size = size, geom = geom, split_id = split_id, lon = lon, lat = lat)
 
@@ -50,6 +60,8 @@ geomSampling <- function(size, geom, split_id = NULL, lon = NULL, lat = NULL) .s
 #' @param size Number or fraction per raster class.
 #' @param raster A categorical `SpatRaster`.
 #' @param lon,lat Optional coordinate column names.
+#' @return A `gedi_sampling_method` object containing the raster-stratified
+#'   sampling parameters for use with [sampleGEDI()].
 #' @export
 rasterSampling <- function(size, raster, lon = NULL, lat = NULL) .sampling_method("raster", size = size, raster = raster, lon = lon, lat = lat)
 

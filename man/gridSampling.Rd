@@ -13,6 +13,10 @@ gridSampling(size, grid_size, lon = NULL, lat = NULL)
 
 \item{lon, lat}{Optional coordinate column names.}
 }
+\value{
+A \code{gedi_sampling_method} object containing the grid-stratified
+sampling parameters for use with \code{\link[=sampleGEDI]{sampleGEDI()}}.
+}
 \description{
 GEDI grid-stratified sampling specification
 }

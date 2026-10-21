@@ -138,7 +138,7 @@ clipLevel2AMGeometry <- function(level2AM, polygon, split_by = "id") {
     ymax = exshp$ymax
   )
   if (nrow(level2adt) == 0) {
-    print("The polygon does not overlap the GEDI data")
+    return(level2adt)
   } else {
     .I <- data.table::.I
     level2adt[, id := .I]

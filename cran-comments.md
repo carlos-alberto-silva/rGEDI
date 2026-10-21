@@ -1,3 +1,18 @@
+## Resubmission
+
+This is a resubmission. In response to the CRAN review:
+
+* Expanded the `Description` field to explain the package functionality,
+  implemented methods, supported GEDI products, and intended workflows.
+* Added explicit value documentation to all usage-bearing help files,
+  including `close.Rd`, and documented both the output class and meaning.
+* Replaced every `\dontrun{}` example with an executable example or
+  `\donttest{}` for operations that take longer than five seconds or download
+  data. The download example only runs when NASA credentials are available.
+* Removed unconditional informational `print()` calls. Functions now return
+  usable objects silently, use suppressible messages when requested, or use
+  console output only in registered print and plotting methods.
+
 ## R CMD check results
 
 0 errors | 0 warnings | 1 note

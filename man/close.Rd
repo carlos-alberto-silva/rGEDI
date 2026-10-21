@@ -20,6 +20,10 @@
 
 \item{...}{Inherited from base}
 }
+\value{
+No return value, called for the side effect of closing the
+underlying HDF5 connection.
+}
 \description{
 Closing files will avoid locking HDF5 GEDI files.
 

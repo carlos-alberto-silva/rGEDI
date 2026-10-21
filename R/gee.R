@@ -362,7 +362,9 @@ ee_image_to_drive <- function(image, description = "rGEDI_export",
 #' @export
 ee_check_task_status <- function(task, quiet = TRUE) {
   status <- reticulate::py_to_r(task$status())
-  if (!quiet) print(status)
+  if (!quiet) {
+    message(paste(utils::capture.output(utils::str(status)), collapse = "\n"))
+  }
   status
 }
 

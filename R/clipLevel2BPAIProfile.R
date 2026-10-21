@@ -59,7 +59,7 @@ clipLevel2BPAIProfile <- function(level2BPAIProfile, xmin, xmax, ymin, ymax) {
   mask <- (seq_along(level2BPAIProfile$lon_lowestmode))[mask]
   newFile <- level2BPAIProfile[mask, ]
   if (nrow(newFile) == 0) {
-    print("The polygon does not overlap the GEDI data")
+    return(newFile)
   } else {
     return(newFile)
   }
@@ -127,7 +127,7 @@ clipLevel2BPAIProfileGeometry <- function(level2BPAIProfile, polygon, split_by =
   )
 
   if (nrow(level2bdt) == 0) {
-    print("The polygon does not overlap the GEDI data")
+    return(level2bdt)
   } else {
     .I <- data.table::.I
     level2bdt[, id := .I]

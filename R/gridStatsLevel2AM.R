@@ -16,7 +16,6 @@
 #' @seealso \url{https://www.earthdata.nasa.gov/data/catalog/lpcloud-gedi02-a-002}
 #'
 #' @examples
-#' \dontrun{
 #' # specify the path to GEDI level2A data (zip file)
 #' outdir <- tempdir()
 #' level2A_fp_zip <- system.file("extdata",
@@ -64,7 +63,6 @@
 #' }
 #'
 #' close(level2a)
-#' }
 #' @importFrom stats setNames na.omit
 #' @export
 gridStatsLevel2AM <- function(level2AM, func, res = 0.5) {

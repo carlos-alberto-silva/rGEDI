@@ -46,7 +46,7 @@ Download GEDI data from LP DAAC Data Pool. Users will need to enter their
 Earth Explore login Information for downloading the data.
 }
 \examples{
-\dontrun{
+\donttest{
 # Set path to GEDI data
 # herein we will only download xml metedata
 filepath=c(paste0(
@@ -61,6 +61,7 @@ filepath=c(paste0(
 # Set dir to download files to
 outdir=tempdir()
 
+if (nzchar(Sys.getenv("NASA_USER")) && nzchar(Sys.getenv("NASA_PASSWORD"))) {
 # Create .netrc file
 netrc = file.path(outdir, ".netrc")
 netrc_conn <- file(netrc)
@@ -74,6 +75,7 @@ close(netrc_conn)
 
 #' Downloading GEDI data
 gediDownload(filepath,outdir)
+}
 }
 }
 \references{

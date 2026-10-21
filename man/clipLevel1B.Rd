@@ -30,7 +30,7 @@ This function clips GEDI Level1B data (geolocated waveforms) within a given
 bounding coordinates
 }
 \examples{
-\dontrun{
+\donttest{
 # Specifying the path to GEDI level1B data (zip file)
 outdir <- tempdir()
 

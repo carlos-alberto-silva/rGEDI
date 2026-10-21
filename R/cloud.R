@@ -232,7 +232,9 @@ rGEDI_configure <- function(python = NULL, install = FALSE,
   }
   if (nzchar(earth_engine_project)) Sys.setenv(EE_PROJECT = earth_engine_project)
   ans <- data.frame(module = modules, available = unname(available))
-  if (!quiet) print(ans, row.names = FALSE)
+  if (!quiet) {
+    message(paste(sprintf("%s: %s", ans$module, ans$available), collapse = "\n"))
+  }
   invisible(ans)
 }
 

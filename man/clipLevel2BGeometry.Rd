@@ -24,7 +24,7 @@ Returns a list of S4 objects of class "gedi.level2b" containing clipped GEDI Lev
 This function extracts GEDI Level1B data within a given geometry
 }
 \examples{
-\dontrun{
+\donttest{
 outdir <- tempdir()
 
 # Specifying the path to GEDI level2B data (zip file)
@@ -45,6 +45,7 @@ polygon_filepath <- system.file("extdata", "stands_cerrado.shp", package = "rGED
 # Reading shapefile as sf object
 library(sf)
 polygon <- sf::st_read(polygon_filepath)
+polygon <- polygon[1, , drop = FALSE]
 
 # Specifying output file and path
 output <- file.path(outdir, "GEDI02_B_2019108080338_O01964_T05337_02_001_01_clip")
@@ -52,8 +53,7 @@ output <- file.path(outdir, "GEDI02_B_2019108080338_O01964_T05337_02_001_01_clip
 # Clipping GEDI data by extent boundary box
 level2b_clip <- clipLevel2BGeometry(level2b,
   polygon = polygon,
-  output = output,
-  split_by = "id"
+  output = output
 )
 
 close(level2b)

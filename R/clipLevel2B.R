@@ -16,7 +16,7 @@
 #' @seealso \url{https://www.earthdata.nasa.gov/data/catalog/lpcloud-gedi01-b-002}
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' outdir <- tempdir()
 #'
 #' # Specifying the path to GEDI level2B data (zip file)
@@ -87,7 +87,7 @@ clipLevel2B <- function(level2b, xmin, xmax, ymin, ymax, output = "") {
 #' @seealso \url{https://www.earthdata.nasa.gov/data/catalog/lpcloud-gedi01-b-002}
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' outdir <- tempdir()
 #'
 #' # Specifying the path to GEDI level2B data (zip file)
@@ -108,6 +108,7 @@ clipLevel2B <- function(level2b, xmin, xmax, ymin, ymax, output = "") {
 #' # Reading shapefile as sf object
 #' library(sf)
 #' polygon <- sf::st_read(polygon_filepath)
+#' polygon <- polygon[1, , drop = FALSE]
 #'
 #' # Specifying output file and path
 #' output <- file.path(outdir, "GEDI02_B_2019108080338_O01964_T05337_02_001_01_clip")
@@ -115,8 +116,7 @@ clipLevel2B <- function(level2b, xmin, xmax, ymin, ymax, output = "") {
 #' # Clipping GEDI data by extent boundary box
 #' level2b_clip <- clipLevel2BGeometry(level2b,
 #'   polygon = polygon,
-#'   output = output,
-#'   split_by = "id"
+#'   output = output
 #' )
 #'
 #' close(level2b)
