@@ -2,6 +2,11 @@
 
 This is a resubmission. In response to the CRAN review:
 
+* Corrected the README GitHub Actions link to reference the repository's
+  actual `.github/workflows/r.yml` workflow file.
+* Replaced README links written as relative file paths with absolute public
+  GitHub URLs for the example-building scripts and generated reference manual.
+
 * Expanded the `Description` field to explain the package functionality,
   implemented methods, supported GEDI products, and intended workflows.
 * Added explicit value documentation to all usage-bearing help files,

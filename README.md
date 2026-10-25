@@ -2,7 +2,7 @@
 
 <!-- badges: start -->
 [![CRAN status](https://www.r-pkg.org/badges/version/rGEDI)](https://CRAN.R-project.org/package=rGEDI)
-[![R-CMD-check](https://github.com/carlos-alberto-silva/rGEDI/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/carlos-alberto-silva/rGEDI/actions/workflows/R-CMD-check.yaml)
+[![R-CMD-check](https://github.com/carlos-alberto-silva/rGEDI/actions/workflows/r.yml/badge.svg)](https://github.com/carlos-alberto-silva/rGEDI/actions/workflows/r.yml)
 ![GitHub](https://img.shields.io/badge/GitHub-master-green.svg)
 ![Licence](https://img.shields.io/badge/Licence-GPL--3-blue.svg)
 [![Downloads](https://cranlogs.r-pkg.org/badges/grand-total/rGEDI)](https://cran.r-project.org/package=rGEDI)
@@ -27,9 +27,9 @@ and GEDI04_A, as well as raster products GEDI03 and GEDI04_B.
 The examples below form one workflow. Local examples use the real GEDI subsets
 bundled with the package. Cloud and Google Earth Engine examples use real NASA
 and Earth Engine services. The scripts that regenerated the displayed assets
-are [`readme/build-local-examples.R`](readme/build-local-examples.R) and
-[`readme/build-modern-examples.R`](readme/build-modern-examples.R). A generated
-[rGEDI function reference manual](output/pdf/rGEDI-reference-manual.pdf) is also
+are [`readme/build-local-examples.R`](https://github.com/carlos-alberto-silva/rGEDI/blob/master/readme/build-local-examples.R) and
+[`readme/build-modern-examples.R`](https://github.com/carlos-alberto-silva/rGEDI/blob/master/readme/build-modern-examples.R). A generated
+[rGEDI function reference manual](https://github.com/carlos-alberto-silva/rGEDI/blob/master/output/pdf/rGEDI-reference-manual.pdf) is also
 available for review.
 
 # Getting Started
@@ -276,7 +276,7 @@ The displayed example was generated from the four complete Level 2A V002
 granules for orbit `O01964`. Its 22,350 sampled footprints span all eight GEDI
 beams, four granule parts, 81.6 minutes, and latitudes from -50.346 to 51.825
 degrees. The reproducible cloud-reading and animation script is
-[`readme/build-complete-orbit.R`](readme/build-complete-orbit.R).
+[`readme/build-complete-orbit.R`](https://github.com/carlos-alberto-silva/rGEDI/blob/master/readme/build-complete-orbit.R).
 
 The GIF follows the ICESat2VegR presentation while showing the correct GEDI
 platform: GEDI is mounted on the International Space Station. GEDI operates at
@@ -667,7 +667,7 @@ directly from the repository:
 The script covers GEDI discovery and cloud reading, Level 4A quality filtering,
 spatial sampling, ancillary extraction, RFE, independent validation,
 wall-to-wall prediction, visualization, and Drive export. The separate
-[`readme/build-modern-examples.R`](readme/build-modern-examples.R) script
+[`readme/build-modern-examples.R`](https://github.com/carlos-alberto-silva/rGEDI/blob/master/readme/build-modern-examples.R) script
 regenerates the figures and data artifacts displayed on this page.
 
 ### 9.3 Install and load required packages
