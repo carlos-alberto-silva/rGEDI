@@ -18,6 +18,9 @@
   implementation aligned with the focused Gaussian-footprint workflow in
   Steven Hancock's simulator while avoiding its non-portable native library
   stack
+* Match Steven Hancock's C waveform core for pulse construction, bin mapping,
+  density normalization, ground separation, and integral normalization, with a
+  locked cross-language numerical fixture
 
 
 # rGEDI 0.5.8 (2026-10-09)

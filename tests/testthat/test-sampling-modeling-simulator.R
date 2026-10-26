@@ -83,7 +83,7 @@ test_that("portable waveform simulation and metrics work", {
   trimmed_wave <- getLevel1BWF(trimmed, 0)@dt
   expect_equal(nrow(trimmed_wave), 64)
   expect_equal(abs(diff(trimmed_wave$elevation)), rep(0.15, 63),
-               tolerance = 1e-10)
+               tolerance = 1e-7)
 
   noisy_file <- tempfile(fileext = ".h5")
   noisy <- gediWFSimulator(cloud, output = noisy_file, coords = c(0, 0),
@@ -102,6 +102,50 @@ test_that("portable waveform simulation and metrics work", {
                "density_res")
   expect_error(gediWFSimulator(cloud, coords = c(0, 0), intensity_threshold = 2),
                "intensity_threshold")
+})
+
+test_that("waveform core matches Steven Hancock's C reference", {
+  cloud <- data.frame(
+    X = c(-3, -1.2, .2, 1.1, 2.7, -2.1, -2.1, -.4, .8, .8, 2.2, 3.4),
+    Y = c(-2, .4, -.3, 1, -1.4, 1.7, 1.7, -1.1, .5, .5, 1.9, .2),
+    Z = c(.8, 1.1, 1, 1.3, .9, 8, 15, 12.5, 18, 22, 16, 20),
+    Classification = c(rep(2L, 5), rep(5L, 7)),
+    Intensity = c(10, 12, 14, 11, 9, 18, 22, 20, 25, 27, 19, 24),
+    ReturnNumber = c(1, 1, 1, 1, 1, 1, 2, 1, 1, 2, 1, 1),
+    NumberOfReturns = c(1, 1, 1, 1, 1, 2, 2, 1, 2, 2, 1, 1)
+  )
+  reference <- utils::read.csv(testthat::test_path(
+    "fixtures", "hancock-reference.csv"
+  ))
+
+  scenarios <- as.vector(outer(
+    c("count", "intensity", "fraction"), c("raw", "normalized"), paste,
+    sep = "_"
+  ))
+  for (scenario in scenarios) {
+    method <- sub("_(raw|normalized)$", "", scenario)
+    normalized <- grepl("_normalized$", scenario)
+    actual <- gediWFSimulator(
+      cloud, output = tempfile(fileext = ".txt"), ascii = TRUE,
+      coords = c(0, 0), method = method, normalize = normalized
+    )
+    expected <- reference[reference$scenario == scenario, ]
+    expect_equal(nrow(actual), nrow(expected))
+    expect_lt(max(abs(actual$elevation - expected$elevation)), 2e-6)
+    expect_lt(max(abs(actual$amplitude - expected$wave)), 5e-7)
+
+    xyz <- rGEDI:::.als_xyz(cloud)
+    pulse_sigma <- rGEDI:::.float32(
+      rGEDI:::.float32(15 * 0.2998 / 2) / 2.35482
+    )
+    internal <- rGEDI:::.simulate_one_waveform(
+      cloud, xyz, c(0, 0), rGEDI:::.float32(5.5), rGEDI:::.float32(.15),
+      pulse_sigma, rGEDI:::.float32(.15), 1, 1024, method,
+      normalized, rGEDI:::.float32(1.5),
+      rGEDI:::.float32(.0006), TRUE
+    )
+    expect_lt(max(abs(internal$ground - expected$ground)), 5e-7)
+  }
 })
 
 test_that("orbit animation writes ICESat2-style interactive HTML", {

@@ -10,9 +10,7 @@
 **rGEDI: An R Package for NASA's Global Ecosystem Dynamics Investigation
 (GEDI) Data Visualizing and Processing.**
 
-Authors: Carlos Alberto Silva, Caio Hamamura, Ruben Valbuena, Steven Hancock,
-Adrian Cardil, Eben N. Broadbent, Danilo R. A. de Almeida, Celso H. L. Silva
-Junior, and Carine Klauberg.
+Authors: Carlos Alberto Silva and Caio Hamamura.
 
 The original rGEDI workflow provides functions for downloading, visualizing,
 clipping, gridding, simulating, and exporting GEDI data. The expanded package
@@ -598,8 +596,13 @@ level4b_stats
 points, or an X/Y/Z table. Its focused implementation follows Steven Hancock's
 `gediRat` core: Gaussian footprint weighting, local ALS-density correction,
 vertical binning, Gaussian pulse convolution, LAS class 2 ground separation,
-and unit-integral normalization. Vectorized bin accumulation keeps this path
-portable and fast without the native library stack that caused CRAN problems.
+and unit-integral normalization. Its supported waveform path is tested bin by
+bin against a C reference extraction from upstream commit
+`49ad4f26b03083b61ee0bd424e8a7e4a8f2c301d`, with agreement within `5e-7`.
+Vectorized bin accumulation keeps this path portable and fast without the
+native library stack that caused CRAN problems. `gediWFMetrics()` supplies the
+focused RH, canopy-cover, energy, ground-height, and foliage-height-diversity
+metrics used here; it does not reproduce every optional `gediMetric` mode.
 
 ```r
 set.seed(11)

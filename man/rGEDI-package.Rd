@@ -13,5 +13,5 @@ See more details about GEDI data in \url{https://gedi.umd.edu/dataproducts/produ
 For comprehensive examples refer to \url{https://github.com/carlos-alberto-silva/rGEDI/blob/master/README.md}
 }
 \author{
-Carlos A. Silva, Caio Hamamura, Ruben Valbuena, Steve Hancock, Adrian Cardil, Eben N. Broadbent, Danilo R. A. de Almeida, Celso H. L. Silva Junior and Carine Klauberg
+Carlos Alberto Silva and Caio Hamamura
 }

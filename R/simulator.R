@@ -45,11 +45,61 @@
   matrix(c(mean(points[[xyz[1L]]], na.rm = TRUE), mean(points[[xyz[2L]]], na.rm = TRUE)), ncol = 2L)
 }
 
+.float32 <- function(x) {
+  readBin(writeBin(as.numeric(x), raw(), size = 4L), "numeric",
+          n = length(x), size = 4L)
+}
+
 .gaussian_kernel <- function(sigma_bins) {
   if (!is.finite(sigma_bins) || sigma_bins <= 0) return(1)
   radius <- max(1L, ceiling(4 * sigma_bins))
-  k <- stats::dnorm(seq.int(-radius, radius), sd = sigma_bins)
-  k / sum(k)
+  kernel <- stats::dnorm(seq.int(-radius, radius), sd = sigma_bins)
+  kernel / sum(kernel)
+}
+
+.hancock_pulse <- function(pulse_sigma, p_res, intensity_threshold) {
+  # Literal translation of setGediPulse() in Steven Hancock's gediIO.c.
+  # The source grows the symmetric pulse by two bins until the first sampled
+  # Gaussian value below iThresh, then normalizes the sampled pulse.
+  x <- 0
+  n_bins <- 0L
+  repeat {
+    y <- .float32(exp(-0.5 * (x / pulse_sigma)^2))
+    x <- .float32(x + p_res)
+    n_bins <- n_bins + 2L
+    if (y < intensity_threshold) break
+  }
+  centre <- n_bins %/% 2L
+  pulse_x <- numeric(n_bins)
+  x <- .float32(-centre * p_res)
+  for (i in seq_len(n_bins)) {
+    pulse_x[i] <- x
+    x <- .float32(x + p_res)
+  }
+  pulse_y <- .float32(exp(-0.5 * (pulse_x / pulse_sigma)^2))
+  total <- 0
+  for (value in pulse_y) total <- .float32(total + value)
+  pulse_y <- .float32(pulse_y / total)
+  list(x = pulse_x, y = pulse_y, centre = which.max(pulse_y))
+}
+
+.hancock_apply_pulse <- function(wave, pulse, p_res, res) {
+  # Literal translation of the non-PCL branch of applyPulseShape().  Keeping
+  # this separate from binning makes the production code vectorized while
+  # retaining the reference bin mapping and edge normalization.
+  n <- length(wave)
+  out <- numeric(n)
+  offsets <- floor(.float32(
+    .float32((pulse$centre - seq_along(pulse$y)) * p_res) / res
+  ))
+  for (i in seq_len(n)) {
+    source <- i + offsets
+    inside <- source >= 1L & source <= n
+    if (any(inside)) {
+      out[i] <- sum(wave[source[inside]] * pulse$y[inside]) / sum(inside)
+    }
+  }
+  out
 }
 
 .weighted_bins <- function(bin, weight, nbins) {
@@ -60,60 +110,77 @@
   out
 }
 
-.simulate_one_waveform <- function(points, xyz, centre, fSigma, res, pulse_sigma,
+.simulate_one_waveform <- function(points, xyz, centre, fSigma, res, pulse_sigma, p_res,
                                    decimate, maxBins, method, normalize,
                                    density_res, intensity_threshold, ground) {
   dx <- points[[xyz[1L]]] - centre[1L]
   dy <- points[[xyz[2L]]] - centre[2L]
   keep <- is.finite(dx) & is.finite(dy) & is.finite(points[[xyz[3L]]]) &
-    exp(-0.5 * (dx * dx + dy * dy) / fSigma^2) >= intensity_threshold
+    .float32(exp(-0.5 * (dx * dx + dy * dy) / fSigma^2)) > intensity_threshold
   p <- points[keep, , drop = FALSE]
   if (!nrow(p)) return(NULL)
   if (decimate < 1) p <- p[stats::runif(nrow(p)) <= decimate, , drop = FALSE]
   if (!nrow(p)) return(NULL)
   dx <- p[[xyz[1L]]] - centre[1L]
   dy <- p[[xyz[2L]]] - centre[2L]
-  footprint <- exp(-0.5 * (dx * dx + dy * dy) / fSigma^2)
+  footprint <- .float32(exp(-0.5 * (dx * dx + dy * dy) / fSigma^2))
   weight <- footprint
   if (method == "intensity") {
     intensity <- .als_field(p, c("intensity", "refl", "reflectance"))
     if (is.null(intensity)) stop("Intensity simulation requires an ALS intensity column.")
-    weight <- weight * as.numeric(p[[intensity]])
+    weight <- .float32(weight * .float32(p[[intensity]]))
   } else if (method == "fraction") {
     nreturns <- .als_field(p, c("numberofreturns", "number_of_returns", "nret"))
-    if (!is.null(nreturns)) weight <- weight / pmax(1, as.numeric(p[[nreturns]]))
+    if (!is.null(nreturns)) {
+      weight <- .float32(weight / .float32(pmax(1, as.numeric(p[[nreturns]]))))
+    }
   }
   if (isTRUE(normalize)) {
-    gx <- floor((p[[xyz[1L]]] - min(p[[xyz[1L]]])) / density_res)
-    gy <- floor((p[[xyz[2L]]] - min(p[[xyz[2L]]])) / density_res)
-    cell <- interaction(gx, gy, drop = TRUE)
+    finite_xy <- is.finite(points[[xyz[1L]]]) & is.finite(points[[xyz[2L]]])
+    min_x <- min(points[[xyz[1L]]][finite_xy])
+    min_y <- min(points[[xyz[2L]]][finite_xy])
+    max_x <- max(points[[xyz[1L]]][finite_xy])
+    max_y <- max(points[[xyz[2L]]][finite_xy])
+    grid_x <- as.integer((max_x - min_x) / density_res) + 2L
+    grid_y <- as.integer((max_y - min_y) / density_res) + 2L
+    origin_x <- min_x + density_res
+    origin_y <- min_y + density_res
+    # C integer conversion truncates toward zero; floor() would differ in the
+    # first cell below the grid origin.
+    gx <- trunc((p[[xyz[1L]]] - origin_x) / density_res)
+    gy <- trunc((p[[xyz[2L]]] - origin_y) / density_res)
+    in_grid <- gx >= 0L & gx < grid_x & gy >= 0L & gy < grid_y
+    cell <- gy * grid_x + gx + 1L
     return_number <- .als_field(p, c("returnnumber", "return_number", "retnumb"))
     number_returns <- .als_field(p, c("numberofreturns", "number_of_returns", "nret"))
     beam_end <- if (!is.null(return_number) && !is.null(number_returns)) {
       as.integer(p[[return_number]]) == as.integer(p[[number_returns]])
     } else rep(TRUE, nrow(p))
-    density <- tabulate(as.integer(cell)[beam_end], nbins = nlevels(cell))
-    density[density < 1L] <- 1L
-    weight <- weight / density[as.integer(cell)]
+    density <- tabulate(cell[beam_end & in_grid], nbins = grid_x * grid_y)
+    divisor <- rep(1L, length(cell))
+    grid_rows <- which(in_grid)
+    populated <- grid_rows[density[cell[grid_rows]] > 0L]
+    divisor[populated] <- density[cell[populated]]
+    weight <- .float32(weight / .float32(divisor))
   }
   z <- p[[xyz[3L]]]
-  low <- floor((min(z) - 35) / res) * res
-  high <- ceiling((max(z) + 35) / res) * res
-  breaks <- seq(low, high + res, by = res)
-  bin <- pmax(1L, pmin(length(breaks) - 1L, findInterval(z, breaks, all.inside = TRUE)))
-  amplitude <- .weighted_bins(bin, weight, length(breaks) - 1L)
+  pulse <- .hancock_pulse(pulse_sigma, p_res, intensity_threshold)
+  buffer <- 35 + length(pulse$y) * p_res / 2
+  min_z <- min(z) - buffer
+  max_z <- max(z) + buffer
+  n_bins <- as.integer((max_z - min_z) / res)
+  bin <- floor((max_z - z) / res) + 1L
+  amplitude <- .weighted_bins(bin, weight, n_bins)
   class_col <- .als_field(p, c("classification", "class"))
   ground_point <- if (!isTRUE(ground) || is.null(class_col)) {
     rep(FALSE, nrow(p))
   } else as.integer(p[[class_col]]) == 2L
   ground_amplitude <- .weighted_bins(
-    bin[ground_point], weight[ground_point], length(breaks) - 1L
+    bin[ground_point], weight[ground_point], n_bins
   )
-  amplitude <- stats::filter(amplitude, .gaussian_kernel(pulse_sigma / res), sides = 2, circular = FALSE)
-  ground_amplitude <- stats::filter(ground_amplitude, .gaussian_kernel(pulse_sigma / res), sides = 2, circular = FALSE)
-  amplitude[is.na(amplitude)] <- 0
-  ground_amplitude[is.na(ground_amplitude)] <- 0
-  elevation <- breaks[-length(breaks)] + res / 2
+  amplitude <- .hancock_apply_pulse(amplitude, pulse, p_res, res)
+  ground_amplitude <- .hancock_apply_pulse(ground_amplitude, pulse, p_res, res)
+  elevation <- max_z - (seq_len(n_bins) - 1L) * res
   if (length(amplitude) > maxBins) {
     active <- which(amplitude > max(amplitude) * 1e-10)
     centre_bin <- if (length(active)) {
@@ -135,10 +202,10 @@
   }
   # GEDI L1B stores the upper RX-window edge in elevation_bin0; the first
   # sample centre is one interval below it and samples proceed downward.
-  list(amplitude = rev(as.numeric(amplitude)), ground = rev(as.numeric(ground_amplitude)),
-       elevation = rev(elevation),
-       elevation_bin0 = max(elevation) + res,
-       elevation_lastbin = min(elevation))
+  list(amplitude = as.numeric(amplitude), ground = as.numeric(ground_amplitude),
+       elevation = elevation,
+       elevation_bin0 = elevation[1L] + res,
+       elevation_lastbin = elevation[length(elevation)])
 }
 
 .write_simulated_l1b <- function(waves, centres, output) {
@@ -182,6 +249,8 @@
 #' @param gridStep Grid spacing in input coordinate units.
 #' @param pSigma Pulse sigma in meters. A negative value derives it from `pFWHM`.
 #' @param pFWHM Pulse full width at half maximum in nanoseconds.
+#' @param pRes Pulse sampling resolution. The default uses `res`, matching
+#'   `gediRat` unless its `-pRes` option is supplied.
 #' @param fSigma Footprint sigma in input coordinate units.
 #' @param res Vertical waveform resolution.
 #' @param decimate Probability of retaining an ALS return.
@@ -206,10 +275,11 @@
 gediWFSimulator <- function(input, output = tempfile(fileext = ".h5"), ground = TRUE,
                             ascii = FALSE, waveID = NULL, coords = NULL,
                             listCoord = NULL, gridBound = NULL, gridStep = 30,
-                            pSigma = -1, pFWHM = 15, fSigma = 5.5, res = 0.15,
+                            pSigma = -1, pFWHM = 15, pRes = NULL,
+                            fSigma = 5.5, res = 0.15,
                             decimate = 1, maxBins = 1024L, countOnly = FALSE,
                             method = c("count", "intensity", "fraction"),
-                            normalize = TRUE, density_res = 1,
+                            normalize = TRUE, density_res = 1.5,
                             intensity_threshold = 0.0006,
                             noise = 0, keepOld = FALSE, seed = NULL, ...) {
   if (!is.null(seed)) set.seed(seed)
@@ -239,14 +309,27 @@ gediWFSimulator <- function(input, output = tempfile(fileext = ".h5"), ground = 
   xyz <- .als_xyz(points)
   centres <- .waveform_centres(points, xyz, coords, listCoord, gridBound, gridStep)
   if (ncol(centres) != 2L) stop("Footprint coordinates must have two columns.")
-  pulse_sigma <- if (pSigma > 0) pSigma else pFWHM * 0.15 / 2.355
+  pulse_sigma <- if (pSigma > 0) {
+    .float32(pSigma)
+  } else {
+    .float32(.float32(pFWHM * 0.2998 / 2) / 2.35482)
+  }
   if (!is.finite(pulse_sigma) || pulse_sigma <= 0) {
     stop("`pSigma`, or the value derived from `pFWHM`, must be positive.")
   }
+  p_res <- if (is.null(pRes)) res else as.numeric(pRes)[1L]
+  if (!is.finite(p_res) || p_res <= 0) stop("`pRes` must be a positive finite number.")
+  # The reference implementation stores these controls as C floats.  Matching
+  # that conversion is necessary at exact bin boundaries.
+  sim_res <- .float32(res)
+  p_res <- .float32(p_res)
+  sim_f_sigma <- .float32(fSigma)
+  sim_density_res <- .float32(density_res)
+  sim_threshold <- .float32(intensity_threshold)
   waves <- lapply(seq_len(nrow(centres)), function(i) {
     .simulate_one_waveform(
-      points, xyz, centres[i, ], fSigma, res, pulse_sigma, decimate,
-      maxBins, method, normalize, density_res, intensity_threshold, ground
+      points, xyz, centres[i, ], sim_f_sigma, sim_res, pulse_sigma, p_res, decimate,
+      maxBins, method, normalize, sim_density_res, sim_threshold, ground
     )
   })
   valid <- !vapply(waves, is.null, logical(1))
@@ -260,9 +343,9 @@ gediWFSimulator <- function(input, output = tempfile(fileext = ".h5"), ground = 
       wave
     })
   }
-  attr(waves, "fSigma") <- fSigma
+  attr(waves, "fSigma") <- sim_f_sigma
   attr(waves, "pSigma") <- pulse_sigma
-  attr(waves, "res") <- res
+  attr(waves, "res") <- sim_res
   if (isTRUE(ascii)) {
     ans <- data.table::rbindlist(lapply(seq_along(waves), function(i) data.table::data.table(
       waveID = if (is.null(waveID)) i - 1L else waveID[i],

@@ -16,6 +16,7 @@ gediWFSimulator(
   gridStep = 30,
   pSigma = -1,
   pFWHM = 15,
+  pRes = NULL,
   fSigma = 5.5,
   res = 0.15,
   decimate = 1,
@@ -23,7 +24,7 @@ gediWFSimulator(
   countOnly = FALSE,
   method = c("count", "intensity", "fraction"),
   normalize = TRUE,
-  density_res = 1,
+  density_res = 1.5,
   intensity_threshold = 6e-04,
   noise = 0,
   keepOld = FALSE,
@@ -53,6 +54,9 @@ gediWFSimulator(
 \item{pSigma}{Pulse sigma in meters. A negative value derives it from \code{pFWHM}.}
 
 \item{pFWHM}{Pulse full width at half maximum in nanoseconds.}
+
+\item{pRes}{Pulse sampling resolution. The default uses \code{res}, matching
+\code{gediRat} unless its \code{-pRes} option is supplied.}
 
 \item{fSigma}{Footprint sigma in input coordinate units.}
 
