@@ -8,7 +8,11 @@ getLevel4A(
   level4a,
   cols = .level4a_default_columns,
   quality = FALSE,
-  beams = NULL
+  beams = NULL,
+  collect = TRUE,
+  max_features = 100000L,
+  chunk_size = 5000L,
+  max_granules = 200L
 )
 }
 \arguments{
@@ -28,9 +32,19 @@ current Release 3 quality fields when present:
 Legacy Release 2 quality fields remain supported.}
 
 \item{beams}{Optional character vector of GEDI beam names.}
+
+\item{collect}{Logical; collect remote footprints into R or retain a lazy
+GEE/gediDB query for rasterization.}
+
+\item{max_features}{Maximum GEE footprints allowed when collecting.}
+
+\item{chunk_size}{Number of GEE features transferred per request.}
+
+\item{max_granules}{Maximum vector granules merged by GEE.}
 }
 \value{
-A \link[data.table:data.table]{data.table::data.table} with one row per footprint.
+A \link[data.table:data.table]{data.table::data.table} with one row per footprint, or a lazy
+remote query object when \code{collect = FALSE}.
 }
 \description{
 Extract GEDI Level 4A footprint metrics

@@ -75,9 +75,15 @@ var.map[["surface_flag"]]            = "surface_flag"
 #'function). An S4 object of class "gedi.level2b".
 #'@param cols A character vector containing the list of columns to be extracted. See the default columns in the description.
 #'@param beams Optional beam names. `NULL` reads every beam.
+#'@param quality Logical; for gediDB, retain Release 3 quality observations.
+#'@param collect Logical; collect remote footprints into R or retain a lazy
+#'GEE/gediDB object for rasterization.
+#'@param max_features Maximum GEE footprints allowed when collecting.
+#'@param chunk_size Number of GEE features transferred per request.
+#'@param max_granules Maximum vector granules merged by GEE.
 #'
-#'@return Returns an S4 object of class [data.table::data.table]
-#'containing the Vegetation Profile Biophysical Variables.
+#'@return A [data.table::data.table] containing the Vegetation Profile
+#'Biophysical Variables, or a lazy remote query when `collect = FALSE`.
 #'
 #'@seealso \url{https://www.earthdata.nasa.gov/data/catalog/lpcloud-gedi02-b-002}
 #'
@@ -143,7 +149,44 @@ getLevel2BVPM<-function(level2b, cols=c(
   "omega",
   "pgap_theta",
   "cover"
-), beams = NULL){
+), beams = NULL, quality = FALSE, collect = TRUE,
+   max_features = 100000L, chunk_size = 5000L, max_granules = 200L){
+  if (inherits(level2b, "gedi_gee_object")) {
+    if (!is.null(beams)) warning("'beams' is ignored for a Google Earth Engine query; filter the returned table instead.")
+    variables <- unique(as.character(cols))
+    variables[variables == "l2b_quality_flag"] <- "quality_flag"
+    if (!isTRUE(collect)) {
+      return(.gee_select(level2b, variables, quality = quality, max_granules = max_granules))
+    }
+    return(.gee_collect(
+      level2b, variables, quality = quality, max_features = max_features,
+      chunk_size = chunk_size, max_granules = max_granules
+    ))
+  }
+  if (inherits(level2b, "gedidb_level2b")) {
+    if (!is.null(beams)) warning("'beams' is ignored for a gediDB query; filter the returned table instead.")
+    requested <- unique(as.character(cols))
+    aliases <- c(
+      beam = "beam_name", algorithmrun_flag = "l2_algrunflag",
+      l2b_quality_flag = "l2b_quality_flag_rel3", rh100 = "rh:100"
+    )
+    mapped <- unname(ifelse(requested %in% names(aliases), aliases[requested], requested))
+    unavailable <- requested %in% c(
+      "delta_time", "latitude_lastbin", "latitude_bin0",
+      "longitude_bin0", "longitude_lastbin", "elev_highestreturn"
+    )
+    mapped <- mapped[!unavailable]
+    filters <- if (isTRUE(quality)) list(l2b_quality_flag_rel3 = "== 1") else list()
+    if (!isTRUE(collect)) return(.new_gedidb_query(level2b, mapped, filters))
+    ans <- .gedidb_query(level2b, mapped, filters)
+    restore <- c(
+      beam_name = "beam", l2_algrunflag = "algorithmrun_flag",
+      l2b_quality_flag_rel3 = "l2b_quality_flag"
+    )
+    present <- intersect(names(restore), names(ans))
+    if (length(present)) data.table::setnames(ans, present, unname(restore[present]))
+    return(ans[])
+  }
   level2b<-level2b@h5
   groups_id<-grep("BEAM\\d{4}$",gsub("/","",
                                      .gedi_list_groups(level2b, recursive = FALSE)), value = T)

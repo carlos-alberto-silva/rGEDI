@@ -8,10 +8,12 @@ readLevel2A(level2Apath)
 }
 \arguments{
 \item{level2Apath}{Local file path or Earthdata Cloud URL pointing to a
-GEDI Level 2A HDF5 granule.}
+GEDI Level 2A HDF5 granule, or a gediDB reference returned by
+\code{\link[=gedifinder]{gedifinder()}} with \code{source = "gedidb"}.}
 }
 \value{
-Returns an S4 object of class \code{\link[=gedi.level2a-class]{gedi.level2a}} containing GEDI level2A data.
+An S4 object of class \code{\link[=gedi.level2a-class]{gedi.level2a}} for HDF5 input, or a
+lazy \code{gedidb_level2a} object for a gediDB reference.
 }
 \description{
 This function reads GEDI level2A products: ground elevation, canopy top height, and relative heights (RH).

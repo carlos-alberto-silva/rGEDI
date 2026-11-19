@@ -6,9 +6,11 @@
 #'@usage readLevel2A(level2Apath)
 #'
 #'@param level2Apath Local file path or Earthdata Cloud URL pointing to a
-#'GEDI Level 2A HDF5 granule.
+#'GEDI Level 2A HDF5 granule, or a gediDB reference returned by
+#'[gedifinder()] with `source = "gedidb"`.
 #'
-#'@return Returns an S4 object of class [`gedi.level2a-class`] containing GEDI level2A data.
+#'@return An S4 object of class [`gedi.level2a-class`] for HDF5 input, or a
+#'lazy `gedidb_level2a` object for a gediDB reference.
 #'
 #'@seealso \url{https://www.earthdata.nasa.gov/data/catalog/lpcloud-gedi02-a-002}
 #'
@@ -29,6 +31,12 @@
 #'@import hdf5r
 #'@export
 readLevel2A <-function(level2Apath) {
+  if (inherits(level2Apath, "gedi_gee_reference")) {
+    return(.open_gee_reference(level2Apath, "GEDI02_A"))
+  }
+  if (inherits(level2Apath, "gedidb_reference")) {
+    return(.open_gedidb_reference(level2Apath, "GEDI02_A"))
+  }
   level2a_h5 <- if (inherits(level2Apath, "GEDICloudH5")) level2Apath else if (.is_gedi_url(level2Apath)) {
     .open_cloud_h5(level2Apath, product = "GEDI02_A")
   } else {

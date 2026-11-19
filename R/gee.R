@@ -285,7 +285,10 @@ ee_build_AlphaEarth_embedding_terrain_stack <- function(geom, start_year, end_ye
 #' @param vis Visualization parameter list.
 #' @return Character tile URL.
 #' @export
-getTileUrl <- function(image, vis = list()) reticulate::py_to_r(image$getMapId(reticulate::r_to_py(vis))[["tile_fetcher"]]$url_format)
+getTileUrl <- function(image, vis = list()) {
+  image <- .unwrap_gee(image)
+  reticulate::py_to_r(image$getMapId(reticulate::r_to_py(vis))[["tile_fetcher"]]$url_format)
+}
 
 #' Add an Earth Engine image to a Leaflet map
 #' @param map A Leaflet widget.
@@ -316,6 +319,7 @@ addEEImage <- function(map, image, bands = NULL, min = 0, max = 1, palette = NUL
 #' @export
 map_download <- function(image, filename, region, scale = 30, crs = "EPSG:4326", overwrite = FALSE) {
   if (file.exists(filename) && !overwrite) stop("Output exists; use overwrite=TRUE.")
+  image <- .unwrap_gee(image)
   params <- list(scale = scale, crs = crs, region = .as_ee_geom(region), format = "GEO_TIFF")
   url <- reticulate::py_to_r(image$getDownloadURL(reticulate::r_to_py(params)))
   curl::curl_download(url, filename, quiet = FALSE)
@@ -345,6 +349,7 @@ ee_image_to_drive <- function(image, description = "rGEDI_export",
                               region, scale = 30, crs = "EPSG:4326",
                               max_pixels = 1e13, start = TRUE, ...) {
   ee <- .require_ee()
+  image <- .unwrap_gee(image)
   task <- ee$batch$Export$image$toDrive(
     image = image, description = description, folder = folder,
     fileNamePrefix = file_name_prefix, region = .as_ee_geom(region),

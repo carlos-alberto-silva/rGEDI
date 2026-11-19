@@ -4,7 +4,17 @@
 \alias{getLevel2AM}
 \title{Get GEDI Elevation and Height Metrics (GEDI Level2A)}
 \usage{
-getLevel2AM(level2a, beams = NULL, include_rh = TRUE)
+getLevel2AM(
+  level2a,
+  beams = NULL,
+  include_rh = TRUE,
+  rh = NULL,
+  quality = FALSE,
+  collect = TRUE,
+  max_features = 100000L,
+  chunk_size = 5000L,
+  max_granules = 200L
+)
 }
 \arguments{
 \item{level2a}{A GEDI Level2A object (output of \code{\link[=readLevel2A]{readLevel2A()}} function).
@@ -12,12 +22,26 @@ An S4 object of class "gedi.level2a".}
 
 \item{beams}{Optional beam names. \code{NULL} reads every beam.}
 
-\item{include_rh}{Logical. Include the 101 relative-height columns. Set to
-\code{FALSE} for a faster metadata-only cloud read.}
+\item{include_rh}{Logical. Include relative-height columns. Set to \code{FALSE}
+for a faster metadata-only read.}
+
+\item{rh}{Optional RH percentiles from 0 through 100. \code{NULL} retains all RH
+metrics for HDF5 data and requests the full RH profile from gediDB.}
+
+\item{quality}{Logical; for gediDB, retain Release 3 quality observations.}
+
+\item{collect}{Logical; collect a remote footprint query into R. Set to
+\code{FALSE} to retain a lazy GEE or gediDB object for rasterization.}
+
+\item{max_features}{Maximum GEE footprints allowed when collecting.}
+
+\item{chunk_size}{Number of GEE features transferred per request.}
+
+\item{max_granules}{Maximum vector granules merged by GEE.}
 }
 \value{
-Returns an S4 object of class \link[data.table:data.table]{data.table::data.table}
-containing the elevation and relative heights metrics.
+A \link[data.table:data.table]{data.table::data.table} containing elevation and relative-height
+metrics, or a lazy remote query when \code{collect = FALSE}.
 }
 \description{
 This function extracts Elevation and Relative Height (RH) metrics from GEDI Level2A data.

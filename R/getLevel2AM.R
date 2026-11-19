@@ -5,11 +5,19 @@
 #'@param level2a A GEDI Level2A object (output of [readLevel2A()] function).
 #'An S4 object of class "gedi.level2a".
 #'@param beams Optional beam names. `NULL` reads every beam.
-#'@param include_rh Logical. Include the 101 relative-height columns. Set to
-#'`FALSE` for a faster metadata-only cloud read.
+#'@param include_rh Logical. Include relative-height columns. Set to `FALSE`
+#'for a faster metadata-only read.
+#'@param rh Optional RH percentiles from 0 through 100. `NULL` retains all RH
+#'metrics for HDF5 data and requests the full RH profile from gediDB.
+#'@param quality Logical; for gediDB, retain Release 3 quality observations.
+#'@param collect Logical; collect a remote footprint query into R. Set to
+#'`FALSE` to retain a lazy GEE or gediDB object for rasterization.
+#'@param max_features Maximum GEE footprints allowed when collecting.
+#'@param chunk_size Number of GEE features transferred per request.
+#'@param max_granules Maximum vector granules merged by GEE.
 #'
-#'@return Returns an S4 object of class [data.table::data.table]
-#'containing the elevation and relative heights metrics.
+#'@return A [data.table::data.table] containing elevation and relative-height
+#'metrics, or a lazy remote query when `collect = FALSE`.
 #'
 #'@seealso \url{https://www.earthdata.nasa.gov/data/catalog/lpcloud-gedi02-a-002}
 #'
@@ -49,7 +57,49 @@
 #'
 #'close(level2a)
 #'@export
-getLevel2AM<-function(level2a, beams = NULL, include_rh = TRUE){
+getLevel2AM<-function(level2a, beams = NULL, include_rh = TRUE, rh = NULL,
+                      quality = FALSE, collect = TRUE,
+                      max_features = 100000L, chunk_size = 5000L,
+                      max_granules = 200L){
+  if (inherits(level2a, "gedi_gee_object")) {
+    if (!is.null(beams)) warning("'beams' is ignored for a Google Earth Engine query; filter the returned table instead.")
+    variables <- c(
+      "beam", "shot_number", "degrade_flag", "quality_flag",
+      "sensitivity", "solar_elevation", "elev_lowestmode"
+    )
+    if (isTRUE(include_rh)) {
+      selected_rh <- if (is.null(rh)) 0:100 else unique(as.integer(rh))
+      if (anyNA(selected_rh) || any(selected_rh < 0L | selected_rh > 100L)) {
+        stop("'rh' must contain percentiles from 0 through 100.", call. = FALSE)
+      }
+      variables <- c(variables, paste0("rh", selected_rh))
+    }
+    if (!isTRUE(collect)) {
+      return(.gee_select(level2a, variables, quality = quality, max_granules = max_granules))
+    }
+    return(.gee_collect(
+      level2a, variables, quality = quality, max_features = max_features,
+      chunk_size = chunk_size, max_granules = max_granules
+    ))
+  }
+  if (inherits(level2a, "gedidb_level2a")) {
+    if (!is.null(beams)) warning("'beams' is ignored for a gediDB query; filter the returned table instead.")
+    variables <- c("beam_name", "shot_number", "degrade_flag",
+                   "l2a_quality_flag_rel3", "sensitivity", "solar_elevation",
+                   "elev_lowestmode")
+    if (isTRUE(include_rh)) {
+      if (is.null(rh)) {
+        variables <- c(variables, "rh")
+      } else {
+        rh <- unique(as.integer(rh))
+        if (anyNA(rh) || any(rh < 0L | rh > 100L)) stop("'rh' must contain percentiles from 0 through 100.", call. = FALSE)
+        variables <- c(variables, paste0("rh:", rh))
+      }
+    }
+    filters <- if (isTRUE(quality)) list(l2a_quality_flag_rel3 = "== 1") else list()
+    if (!isTRUE(collect)) return(.new_gedidb_query(level2a, variables, filters))
+    return(.gedidb_query(level2a, variables, filters))
+  }
   level2a<-level2a@h5
   groups_id<-grep("BEAM\\d{4}$",gsub("/","",
                                      .gedi_list_groups(level2a, recursive = FALSE)), value = T)
@@ -84,11 +134,11 @@ getLevel2AM<-function(level2a, beams = NULL, include_rh = TRUE){
     rhs <- data.table::as.data.table(values)
     if (isTRUE(include_rh)) {
       if(length(level2a_i[["rh"]]$dims)==2) {
-        rh=t(level2a_i[["rh"]][,])
+        rh_values=t(level2a_i[["rh"]][,])
       } else {
-        rh=t(level2a_i[["rh"]][])
+        rh_values=t(level2a_i[["rh"]][])
       }
-      rhs <- cbind(rhs, rh)
+      rhs <- cbind(rhs, rh_values)
     }
     rh.dt<-rbind(rh.dt,rhs)
     }
@@ -97,6 +147,12 @@ getLevel2AM<-function(level2a, beams = NULL, include_rh = TRUE){
   if (isTRUE(include_rh) && ncol(rh.dt) >= 101L) {
     tail_names <- tail(names(rh.dt), 101L)
     data.table::setnames(rh.dt, tail_names, paste0("rh",seq(0,100)))
+  }
+  if (isTRUE(include_rh) && !is.null(rh)) {
+    rh <- unique(as.integer(rh))
+    if (anyNA(rh) || any(rh < 0L | rh > 100L)) stop("'rh' must contain percentiles from 0 through 100.", call. = FALSE)
+    keep_rh <- paste0("rh", rh)
+    rh.dt <- rh.dt[, c(setdiff(names(rh.dt), grep("^rh[0-9]+$", names(rh.dt), value = TRUE)), keep_rh), with = FALSE]
   }
   close(pb)
   return(rh.dt)

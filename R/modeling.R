@@ -225,15 +225,61 @@ predictGEDIH5 <- function(model, data, output, dataset = "prediction") {
 }
 
 #' Rasterize GEDI footprint data
-#' @param x GEDI footprint table.
+#' @param x GEDI footprint table, a lazy `gedi_gee_object`, or a lazy
+#'   `gedidb_query` returned by an extractor with `collect = FALSE`.
 #' @param metric Metric column.
-#' @param res Resolution in decimal degrees.
+#' @param res Resolution in decimal degrees for local data, or metres for a
+#'   Google Earth Engine query, when no template is supplied.
 #' @param fun Aggregation function.
 #' @param lon,lat Optional coordinate columns.
 #' @param ... Passed to [terra::rasterize()].
-#' @return A [`terra::SpatRaster-class`].
+#' @param template Optional [terra::rast()] grid, including a projected grid.
+#' @param input_crs Coordinate reference system of the footprint columns.
+#' @param output_crs Output grid CRS for Google Earth Engine processing.
+#' @param parallel Logical; process lazy gediDB spatial tiles concurrently.
+#' @param workers Number of parallel gediDB workers. `NULL` uses the available
+#'   physical cores minus one, limited by the number of tiles.
+#' @param tile_size Width and height of each gediDB query tile in degrees.
+#' @param filename Optional disk-backed raster filename. It is required for a
+#'   lazy gediDB grid exceeding 100 million cells.
+#' @return A [`terra::SpatRaster-class`] for local data, or a lazy
+#'   `gedi_gee_object` containing an Earth Engine image for GEE data.
 #' @export
-rasterizeGEDI <- function(x, metric, res = 0.01, fun = mean, lon = NULL, lat = NULL, ...) {
+rasterizeGEDI <- function(x, metric, res = 0.01, fun = mean, lon = NULL, lat = NULL, ...,
+                          template = NULL, input_crs = "EPSG:4326",
+                          output_crs = "EPSG:3857", parallel = FALSE,
+                          workers = NULL, tile_size = 5, filename = "") {
+  if (inherits(x, "gedidb_query")) {
+    if (missing(res)) res <- 1000
+    if (missing(output_crs)) output_crs <- "EPSG:6933"
+    if (!is.null(template)) {
+      res <- terra::res(template)[1L]
+      output_crs <- terra::crs(template)
+    }
+    return(.gedidb_grid_query(
+      x, metric, res = res, fun = fun, output_crs = output_crs,
+      parallel = parallel, workers = workers, tile_size = tile_size,
+      filename = filename
+    ))
+  }
+  if (inherits(x, "gedi_gee_object")) {
+    if (missing(res)) res <- 1000
+    if (!is.null(template)) {
+      stop("'template' is not used for server-side GEE rasterization; set 'res' and 'output_crs'.",
+           call. = FALSE)
+    }
+    if (nzchar(filename)) {
+      stop("Use map_download() or ee_image_to_drive() to export a lazy GEE raster.",
+           call. = FALSE)
+    }
+    return(.gee_rasterize(x, metric, res = res, fun = fun, crs = output_crs))
+  }
   coords <- .gedi_coords(x, lon, lat)
-  .grid_gedi_points(x, coords[1L], coords[2L], metric, fun, res, ...)
+  dots <- list(...)
+  if (nzchar(filename)) dots$filename <- filename
+  do.call(.grid_gedi_points, c(
+    list(x = x, lon = coords[1L], lat = coords[2L], metric = metric,
+         fun = fun, res = res, template = template, input_crs = input_crs),
+    dots
+  ))
 }

@@ -18,7 +18,9 @@ gedifinder(
   page_size = 2000L,
   cloud_computing = FALSE,
   persist = TRUE,
-  orbit = NULL
+  orbit = NULL,
+  source = c("earthdata", "gedidb", "gee"),
+  check = TRUE
 )
 }
 \arguments{
@@ -50,9 +52,21 @@ when \code{cloud_computing = TRUE}.}
 \item{orbit}{Optional GEDI orbit number, such as \code{1964} or \code{"O01964"}.
 When supplied, the spatial bounding box is omitted so CMR returns every
 production granule belonging to that orbit.}
+
+\item{source}{Data service. \code{"earthdata"} searches NASA CMR, \code{"gedidb"}
+returns a lazy reference to the public GFZ TileDB database, and \code{"gee"}
+returns a lazy Google Earth Engine asset reference.}
+
+\item{check}{Logical; for \code{source = "gedidb"} or \code{"gee"}, verify that the
+optional backend and service are available before returning.}
 }
 \value{
-A character vector or \link[data.table:data.table]{data.table::data.table}.
+For Earthdata, a character vector or \link[data.table:data.table]{data.table::data.table}. For
+gediDB with \code{return = "url"}, a \code{gedidb_reference} containing the remote
+address and search bounds; pass it to the corresponding \verb{readLevel*()}
+function. A GEE URL result is a \code{gedi_gee_reference} that can be passed to
+the corresponding reader. With \code{return = "table"}, either remote source
+returns one metadata row.
 }
 \description{
 Find GEDI granules through NASA CMR

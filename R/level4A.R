@@ -15,11 +15,19 @@
 #' biomass density estimates.
 #'
 #' @param level4Apath Local file path or Earthdata Cloud URL pointing to a
-#'   GEDI04_A HDF5 granule.
-#' @return A [`gedi.level4a-class`] object. Close it with [close()].
+#'   GEDI04_A HDF5 granule, or a gediDB reference returned by [gedifinder()].
+#' @return A [`gedi.level4a-class`] object for HDF5 input, or a lazy
+#'   `gedidb_level4a` object for a gediDB reference. Close HDF5 inputs with
+#'   [close()] and cached gediDB providers with [gedidb_disconnect()].
 #' @seealso \url{https://daac.ornl.gov/GEDI/guides/GEDI_L4A_AGB_Density_V3.html}
 #' @export
 readLevel4A <- function(level4Apath) {
+  if (inherits(level4Apath, "gedi_gee_reference")) {
+    return(.open_gee_reference(level4Apath, "GEDI04_A"))
+  }
+  if (inherits(level4Apath, "gedidb_reference")) {
+    return(.open_gedidb_reference(level4Apath, "GEDI04_A"))
+  }
   if (inherits(level4Apath, "GEDICloudH5")) {
     h5 <- level4Apath
   } else if (.is_gedi_url(level4Apath)) {
@@ -57,10 +65,63 @@ readLevel4A <- function(level4Apath) {
 #'
 #'   Legacy Release 2 quality fields remain supported.
 #' @param beams Optional character vector of GEDI beam names.
-#' @return A [data.table::data.table] with one row per footprint.
+#' @param collect Logical; collect remote footprints into R or retain a lazy
+#'   GEE/gediDB query for rasterization.
+#' @param max_features Maximum GEE footprints allowed when collecting.
+#' @param chunk_size Number of GEE features transferred per request.
+#' @param max_granules Maximum vector granules merged by GEE.
+#' @return A [data.table::data.table] with one row per footprint, or a lazy
+#'   remote query object when `collect = FALSE`.
 #' @export
 getLevel4A <- function(level4a, cols = .level4a_default_columns,
-                       quality = FALSE, beams = NULL) {
+                       quality = FALSE, beams = NULL, collect = TRUE,
+                       max_features = 100000L, chunk_size = 5000L,
+                       max_granules = 200L) {
+  if (inherits(level4a, "gedi_gee_object")) {
+    if (!is.null(beams)) warning("'beams' is ignored for a Google Earth Engine query; filter the returned table instead.")
+    requested <- if (is.null(cols) || identical(cols, .level4a_default_columns)) {
+      c(
+        "beam", "shot_number", "degrade_flag", "sensitivity",
+        "solar_elevation", "agbd", "agbd_se", "agbd_pi_lower",
+        "agbd_pi_upper", "predict_stratum", "selected_algorithm",
+        "l4_quality_flag"
+      )
+    } else unique(as.character(cols))
+    requested[requested == "l4a_quality_flag_rel3"] <- "l4_quality_flag"
+    if (!isTRUE(collect)) {
+      return(.gee_select(level4a, requested, quality = quality, max_granules = max_granules))
+    }
+    return(.gee_collect(
+      level4a, requested, quality = quality, max_features = max_features,
+      chunk_size = chunk_size, max_granules = max_granules
+    ))
+  }
+  if (inherits(level4a, "gedidb_level4a")) {
+    if (!is.null(beams)) warning("'beams' is ignored for a gediDB query; filter the returned table instead.")
+    requested <- if (is.null(cols)) {
+      c("beam_name", "shot_number", "l2a_quality_flag_rel3", "l4a_quality_flag_rel3",
+        "degrade_include_flag", "degrade_flag", "sensitivity", "solar_elevation",
+        "surface_flag", "elev_lowestmode", "agbd", "agbd_se", "agbd_pi_lower",
+        "agbd_pi_upper", "predict_stratum", "selected_algorithm")
+    } else unique(as.character(cols))
+    requested[requested == "beam"] <- "beam_name"
+    requested <- setdiff(requested, c("lat_lowestmode", "lon_lowestmode", "time"))
+    unavailable <- intersect(requested, c(
+      "l2_algrunflag", "degrade_include_flag",
+      "elev_highestreturn_outlier_flag", "delta_time"
+    ))
+    requested <- setdiff(requested, unavailable)
+    if (length(unavailable) && !identical(cols, .level4a_default_columns)) {
+      warning("Unavailable gediDB field(s): ", paste(unavailable, collapse = ", "))
+    }
+    filters <- if (isTRUE(quality)) list(l4a_quality_flag_rel3 = "== 1") else list()
+    if (!isTRUE(collect)) return(.new_gedidb_query(level4a, requested, filters))
+    ans <- .gedidb_query(level4a, requested, filters)
+    preferred <- unique(c("beam", "shot_number", "lat_lowestmode", "lon_lowestmode", "time",
+                          if (is.null(cols)) names(ans) else cols))
+    data.table::setcolorder(ans, c(intersect(preferred, names(ans)), setdiff(names(ans), preferred)))
+    return(ans[])
+  }
   if (!is(level4a, "gedi.level4a")) {
     stop("'level4a' must be returned by readLevel4A().", call. = FALSE)
   }

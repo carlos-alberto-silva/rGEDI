@@ -10,7 +10,12 @@ getLevel2BVPM(
     "sensitivity", "solar_elevation", "latitude_lastbin", "latitude_bin0",
     "longitude_bin0", "longitude_lastbin", "elev_highestreturn", "elev_lowestmode",
     "rh100", "pai", "fhd_normal", "omega", "pgap_theta", "cover"),
-  beams = NULL
+  beams = NULL,
+  quality = FALSE,
+  collect = TRUE,
+  max_features = 100000L,
+  chunk_size = 5000L,
+  max_granules = 200L
 )
 }
 \arguments{
@@ -20,10 +25,21 @@ function). An S4 object of class "gedi.level2b".}
 \item{cols}{A character vector containing the list of columns to be extracted. See the default columns in the description.}
 
 \item{beams}{Optional beam names. \code{NULL} reads every beam.}
+
+\item{quality}{Logical; for gediDB, retain Release 3 quality observations.}
+
+\item{collect}{Logical; collect remote footprints into R or retain a lazy
+GEE/gediDB object for rasterization.}
+
+\item{max_features}{Maximum GEE footprints allowed when collecting.}
+
+\item{chunk_size}{Number of GEE features transferred per request.}
+
+\item{max_granules}{Maximum vector granules merged by GEE.}
 }
 \value{
-Returns an S4 object of class \link[data.table:data.table]{data.table::data.table}
-containing the Vegetation Profile Biophysical Variables.
+A \link[data.table:data.table]{data.table::data.table} containing the Vegetation Profile
+Biophysical Variables, or a lazy remote query when \code{collect = FALSE}.
 }
 \description{
 This function extracts information from GEDI Level2B data:

@@ -8,7 +8,7 @@ readLevel2B(level2Bpath)
 }
 \arguments{
 \item{level2Bpath}{Local file path or Earthdata Cloud URL pointing to a
-GEDI Level 2B HDF5 granule.}
+GEDI Level 2B HDF5 granule, or a gediDB reference returned by \code{\link[=gedifinder]{gedifinder()}}.}
 }
 \value{
 Returns an S4 object of class \code{\link[=gedi.level2b-class]{gedi.level2b}} containing GEDI level2B data.

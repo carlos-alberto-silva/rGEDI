@@ -7,6 +7,7 @@
 rGEDI_configure(
   python = NULL,
   install = FALSE,
+  gedidb = FALSE,
   earth_engine_project = Sys.getenv("EE_PROJECT", unset = ""),
   quiet = FALSE
 )
@@ -15,6 +16,8 @@ rGEDI_configure(
 \item{python}{Optional Python executable or environment name.}
 
 \item{install}{Logical; install missing Python modules.}
+
+\item{gedidb}{Logical; include the optional gediDB query backend.}
 
 \item{earth_engine_project}{Optional Google Earth Engine project ID.}
 

@@ -6,7 +6,7 @@
 #'
 #' @param x A `gedi.level1b`, `gedi.level2a`, `gedi.level2b`, or
 #'   `gedi.level4a` object; a footprint `data.frame`/`data.table`; or a
-#'   [`terra::SpatRaster-class`].
+#'   [`terra::SpatRaster-class`], or a lazy `gedi_gee_object`.
 #' @param clip_obj A numeric extent in the order
 #'   `c(xmin, xmax, ymin, ymax)`, a [`terra::SpatExtent-class`], or an `sf`,
 #'   `sfc`, or [`terra::SpatVector-class`] polygon object.
@@ -19,7 +19,8 @@
 #'   inputs return clipped open GEDI objects; footprint tables return a
 #'   [data.table::data.table]; and Level 3/4B rasters return a
 #'   [`terra::SpatRaster-class`]. Geometry clipping with `split_by` returns a
-#'   named list of HDF5-backed GEDI objects, one per polygon ID.
+#'   named list of HDF5-backed GEDI objects, one per polygon ID. A GEE input
+#'   returns a lazy GEE object of the same server-side type.
 #'
 #' @details
 #' Extracted tables are recognized from standard GEDI coordinates:

@@ -30,7 +30,8 @@
 #'
 #' @param x One or more local paths, GDAL-readable URLs, or a `SpatRaster`.
 #' @param metrics Optional layer names to retain.
-#' @return A [`terra::SpatRaster-class`].
+#' @return A [`terra::SpatRaster-class`] for local data or a lazy
+#'   `gedi_gee_object` for a GEE reference.
 #' @seealso \url{https://daac.ornl.gov/GEDI/guides/GEDI_L3_LandSurface_Metrics_V3.html}
 #' @export
 readLevel3 <- function(x, metrics = NULL) .read_gedi_raster(x, "GEDI03", metrics)
@@ -41,7 +42,14 @@ readLevel3 <- function(x, metrics = NULL) .read_gedi_raster(x, "GEDI03", metrics
 #' @return A [`terra::SpatRaster-class`].
 #' @seealso \doi{10.3334/ORNLDAAC/2299}
 #' @export
-readLevel4B <- function(x, metrics = NULL) .read_gedi_raster(x, "GEDI04_B", metrics)
+readLevel4B <- function(x, metrics = NULL) {
+  if (inherits(x, "gedi_gee_reference")) {
+    object <- .open_gee_reference(x, "GEDI04_B")
+    if (!is.null(metrics)) object <- .gee_select(object, metrics)
+    return(object)
+  }
+  .read_gedi_raster(x, "GEDI04_B", metrics)
+}
 
 .gedi_rasters <- function(x) {
   if (inherits(x, "SpatRaster")) return(list(x))
@@ -192,10 +200,19 @@ plotLevel3 <- function(x, ...) { r <- .as_gedi_raster(x); terra::plot(r, ...); i
 #' @export
 plotLevel4B <- function(x, ...) { r <- .as_gedi_raster(x); terra::plot(r, ...); invisible(r) }
 
-.grid_gedi_points <- function(x, lon, lat, metric, fun, res, ...) {
+.grid_gedi_points <- function(x, lon, lat, metric, fun, res, ...,
+                              template = NULL, input_crs = "EPSG:4326") {
   if (!all(c(lon, lat, metric) %in% names(x))) stop("Coordinate or metric columns are missing.")
-  pts <- terra::vect(as.data.frame(x), geom = c(lon, lat), crs = "EPSG:4326")
-  template <- terra::rast(terra::ext(pts), resolution = res, crs = "EPSG:4326")
+  pts <- terra::vect(as.data.frame(x), geom = c(lon, lat), crs = input_crs)
+  if (is.null(template)) {
+    if (!terra::is.lonlat(pts)) stop("Supply a template when using projected coordinates.")
+    template <- terra::rast(terra::ext(pts), resolution = res, crs = input_crs)
+  } else {
+    if (!inherits(template, "SpatRaster") || !nzchar(terra::crs(template))) {
+      stop("The template must be a SpatRaster with a coordinate reference system.")
+    }
+    if (!terra::same.crs(pts, template)) pts <- terra::project(pts, terra::crs(template))
+  }
   terra::rasterize(pts, template, field = metric, fun = fun, ...)
 }
 

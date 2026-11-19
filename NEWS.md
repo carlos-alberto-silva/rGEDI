@@ -1,5 +1,17 @@
 <!-- NEWS.md is maintained by https://cynkra.github.io/fledge, do not edit -->
 
+# rGEDI 0.6.1 (2026-11-19)
+
+* Unify Earthdata, gediDB, and Google Earth Engine searches through
+  `gedifinder(source = ...)`, with service availability checks and source and
+  release provenance.
+* Add lazy GEE readers and consistent collection, clipping, 1 km
+  rasterization, visualization, download, and Drive-export workflows.
+* Add analysis-ready GEDI Version 3 footprint queries through gediDB and
+  projected-template gridding for Level 2A RH and Level 4A biomass metrics,
+  including opt-in parallel spatial tiles and disk-backed output.
+* Add multi-year GEDI archive helpers and tests for remote backends.
+
 # rGEDI 0.6.0 (2026-10-09)
 
 * Add Level 3, Level 4A, and Level 4B readers and spatial processing tools

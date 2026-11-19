@@ -16,4 +16,12 @@
 ^\.github$
 ^CRAN-SUBMISSION$
 ^cran-comments\.md$
+^\.rlib$
+^\.venv-rgedi$
+^\.tmp-gedidb-source$
+^\.codex-check
+^_.*$
+^rGEDI-cran-check.*$
+^.*\.Rcheck$
+^rGEDI_[0-9].*\.tar\.gz$
 ^\.lintr$

@@ -4,23 +4,57 @@
 \alias{rasterizeGEDI}
 \title{Rasterize GEDI footprint data}
 \usage{
-rasterizeGEDI(x, metric, res = 0.01, fun = mean, lon = NULL, lat = NULL, ...)
+rasterizeGEDI(
+  x,
+  metric,
+  res = 0.01,
+  fun = mean,
+  lon = NULL,
+  lat = NULL,
+  ...,
+  template = NULL,
+  input_crs = "EPSG:4326",
+  output_crs = "EPSG:3857",
+  parallel = FALSE,
+  workers = NULL,
+  tile_size = 5,
+  filename = ""
+)
 }
 \arguments{
-\item{x}{GEDI footprint table.}
+\item{x}{GEDI footprint table, a lazy \code{gedi_gee_object}, or a lazy
+\code{gedidb_query} returned by an extractor with \code{collect = FALSE}.}
 
 \item{metric}{Metric column.}
 
-\item{res}{Resolution in decimal degrees.}
+\item{res}{Resolution in decimal degrees for local data, or metres for a
+Google Earth Engine query, when no template is supplied.}
 
 \item{fun}{Aggregation function.}
 
 \item{lon, lat}{Optional coordinate columns.}
 
 \item{...}{Passed to \code{\link[terra:rasterize]{terra::rasterize()}}.}
+
+\item{template}{Optional \code{\link[terra:rast]{terra::rast()}} grid, including a projected grid.}
+
+\item{input_crs}{Coordinate reference system of the footprint columns.}
+
+\item{output_crs}{Output grid CRS for Google Earth Engine processing.}
+
+\item{parallel}{Logical; process lazy gediDB spatial tiles concurrently.}
+
+\item{workers}{Number of parallel gediDB workers. \code{NULL} uses the available
+physical cores minus one, limited by the number of tiles.}
+
+\item{tile_size}{Width and height of each gediDB query tile in degrees.}
+
+\item{filename}{Optional disk-backed raster filename. It is required for a
+lazy gediDB grid exceeding 100 million cells.}
 }
 \value{
-A \code{\link[terra:SpatRaster-class]{terra::SpatRaster}}.
+A \code{\link[terra:SpatRaster-class]{terra::SpatRaster}} for local data, or a lazy
+\code{gedi_gee_object} containing an Earth Engine image for GEE data.
 }
 \description{
 Rasterize GEDI footprint data

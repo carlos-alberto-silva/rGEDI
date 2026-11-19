@@ -138,7 +138,17 @@
 #'   when `cloud_computing = TRUE`.
 #' @param return Return a URL vector or a metadata table.
 #' @param page_size CMR page size.
-#' @return A character vector or [data.table::data.table].
+#' @param source Data service. `"earthdata"` searches NASA CMR, `"gedidb"`
+#'   returns a lazy reference to the public GFZ TileDB database, and `"gee"`
+#'   returns a lazy Google Earth Engine asset reference.
+#' @param check Logical; for `source = "gedidb"` or `"gee"`, verify that the
+#'   optional backend and service are available before returning.
+#' @return For Earthdata, a character vector or [data.table::data.table]. For
+#'   gediDB with `return = "url"`, a `gedidb_reference` containing the remote
+#'   address and search bounds; pass it to the corresponding `readLevel*()`
+#'   function. A GEE URL result is a `gedi_gee_reference` that can be passed to
+#'   the corresponding reader. With `return = "table"`, either remote source
+#'   returns one metadata row.
 #' @seealso \url{https://cmr.earthdata.nasa.gov/search/site/docs/search/api.html}
 #' @export
 gedifinder <- function(product, ul_lat = NULL, ul_lon = NULL,
@@ -147,11 +157,99 @@ gedifinder <- function(product, ul_lat = NULL, ul_lon = NULL,
                        access = c("https", "s3", "opendap", "all"),
                        cloud_hosted = TRUE, return = c("url", "table"),
                        page_size = 2000L, cloud_computing = FALSE,
-                       persist = TRUE, orbit = NULL) {
+                       persist = TRUE, orbit = NULL,
+                       source = c("earthdata", "gedidb", "gee"), check = TRUE) {
+  source <- match.arg(source)
   access <- match.arg(access)
   return <- match.arg(return)
   product <- toupper(product)
+  if (source == "gee") {
+    if (!product %in% names(.gedi_ee_catalog)) {
+      stop(
+        "For source = 'gee', choose one of: ",
+        paste(names(.gedi_ee_catalog), collapse = ", "), ".",
+        call. = FALSE
+      )
+    }
+    if (!is.null(orbit)) {
+      stop("Google Earth Engine searches require a spatial bounding box, not an orbit.", call. = FALSE)
+    }
+    bbox_values <- as.numeric(c(ul_lat, ul_lon, lr_lat, lr_lon))
+    if (length(bbox_values) != 4L || any(!is.finite(bbox_values))) {
+      stop("Supply all four bounding coordinates for a Google Earth Engine search.", call. = FALSE)
+    }
+    bbox <- c(xmin = ul_lon, ymin = lr_lat, xmax = lr_lon, ymax = ul_lat)
+    if (bbox["xmin"] > bbox["xmax"] || bbox["ymin"] > bbox["ymax"]) {
+      stop("The Earth Engine bounds must satisfy ul_lon <= lr_lon and lr_lat <= ul_lat.", call. = FALSE)
+    }
+    if (!is.null(daterange)) {
+      if (length(daterange) != 2L || anyNA(as.Date(daterange))) {
+        stop("'daterange' must contain two valid dates.", call. = FALSE)
+      }
+      daterange <- as.character(as.Date(daterange))
+    }
+    gee_version <- .gee_catalog_version(product, version)
+    if (isTRUE(check)) {
+      available <- gee_available()
+      if (!isTRUE(available)) {
+        stop("Google Earth Engine is unavailable: ", attr(available, "reason"), call. = FALSE)
+      }
+    }
+    reference <- .new_gee_reference(
+      product, bbox, daterange, gee_version, checked = isTRUE(check)
+    )
+    if (return == "table") {
+      return(data.table::data.table(
+        product = product, version = gee_version, source = "gee",
+        address = unclass(reference)[1L], xmin = bbox["xmin"], ymin = bbox["ymin"],
+        xmax = bbox["xmax"], ymax = bbox["ymax"],
+        start_date = if (is.null(daterange)) NA_character_ else daterange[1L],
+        end_date = if (is.null(daterange)) NA_character_ else daterange[2L]
+      ))
+    }
+    return(reference)
+  }
   info <- .gedi_short_name(product, version)
+  if (source == "gedidb") {
+    if (!product %in% c("GEDI02_A", "GEDI02_B", "GEDI04_A")) {
+      stop("gediDB references are supported for GEDI02_A, GEDI02_B, and GEDI04_A.", call. = FALSE)
+    }
+    if (!is.null(orbit)) stop("gediDB searches require a spatial bounding box, not an orbit.", call. = FALSE)
+    bbox_values <- as.numeric(c(ul_lat, ul_lon, lr_lat, lr_lon))
+    if (length(bbox_values) != 4L || any(!is.finite(bbox_values))) {
+      stop("Supply all four bounding coordinates for a gediDB search.", call. = FALSE)
+    }
+    bbox <- c(xmin = ul_lon, ymin = lr_lat, xmax = lr_lon, ymax = ul_lat)
+    if (bbox["xmin"] > bbox["xmax"] || bbox["ymin"] > bbox["ymax"]) {
+      stop("The gediDB bounds must satisfy ul_lon <= lr_lon and lr_lat <= ul_lat.", call. = FALSE)
+    }
+    if (!is.null(daterange)) {
+      if (length(daterange) != 2L || anyNA(as.Date(daterange))) {
+        stop("'daterange' must contain two valid dates.", call. = FALSE)
+      }
+      daterange <- as.character(as.Date(daterange))
+    }
+    db_version <- .gedidb_version(version)
+    if (isTRUE(check)) {
+      available <- gedidb_available(db_version)
+      if (!isTRUE(available)) {
+        stop("gediDB is unavailable: ", attr(available, "reason"), call. = FALSE)
+      }
+    }
+    reference <- .new_gedidb_reference(
+      product, bbox, daterange, db_version, checked = isTRUE(check)
+    )
+    if (return == "table") {
+      return(data.table::data.table(
+        product = product, version = db_version, source = "gedidb",
+        address = unclass(reference)[1L], xmin = bbox["xmin"], ymin = bbox["ymin"],
+        xmax = bbox["xmax"], ymax = bbox["ymax"],
+        start_date = if (is.null(daterange)) NA_character_ else daterange[1L],
+        end_date = if (is.null(daterange)) NA_character_ else daterange[2L]
+      ))
+    }
+    return(reference)
+  }
   if (isTRUE(cloud_computing) && is.null(orbit)) {
     return(.gedifinder_earthaccess(
       product, info, ul_lat, ul_lon, lr_lat, lr_lon,

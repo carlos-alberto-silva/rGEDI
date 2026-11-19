@@ -209,11 +209,12 @@ length.GEDICloudDataset <- function(x) prod(x$dims)
 #'
 #' @param python Optional Python executable or environment name.
 #' @param install Logical; install missing Python modules.
+#' @param gedidb Logical; include the optional gediDB query backend.
 #' @param earth_engine_project Optional Google Earth Engine project ID.
 #' @param quiet Logical.
 #' @return Invisibly returns a capability table.
 #' @export
-rGEDI_configure <- function(python = NULL, install = FALSE,
+rGEDI_configure <- function(python = NULL, install = FALSE, gedidb = FALSE,
                             earth_engine_project = Sys.getenv("EE_PROJECT", unset = ""),
                             quiet = FALSE) {
   if (!requireNamespace("reticulate", quietly = TRUE)) {
@@ -223,10 +224,11 @@ rGEDI_configure <- function(python = NULL, install = FALSE,
     if (file.exists(python)) reticulate::use_python(python, required = TRUE) else reticulate::use_condaenv(python, required = TRUE)
   }
   modules <- c("earthaccess", "h5py", "ee")
+  if (isTRUE(gedidb)) modules <- c(modules, "gedidb")
   available <- vapply(modules, reticulate::py_module_available, logical(1))
   if (isTRUE(install) && any(!available)) {
     packages <- c(earthaccess = "earthaccess", h5py = "h5py",
-                  ee = "earthengine-api")
+                  ee = "earthengine-api", gedidb = "gedidb")
     reticulate::py_install(unname(packages[!available]), pip = TRUE)
     available <- vapply(modules, reticulate::py_module_available, logical(1))
   }

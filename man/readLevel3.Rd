@@ -12,7 +12,8 @@ readLevel3(x, metrics = NULL)
 \item{metrics}{Optional layer names to retain.}
 }
 \value{
-A \code{\link[terra:SpatRaster-class]{terra::SpatRaster}}.
+A \code{\link[terra:SpatRaster-class]{terra::SpatRaster}} for local data or a lazy
+\code{gedi_gee_object} for a GEE reference.
 }
 \description{
 Read GEDI Level 3 gridded metrics

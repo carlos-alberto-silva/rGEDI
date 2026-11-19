@@ -235,6 +235,150 @@ Level 3 and Level 4B are raster collections. Download the selected metric
 GeoTIFF first and then use `readLevel3()` or `readLevel4B()`. This avoids the
 Earthdata redirect restrictions encountered by GDAL virtual-file reads.
 
+### Stream footprint products from gediDB
+
+[gediDB](https://gedidb.readthedocs.io/en/latest/user/tiledb_database.html)
+provides a public, analysis-ready TileDB database for GEDI Level 2A, Level 2B,
+Level 4A, and Level 4C. It does not require NASA credentials. Install the
+optional Python backend once:
+
+~~~r
+rGEDI_configure(gedidb = TRUE, install = TRUE)
+~~~
+
+Select source = "gedidb" during the search. The finder checks the service and
+returns only a lazy remote reference; it does not transfer footprints. The
+read function opens that reference, and the extraction function requests the
+selected variables.
+
+~~~r
+l2a_address <- gedifinder(
+  "GEDI02_A",
+  ul_lat = ymax, ul_lon = xmin, lr_lat = ymin, lr_lon = xmax,
+  version = "003", daterange = daterange, source = "gedidb"
+)
+l2a_remote <- readLevel2A(l2a_address)
+l2a_rh98 <- getLevel2AM(l2a_remote, rh = 98, quality = TRUE)
+
+l4a_address <- gedifinder(
+  "GEDI04_A",
+  ul_lat = ymax, ul_lon = xmin, lr_lat = ymin, lr_lon = xmax,
+  version = "003", daterange = daterange, source = "gedidb"
+)
+l4a_remote <- readLevel4A(l4a_address)
+l4a_agbd <- getLevel4A(
+  l4a_remote,
+  cols = c("shot_number", "agbd", "agbd_se", "l4a_quality_flag_rel3"),
+  quality = TRUE
+)
+~~~
+
+The results are ordinary data.table footprint tables, so the same clipping,
+sampling, rasterization, statistics, and modeling functions apply. For an
+exact 1 km grid, supply a projected SpatRaster template:
+
+~~~r
+grid_points <- rbind(
+  l2a_rh98[, .(lon_lowestmode, lat_lowestmode)],
+  l4a_agbd[, .(lon_lowestmode, lat_lowestmode)]
+)
+grid_points <- terra::vect(
+  as.data.frame(grid_points),
+  geom = c("lon_lowestmode", "lat_lowestmode"), crs = "EPSG:4326"
+)
+grid_points <- terra::project(grid_points, "EPSG:6933")
+bounds <- as.vector(terra::ext(grid_points))
+bounds <- c(
+  floor(bounds[1] / 1000) * 1000, ceiling(bounds[2] / 1000) * 1000,
+  floor(bounds[3] / 1000) * 1000, ceiling(bounds[4] / 1000) * 1000
+)
+template_1km <- terra::rast(
+  terra::ext(bounds),
+  resolution = 1000, crs = "EPSG:6933"
+)
+
+rh98_1km <- rasterizeGEDI(l2a_rh98, "rh98", template = template_1km)
+agbd_1km <- rasterizeGEDI(l4a_agbd, "agbd", template = template_1km)
+~~~
+
+The first query in an R session opens remote TileDB metadata. Later queries
+reuse a cached provider. Call gedidb_disconnect() when the remote workflow is
+finished.
+
+For larger areas, retain a lazy gediDB query and process independent spatial
+tiles concurrently. Each worker downloads only the selected metric,
+coordinates, and quality fields and immediately reduces the footprints to
+grid-cell totals. Supplying `filename` keeps large rasters disk-backed.
+
+~~~r
+l2a_rh98_lazy <- getLevel2AM(
+  l2a_remote, rh = 98, quality = TRUE, collect = FALSE
+)
+
+rh98_parallel_1km <- rasterizeGEDI(
+  l2a_rh98_lazy, "rh98",
+  res = 1000, output_crs = "EPSG:6933",
+  parallel = TRUE, workers = 4, tile_size = 5,
+  filename = file.path(outdir, "gedidb_rh98_1km.tif")
+)
+~~~
+
+Use a small number of workers first. Every worker opens an independent remote
+TileDB connection, so excessive parallelism can reduce performance or overload
+the public service. A mission-wide grid covers billions of footprints and
+should be treated as a resumable cloud/HPC batch job, not an interactive query.
+
+### Search and process GEDI with Google Earth Engine
+
+The same finder-reader-extractor sequence also works with Google Earth Engine.
+Initialize the project once per R session, then select `source = "gee"`.
+Unlike Earthdata and gediDB, Earth Engine currently serves GEDI Version 2
+(Level 2A/2B and Level 4B) and Version 2.1 (Level 4A), so rGEDI validates the
+version and records it in the returned reference.
+
+~~~r
+ee_initialize(project = "ee-carlossilvaengflorestal")
+
+l2a_gee_address <- gedifinder(
+  "GEDI02_A",
+  ul_lat = ymax, ul_lon = xmin, lr_lat = ymin, lr_lon = xmax,
+  version = "002", daterange = daterange, source = "gee"
+)
+l2a_gee <- readLevel2A(l2a_gee_address)
+
+# Collect a bounded footprint query as a data.table.
+l2a_rh98_gee <- getLevel2AM(
+  l2a_gee, rh = 98, quality = TRUE, max_features = 100000
+)
+
+# Or leave the footprints in Earth Engine and build the 1 km grid there.
+l2a_rh98_lazy <- getLevel2AM(
+  l2a_gee, rh = 98, quality = TRUE, collect = FALSE
+)
+rh98_1km_gee <- rasterizeGEDI(
+  l2a_rh98_lazy, "rh98", res = 1000, output_crs = "EPSG:3857"
+)
+
+l4a_gee_address <- gedifinder(
+  "GEDI04_A",
+  ul_lat = ymax, ul_lon = xmin, lr_lat = ymin, lr_lon = xmax,
+  version = "002.1", daterange = daterange, source = "gee"
+)
+l4a_gee <- readLevel4A(l4a_gee_address)
+l4a_agbd_lazy <- getLevel4A(
+  l4a_gee, cols = "agbd", quality = TRUE, collect = FALSE
+)
+agbd_1km_gee <- rasterizeGEDI(
+  l4a_agbd_lazy, "agbd", res = 1000, output_crs = "EPSG:3857"
+)
+~~~
+
+`gedifinder()` checks that the selected service is reachable before later
+functions run. `clip()` preserves a lazy GEE object, and `getTileUrl()`,
+`map_view()`, `map_download()`, and `ee_image_to_drive()` accept the lazy
+raster result directly. Use `collect = TRUE` only for focused footprint
+queries; use `collect = FALSE` for large-area gridding and mapping.
+
 ## 5 Extract, quality-filter, clip, rasterize, summarize, and simulate footprint-level products
 
 ### 5.1 Extract the Reference Ground Track and plot the GIF animation

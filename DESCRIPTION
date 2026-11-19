@@ -1,7 +1,7 @@
 Package: rGEDI
 Type: Package
 Title: NASA's Global Ecosystem Dynamics Investigation (GEDI) Data Visualization and Processing
-Version: 0.6.0
+Version: 0.6.1
 Authors@R: c(
     person("Carlos Alberto", "Silva", email = "c.silva@ufl.edu", role = c("aut", "cph", "cre")),
     person("Caio", "Hamamura", email = "caiohamamura@gmail.com", role = c("aut", "cph")))
@@ -16,7 +16,8 @@ Description: Provides an end-to-end workflow for NASA Global Ecosystem
   measurements. The package also simulates GEDI-like waveforms from airborne
   laser-scanning point clouds and supports spatial sampling, predictive
   modelling, ancillary-data extraction, and wall-to-wall upscaling with
-  optional Google Earth Engine workflows.
+  optional Google Earth Engine workflows. An optional Python interface queries
+  analysis-ready footprint data from the public 'gediDB' 'TileDB' service.
 License: GPL-3
 Encoding: UTF-8
 Depends: methods
@@ -30,6 +31,7 @@ Imports:
   hdf5r,
   jsonlite,
   lazyeval,
+  parallel,
   RColorBrewer,
   R6,
   sf,
