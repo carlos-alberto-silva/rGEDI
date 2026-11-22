@@ -23,26 +23,32 @@ and GEDI04_A, as well as raster products GEDI03 and GEDI04_B.
 
 The examples below form one workflow. Local examples use the real GEDI subsets
 bundled with the package. Cloud and Google Earth Engine examples use real NASA
-and Earth Engine services. The scripts that regenerated the displayed assets
-are `readme/build-local-examples.R` and `readme/build-modern-examples.R`. A
+and Earth Engine services. Reproduction instructions and input provenance for the figures are in
+[`readme/REPRODUCE.md`](readme/REPRODUCE.md). A
 generated function reference manual is available at
 `output/pdf/rGEDI-reference-manual.pdf`.
+
+<p align="center"><img src="readme/fig-package-workflow.png" width="900" alt="Connected rGEDI readers, extractors, spatial functions, model functions and supporting interfaces"></p>
+
+Editable PowerPoint figures and the full plotting scripts are available in
+[`readme/editable/`](readme/editable/) and
+[`readme/REPRODUCE.md`](readme/REPRODUCE.md). The workflow diagram, waveforms,
+reference lines and model scatter charts contain editable native objects.
+Dense ALS and PAVD panels remain separate high-resolution image objects.
 
 # Getting Started
 
 ## 1 Installation
 
 ```r
-# Development release
-install.packages(
-  "rGEDI",
-  repos = c("https://carlos-alberto-silva.r-universe.dev",
-            "https://cloud.r-project.org")
-)
+# Current development API used by these examples
+install.packages("remotes")
+remotes::install_github("carlos-alberto-silva/rGEDI")
 
-# Current GitHub master
-# install.packages("remotes")
-# remotes::install_github("carlos-alberto-silva/rGEDI")
+# Alternative development builds, after the r-universe build completes
+# install.packages("rGEDI", repos = c(
+#   "https://carlos-alberto-silva.r-universe.dev",
+#   "https://cloud.r-project.org"))
 
 library(rGEDI)
 library(data.table)
@@ -62,8 +68,9 @@ As in the ICESat2VegR workflow, rGEDI uses three Python packages through
 3. [`earthengine-api`](https://github.com/google/earthengine-api) samples
    predictors and creates wall-to-wall maps in Google Earth Engine.
 
-Run the configuration once. It installs Miniconda when needed and creates the
-package Python environment. Restart R if the installer asks you to do so.
+Run the configuration once to install the optional Python modules through
+reticulate. Set RETICULATE_PYTHON before loading reticulate when selecting
+an existing environment. Add gedidb = TRUE to install the database backend.
 
 ```r
 rGEDI_configure(install = TRUE)
@@ -106,8 +113,6 @@ daterange <- c("2019-04-18", "2019-04-19")
 outdir <- file.path(tempdir(), "rGEDI")
 dir.create(outdir, showWarnings = FALSE)
 ```
-
-<p align="center"><img src="readme/fig-study-site.png" width="650" alt="Cerrado study site and GEDI footprints"></p>
 
 ## 3 Find GEDI data and download
 
@@ -228,7 +233,7 @@ cloud_urls <- gedifinder(
 
 # readLevel1B(), readLevel2A(), and readLevel2B() accept the same URL type.
 level4a_cloud <- readLevel4A(cloud_urls[1])
-level4a_cloud$beams
+class(level4a_cloud)
 ```
 
 Level 3 and Level 4B are raster collections. Download the selected metric
@@ -297,8 +302,8 @@ template_1km <- terra::rast(
   resolution = 1000, crs = "EPSG:6933"
 )
 
-rh98_1km <- rasterizeGEDI(l2a_rh98, "rh98", template = template_1km)
-agbd_1km <- rasterizeGEDI(l4a_agbd, "agbd", template = template_1km)
+rh98_1km <- rasterize(l2a_rh98, "rh98", template = template_1km)
+agbd_1km <- rasterize(l4a_agbd, "agbd", template = template_1km)
 ~~~
 
 The first query in an R session opens remote TileDB metadata. Later queries
@@ -315,10 +320,10 @@ l2a_rh98_lazy <- getLevel2AM(
   l2a_remote, rh = 98, quality = TRUE, collect = FALSE
 )
 
-rh98_parallel_1km <- rasterizeGEDI(
+rh98_parallel_1km <- rasterize(
   l2a_rh98_lazy, "rh98",
   res = 1000, output_crs = "EPSG:6933",
-  parallel = TRUE, workers = 4, tile_size = 5,
+  parallel = TRUE, workers = 2, tile_size = 1,
   filename = file.path(outdir, "gedidb_rh98_1km.tif")
 )
 ~~~
@@ -327,6 +332,27 @@ Use a small number of workers first. Every worker opens an independent remote
 TileDB connection, so excessive parallelism can reduce performance or overload
 the public service. A mission-wide grid covers billions of footprints and
 should be treated as a resumable cloud/HPC batch job, not an interactive query.
+
+The same parallel controls are available when extracting a collection of
+independent granules. Each worker opens and closes its own HDF5 connection.
+
+~~~r
+level2a_collection <- readLevel2A(orbit_files)
+metrics <- getLevel2AM(
+  level2a_collection, rh = 98, quality = TRUE,
+  parallel = TRUE, workers = 2
+)
+close(level2a_collection)
+~~~
+
+gediWFSimulator() also accepts multiple footprint centres and the optional
+arguments parallel, workers, and seed. accumulateGEDIGranules() accepts a
+manifest table for parallel accumulation. Keep concurrency modest when
+several workflows share memory and network bandwidth.
+
+Parallelism is intentionally not applied to a single open HDF5 object or to
+Google Earth Engine operations. Earth Engine already executes computations on
+Google's servers, while sharing local HDF5 handles between processes is unsafe.
 
 ### Search and process GEDI with Google Earth Engine
 
@@ -337,7 +363,7 @@ Unlike Earthdata and gediDB, Earth Engine currently serves GEDI Version 2
 version and records it in the returned reference.
 
 ~~~r
-ee_initialize(project = "ee-carlossilvaengflorestal")
+ee_initialize(project = Sys.getenv("EE_PROJECT"))
 
 l2a_gee_address <- gedifinder(
   "GEDI02_A",
@@ -355,8 +381,8 @@ l2a_rh98_gee <- getLevel2AM(
 l2a_rh98_lazy <- getLevel2AM(
   l2a_gee, rh = 98, quality = TRUE, collect = FALSE
 )
-rh98_1km_gee <- rasterizeGEDI(
-  l2a_rh98_lazy, "rh98", res = 1000, output_crs = "EPSG:3857"
+rh98_1km_gee <- rasterize(
+  l2a_rh98_lazy, "rh98", res = 1000, fun = "mean", output_crs = "EPSG:3857"
 )
 
 l4a_gee_address <- gedifinder(
@@ -368,22 +394,24 @@ l4a_gee <- readLevel4A(l4a_gee_address)
 l4a_agbd_lazy <- getLevel4A(
   l4a_gee, cols = "agbd", quality = TRUE, collect = FALSE
 )
-agbd_1km_gee <- rasterizeGEDI(
-  l4a_agbd_lazy, "agbd", res = 1000, output_crs = "EPSG:3857"
+agbd_1km_gee <- rasterize(
+  l4a_agbd_lazy, "agbd", res = 1000, fun = "mean", output_crs = "EPSG:3857"
 )
 ~~~
 
 `gedifinder()` checks that the selected service is reachable before later
 functions run. `clip()` preserves a lazy GEE object, and `getTileUrl()`,
 `map_view()`, `map_download()`, and `ee_image_to_drive()` accept the lazy
-raster result directly. Use `collect = TRUE` only for focused footprint
+raster result directly. The Web Mercator example uses 1,000 projected metres;
+choose an appropriate local metric or equal-area CRS for analysis because
+Web Mercator cell areas vary with latitude. Use `collect = TRUE` only for focused footprint
 queries; use `collect = FALSE` for large-area gridding and mapping.
 
 ## 5 Extract, quality-filter, clip, rasterize, summarize, and simulate footprint-level products
 
 ### 5.1 Extract the Reference Ground Track and plot the GIF animation
 
-`getGEDITrack()` standardizes coordinates, beam names, and acquisition order
+`getTrack()` standardizes coordinates, beam names, and acquisition order
 from a Level 1B, 2A, 2B, or 4A object, an extracted table, or a list of open
 granules. NASA partitions one GEDI orbit into four consecutive production
 granules (`_01` through `_04`). `gedifinder(orbit = ...)` retrieves every part;
@@ -393,7 +421,7 @@ granules (`_01` through `_04`). `gedifinder(orbit = ...)` retrieves every part;
 stopifnot(length(orbit_files) == 4L)
 
 orbit_h5 <- lapply(sort(orbit_files), readLevel2A)
-rgt <- getGEDITrack(orbit_h5, every = 200, segment_gaps = FALSE)
+rgt <- getTrack(orbit_h5, every = 200, segment_gaps = FALSE)
 head(rgt)
 
 plot_gedi_orbit_animation(
@@ -439,10 +467,9 @@ level1b_geo <- getLevel1BGeo(level1b)
 head(level1b_geo)
 ```
 
-The original rGEDI map is retained below. It shows the Level 1B footprints
-over high-resolution imagery.
+The U.S. comparison below connects footprint geolocation to real GEDI
+returns and measured airborne lidar structure.
 
-<p align="center"><img src="readme/fig2.PNG" width="650" alt="Original rGEDI Level 1B footprint map"></p>
 
 #### Get GEDI full waveform (GEDI Level 1B)
 
@@ -452,7 +479,6 @@ waveform <- getLevel1BWF(level1b, shot_number = shot)
 plot(waveform)
 ```
 
-<p align="center"><img src="readme/fig3.png" width="650" alt="Original rGEDI Level 1B full waveform"></p>
 
 #### Get GEDI elevation and height metrics (GEDI Level 2A)
 
@@ -471,9 +497,7 @@ plotWFMetrics(level1b, level2a, shot_number = shot,
               rh = c(25, 50, 75, 90, 98))
 ```
 
-<p align="center"><img src="readme/fig8.png" width="650" alt="Original rGEDI waveform with relative-height metrics"></p>
 
-<p align="center"><img src="readme/fig-waveform-rh.png" width="650" alt="GEDI waveform with relative height metrics"></p>
 
 #### Get GEDI vegetation biophysical variables (GEDI Level 2B)
 
@@ -493,9 +517,47 @@ plotPAIProfile(pai_profile, beam = profile_beam)
 plotPAVDProfile(pavd_profile, beam = profile_beam)
 ```
 
-<p align="center"><img src="readme/fig9.png" width="650" alt="Original rGEDI PAI and PAVD profiles"></p>
+The Appalachian example connects footprint products, clipping, vegetation
+profiles and forest characterization. Panel A shows 13 granules from May to
+September 2019 clipped to the mapped Great Smoky Mountains National Park AOI.
+Panel B shows all eight ground tracks of one Earthdata granule. Panel C shows
+a continuous PAVD display with the actual Level 1B waveform from the marked
+footprint in its inset. No background imagery is used.
 
-<p align="center"><img src="readme/fig-pai-pavd.png" width="750" alt="GEDI PAI and PAVD profiles"></p>
+```r
+source("readme/build-profile-example.R")
+```
+
+<p align="center"><img src="readme/fig-forest-characterization.png" width="1100" alt="Thirteen GEDI granules over a named park AOI, eight ground tracks from one granule, a PAVD profile with a real waveform inset, forest-type PAVD curves and L2A RH98 and L2B cover and PAI boxplots"></p>
+
+The single-granule map contains 4,387 geolocated footprints across all eight
+beams. Footprint circles have a nominal 25 m diameter. The highlighted
+Level 2B beam contains 686 candidate shots, of which 167 pass its quality,
+algorithm, degradation, sensitivity and vegetation-value screen. There are
+166 inside the park, each with a valid matched Level 2A RH98 observation.
+The continuous profile has 43 shots across 2.39 km. Its 925-bin inset waveform
+comes from the marked shot, rather than an illustration from another site.
+
+For display, the PAVD columns extend to the midpoints between footprint
+centres, and their native 5 m vertical bins are interpolated within each
+column. This produces a continuous display while retaining the original
+measurements for summaries. It does not create new GEDI observations.
+The transect shows L2B ground and the elevation of L2A RH98.
+
+Panels D and E compare 72 deciduous, 18 evergreen and 57 mixed-forest
+footprints classified by year-matched NLCD 2019 pixels. The vertical PAVD
+panels share axes and show means and interquartile ranges from native bins,
+including zeros. The boxplots show standard Level 2A RH98 and Level 2B canopy
+cover and PAI. Nineteen other-cover footprints remain in the park-wide
+summary and are omitted from these forest comparisons.
+
+The overview uses GEE Level 2A V2 footprints. The single-granule map,
+matched RH98 measurements, PAVD profiles and waveform use Earthdata V3.
+The overview illustrates coverage. Numerical forest summaries use the
+matched V3 observations. The [NPS boundary](https://www.nps.gov/grsm/planyourvisit/access_data.htm)
+defines the AOI, and [USGS NLCD 2019](https://developers.google.com/earth-engine/datasets/catalog/USGS_NLCD_RELEASES_2019_REL_NLCD)
+provides the forest classes. Cached inputs make redrawing the figure possible
+without a cloud connection.
 
 #### Get GEDI aboveground biomass at footprint level (GEDI Level 4A)
 
@@ -511,7 +573,26 @@ level4a_footprints <- getLevel4A(
 head(level4a_footprints)
 ```
 
-<p align="center"><img src="readme/fig-gedi-cloud-l4a.png" width="800" alt="Streamed GEDI Level 4A orbit and quality filtered footprints"></p>
+### U.S. forest waveforms and airborne lidar
+
+Six real GEDI Level 1B waveforms illustrate Pacific coastal conifer,
+southwest dry conifer, northern mixed forest, Appalachian hardwood,
+Sierra Nevada montane conifer and southeastern evergreen forest settings. The
+USGS 3DEP views show height-coloured ALS points over measured hillshaded DTM
+surfaces. All point clouds share camera angle, horizontal extent, vertical
+limits and colour scale. Waveforms share height and peak-return scales,
+with labelled GEDI ground and RH98 lines. The top axis shows normalized
+cumulative return energy integrated over the displayed -10 to 60 m interval.
+This plotting calculation is separate from the mission's RH retrieval.
+The ALS clips and hillshaded DTM surfaces have a 25 m diameter. An orthographic
+view and translucent terrain keep the lower returns visible.
+
+<p align="center"><img src="readme/fig-us-forest-waveforms.png" width="1000" alt="Large US locator map above six 3D ALS clouds with hillshaded terrain and observed GEDI waveforms showing ground and RH98"></p>
+
+ALS and GEDI acquisition dates are shown. These observations illustrate
+contrasting structure and are not a temporally matched ALS validation.
+The plotting inputs and provenance are in `readme/data/us_forests/`.
+Rebuild with `python readme/build-us-forest-figure.py`.
 
 ### 5.3 Clip
 
@@ -529,7 +610,7 @@ level2a_clip <- clip(level2a, bbox,
   output = file.path(outdir, "level2a-clip.h5"))
 level2b_clip <- clip(level2b, study_area,
   output = file.path(outdir, "level2b-clip.h5"))
-level4a_clip <- clip(level4a, bbox,
+level4a_clip <- clip(level4a_cloud, bbox,
   output = file.path(outdir, "level4a-clip.h5"))
 
 # Extracted footprint tables and rasters
@@ -556,7 +637,7 @@ level2a_clip <- clipLevel2A(level2a, xmin, xmax, ymin, ymax,
                             output = file.path(outdir, "level2a-clip.h5"))
 level2b_clip <- clipLevel2B(level2b, xmin, xmax, ymin, ymax,
                             output = file.path(outdir, "level2b-clip.h5"))
-level4a_clip <- clipLevel4A(level4a, xmin, xmax, ymin, ymax,
+level4a_clip <- clipLevel4A(level4a_cloud, xmin, xmax, ymin, ymax,
                             output = file.path(outdir, "level4a-clip.h5"))
 level4a_table_clip <- clipLevel4A(level4a_footprints, xmin, xmax, ymin, ymax)
 ```
@@ -570,7 +651,7 @@ level2a_geom <- clipLevel2AGeometry(level2a, study_area,
   output = file.path(outdir, "level2a-geometry"))
 level2b_geom <- clipLevel2BGeometry(level2b, study_area,
   output = file.path(outdir, "level2b-geometry"))
-level4a_geom <- clipLevel4AGeometry(level4a, study_area,
+level4a_geom <- clipLevel4AGeometry(level4a_cloud, study_area,
   output = file.path(outdir, "level4a-geometry.h5"))
 level4a_table_geom <- clipLevel4AGeometry(level4a_footprints, study_area)
 ```
@@ -591,7 +672,28 @@ points(level2a_geom_dt$lon_lowestmode, level2a_geom_dt$lat_lowestmode,
        pch = 16, col = "#762A83")
 ```
 
-<p align="center"><img src="readme/fig4.png" width="700" alt="Original rGEDI clipping and footprint visualization"></p>
+#### Characterize forest structure within polygons
+
+The characterization figure in Section 5.2 demonstrates a clip to a named
+national park followed by summaries within the AOI and by mapped forest type.
+Supply your own mapped fire, stand or forest-type boundaries to apply the
+same functions to other questions.
+
+```r
+# `polygons` contains a unit_id column and a defined CRS.
+footprints <- clip(level2b_good, polygons, split_by = "unit_id")
+structure_metrics <- function(pai, cover) list(
+  n = length(pai), mean_pai = mean(pai), mean_cover = mean(cover)
+)
+polygon_summary <- polyStatsLevel2BVPM(
+  footprints, ~structure_metrics(pai, cover), id = "poly_id"
+)
+```
+
+The runnable park example writes `readme/profile-polygon-summary.csv` and
+`readme/profile-forest-type-summary.csv`. These are summaries of sampled
+footprints. Record sample counts and acquisition periods when interpreting
+differences among forest types or disturbance classes.
 
 ### 5.4 Compute descriptive statistics
 
@@ -628,12 +730,7 @@ agbd_grid <- gridStatsLevel4A(
 )
 ```
 
-<p align="center">
-  <img src="readme/fig5.png" width="390" alt="Original Level 2A grid statistics">
-  <img src="readme/fig6.png" width="390" alt="Original Level 2B grid statistics">
-</p>
 
-<p align="center"><img src="readme/fig-clip-grids.png" width="850" alt="GEDI Level 2A and Level 2B grids"></p>
 
 ### 5.6 Convert to `SpatVector`
 
@@ -646,57 +743,20 @@ level2b_vect <- to_vect(level2b_vpm)
 level4a_vect <- to_vect(level4a_footprints)
 ```
 
-## 6 Predicting and rasterizing local GEDI-derived forest attributes with machine learning
+## 6 Modelling forest attributes
 
-### 6.1 Create a model for GEDI data
+Section 9 provides a runnable forest biomass example using satellite-derived
+predictors, separate spatial blocks and a held-out acquisition year. It uses
+fit_model(), predict() and fit_metrics(), and reports training and validation
+performance with the same plotting scales.
 
-This example reads the real Level 2A table generated from the bundled granule.
-
-```r
-model_data <- fread("readme/gedi-level2a-example.csv")
-predictors <- c("rh50", "rh75", "rh90", "rh100", "elev_lowestmode")
-
-selection <- varSel(
-  model_data[, ..predictors], model_data$rh98,
-  method = "rfe", threshold = 0, seed = 42, ntree = 200
-)
-plot(selection, which = "importance", main = "RFE predictor importance")
-selected_predictors <- selection$selvars
-
-fit <- fit_model(
-  model_data[, ..selected_predictors], model_data$rh98,
-  method = "randomForest", test = "kfold", k = 5,
-  seed = 42, ntree = 300
-)
-fit$stats_test
-```
-
-### 6.2 Predict field or fuel data
-
-For a field response such as fuel load, join measured plots to GEDI footprints
-by spatial proximity or shot ID, then pass the measured column as `y`. The
-following call predicts the real `rh98` response in this reproducible example.
-
-```r
-predicted <- predictGEDI(fit, model_data, name = "predicted_rh98")
-
-# For a measured fuel-load table, the corresponding call is:
-# fuel_fit <- fit_model(fuel_training[, ..predictor_names],
-#                       fuel_training$fuel_load,
-#                       method = "randomForest", test = "kfold", k = 5)
-```
-
-### 6.3 Rasterize predicted data
-
-```r
-rh98_prediction <- rasterizeGEDI(
-  predicted, metric = "predicted_rh98", res = 0.002,
-  lon = "lon_lowestmode", lat = "lat_lowestmode", fun = mean
-)
-plot(rh98_prediction)
-```
-
-<p align="center"><img src="readme/fig-gedi-local-model.png" width="600" alt="Local GEDI RH98 model validation"></p>
+For a field response such as total fuel biomass or timber volume, join
+measured plots to simulated waveform metrics using plot identifiers.
+gediWFSimulator() and gediWFMetrics() provide the waveform predictors shown
+in Section 8. Fit the model to the measured field response, and keep samples
+from the same plot or stand together when assigning validation folds. Apply
+varSel() within each training fold when predictor selection forms part of the
+workflow. Record the field units alongside the predictions.
 
 ## 7 Extract, clip, and summarize GEDI-derived grid products
 
@@ -719,20 +779,18 @@ level3_bbox <- clipLevel3(level3, c(xmin, xmax, ymin, ymax))
 level4b_bbox <- clipLevel4B(level4b, c(xmin, xmax, ymin, ymax))
 level3_aoi <- clipLevel3(level3, vect(study_area))
 level4b_aoi <- clipLevel4B(level4b, vect(study_area))
-level3_values <- extractLevel3(level3, vect(study_area))
-level4b_values <- extractLevel4B(level4b, vect(study_area))
+level3_values <- getLevel3(level3, geometry = vect(study_area))
+level4b_values <- getLevel4B(level4b, geometry = vect(study_area))
 ```
 
 ### 7.3 Compute Level 4B descriptive statistics within an AOI
 
 ```r
-level4b_stats <- polyStatsLevel4B(
+level4b_stats <- polyStats(
   level4b, vect(study_area), fun = mean, na.rm = TRUE
 )
 level4b_stats
 ```
-
-<p align="center"><img src="readme/fig-gedi-l4a-raster.png" width="650" alt="Rasterized GEDI biomass footprints"></p>
 
 ## 8 Simulating GEDI full-waveform data from ALS point clouds
 
@@ -780,271 +838,124 @@ metrics_noisy <- gediWFMetrics(sim_noisy)
 metrics_noisy[, .(cover, rh50, rh90, rh100, waveEnergy)]
 ```
 
-<p align="center"><img src="readme/fig7.png" width="750" alt="Original rGEDI ALS point cloud and simulated waveform"></p>
 
-<p align="center"><img src="readme/fig-simulator.png" width="800" alt="Simulated GEDI waveforms without and with noise"></p>
+## 9 Forest biomass modelling and mapping
 
-## 9 Upscaling GEDI products using AlphaEarth Embeddings
+The forest example uses the North Kaibab landscape around the 2020 Mangum
+Fire in Arizona. It covers contrasting canopy conditions and pools screened
+GEDI Level 4A observations from 2019, 2021 and 2022. Predictors are all
+64 annual AlphaEarth embedding bands, elevation, slope and sine/cosine of
+aspect. The reference response is GEDI aboveground biomass density.
 
-### 9.1 Introduction
+<p align="center"><img src="readme/fig-forest-landscape.png" width="750" alt="Landsat natural colour forest landscape with boundary, north arrow and scale"></p>
 
-This workflow models real quality-filtered GEDI Level 4A aboveground biomass
-density (`agbd`) with the 64-band AlphaEarth annual embedding plus terrain
-predictors in Google Earth Engine (GEE). It follows the ICESat2VegR sequence,
-adapted to GEDI footprints: discover Level 4A data, apply product quality
-flags, create a spatially balanced footprint sample, extract AlphaEarth and
-terrain values, select predictors, validate a Random Forest model, train the
-equivalent GEE regressor, predict the AOI, visualize it, and export GeoTIFF.
+### 9.1 Retrieve the forest inputs
 
-AlphaEarth bands `A00`–`A63` are general-purpose satellite embeddings. The
-terrain variables (`elevation`, `slope`, and `aspect`) provide explicit
-topographic context. Longitude and latitude can also be included, but their
-importance should be interpreted carefully because they may encode geographic
-location rather than transferable ecological relationships.
+The installed script fits and evaluates the model using the supplied real
+GEDI and predictor table. Its fixed spatial folds make the displayed
+validation reproducible. Set EE_PROJECT and RGEDI_FOREST_MAP=TRUE to
+retrieve a fresh GEE predictor stack and generate a prediction raster.
 
-### 9.2 Code availability
+~~~r
+Sys.setenv(EE_PROJECT = "your-google-cloud-project")
+source("inst/scripts/forest_biomass_workflow.R")
+~~~
 
-A clean end-to-end script is installed with the package and can also be opened
-directly from the repository:
+To retrieve new observations, use the finder-reader-extractor sequence for
+each year and extract predictors from the matching annual embedding.
+The GEE reference records the Level 4A Version 2.1 source.
 
-**GEDI AlphaEarth upscaling workflow:**
-`inst/scripts/upscaling_alphaearth_workflow.R`
-
-The script covers GEDI discovery and cloud reading, Level 4A quality filtering,
-spatial sampling, ancillary extraction, RFE, independent validation,
-wall-to-wall prediction, visualization, and Drive export. The separate
-`readme/build-modern-examples.R` script regenerates the figures and data
-artifacts displayed on this page.
-
-### 9.3 Install and load required packages
-
-```r
-repos <- c(
-  rgedi = "https://carlos-alberto-silva.r-universe.dev",
-  CRAN = "https://cloud.r-project.org"
+~~~r
+address <- gedifinder(
+  "GEDI04_A", ul_lat = 36.90, ul_lon = -112.60,
+  lr_lat = 36.45, lr_lon = -112.05,
+  version = "002.1", daterange = c("2019-01-01", "2020-01-01"),
+  source = "gee"
 )
-need <- c(
-  "rGEDI", "reticulate", "sf", "terra", "data.table",
-  "randomForest", "leaflet"
+dataset <- readLevel4A(address)
+footprints <- getLevel4A(
+  dataset, quality = TRUE, max_features = 1000000, max_granules = 2000,
+  cols = c("beam", "shot_number", "agbd", "solar_elevation",
+           "l4_quality_flag", "degrade_flag", "sensitivity")
 )
-missing <- need[!vapply(need, requireNamespace, logical(1), quietly = TRUE)]
-if (length(missing)) install.packages(missing, repos = repos, dependencies = TRUE)
-
-suppressPackageStartupMessages({
-  library(rGEDI)
-  library(data.table)
-  library(sf)
-  library(terra)
-})
-```
-
-### 9.4 Read AOI and define the date range
-
-```r
-aoi <- sf::st_make_valid(sf::st_transform(study_area, 4326))
-aoi_box <- sf::st_bbox(aoi)
-study_extent <- unname(aoi_box[c("xmin", "xmax", "ymin", "ymax")])
-daterange <- c("2019-04-18", "2019-04-19")
-start_year <- 2019
-end_year <- 2019
-```
-
-### 9.5 Package configuration
-
-Configure the Python environment once. Authentication remains in the standard
-user-level stores managed by Earthdata and the Earth Engine API; it is never
-placed in this README or the workflow script.
-
-```r
-rGEDI_configure(install = TRUE)
-
-# Reads NETRC or ~/.netrc. Do not put usernames or passwords in scripts.
-earthdata_login()
-
-# Set this in the R session or the user's environment, outside the repository.
-# Sys.setenv(EE_PROJECT = "your-google-cloud-project")
-ee_project <- Sys.getenv("EE_PROJECT", unset = "")
-if (!nzchar(ee_project)) stop("Set EE_PROJECT to your Google Cloud project ID.")
-ee <- ee_initialize(project = ee_project)
-```
-
-### 9.6 Build the AlphaEarth predictor stack and extract footprint values
-
-Start from the quality-filtered Level 4A footprints extracted in Section 5.2.
-The `spacedSampling()` step reduces spatial clustering before predictors are
-sampled from the 10 m AlphaEarth embedding at a 30 m working scale.
-
-```r
-level4a_aoi <- clipLevel4AGeometry(level4a_footprints, aoi)
-level4a_aoi <- level4a_aoi[is.finite(agbd) & agbd >= 0]
-
-set.seed(42)
-footprint_sample <- sampleGEDI(
-  level4a_aoi,
-  spacedSampling(size = min(500L, nrow(level4a_aoi)), radius = 25)
-)
-footprint_sample$sample_id <- seq_len(nrow(footprint_sample))
-
-stack <- ee_build_AlphaEarth_embedding_terrain_stack(
-  aoi, start_year, end_year, add_lonlat = TRUE
-)
-bands <- reticulate::py_to_r(stack$bandNames()$getInfo())
-predictor_names <- c(
-  grep("^A[0-9]{2}$", bands, value = TRUE),
-  intersect(
-    c("elevation", "slope", "aspect", "longitude", "latitude"),
-    bands
-  )
-)
-
-training <- extractEE(
-  stack$select(as.list(predictor_names)),
-  footprint_sample, scale = 30, chunk_size = 250
-)
-
-# Restore coordinates if Earth Engine returned only feature properties.
-coordinates <- as.data.table(footprint_sample)[, .(
-  sample_id, lon_lowestmode, lat_lowestmode
-)]
-if (!all(c("lon_lowestmode", "lat_lowestmode") %in% names(training))) {
-  training <- merge(training, coordinates, by = "sample_id",
-                    all.x = TRUE, sort = FALSE)
-}
-
-complete <- training[
-  complete.cases(training[, c("agbd", predictor_names), with = FALSE])
+footprints <- footprints[
+  is.finite(agbd) & agbd >= 0 & l4_quality_flag == 1 & degrade_flag == 0
 ]
-fwrite(complete, file.path(outdir, "gedi-alphaearth-training.csv"))
-head(complete[, c("agbd", head(predictor_names, 6)), with = FALSE])
-```
+~~~
 
-### 9.7 Visualize the predictor stack as false-color RGB
+### 9.2 Fit and assess the forest model
 
-```r
-rgb <- stack$select(c("A00", "A20", "A40"))
-rgb_map <- map_view(
-  list(`AlphaEarth RGB` = rgb),
-  vis = list(`AlphaEarth RGB` = list(
-    bands = c("A00", "A20", "A40"), min = -0.06, max = 0.12
-  )), aoi = aoi
-)
-rgb_map
-```
+Separate spatial blocks and acquisition years before fitting. The illustrated
+evaluation assigns 2.5 km spatial blocks to five folds. Each fold trains on
+2019/2021 observations outside the held-out blocks and predicts 2022
+observations in those blocks. The full script repeats this operation across
+all five folds.
 
-<p align="center"><img src="readme/fig-alphaearth-rgb.png" width="700" alt="AlphaEarth embedding false-color composite"></p>
-
-### 9.8 Variable selection with RFE
-
-RFE repeatedly removes the least useful predictor and chooses the smallest
-subset within one standard error of the minimum out-of-bag error. Green bars
-in the importance plot identify the retained variables.
-
-```r
-selection <- varSel(
-  complete[, ..predictor_names], complete$agbd,
-  method = "rfe", threshold = 0, seed = 42,
-  ntree = 200
-)
-best_predictors <- selection$selvars
-print(best_predictors)
-
-par(mfrow = c(1, 2), mar = c(4.2, 7, 3, 1))
-plot(selection, which = "importance")
-plot(selection, which = "rfe")
-par(mfrow = c(1, 1))
-```
-
-<p align="center"><img src="readme/fig-gedi-rfe.png" width="800" alt="GEDI AlphaEarth variable importance and recursive feature elimination"></p>
-
-### 9.9 Train/test split and fit a Random Forest model
-
-Use a reproducible 70%/30% train/test split to estimate performance on GEDI
-footprints that were not used to fit each validation model. The final model
-stored in `fit$model` is refitted with all complete observations for subsequent
-prediction.
-
-```r
+~~~r
 fit <- fit_model(
-  complete[, ..best_predictors], complete$agbd,
-  method = "randomForest", test = "split", test_size = 0.30,
-  seed = 42, ntree = 500
+  train[, ..predictor_names], train$agbd,
+  method = "randomForest", test = "none",
+  seed = 5721, ntree = 500,
+  mtry = floor(sqrt(length(predictor_names))), nodesize = 5
 )
-fit$stats_train
-fit$stats_test
+predicted <- as.numeric(predict(fit, newdata = holdout[, ..predictor_names]))
+accuracy <- fit_metrics(holdout$agbd, predicted, unit = "Mg/ha")
+~~~
 
-ok <- is.finite(fit$validation)
-plot(
-  fit$response[ok], fit$validation[ok],
-  pch = 21, bg = "#1fa187", col = "#173f5f",
-  xlab = "Observed GEDI AGBD (Mg/ha)",
-  ylab = "Holdout prediction (Mg/ha)"
+The saved demonstration pools 392 observations from 2019, 499 from 2021
+and 486 from 2022 (1,377 total). Its pooled spatial and 2022
+holdout evaluation has 486 observations, predictive RÃ‚Â² of 0.56, RMSE of
+56.5 Mg/ha and bias of 4.6 Mg/ha. Training metrics describe the final model
+fitted to all observations. These results assess agreement with GEDI
+biomass estimates at held-out locations.
+
+<p align="center"><img src="readme/fig-gedi-model-validation.png" width="850" alt="Training and spatial temporal holdout with equal axes, density colours, fitted and 1 to 1 lines"></p>
+
+One extreme training observation falls outside the 0Ã¢â‚¬â€œ750 Mg/ha display.
+The reported statistics include every observation. The
+[full-range plot](readme/fig-forest-validation-full-range.png) shows the
+complete range.
+
+### 9.3 Predict and map biomass
+
+The final model uses the same predictor names and the rGEDI predict()
+method. GEE predictor rasters can be downloaded with map_download().
+The plotting script adds the boundary, scale bar, north arrow and units.
+
+~~~r
+model <- fit_model(
+  training[, ..predictor_names], training$agbd,
+  method = "randomForest", test = "none",
+  seed = 5721, ntree = 500,
+  mtry = floor(sqrt(length(predictor_names))), nodesize = 5
 )
-abline(0, 1, col = "#d1495b", lwd = 2)
-```
-
-<p align="center"><img src="readme/fig-gedi-model-validation.png" width="600" alt="GEDI AlphaEarth biomass model validation"></p>
-
-### 9.10 Create a wall-to-wall aboveground biomass map in GEE
-
-The local holdout model above provides accuracy diagnostics. For scalable
-wall-to-wall prediction, train an equivalent regression forest inside Earth
-Engine using the same response and selected predictors.
-
-```r
-ee_columns <- c(
-  "agbd", "lon_lowestmode", "lat_lowestmode", best_predictors
+mapped <- terra::predict(
+  predictors[[predictor_names]], model, na.rm = TRUE,
+  filename = file.path(outdir, "agbd_2019.tif"), overwrite = TRUE
 )
-training_vect <- to_vect(
-  complete[, ..ee_columns],
-  lon = "lon_lowestmode", lat = "lat_lowestmode"
+~~~
+
+<p align="center"><img src="readme/fig-gedi-wall-to-wall.png" width="750" alt="Predicted North Kaibab AGBD in Mg per hectare with boundary, north arrow and scale"></p>
+
+For server-side prediction, build_ee_forest() and map_create() train and
+apply a GEE regression forest. Assess that GEE model on its own held-out
+observations before reporting its accuracy.
+
+~~~r
+training_ee <- vect_as_ee(to_vect(training, lon = "lon", lat = "lat"))
+forest_ee <- build_ee_forest(
+  training_ee, response = "agbd", predictors = predictor_names,
+  trees = 500, seed = 5721
 )
-training_ee <- vect_as_ee(training_vect)
-training_ee <- training_ee$filter(
-  ee$Filter$notNull(as.list(c("agbd", best_predictors)))
-)
-forest <- build_ee_forest(
-  training_ee, response = "agbd", predictors = best_predictors,
-  trees = 500, seed = 42
-)
-agbd_map <- map_create(forest, stack$select(as.list(best_predictors)),
-                       aoi = aoi, name = "agbd")
-```
-
-### 9.11 Visualize the aboveground biomass map
-
-```r
-agbd_view <- map_view(
-  list(`Predicted AGBD` = agbd_map),
-  vis = list(`Predicted AGBD` = list(
-    min = 0, max = 200,
-    palette = c("#f7fcf5", "#74c476", "#00441b")
-  )), aoi = aoi
-)
-agbd_view
-```
-
-<p align="center"><img src="readme/fig-gedi-wall-to-wall.png" width="700" alt="GEE wall-to-wall GEDI aboveground biomass map"></p>
-
-### 9.12 Export the map to GeoTIFF via Google Drive
-
-Use a Drive task for large exports. `start = TRUE` starts it immediately and
-`ee_check_task_status()` reports its state.
-
-```r
-drive_task <- ee_image_to_drive(
-  agbd_map,
-  description = "rGEDI_AGBD_2019", folder = "EE_Exports",
-  file_name_prefix = "rGEDI_AGBD_2019", region = aoi,
-  scale = 30, start = TRUE
-)
-ee_check_task_status(drive_task, quiet = FALSE)
-
-# Small images can be downloaded directly:
+image <- map_create(forest_ee, stack, aoi = study_extent, name = "agbd")
 map_download(
-  agbd_map, file.path(outdir, "rGEDI_AGBD_2019.tif"),
-  region = aoi, scale = 30, overwrite = TRUE
+  image, file.path(outdir, "gee_agbd.tif"),
+  region = study_extent, scale = 30, crs = "EPSG:32612"
 )
-```
+~~~
+
+readme/build-forest-example.R redraws the validation figures from the saved
+inputs. readme/build-modern-examples.R calls this workflow. Use readme/plot-forest-maps.R DATA_DIR BOUNDARY_GEOJSON to redraw the maps from the exported rasters.
 
 ## 10 Close the files
 
@@ -1077,15 +988,21 @@ close(sim_noisy)
   *Science of Remote Sensing*, 1, 100002.
 - Hancock, S. et al. (2019). The GEDI simulator: A large-footprint waveform
   lidar simulator for calibration and validation of spaceborne missions.
-  *Earth and Space Science*, 6, 294–310.
+  *Earth and Space Science*, 6, 294Ã¢â‚¬â€œ310.
 - Steven Hancock's reference implementation: <https://bitbucket.org/StevenHancock/gedisimulator/src/master/>
 - GEDI project and product guides: <https://www.earthdata.nasa.gov/data/projects/gedi>
 
 # Acknowledgements
 
 GEDI data are provided by NASA's Land Processes Distributed Active Archive
-Center. The package includes simulator work originally developed by Caio
-Hamamura and contributors to the GEDI waveform-simulation ecosystem.
+Center and Oak Ridge National Laboratory Distributed Active Archive Center.
+Steven Hancock developed the GEDI waveform simulator (Hancock et al., 2019).
+The waveform-simulation functionality in rGEDI builds on his implementation.
+We acknowledge Steven Hancock and the contributors to the GEDI
+waveform-simulation ecosystem.
+
+- Steven Hancock's reference implementation is available in the
+  [GEDI simulator repository](https://bitbucket.org/StevenHancock/gedisimulator/src/master/).
 
 # Reporting issues
 
@@ -1100,9 +1017,9 @@ error message. Never include Earthdata or Google credentials.
 citation("rGEDI")
 ```
 
-Silva, C. A. et al. (2020). rGEDI: NASA's Global Ecosystem Dynamics
-Investigation (GEDI) data visualization and processing. *Remote Sensing*,
-12(19), 3208. <https://doi.org/10.3390/rs12193208>
+Silva, C. A., and Hamamura, C. (2026). *rGEDI: NASA's Global Ecosystem
+Dynamics Investigation (GEDI) Data Visualization and Processing*.
+R package version 0.6.0. <https://doi.org/10.32614/CRAN.package.rGEDI>.
 
 # Disclaimer
 

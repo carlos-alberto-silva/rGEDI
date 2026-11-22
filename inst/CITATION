@@ -1,0 +1,9 @@
+bibentry(
+  bibtype = "Manual",
+  title = "rGEDI: NASA's Global Ecosystem Dynamics Investigation (GEDI) Data Visualization and Processing",
+  author = c(person(given = c("Carlos", "Alberto"), family = "Silva"), person("Caio", "Hamamura")),
+  year = "2026",
+  note = paste("R package version", meta$Version),
+  url = "https://CRAN.R-project.org/package=rGEDI",
+  doi = "10.32614/CRAN.package.rGEDI"
+)

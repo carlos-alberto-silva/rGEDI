@@ -59,10 +59,16 @@ getLevel1BWF<-function(level1b,shot_number){
   groups_id<-grep("BEAM\\d{4}$",gsub("/","",
                                      .gedi_list_groups(level1b, recursive = FALSE)), value = T)
 
+  shot_text <- as.character(shot_number)
+  beam_id <- suppressWarnings(as.integer(substr(shot_text, nchar(shot_text)-12L, nchar(shot_text)-11L)))
+  if (length(beam_id) == 1L && !is.na(beam_id) && beam_id >= 0L && beam_id <= 15L) {
+    preferred <- paste0("BEAM", paste(rev(as.integer(intToBits(beam_id))[1:4]), collapse = ""))
+    groups_id <- c(intersect(preferred, groups_id), setdiff(groups_id, preferred))
+  }
   i=NULL
   for ( k in groups_id){
     gid<-max(level1b[[paste0(k,"/shot_number")]][]==shot_number)
-    if (gid==1) {i=k}
+    if (gid==1) {i=k; break}
   }
 
   if(is.null(i)) {
@@ -74,9 +80,13 @@ getLevel1BWF<-function(level1b,shot_number){
   elevation_bin0<-level1b[[paste0(i,"/geolocation/elevation_bin0")]][]
   elevation_lastbin<-level1b[[paste0(i,"/geolocation/elevation_lastbin")]][]
   rx_sample_count<-level1b[[paste0(i,"/rx_sample_count")]][]
-  rx_sample_start_index<-level1b[[paste0(i,"/rx_sample_start_index")]][]
+  # HDF5 addresses fit in an R double; integer64 cannot be used with colon.
+  rx_sample_start_index<-as.numeric(level1b[[paste0(i,"/rx_sample_start_index")]][])
   rx_sample_start_index_n<-rx_sample_start_index-min(rx_sample_start_index)+1
   rxwaveform_i<-level1b[[paste0(i,"/rxwaveform")]][rx_sample_start_index_n[shot_number_id]:(rx_sample_start_index_n[shot_number_id]+rx_sample_count[shot_number_id]-1)]
+  if (length(rxwaveform_i) != as.numeric(rx_sample_count[shot_number_id])) {
+    stop("The requested waveform sample range is incomplete.", call. = FALSE)
+  }
   rxwaveform_inorm<-(rxwaveform_i-min(rxwaveform_i))/(max(rxwaveform_i)-min(rxwaveform_i))*100
   elevation_bin0_i<-elevation_bin0[shot_number_id]
   elevation_lastbin_i<-elevation_lastbin[shot_number_id]
@@ -87,3 +97,4 @@ getLevel1BWF<-function(level1b,shot_number){
   return(waveform)
  }
 }
+

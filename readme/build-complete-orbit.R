@@ -39,7 +39,7 @@ parts <- lapply(seq_along(urls), function(i) {
     h5 <- NULL
     track <- tryCatch({
       h5 <- readLevel2A(urls[i])
-      getGEDITrack(h5, every = 200)
+      getTrack(h5, every = 200)
     }, error = function(e) {
       message("Earthdata request failed: ", conditionMessage(e))
       NULL

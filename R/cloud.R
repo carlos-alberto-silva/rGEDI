@@ -166,6 +166,7 @@ names.GEDICloudH5 <- function(x) x$ls()$name
   if (!is.null(dim(value)) && length(dim(value)) > 1L) {
     value <- aperm(value, rev(seq_along(dim(value))))
   }
+  if (length(dim(value)) == 1L) dim(value) <- NULL
   value
 }
 
@@ -175,6 +176,7 @@ names.GEDICloudH5 <- function(x) x$ls()$name
   indices <- tryCatch(list(...), error = function(e) NULL)
   if (length(x$dims) == 1L && length(indices) == 1L) {
     i <- indices[[1L]]
+    if (inherits(i, "integer64")) i <- as.numeric(i)
     if (is.numeric(i) && length(i) > 0L && !anyNA(i) &&
         all(is.finite(i)) && all(i == floor(i)) &&
         min(i) >= 1 && max(i) <= min(x$dims[1L], .Machine$integer.max) &&
@@ -384,3 +386,5 @@ close.gedi.cloud_h5 <- function(con, ...) {
   con$close_all()
   invisible(NULL)
 }
+
+

@@ -2,6 +2,11 @@
 
 # rGEDI 0.6.1 (2026-11-19)
 
+* Bound cloud waveform reads to the requested samples, handle unsigned 64-bit
+  sample addresses, and return ordinary vectors for one-dimensional datasets.
+* Refresh the repository examples with real forest point clouds, matched GEDI
+  profiles, polygon characterization, reproducible modelling and editable figures.
+
 * Simplify the public workflow: `gedifinder()` chooses the source and the
   existing `readLevel*()` functions open local, Earthdata, gediDB, or supported
   Google Earth Engine references.
