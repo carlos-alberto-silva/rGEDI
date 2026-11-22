@@ -12,7 +12,8 @@ readLevel4B(x, metrics = NULL)
 \item{metrics}{Optional layer names to retain.}
 }
 \value{
-A \code{\link[terra:SpatRaster-class]{terra::SpatRaster}}.
+A \code{\link[terra:SpatRaster-class]{terra::SpatRaster}} for local or GDAL-readable data, or a
+lazy \code{gedi_gee_object} for a Google Earth Engine reference.
 }
 \description{
 Read GEDI Level 4B gridded biomass

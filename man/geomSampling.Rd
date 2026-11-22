@@ -17,7 +17,7 @@ geomSampling(size, geom, split_id = NULL, lon = NULL, lat = NULL)
 }
 \value{
 A \code{gedi_sampling_method} object containing the polygon-stratified
-sampling parameters for use with \code{\link[=sampleGEDI]{sampleGEDI()}}.
+sampling parameters for use with \code{\link[=sample]{sample()}}.
 }
 \description{
 GEDI polygon-stratified sampling specification

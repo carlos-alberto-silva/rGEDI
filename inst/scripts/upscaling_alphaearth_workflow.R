@@ -67,7 +67,7 @@ footprints <- footprints[is.finite(agbd) & agbd >= 0]
 
 # Spatially balanced sampling and predictor extraction -----------------------
 set.seed(42)
-sampled <- sampleGEDI(
+sampled <- sample(
   footprints,
   spacedSampling(size = min(500L, nrow(footprints)), radius = 25)
 )

@@ -13,6 +13,11 @@
 }
 
 .read_gedi_raster <- function(x, product, metrics = NULL) {
+  if (inherits(x, "gedi_gee_reference")) {
+    object <- .open_gee_reference(x, product)
+    if (!is.null(metrics)) object <- .gee_select(object, metrics)
+    return(object)
+  }
   if (inherits(x, "SpatRaster")) return(x)
   if (!is.character(x) || !length(x)) stop("'x' must contain raster paths or URLs.")
   r <- terra::rast(x)
@@ -30,26 +35,18 @@
 #'
 #' @param x One or more local paths, GDAL-readable URLs, or a `SpatRaster`.
 #' @param metrics Optional layer names to retain.
-#' @return A [`terra::SpatRaster-class`] for local data or a lazy
-#'   `gedi_gee_object` for a GEE reference.
-#' @seealso \url{https://daac.ornl.gov/GEDI/guides/GEDI_L3_LandSurface_Metrics_V3.html}
+#' @return A [`terra::SpatRaster-class`].
 #' @export
 readLevel3 <- function(x, metrics = NULL) .read_gedi_raster(x, "GEDI03", metrics)
 
 #' Read GEDI Level 4B gridded biomass
 #'
 #' @inheritParams readLevel3
-#' @return A [`terra::SpatRaster-class`].
+#' @return A [`terra::SpatRaster-class`] for local or GDAL-readable data, or a
+#'   lazy `gedi_gee_object` for a Google Earth Engine reference.
 #' @seealso \doi{10.3334/ORNLDAAC/2299}
 #' @export
-readLevel4B <- function(x, metrics = NULL) {
-  if (inherits(x, "gedi_gee_reference")) {
-    object <- .open_gee_reference(x, "GEDI04_B")
-    if (!is.null(metrics)) object <- .gee_select(object, metrics)
-    return(object)
-  }
-  .read_gedi_raster(x, "GEDI04_B", metrics)
-}
+readLevel4B <- function(x, metrics = NULL) .read_gedi_raster(x, "GEDI04_B", metrics)
 
 .gedi_rasters <- function(x) {
   if (inherits(x, "SpatRaster")) return(list(x))
@@ -153,39 +150,102 @@ aggregateLevel3 <- function(x, fact, fun = mean, ...) terra::aggregate(.as_gedi_
 #' @export
 aggregateLevel4B <- function(x, fact, fun = mean, ...) terra::aggregate(.as_gedi_raster(x), fact = fact, fun = fun, ...)
 
-.extract_gedi_raster <- function(x, y, ...) terra::extract(.as_gedi_raster(x), terra::vect(y), ...)
-
-#' Extract GEDI Level 3 raster values
-#' @param x A raster path or `SpatRaster`.
-#' @param y Points or polygons accepted by [terra::vect()].
-#' @param ... Passed to [terra::extract()].
-#' @return A data frame.
-#' @export
-extractLevel3 <- function(x, y, ...) .extract_gedi_raster(x, y, ...)
-
-#' Extract GEDI Level 4B raster values
-#' @inheritParams extractLevel3
-#' @return A data frame.
-#' @export
-extractLevel4B <- function(x, y, ...) .extract_gedi_raster(x, y, ...)
-
-.poly_stats_raster <- function(x, polygon, fun = mean, na.rm = TRUE, ...) {
-  terra::extract(.as_gedi_raster(x), terra::vect(polygon), fun = fun, na.rm = na.rm, ...)
+.get_gedi_raster <- function(x, geometry = NULL, metrics = NULL, xy = TRUE,
+                             cells = FALSE, na.rm = TRUE, global = FALSE,
+                             max_cells = 5e6, ...) {
+  if (inherits(x, "gedi_gee_object")) {
+    if (is.null(geometry)) {
+      stop("A geometry is required when retrieving pixels from Google Earth Engine.",
+           call. = FALSE)
+    }
+    if (!is.null(metrics)) x <- .gee_select(x, metrics)
+    return(extractEE(.unwrap_gee(x), geometry, ...))
+  }
+  raster <- .as_gedi_raster(x)
+  if (!is.null(metrics)) {
+    missing <- setdiff(metrics, names(raster))
+    if (length(missing)) stop("Unknown metric(s): ", paste(missing, collapse = ", "), call. = FALSE)
+    raster <- raster[[metrics]]
+  }
+  if (!is.null(geometry)) {
+    geometry <- if (is.numeric(geometry) && length(geometry) == 4L) {
+      terra::as.polygons(terra::ext(geometry))
+    } else {
+      terra::vect(geometry)
+    }
+    return(data.table::as.data.table(
+      terra::extract(raster, geometry, ...)
+    ))
+  }
+  requested <- terra::ncell(raster)
+  if (!isTRUE(global) && requested > max_cells) {
+    stop(
+      "The raster has ", format(requested, big.mark = ","),
+      " cells. Supply `geometry`, or set `global = TRUE` explicitly.",
+      call. = FALSE
+    )
+  }
+  data.table::as.data.table(
+    terra::as.data.frame(raster, xy = xy, cells = cells, na.rm = na.rm, ...)
+  )
 }
 
-#' Polygon summaries of GEDI Level 3 metrics
-#' @inheritParams extractLevel3
+#' Get GEDI Level 3 pixel measurements
+#'
+#' @param x A Level 3 raster returned by [readLevel3()] or a raster path.
+#' @param geometry Optional points, polygons, or extent accepted by
+#'   [terra::vect()]. A geometry is required for Google Earth Engine data.
+#' @param metrics Optional raster layers to retrieve.
+#' @param xy Include cell-center coordinates when returning all cells.
+#' @param cells Include cell numbers when returning all cells.
+#' @param na.rm Remove rows whose raster values are all missing.
+#' @param global Explicitly allow conversion of a large complete raster.
+#' @param max_cells Maximum cells converted without `global = TRUE`.
+#' @param ... Passed to [terra::extract()], [terra::as.data.frame()], or
+#'   [extractEE()].
+#' @return A [data.table::data.table] containing pixel measurements.
+#' @export
+getLevel3 <- function(x, geometry = NULL, metrics = NULL, xy = TRUE,
+                      cells = FALSE, na.rm = TRUE, global = FALSE,
+                      max_cells = 5e6, ...) {
+  .get_gedi_raster(x, geometry, metrics, xy, cells, na.rm, global, max_cells, ...)
+}
+
+#' Get GEDI Level 4B pixel measurements
+#' @inheritParams getLevel3
+#' @param x A Level 4B raster returned by [readLevel4B()], a raster path, or a
+#'   lazy Google Earth Engine Level 4B object.
+#' @return A [data.table::data.table] containing pixel-level biomass measurements.
+#' @export
+getLevel4B <- function(x, geometry = NULL, metrics = NULL, xy = TRUE,
+                       cells = FALSE, na.rm = TRUE, global = FALSE,
+                       max_cells = 5e6, ...) {
+  .get_gedi_raster(x, geometry, metrics, xy, cells, na.rm, global, max_cells, ...)
+}
+
+.poly_stats_raster <- function(x, polygon, fun = mean, na.rm = TRUE, ...) {
+  data.table::as.data.table(
+    terra::extract(.as_gedi_raster(x), terra::vect(polygon),
+                   fun = fun, na.rm = na.rm, ...)
+  )
+}
+
+#' Polygon summaries for any GEDI raster
+#'
+#' Works with native Level 3 and Level 4B products and with rasters created
+#' from Level 2A, Level 2B, or Level 4A footprint measurements.
+#'
+#' @param x A raster path or [terra::SpatRaster-class].
+#' @param polygon Polygon geometry accepted by [terra::vect()].
 #' @param fun Summary function.
 #' @param na.rm Logical.
-#' @return A data frame.
+#' @param ... Passed to [terra::extract()].
+#' @return A [data.table::data.table] with one row per polygon and summary
+#'   columns for every raster layer.
 #' @export
-polyStatsLevel3 <- function(x, y, fun = mean, na.rm = TRUE, ...) .poly_stats_raster(x, y, fun, na.rm, ...)
-
-#' Polygon summaries of GEDI Level 4B metrics
-#' @inheritParams polyStatsLevel3
-#' @return A data frame.
-#' @export
-polyStatsLevel4B <- function(x, y, fun = mean, na.rm = TRUE, ...) .poly_stats_raster(x, y, fun, na.rm, ...)
+polyStats <- function(x, polygon, fun = mean, na.rm = TRUE, ...) {
+  .poly_stats_raster(x, polygon, fun, na.rm, ...)
+}
 
 #' Plot GEDI Level 3 metrics
 #' @param x A raster path or `SpatRaster`.

@@ -132,8 +132,8 @@
 #' @param cloud_hosted Logical retained for backward compatibility. The current
 #'   GEDI collection identifiers resolve to their Earthdata Cloud holdings.
 #' @param cloud_computing Logical. When `TRUE`, authenticate with Earthdata and
-#'   return HTTPS granules marked for direct cloud streaming by [openGEDI()] or
-#'   the product-specific `readLevel*()` function.
+#'   return HTTPS granules marked for direct cloud streaming by the
+#'   product-specific `readLevel*()` function.
 #' @param persist Logical; allow Earthaccess to persist an interactive login
 #'   when `cloud_computing = TRUE`.
 #' @param return Return a URL vector or a metadata table.

@@ -14,7 +14,7 @@ accumulateGEDIGranule <- function(entry, from = NULL, to = NULL, region = NULL) 
     stop("The UTC date bounds must be increasing.")
   }
   metric <- match.arg(entry$metric, c("rh98", "agbd"))
-  cloud <- readGEDICloud(entry$url, product = entry$product)
+  cloud <- .read_gedi_cloud(entry$url, product = entry$product)
   on.exit(close(cloud))
   power <- c("BEAM0101", "BEAM0110", "BEAM1000", "BEAM1011")
   v3 <- as.integer(entry$version) == 3L
@@ -71,6 +71,59 @@ accumulateGEDIGranule <- function(entry, from = NULL, to = NULL, region = NULL) 
   .archive_cell_totals(data.table::rbindlist(pieces))
 }
 
+.accumulate_gedi_granule_spec <- function(spec) {
+  region <- if (is.null(spec$region_root)) spec$region else {
+    readGEDIArchiveRegion(spec$region_root)
+  }
+  accumulateGEDIGranule(spec$entry, spec$from, spec$to, region)
+}
+
+#' Accumulate multiple cloud granules on a common 1 km grid
+#'
+#' Each worker opens and closes one cloud granule independently. Partial cell
+#' totals are combined after all workers finish, so the result is identical to
+#' summing sequential granule results.
+#'
+#' @param entries A data frame or data table of manifest rows accepted by
+#'   [accumulateGEDIGranule()].
+#' @inheritParams accumulateGEDIGranule
+#' @param parallel Logical; process granules concurrently.
+#' @param workers Number of workers. `NULL` uses physical cores minus one,
+#'   limited by the number of granules.
+#' @return A data table of combined metric sums and footprint counts by
+#'   EASE-Grid cell. The `workers` attribute records actual concurrency.
+#' @export
+accumulateGEDIGranules <- function(entries, from = NULL, to = NULL,
+                                   region = NULL, parallel = FALSE,
+                                   workers = NULL) {
+  entries <- data.table::as.data.table(entries)
+  if (!nrow(entries)) return(.archive_cell_totals(data.table::data.table()))
+  region_root <- NULL
+  if (isTRUE(parallel) && !is.null(region)) {
+    region_root <- region$root
+    if (is.null(region_root) || !dir.exists(region_root)) {
+      stop(
+        "A parallel regional batch requires a region returned by readGEDIArchiveRegion().",
+        call. = FALSE
+      )
+    }
+  }
+  specs <- lapply(seq_len(nrow(entries)), function(i) list(
+    entry = entries[i], from = from, to = to,
+    region = if (isTRUE(parallel)) NULL else region,
+    region_root = region_root
+  ))
+  pieces <- .gedi_parallel_lapply(
+    specs,
+    function(spec) getFromNamespace(".accumulate_gedi_granule_spec", "rGEDI")(spec),
+    parallel = parallel, workers = workers
+  )
+  used_workers <- attr(pieces, "workers")
+  answer <- .archive_cell_totals(data.table::rbindlist(pieces))
+  attr(answer, "workers") <- used_workers
+  answer[]
+}
+
 #' Read the footprint boundary and forest mask for a regional archive
 #' @param root Archive directory with the optional Amazon region assets.
 #' @return A regional filter, or NULL for an archive without region assets.
@@ -81,7 +134,8 @@ readGEDIArchiveRegion <- function(root) {
   if (!file.exists(area_file) && !file.exists(mask_file)) return(NULL)
   if (!file.exists(area_file) || !file.exists(mask_file)) stop("The regional archive needs a boundary and forest mask.")
   area <- terra::vect(area_file)
-  list(bounds = as.vector(terra::ext(area)),
+  list(root = normalizePath(root, winslash = "/", mustWork = TRUE),
+       bounds = as.vector(terra::ext(area)),
        area = terra::makeValid(terra::project(area, "EPSG:6933")),
        forest = terra::rast(mask_file))
 }
@@ -98,9 +152,9 @@ readGEDIArchiveRegion <- function(root) {
   grid <- terra::rast(ncols = 250, nrows = 250, xmin = x0 * 1000, xmax = (x0 + 250) * 1000,
                       ymin = y0 * 1000, ymax = (y0 + 250) * 1000, crs = "EPSG:6933")
   cells[, `:=`(x = 1000 * (col_km + .5), y = 1000 * (row_km + .5))]
-  totals <- rasterizeGEDI(cells, "total", fun = "sum", lon = "x", lat = "y",
+  totals <- rasterize(cells, "total", fun = "sum", lon = "x", lat = "y",
                           template = grid, input_crs = "EPSG:6933")
-  counts <- rasterizeGEDI(cells, "shots", fun = "sum", lon = "x", lat = "y",
+  counts <- rasterize(cells, "shots", fun = "sum", lon = "x", lat = "y",
                           template = grid, input_crs = "EPSG:6933")
   stopifnot(terra::global(counts, "sum", na.rm = TRUE)[1L, 1L] == sum(cells$shots))
   stats <- c(totals / counts, counts, totals)

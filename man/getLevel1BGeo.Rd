@@ -7,7 +7,9 @@
 getLevel1BGeo(
   level1b,
   select = c("elevation_bin0", "elevation_lastbin"),
-  beams = NULL
+  beams = NULL,
+  parallel = FALSE,
+  workers = NULL
 )
 }
 \arguments{
@@ -17,6 +19,10 @@ getLevel1BGeo(
 by default it will extract \emph{latitude_bin0}, \emph{latitude_lastbin}, \emph{longitude_bin0}, \emph{longitude_lastbin}, and \emph{shot_number}. See details for more options.}
 
 \item{beams}{Optional beam names. \code{NULL} reads every beam.}
+
+\item{parallel}{Logical; process a multi-granule collection concurrently.}
+
+\item{workers}{Number of parallel workers, or \code{NULL} for automatic selection.}
 }
 \value{
 Returns an S4 object of class \code{\link[data.table:data.table]{data.table::data.table}} containing the GEDI Full Waveform Geolocations

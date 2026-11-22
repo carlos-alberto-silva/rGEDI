@@ -7,18 +7,16 @@
 readLevel4A(level4Apath)
 }
 \arguments{
-\item{level4Apath}{Local file path or Earthdata Cloud URL pointing to a
-GEDI04_A HDF5 granule, or a gediDB reference returned by \code{\link[=gedifinder]{gedifinder()}}.}
+\item{level4Apath}{One or more local paths or Earthdata Cloud URLs pointing
+to GEDI04_A HDF5 granules, or a gediDB reference returned by \code{\link[=gedifinder]{gedifinder()}}.}
 }
 \value{
 A \code{\link[=gedi.level4a-class]{gedi.level4a}} object for HDF5 input, or a lazy
-\code{gedidb_level4a} object for a gediDB reference. Close HDF5 inputs with
+\code{gedidb_level4a} object for a gediDB reference. Multiple paths return a
+lazy collection consumed by \code{\link[=getLevel4A]{getLevel4A()}}. Close HDF5 inputs with
 \code{\link[=close]{close()}} and cached gediDB providers with \code{\link[=gedidb_disconnect]{gedidb_disconnect()}}.
 }
 \description{
 Opens a GEDI04_A HDF5 granule containing footprint-level aboveground
 biomass density estimates.
-}
-\seealso{
-\url{https://daac.ornl.gov/GEDI/guides/GEDI_L4A_AGB_Density_V3.html}
 }

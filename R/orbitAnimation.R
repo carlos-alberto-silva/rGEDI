@@ -69,7 +69,7 @@ plot_gedi_orbit_animation <- function(
     stop("`earth_rotation_speed` must be between 0 and 20.", call. = FALSE)
   }
 
-  output <- as.data.frame(getGEDITrack(
+  output <- as.data.frame(getTrack(
     x, lon = lon, lat = lat, time = time, track = track,
     beams = beams, every = every, segment_gaps = FALSE
   ))
@@ -129,8 +129,8 @@ plot_gedi_orbit_animation <- function(
 #'   lat_lowestmode = seq(-13.8, -13.7, length.out = 10),
 #'   delta_time = seq_len(10), beam = "BEAM0000"
 #' )
-#' getGEDITrack(shots, every = 2)
-getGEDITrack <- function(x, lon = NULL, lat = NULL, time = NULL, track = NULL,
+#' getTrack(shots, every = 2)
+getTrack <- function(x, lon = NULL, lat = NULL, time = NULL, track = NULL,
                          beams = NULL, every = 1L, segment_gaps = TRUE) {
   points <- .gedi_orbit_points(x, beams = beams)
   choices <- names(points)

@@ -7,11 +7,12 @@
 readLevel1B(level1Bpath)
 }
 \arguments{
-\item{level1Bpath}{Local file path or Earthdata Cloud URL pointing to a
-GEDI Level 1B HDF5 granule.}
+\item{level1Bpath}{One or more local paths or Earthdata Cloud URLs pointing
+to GEDI Level 1B HDF5 granules.}
 }
 \value{
-Returns an S4 object of class \code{\link[=gedi.level1b-class]{gedi.level1b}} containing GEDI level1B data.
+A \code{\link[=gedi.level1b-class]{gedi.level1b}} object for one granule, or a lazy
+multi-granule collection consumed by \code{\link[=getLevel1BGeo]{getLevel1BGeo()}} and \code{\link[=getLevel1BWF]{getLevel1BWF()}}.
 }
 \description{
 This function reads GEDI level1B products: geolocated Waveforms

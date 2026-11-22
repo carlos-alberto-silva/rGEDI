@@ -56,11 +56,22 @@
 #'head(level2AM)
 #'
 #'close(level2a)
+#' @param parallel Logical; process a multi-granule collection concurrently.
+#' @param workers Number of parallel workers, or `NULL` for automatic selection.
 #'@export
 getLevel2AM<-function(level2a, beams = NULL, include_rh = TRUE, rh = NULL,
                       quality = FALSE, collect = TRUE,
                       max_features = 100000L, chunk_size = 5000L,
-                      max_granules = 200L){
+                      max_granules = 200L, parallel = FALSE, workers = NULL){
+  if (inherits(level2a, "gedi_granule_collection")) {
+    return(.extract_gedi_collection(
+      level2a,
+      list(beams = beams, include_rh = include_rh, rh = rh, quality = quality,
+           collect = collect, max_features = max_features,
+           chunk_size = chunk_size, max_granules = max_granules),
+      parallel, workers
+    ))
+  }
   if (inherits(level2a, "gedi_gee_object")) {
     if (!is.null(beams)) warning("'beams' is ignored for a Google Earth Engine query; filter the returned table instead.")
     variables <- c(

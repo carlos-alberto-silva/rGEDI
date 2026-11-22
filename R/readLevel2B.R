@@ -4,10 +4,11 @@
 #'
 #'@usage readLevel2B(level2Bpath)
 #'
-#'@param level2Bpath Local file path or Earthdata Cloud URL pointing to a
-#'GEDI Level 2B HDF5 granule, or a gediDB reference returned by [gedifinder()].
+#'@param level2Bpath One or more local paths or Earthdata Cloud URLs pointing
+#'to GEDI Level 2B HDF5 granules, or a gediDB reference returned by [gedifinder()].
 #'
-#'@return Returns an S4 object of class [`gedi.level2b-class`] containing GEDI level2B data.
+#'@return A [`gedi.level2b-class`] object for one HDF5 granule, a lazy remote
+#'object, or a multi-granule collection consumed by [getLevel2BVPM()].
 #'
 #'
 #'@examples
@@ -27,6 +28,9 @@
 #'@import hdf5r
 #'@export
 readLevel2B <-function(level2Bpath) {
+  if (is.character(level2Bpath) && length(level2Bpath) > 1L) {
+    return(.new_gedi_granule_collection(level2Bpath, "GEDI02_B"))
+  }
   if (inherits(level2Bpath, "gedi_gee_reference")) {
     return(.open_gee_reference(level2Bpath, "GEDI02_B"))
   }

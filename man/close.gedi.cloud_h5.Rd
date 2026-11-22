@@ -7,7 +7,8 @@
 \method{close}{gedi.cloud_h5}(con, ...)
 }
 \arguments{
-\item{con}{A \code{gedi.cloud_h5} object returned by \code{\link[=readGEDICloud]{readGEDICloud()}}.}
+\item{con}{A cloud-backed GEDI HDF5 object returned by a \verb{readLevel*()}
+function.}
 
 \item{...}{Reserved for compatibility with \code{\link[=close]{close()}}.}
 }

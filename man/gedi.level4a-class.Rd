@@ -14,7 +14,3 @@ Class for GEDI Level 4A footprint biomass data
 \item{\code{h5}}{An open local or cloud-backed HDF5 connection containing a
 GEDI04_A granule.}
 }}
-
-\seealso{
-\url{https://daac.ornl.gov/GEDI/guides/GEDI_L4A_AGB_Density_V3.html}
-}

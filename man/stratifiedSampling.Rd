@@ -15,7 +15,7 @@ stratifiedSampling(size, variable, breaks = NULL)
 }
 \value{
 A \code{gedi_sampling_method} object containing the attribute-stratified
-sampling parameters for use with \code{\link[=sampleGEDI]{sampleGEDI()}}.
+sampling parameters for use with \code{\link[=sample]{sample()}}.
 }
 \description{
 GEDI attribute-stratified sampling specification

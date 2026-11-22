@@ -29,6 +29,8 @@ gediWFSimulator(
   noise = 0,
   keepOld = FALSE,
   seed = NULL,
+  parallel = FALSE,
+  workers = NULL,
   ...
 )
 }
@@ -86,6 +88,11 @@ of the waveform maximum. Zero leaves the waveform unchanged.}
 \item{keepOld}{Do not overwrite an existing output file.}
 
 \item{seed}{Optional random seed.}
+
+\item{parallel}{Logical; simulate independent footprint centres concurrently.}
+
+\item{workers}{Number of parallel workers. \code{NULL} uses physical cores minus
+one, limited by the number of footprints.}
 
 \item{...}{Compatibility arguments accepted from the original simulator.}
 }

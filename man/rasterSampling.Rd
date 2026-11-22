@@ -15,7 +15,7 @@ rasterSampling(size, raster, lon = NULL, lat = NULL)
 }
 \value{
 A \code{gedi_sampling_method} object containing the raster-stratified
-sampling parameters for use with \code{\link[=sampleGEDI]{sampleGEDI()}}.
+sampling parameters for use with \code{\link[=sample]{sample()}}.
 }
 \description{
 GEDI raster-stratified sampling specification

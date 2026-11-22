@@ -44,6 +44,17 @@
 #'
 getLevel1BWF<-function(level1b,shot_number){
 
+  if (inherits(level1b, "gedi_granule_collection")) {
+    for (source in level1b$sources) {
+      object <- readLevel1B(source)
+      result <- tryCatch(getLevel1BWF(object, shot_number), error = identity)
+      close(object)
+      if (!inherits(result, "error")) return(result)
+    }
+    stop("Shot number ", shot_number, " was not found in the granule collection.",
+         call. = FALSE)
+  }
+
   level1b<-level1b@h5
   groups_id<-grep("BEAM\\d{4}$",gsub("/","",
                                      .gedi_list_groups(level1b, recursive = FALSE)), value = T)

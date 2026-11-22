@@ -180,7 +180,14 @@ gediEE <- function(product = names(.gedi_ee_catalog), start_date = NULL,
     }
     ids <- reticulate::py_to_r(index$aggregate_array("table_id")$getInfo())
     collections <- lapply(ids, ee$FeatureCollection)
-    collection <- Reduce(function(x, y) x$merge(y), collections)
+    # Keep large query graphs shallow when merging many granule tables.
+    while (length(collections) > 1L) {
+      collections <- lapply(seq.int(1L, length(collections), by = 2L), function(i) {
+        if (i == length(collections)) return(collections[[i]])
+        collections[[i]]$merge(collections[[i + 1L]])
+      })
+    }
+    collection <- collections[[1L]]
     if (!is.null(geom)) collection <- collection$filterBounds(geom)
     if (isTRUE(quality)) {
       flag <- if (product == "GEDI04_A") "l4_quality_flag" else "quality_flag"

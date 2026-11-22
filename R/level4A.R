@@ -14,14 +14,17 @@
 #' Opens a GEDI04_A HDF5 granule containing footprint-level aboveground
 #' biomass density estimates.
 #'
-#' @param level4Apath Local file path or Earthdata Cloud URL pointing to a
-#'   GEDI04_A HDF5 granule, or a gediDB reference returned by [gedifinder()].
+#' @param level4Apath One or more local paths or Earthdata Cloud URLs pointing
+#'   to GEDI04_A HDF5 granules, or a gediDB reference returned by [gedifinder()].
 #' @return A [`gedi.level4a-class`] object for HDF5 input, or a lazy
-#'   `gedidb_level4a` object for a gediDB reference. Close HDF5 inputs with
+#'   `gedidb_level4a` object for a gediDB reference. Multiple paths return a
+#'   lazy collection consumed by [getLevel4A()]. Close HDF5 inputs with
 #'   [close()] and cached gediDB providers with [gedidb_disconnect()].
-#' @seealso \url{https://daac.ornl.gov/GEDI/guides/GEDI_L4A_AGB_Density_V3.html}
 #' @export
 readLevel4A <- function(level4Apath) {
+  if (is.character(level4Apath) && length(level4Apath) > 1L) {
+    return(.new_gedi_granule_collection(level4Apath, "GEDI04_A"))
+  }
   if (inherits(level4Apath, "gedi_gee_reference")) {
     return(.open_gee_reference(level4Apath, "GEDI04_A"))
   }
@@ -70,13 +73,24 @@ readLevel4A <- function(level4Apath) {
 #' @param max_features Maximum GEE footprints allowed when collecting.
 #' @param chunk_size Number of GEE features transferred per request.
 #' @param max_granules Maximum vector granules merged by GEE.
+#' @param parallel Logical; process a multi-granule collection concurrently.
+#' @param workers Number of parallel workers, or `NULL` for automatic selection.
 #' @return A [data.table::data.table] with one row per footprint, or a lazy
 #'   remote query object when `collect = FALSE`.
 #' @export
 getLevel4A <- function(level4a, cols = .level4a_default_columns,
                        quality = FALSE, beams = NULL, collect = TRUE,
                        max_features = 100000L, chunk_size = 5000L,
-                       max_granules = 200L) {
+                       max_granules = 200L, parallel = FALSE, workers = NULL) {
+  if (inherits(level4a, "gedi_granule_collection")) {
+    return(.extract_gedi_collection(
+      level4a,
+      list(cols = cols, quality = quality, beams = beams, collect = collect,
+           max_features = max_features, chunk_size = chunk_size,
+           max_granules = max_granules),
+      parallel, workers
+    ))
+  }
   if (inherits(level4a, "gedi_gee_object")) {
     if (!is.null(beams)) warning("'beams' is ignored for a Google Earth Engine query; filter the returned table instead.")
     requested <- if (is.null(cols) || identical(cols, .level4a_default_columns)) {
@@ -378,19 +392,6 @@ gridStatsLevel4A <- function(level4A, metric = "agbd", fun = mean, res = 0.01, .
 polyStatsLevel4A <- function(level4A, polygon, metric = "agbd", fun = mean,
                              id = NULL, ...) {
   .poly_gedi_points(level4A, polygon, "lon_lowestmode", "lat_lowestmode", metric, fun, id, ...)
-}
-
-#' Rasterize GEDI Level 4A footprints
-#'
-#' @inheritParams gridStatsLevel4A
-#' @param filename Optional output GeoTIFF path.
-#' @param overwrite Logical; overwrite `filename` when it exists.
-#' @return A [`terra::SpatRaster-class`].
-#' @export
-rasterizeLevel4A <- function(level4A, metric = "agbd", fun = mean, res = 0.01,
-                             filename = "", overwrite = FALSE, ...) {
-  r <- gridStatsLevel4A(level4A, metric, fun, res, ...)
-  if (nzchar(filename)) terra::writeRaster(r, filename, overwrite = overwrite) else r
 }
 
 #' Plot GEDI Level 4A footprint biomass

@@ -95,8 +95,20 @@ fit_model <- function(x, y, method = c("randomForest", "lm"),
     test = test), class = "gedi_model")
 }
 
+#' Predict from a fitted GEDI model
+#'
+#' @param object A model returned by [fit_model()].
+#' @param newdata Predictor table containing the model's required columns.
+#' @param ... Passed to the underlying fitted model's [stats::predict()] method.
+#' @return A numeric vector with one prediction per row of `newdata`.
+#' @method predict gedi_model
 #' @export
-predict.gedi_model <- function(object, newdata, ...) stats::predict(object$model, newdata = as.data.frame(newdata)[, object$predictors, drop = FALSE], ...)
+predict.gedi_model <- function(object, newdata, ...) {
+  stats::predict(
+    object$model,
+    newdata = as.data.frame(newdata)[, object$predictors, drop = FALSE], ...
+  )
+}
 
 #' Select predictor variables for a GEDI model
 #' @param x Predictor data frame.
@@ -197,19 +209,6 @@ plot.gedi_var_selection <- function(x, which = c("importance", "rfe"), ...) {
   invisible(x)
 }
 
-#' Predict GEDI footprint values
-#' @param model A `gedi_model` or fitted R model.
-#' @param data Predictor table.
-#' @param name Output column name.
-#' @return A data table containing input data and predictions.
-#' @export
-predictGEDI <- function(model, data, name = "prediction") {
-  pred <- if (inherits(model, "gedi_model")) predict(model, data) else stats::predict(model, newdata = as.data.frame(data))
-  ans <- data.table::as.data.table(data)
-  ans[, (name) := as.numeric(pred)]
-  ans
-}
-
 #' Predict values and write them to HDF5
 #' @param model A `gedi_model` or fitted R model.
 #' @param data Predictor table.
@@ -218,37 +217,22 @@ predictGEDI <- function(model, data, name = "prediction") {
 #' @return Invisibly returns `output`.
 #' @export
 predictGEDIH5 <- function(model, data, output, dataset = "prediction") {
-  values <- predictGEDI(model, data, dataset)[[dataset]]
+  values <- if (inherits(model, "gedi_model")) {
+    predict(model, newdata = data)
+  } else {
+    stats::predict(model, newdata = as.data.frame(data))
+  }
   h5 <- hdf5r::H5File$new(output, mode = "w"); on.exit(h5$close_all(), add = TRUE)
-  h5[[dataset]] <- values
+  h5[[dataset]] <- as.numeric(values)
   invisible(output)
 }
 
-#' Rasterize GEDI footprint data
-#' @param x GEDI footprint table, a lazy `gedi_gee_object`, or a lazy
-#'   `gedidb_query` returned by an extractor with `collect = FALSE`.
-#' @param metric Metric column.
-#' @param res Resolution in decimal degrees for local data, or metres for a
-#'   Google Earth Engine query, when no template is supplied.
-#' @param fun Aggregation function.
-#' @param lon,lat Optional coordinate columns.
-#' @param ... Passed to [terra::rasterize()].
-#' @param template Optional [terra::rast()] grid, including a projected grid.
-#' @param input_crs Coordinate reference system of the footprint columns.
-#' @param output_crs Output grid CRS for Google Earth Engine processing.
-#' @param parallel Logical; process lazy gediDB spatial tiles concurrently.
-#' @param workers Number of parallel gediDB workers. `NULL` uses the available
-#'   physical cores minus one, limited by the number of tiles.
-#' @param tile_size Width and height of each gediDB query tile in degrees.
-#' @param filename Optional disk-backed raster filename. It is required for a
-#'   lazy gediDB grid exceeding 100 million cells.
-#' @return A [`terra::SpatRaster-class`] for local data, or a lazy
-#'   `gedi_gee_object` containing an Earth Engine image for GEE data.
-#' @export
-rasterizeGEDI <- function(x, metric, res = 0.01, fun = mean, lon = NULL, lat = NULL, ...,
-                          template = NULL, input_crs = "EPSG:4326",
-                          output_crs = "EPSG:3857", parallel = FALSE,
-                          workers = NULL, tile_size = 5, filename = "") {
+# Rasterize a GEDI table or lazy query. Kept internal so the public
+# rasterize() function can also forward standard spatial objects to terra.
+.rasterize_gedi <- function(x, metric, res = 0.01, fun = mean, lon = NULL, lat = NULL, ...,
+                            template = NULL, input_crs = "EPSG:4326",
+                            output_crs = "EPSG:3857", parallel = FALSE,
+                            workers = NULL, tile_size = 5, filename = "") {
   if (inherits(x, "gedidb_query")) {
     if (missing(res)) res <- 1000
     if (missing(output_crs)) output_crs <- "EPSG:6933"
@@ -282,4 +266,25 @@ rasterizeGEDI <- function(x, metric, res = 0.01, fun = mean, lon = NULL, lat = N
          fun = fun, res = res, template = template, input_crs = input_crs),
     dots
   ))
+}
+
+#' Rasterize GEDI measurements or standard terra objects
+#'
+#' GEDI footprint tables and lazy gediDB or Google Earth Engine queries use
+#' rGEDI's metric-aware implementation. Other inputs are forwarded unchanged
+#' to [terra::rasterize()].
+#'
+#' @param x A GEDI footprint table, lazy GEDI query, or an object supported by
+#'   [terra::rasterize()].
+#' @param ... For GEDI inputs, supply `metric`, `res`, `fun`, optional `lon`
+#'   and `lat`, `template`, `input_crs`, `output_crs`, parallel controls, and
+#'   an optional `filename`. For other inputs these arguments are passed
+#'   unchanged to [terra::rasterize()].
+#' @return A [terra::SpatRaster-class] or lazy `gedi_gee_object`.
+#' @export
+rasterize <- function(x, ...) {
+  if (inherits(x, c("data.frame", "data.table", "gedidb_query", "gedi_gee_object"))) {
+    return(.rasterize_gedi(x, ...))
+  }
+  terra::rasterize(x, ...)
 }

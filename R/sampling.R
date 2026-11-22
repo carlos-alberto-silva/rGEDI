@@ -15,7 +15,7 @@
 #' GEDI random sampling specification
 #' @param size Number or fraction of observations to select.
 #' @return A `gedi_sampling_method` object containing the method name and
-#'   requested sample size for use with [sampleGEDI()].
+#'   requested sample size for use with [sample()].
 #' @export
 randomSampling <- function(size) .sampling_method("random", size = size)
 
@@ -24,7 +24,7 @@ randomSampling <- function(size) .sampling_method("random", size = size)
 #' @param radius Minimum separation in meters.
 #' @param lon,lat Optional coordinate column names.
 #' @return A `gedi_sampling_method` object containing the minimum-distance
-#'   sampling parameters for use with [sampleGEDI()].
+#'   sampling parameters for use with [sample()].
 #' @export
 spacedSampling <- function(size, radius, lon = NULL, lat = NULL) .sampling_method("spaced", size = size, radius = radius, lon = lon, lat = lat)
 
@@ -33,7 +33,7 @@ spacedSampling <- function(size, radius, lon = NULL, lat = NULL) .sampling_metho
 #' @param grid_size Grid size in decimal degrees.
 #' @param lon,lat Optional coordinate column names.
 #' @return A `gedi_sampling_method` object containing the grid-stratified
-#'   sampling parameters for use with [sampleGEDI()].
+#'   sampling parameters for use with [sample()].
 #' @export
 gridSampling <- function(size, grid_size, lon = NULL, lat = NULL) .sampling_method("grid", size = size, grid_size = grid_size, lon = lon, lat = lat)
 
@@ -42,7 +42,7 @@ gridSampling <- function(size, grid_size, lon = NULL, lat = NULL) .sampling_meth
 #' @param variable Column used as strata, or a numeric column to bin.
 #' @param breaks Optional breaks for a numeric variable.
 #' @return A `gedi_sampling_method` object containing the attribute-stratified
-#'   sampling parameters for use with [sampleGEDI()].
+#'   sampling parameters for use with [sample()].
 #' @export
 stratifiedSampling <- function(size, variable, breaks = NULL) .sampling_method("stratified", size = size, variable = variable, breaks = breaks)
 
@@ -52,7 +52,7 @@ stratifiedSampling <- function(size, variable, breaks = NULL) .sampling_method("
 #' @param split_id Optional polygon ID column.
 #' @param lon,lat Optional coordinate column names.
 #' @return A `gedi_sampling_method` object containing the polygon-stratified
-#'   sampling parameters for use with [sampleGEDI()].
+#'   sampling parameters for use with [sample()].
 #' @export
 geomSampling <- function(size, geom, split_id = NULL, lon = NULL, lat = NULL) .sampling_method("geometry", size = size, geom = geom, split_id = split_id, lon = lon, lat = lat)
 
@@ -61,7 +61,7 @@ geomSampling <- function(size, geom, split_id = NULL, lon = NULL, lat = NULL) .s
 #' @param raster A categorical `SpatRaster`.
 #' @param lon,lat Optional coordinate column names.
 #' @return A `gedi_sampling_method` object containing the raster-stratified
-#'   sampling parameters for use with [sampleGEDI()].
+#'   sampling parameters for use with [sample()].
 #' @export
 rasterSampling <- function(size, raster, lon = NULL, lat = NULL) .sampling_method("raster", size = size, raster = raster, lon = lon, lat = lat)
 
@@ -75,13 +75,7 @@ rasterSampling <- function(size, raster, lon = NULL, lat = NULL) .sampling_metho
   if (!take) integer() else base::sample(index, take)
 }
 
-#' Sample GEDI footprint observations
-#'
-#' @param x A data frame or data table of GEDI footprints.
-#' @param method A specification returned by one of the sampling constructors.
-#' @return A [data.table::data.table].
-#' @export
-sampleGEDI <- function(x, method) {
+.sample_gedi <- function(x, method) {
   if (!inherits(x, c("data.frame", "data.table"))) stop("'x' must be a GEDI footprint table.")
   if (!inherits(method, "gedi_sampling_method")) stop("'method' must be a GEDI sampling specification.")
   dt <- data.table::as.data.table(x)
@@ -136,6 +130,31 @@ sampleGEDI <- function(x, method) {
     return(dt[selected])
   }
   stop("Unknown GEDI sampling method.")
+}
+
+#' Sample GEDI footprints or ordinary R objects
+#'
+#' A GEDI footprint table paired with a GEDI sampling specification uses the
+#' spatial sampling implementation. All other calls are forwarded unchanged
+#' to [base::sample()].
+#'
+#' @param x A GEDI footprint table or an object accepted by [base::sample()].
+#' @param ... A `gedi_sampling_method` object for GEDI tables, or the standard
+#'   `size`, `replace`, and `prob` arguments for [base::sample()].
+#' @return A [data.table::data.table] for GEDI sampling; otherwise the value
+#'   returned by [base::sample()].
+#' @export
+sample <- function(x, ...) {
+  args <- list(...)
+  method <- if ("method" %in% names(args)) args[["method"]] else if (length(args)) args[[1L]] else NULL
+  if (inherits(x, c("data.frame", "data.table")) &&
+      inherits(method, "gedi_sampling_method")) {
+    if (length(args) != 1L) {
+      stop("Supply exactly one GEDI sampling specification.", call. = FALSE)
+    }
+    return(.sample_gedi(x, method))
+  }
+  base::sample(x, ...)
 }
 
 #' Convert GEDI footprints to a spatial vector

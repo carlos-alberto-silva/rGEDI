@@ -68,6 +68,14 @@ test_that("GEE readers collect footprints or keep them lazy", {
   expect_true(all(c("shot_number", "agbd", "agbd_se") %in% names(biomass)))
 })
 
+test_that("Level 4B reader accepts its GEE raster reference", {
+  old <- options(rGEDI.gee_backend = make_gee_backend())
+  on.exit(options(old), add = TRUE)
+
+  l4b <- readLevel4B(gedifinder("GEDI04_B", 10, 20, 9, 21, source = "gee"))
+  expect_s3_class(l4b, "gedi_gee_object")
+})
+
 test_that("generic clip and rasterization preserve lazy GEE processing", {
   old <- options(rGEDI.gee_backend = make_gee_backend())
   on.exit(options(old), add = TRUE)
@@ -77,7 +85,7 @@ test_that("generic clip and rasterization preserve lazy GEE processing", {
   expect_s3_class(clipped, "gedi_gee_object")
   expect_s3_class(clipped$object, "mock_ee_clip")
 
-  image <- rasterizeGEDI(getLevel2AM(l2a, rh = 98, collect = FALSE), "rh98")
+  image <- rasterize(getLevel2AM(l2a, rh = 98, collect = FALSE), "rh98")
   expect_s3_class(image, "gedi_gee_object")
   expect_identical(image$kind, "image")
   expect_identical(image$object$res, 1000)

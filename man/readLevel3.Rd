@@ -12,12 +12,8 @@ readLevel3(x, metrics = NULL)
 \item{metrics}{Optional layer names to retain.}
 }
 \value{
-A \code{\link[terra:SpatRaster-class]{terra::SpatRaster}} for local data or a lazy
-\code{gedi_gee_object} for a GEE reference.
+A \code{\link[terra:SpatRaster-class]{terra::SpatRaster}}.
 }
 \description{
 Read GEDI Level 3 gridded metrics
-}
-\seealso{
-\url{https://daac.ornl.gov/GEDI/guides/GEDI_L3_LandSurface_Metrics_V3.html}
 }

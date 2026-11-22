@@ -81,8 +81,8 @@ test_that("gediDB RH98 and L4A data rasterize on a 1 km grid", {
     terra::ext(bounds), resolution = 1000, crs = "EPSG:6933"
   )
 
-  rh98_grid <- rasterizeGEDI(l2a, "rh98", template = template)
-  agbd_grid <- rasterizeGEDI(l4a, "agbd", template = template)
+  rh98_grid <- rasterize(l2a, "rh98", template = template)
+  agbd_grid <- rasterize(l4a, "agbd", template = template)
   expect_s4_class(rh98_grid, "SpatRaster")
   expect_s4_class(agbd_grid, "SpatRaster")
   expect_equal(terra::res(rh98_grid), c(1000, 1000))
@@ -103,7 +103,7 @@ test_that("lazy gediDB queries rasterize by spatial tiles", {
   lazy <- getLevel2AM(readLevel2A(ref), rh = 98, quality = TRUE, collect = FALSE)
   expect_s3_class(lazy, "gedidb_query")
 
-  grid <- rasterizeGEDI(
+  grid <- rasterize(
     lazy, "rh98", res = 1000, output_crs = "EPSG:6933",
     tile_size = 0.05, parallel = FALSE
   )
@@ -113,4 +113,12 @@ test_that("lazy gediDB queries rasterize by spatial tiles", {
   expect_identical(attr(grid, "gedidb_tiles"), 4L)
   expect_identical(attr(grid, "gedidb_workers"), 1L)
   expect_equal(attr(grid, "gedidb_shots"), 12)
+
+  # Counts must conserve observations across retrieval tiles, enabling
+  # correctly weighted means when spatial exports are assembled.
+  for (count_fun in list("length", base::length)) {
+    counts <- rasterize(lazy, "rh98", fun = count_fun, res = 1000,
+                        output_crs = "EPSG:6933", tile_size = 0.05)
+    expect_equal(sum(terra::values(counts), na.rm = TRUE), 12)
+  }
 })

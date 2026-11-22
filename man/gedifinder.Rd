@@ -43,8 +43,8 @@ GEDI collection identifiers resolve to their Earthdata Cloud holdings.}
 \item{page_size}{CMR page size.}
 
 \item{cloud_computing}{Logical. When \code{TRUE}, authenticate with Earthdata and
-return HTTPS granules marked for direct cloud streaming by \code{\link[=openGEDI]{openGEDI()}} or
-the product-specific \verb{readLevel*()} function.}
+return HTTPS granules marked for direct cloud streaming by the
+product-specific \verb{readLevel*()} function.}
 
 \item{persist}{Logical; allow Earthaccess to persist an interactive login
 when \code{cloud_computing = TRUE}.}

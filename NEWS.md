@@ -2,6 +2,20 @@
 
 # rGEDI 0.6.1 (2026-11-19)
 
+* Simplify the public workflow: `gedifinder()` chooses the source and the
+  existing `readLevel*()` functions open local, Earthdata, gediDB, or supported
+  Google Earth Engine references.
+* Let the existing Level 1B, 2A, 2B, and 4A readers and getters process one or
+  multiple granules, with parallel controls on multi-granule extraction. Add
+  `getLevel3()`, `getLevel4B()`, and the raster-wide `polyStats()` interface.
+* Standardize modeling on `predict()` and rasterization on `rasterize()`.
+  Remove the superseded `readGEDICloud()`, `extractGEDIGranules()`,
+  `extractLevel3()`, `extractLevel4B()`, `polyStatsLevel3()`,
+  `polyStatsLevel4B()`, `predictGEDI()`, `rasterizeGEDI()`, and
+  `rasterizeLevel4A()` exports; `rasterize()` now covers Level 4A tables.
+* Use `sample()` for GEDI-aware or ordinary base-R sampling and `getTrack()`
+  for standardized orbit tracks. Keep `gediDownload()` as the download entry
+  point and remove the redundant `openGEDI()` wrapper.
 * Unify Earthdata, gediDB, and Google Earth Engine searches through
   `gedifinder(source = ...)`, with service availability checks and source and
   release provenance.
@@ -10,6 +24,9 @@
 * Add analysis-ready GEDI Version 3 footprint queries through gediDB and
   projected-template gridding for Level 2A RH and Level 4A biomass metrics,
   including opt-in parallel spatial tiles and disk-backed output.
+* Add the same deterministic `parallel`/`workers` interface to safe
+  multi-granule extraction, waveform simulation, and cloud-archive batches;
+  workers never share open HDF5 handles.
 * Add multi-year GEDI archive helpers and tests for remote backends.
 
 # rGEDI 0.6.0 (2026-10-09)

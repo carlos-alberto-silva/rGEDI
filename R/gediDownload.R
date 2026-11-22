@@ -92,10 +92,6 @@ gediDownload<-function(filepath, outdir = NULL, overwrite = FALSE, buffer_size =
   invisible(normalizePath(downloaded, winslash = "/", mustWork = TRUE))
 }
 
-#' @rdname gediDownload
-#' @export
-downloadGEDI <- gediDownload
-
 gediDownloadFile = function(url, outdir, overwrite, buffer_size, netrc, timeout) {
   filename <- file.path(outdir, basename(sub("[?#].*$", "", url))) # Keep original filename
   if((! overwrite) && file.exists(filename)) {

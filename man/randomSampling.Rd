@@ -11,7 +11,7 @@ randomSampling(size)
 }
 \value{
 A \code{gedi_sampling_method} object containing the method name and
-requested sample size for use with \code{\link[=sampleGEDI]{sampleGEDI()}}.
+requested sample size for use with \code{\link[=sample]{sample()}}.
 }
 \description{
 GEDI random sampling specification

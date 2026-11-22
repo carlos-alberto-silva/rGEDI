@@ -113,8 +113,17 @@
 #'head(level1bGeo)
 #'
 #'close(level1b)
+#' @param parallel Logical; process a multi-granule collection concurrently.
+#' @param workers Number of parallel workers, or `NULL` for automatic selection.
 #'@export
-getLevel1BGeo<-function(level1b,select=c("elevation_bin0", "elevation_lastbin"), beams = NULL) {
+getLevel1BGeo<-function(level1b,select=c("elevation_bin0", "elevation_lastbin"), beams = NULL,
+                        parallel = FALSE, workers = NULL) {
+
+  if (inherits(level1b, "gedi_granule_collection")) {
+    return(.extract_gedi_collection(
+      level1b, list(select = select, beams = beams), parallel, workers
+    ))
+  }
 
   select<-unique(c("latitude_bin0", "latitude_lastbin", "longitude_bin0", "longitude_lastbin","shot_number",select))
   level1b<-level1b@h5

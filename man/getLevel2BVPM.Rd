@@ -15,7 +15,9 @@ getLevel2BVPM(
   collect = TRUE,
   max_features = 100000L,
   chunk_size = 5000L,
-  max_granules = 200L
+  max_granules = 200L,
+  parallel = FALSE,
+  workers = NULL
 )
 }
 \arguments{
@@ -36,6 +38,10 @@ GEE/gediDB object for rasterization.}
 \item{chunk_size}{Number of GEE features transferred per request.}
 
 \item{max_granules}{Maximum vector granules merged by GEE.}
+
+\item{parallel}{Logical; process a multi-granule collection concurrently.}
+
+\item{workers}{Number of parallel workers, or \code{NULL} for automatic selection.}
 }
 \value{
 A \link[data.table:data.table]{data.table::data.table} containing the Vegetation Profile

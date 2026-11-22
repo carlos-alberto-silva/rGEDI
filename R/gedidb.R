@@ -342,11 +342,13 @@ gedidb_disconnect <- function() {
     "mean"
   } else if (identical(fun, sum)) {
     "sum"
+  } else if (identical(fun, length)) {
+    "length"
   } else {
-    stop("Lazy gediDB rasterization currently supports mean and sum.", call. = FALSE)
+    stop("Lazy gediDB rasterization supports mean, sum, and length.", call. = FALSE)
   }
-  if (!reducer %in% c("mean", "sum")) {
-    stop("Lazy gediDB rasterization currently supports mean and sum.", call. = FALSE)
+  if (!reducer %in% c("mean", "sum", "length")) {
+    stop("Lazy gediDB rasterization supports mean, sum, and length.", call. = FALSE)
   }
   res <- as.numeric(res)[1L]
   if (!is.finite(res) || res <= 0) stop("'res' must be a positive number.", call. = FALSE)
@@ -389,7 +391,7 @@ gedidb_disconnect <- function() {
   cells <- data.table::rbindlist(pieces, use.names = TRUE)
   if (nrow(cells)) {
     cells <- cells[, .(total = sum(total), shots = sum(shots)), by = .(col, row)]
-    cells[, value := if (reducer == "mean") total / shots else total]
+    cells[, value := switch(reducer, mean = total / shots, sum = total, length = shots)]
     cells[, `:=`(x = (col + 0.5) * res, y = (row + 0.5) * res)]
   }
   template <- .gedidb_grid_template(reference, res, output_crs)

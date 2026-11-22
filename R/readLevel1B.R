@@ -4,10 +4,11 @@
 #'
 #'@usage readLevel1B(level1Bpath)
 #'
-#'@param level1Bpath Local file path or Earthdata Cloud URL pointing to a
-#'GEDI Level 1B HDF5 granule.
+#'@param level1Bpath One or more local paths or Earthdata Cloud URLs pointing
+#'to GEDI Level 1B HDF5 granules.
 #'
-#'@return Returns an S4 object of class [`gedi.level1b-class`] containing GEDI level1B data.
+#'@return A [`gedi.level1b-class`] object for one granule, or a lazy
+#'multi-granule collection consumed by [getLevel1BGeo()] and [getLevel1BWF()].
 #'
 #'@seealso [`hdf5r::H5File-class`] in the \emph{hdf5r} package and
 #'\url{https://www.earthdata.nasa.gov/data/catalog/lpcloud-gedi01-b-002}
@@ -29,6 +30,9 @@
 #'@import hdf5r
 #'@export
 readLevel1B <-function(level1Bpath) {
+  if (is.character(level1Bpath) && length(level1Bpath) > 1L) {
+    return(.new_gedi_granule_collection(level1Bpath, "GEDI01_B"))
+  }
   level1b_h5 <- if (inherits(level1Bpath, "GEDICloudH5")) level1Bpath else if (.is_gedi_url(level1Bpath)) {
     .open_cloud_h5(level1Bpath, product = "GEDI01_B")
   } else {

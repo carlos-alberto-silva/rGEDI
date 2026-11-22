@@ -11,7 +11,6 @@ test_that("GEDI product and Earth Engine catalogs expose modern products", {
 test_that("cloud helpers validate unsupported local files and optional modules", {
   f <- tempfile(pattern = "unknown_", fileext = ".h5")
   writeBin(as.raw(1:4), f)
-  expect_error(openGEDI(f), "Cannot infer")
   expect_error(earthdata_login(netrc = tempfile()), "path|configure|Install")
 })
 

@@ -128,6 +128,8 @@ var.map[["surface_flag"]]            = "surface_flag"
 #'head(level2BVPM)
 #'
 #'close(level2b)
+#' @param parallel Logical; process a multi-granule collection concurrently.
+#' @param workers Number of parallel workers, or `NULL` for automatic selection.
 #'@export
 getLevel2BVPM<-function(level2b, cols=c(
   "beam",
@@ -150,7 +152,17 @@ getLevel2BVPM<-function(level2b, cols=c(
   "pgap_theta",
   "cover"
 ), beams = NULL, quality = FALSE, collect = TRUE,
-   max_features = 100000L, chunk_size = 5000L, max_granules = 200L){
+   max_features = 100000L, chunk_size = 5000L, max_granules = 200L,
+   parallel = FALSE, workers = NULL){
+  if (inherits(level2b, "gedi_granule_collection")) {
+    return(.extract_gedi_collection(
+      level2b,
+      list(cols = cols, beams = beams, quality = quality, collect = collect,
+           max_features = max_features, chunk_size = chunk_size,
+           max_granules = max_granules),
+      parallel, workers
+    ))
+  }
   if (inherits(level2b, "gedi_gee_object")) {
     if (!is.null(beams)) warning("'beams' is ignored for a Google Earth Engine query; filter the returned table instead.")
     variables <- unique(as.character(cols))

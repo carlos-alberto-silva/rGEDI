@@ -155,8 +155,9 @@ GEDICloudDataset <- R6Class("GEDICloudDataset", public = list(
 #' @export
 names.GEDICloudH5 <- function(x) x$ls()$name
 
-.cloud_dataset_value <- function(x) {
-  value <- x$ds$`__getitem__`(reticulate::tuple())
+.cloud_dataset_value <- function(x, index = NULL) {
+  if (is.null(index)) index <- reticulate::tuple()
+  value <- x$ds$`__getitem__`(index)
   dtype <- as.character(x$ds$dtype)
   integer64 <- grepl("^(u?int64|<u8|<i8|>u8|>i8)", dtype)
   if (integer64) value <- value$astype("str")
@@ -170,6 +171,19 @@ names.GEDICloudH5 <- function(x) x$ls()$name
 
 #' @export
 `[.GEDICloudDataset` <- function(x, ...) {
+  # A waveform request must fetch its contiguous bins, not the full beam.
+  indices <- tryCatch(list(...), error = function(e) NULL)
+  if (length(x$dims) == 1L && length(indices) == 1L) {
+    i <- indices[[1L]]
+    if (is.numeric(i) && length(i) > 0L && !anyNA(i) &&
+        all(is.finite(i)) && all(i == floor(i)) &&
+        min(i) >= 1 && max(i) <= min(x$dims[1L], .Machine$integer.max) &&
+        (length(i) == 1L || all(diff(i) == 1))) {
+      builtins <- reticulate::import_builtins(convert = FALSE)
+      index <- builtins$slice(as.integer(i[1L] - 1L), as.integer(tail(i, 1L)))
+      return(.cloud_dataset_value(x, index))
+    }
+  }
   value <- .cloud_dataset_value(x)
   call <- match.call()
   call[[1L]] <- quote(`[`)
@@ -327,35 +341,6 @@ earthdata_login <- function(persist = TRUE, netrc = Sys.getenv("NETRC", unset = 
   invisible(TRUE)
 }
 
-#' Open GEDI data from local storage or Earthdata Cloud
-#'
-#' Raster products are opened with GDAL through [terra::rast()]. HDF5 cloud
-#' granules are opened lazily with Python `earthaccess` and `h5py`.
-#'
-#' @param x Local path, HTTPS URL, S3 URI, OPeNDAP URL, or an Earthaccess granule.
-#' @param product Optional product identifier.
-#' @param stream Logical; stream raster data rather than download it.
-#' @param cache_dir Download directory for non-streamed data.
-#' @return A `SpatRaster`, `gedi.cloud_h5`, or local GEDI object.
-#' @export
-openGEDI <- function(x, product = NULL, stream = TRUE, cache_dir = tempdir()) {
-  if (inherits(x, c("SpatRaster", "gedi.cloud_h5", "gedi.level1b", "gedi.level2a", "gedi.level2b", "gedi.level4a"))) return(x)
-  is_raster <- is.character(x) && grepl("\\.(tif|tiff)(\\?|$)", x, ignore.case = TRUE)
-  if (is_raster) {
-    source <- x
-    if (isTRUE(stream) && grepl("^https?://", source)) source <- paste0("/vsicurl/", source)
-    if (isTRUE(stream) && grepl("^s3://", source)) source <- sub("^s3://", "/vsis3/", source)
-    return(terra::rast(source))
-  }
-  if (is.character(x) && file.exists(x)) return(.read_local_gedi(x, product))
-  product <- .infer_gedi_product(x, product)
-  switch(product,
-    GEDI01_B = readLevel1B(x), GEDI02_A = readLevel2A(x),
-    GEDI02_B = readLevel2B(x), GEDI04_A = readLevel4A(x),
-    readGEDICloud(x, product = product, cache_dir = cache_dir)
-  )
-}
-
 .read_local_gedi <- function(path, product = NULL) {
   if (is.null(product)) {
     name <- toupper(basename(path))
@@ -367,14 +352,7 @@ openGEDI <- function(x, product = NULL, stream = TRUE, cache_dir = tempdir()) {
     stop("Cannot infer a supported GEDI HDF5 product from the filename."))
 }
 
-#' Open a GEDI HDF5 granule through Earthaccess
-#'
-#' @param x URL, S3 URI, or Earthaccess granule result.
-#' @param product Optional product identifier.
-#' @param cache_dir Used when cloud modules are unavailable and a URL is downloaded.
-#' @return An object of class `gedi.cloud_h5`.
-#' @export
-readGEDICloud <- function(x, product = NULL, cache_dir = tempdir()) {
+.read_gedi_cloud <- function(x, product = NULL, cache_dir = tempdir()) {
   if (!requireNamespace("reticulate", quietly = TRUE) ||
       !reticulate::py_module_available("earthaccess") ||
       !reticulate::py_module_available("h5py")) {
@@ -396,7 +374,8 @@ print.gedi.cloud_h5 <- function(x, ...) {
 }
 
 #' Close a cloud HDF5 connection
-#' @param con A `gedi.cloud_h5` object returned by [readGEDICloud()].
+#' @param con A cloud-backed GEDI HDF5 object returned by a `readLevel*()`
+#'   function.
 #' @param ... Reserved for compatibility with [close()].
 #' @return Invisibly returns `NULL`.
 #' @method close gedi.cloud_h5

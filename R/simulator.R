@@ -268,6 +268,9 @@
 #'   of the waveform maximum. Zero leaves the waveform unchanged.
 #' @param keepOld Do not overwrite an existing output file.
 #' @param seed Optional random seed.
+#' @param parallel Logical; simulate independent footprint centres concurrently.
+#' @param workers Number of parallel workers. `NULL` uses physical cores minus
+#'   one, limited by the number of footprints.
 #' @param ... Compatibility arguments accepted from the original simulator.
 #' @return A [`gedi.level1b-class`] object, or a waveform table when `ascii=TRUE`.
 #' @references Hancock et al. (2019) \doi{10.1029/2018EA000506}
@@ -281,7 +284,8 @@ gediWFSimulator <- function(input, output = tempfile(fileext = ".h5"), ground = 
                             method = c("count", "intensity", "fraction"),
                             normalize = TRUE, density_res = 1.5,
                             intensity_threshold = 0.0006,
-                            noise = 0, keepOld = FALSE, seed = NULL, ...) {
+                            noise = 0, keepOld = FALSE, seed = NULL,
+                            parallel = FALSE, workers = NULL, ...) {
   if (!is.null(seed)) set.seed(seed)
   if (!isTRUE(ascii) && !grepl("\\.h5$", output, ignore.case = TRUE)) output <- paste0(output, ".h5")
   if (file.exists(output) && keepOld) return(.read_local_gedi(output, "GEDI01_B"))
@@ -326,12 +330,17 @@ gediWFSimulator <- function(input, output = tempfile(fileext = ".h5"), ground = 
   sim_f_sigma <- .float32(fSigma)
   sim_density_res <- .float32(density_res)
   sim_threshold <- .float32(intensity_threshold)
-  waves <- lapply(seq_len(nrow(centres)), function(i) {
-    .simulate_one_waveform(
+  task_seeds <- if (isTRUE(parallel) && decimate < 1) {
+    sample.int(.Machine$integer.max, nrow(centres))
+  } else NULL
+  waves <- .gedi_parallel_lapply(seq_len(nrow(centres)), function(i) {
+    if (!is.null(task_seeds)) set.seed(task_seeds[i])
+    getFromNamespace(".simulate_one_waveform", "rGEDI")(
       points, xyz, centres[i, ], sim_f_sigma, sim_res, pulse_sigma, p_res, decimate,
       maxBins, method, normalize, sim_density_res, sim_threshold, ground
     )
-  })
+  }, parallel = parallel, workers = workers)
+  used_workers <- attr(waves, "workers")
   valid <- !vapply(waves, is.null, logical(1))
   waves <- waves[valid]
   centres <- centres[valid, , drop = FALSE]
@@ -352,9 +361,12 @@ gediWFSimulator <- function(input, output = tempfile(fileext = ".h5"), ground = 
       x = centres[i, 1L], y = centres[i, 2L], elevation = waves[[i]]$elevation,
       amplitude = waves[[i]]$amplitude)))
     utils::write.table(ans, output, row.names = FALSE)
+    attr(ans, "workers") <- used_workers
     return(ans)
   }
-  .write_simulated_l1b(waves, centres, output)
+  answer <- .write_simulated_l1b(waves, centres, output)
+  attr(answer, "workers") <- used_workers
+  answer
 }
 
 .weighted_quantile <- function(x, w, probs) {

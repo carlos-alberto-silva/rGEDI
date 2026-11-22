@@ -28,14 +28,20 @@ test_that("Level 3 and Level 4B raster workflows operate end to end", {
                     coords = c("x", "y"), crs = 4326)
   poly <- sf::st_as_sf(data.frame(id = "center", wkt =
     "POLYGON((-1 -1,1 -1,1 1,-1 1,-1 -1))"), wkt = "wkt", crs = 4326)
-  expect_equal(nrow(extractLevel3(l3, p)), 1)
-  expect_equal(nrow(extractLevel4B(l4b, p)), 1)
-  expect_equal(nrow(polyStatsLevel3(l3, poly)), 1)
-  expect_equal(nrow(polyStatsLevel4B(l4b, poly)), 1)
+  expect_s3_class(getLevel3(l3, geometry = p), "data.table")
+  expect_s3_class(getLevel4B(l4b, geometry = p), "data.table")
+  expect_equal(nrow(getLevel3(l3, geometry = p)), 1)
+  expect_equal(nrow(getLevel4B(l4b, geometry = p)), 1)
+  expect_equal(nrow(getLevel3(l3)), 64)
+  expect_true(all(c("x", "y") %in% names(getLevel4B(l4b))))
+  expect_equal(ncol(getLevel4B(l4b)), 3)
+  expect_error(getLevel4B(l4b, max_cells = 10), "global = TRUE")
+  expect_equal(nrow(getLevel4B(l4b, global = TRUE, max_cells = 10)), 64)
+  expect_equal(nrow(polyStats(l3, poly)), 1)
+  expect_equal(nrow(polyStats(l4b, poly)), 1)
 
   png(tempfile(fileext = ".png")); expect_s4_class(plotLevel3(l3), "SpatRaster"); dev.off()
   png(tempfile(fileext = ".png")); expect_s4_class(plotLevel4B(l4b), "SpatRaster"); dev.off()
-  expect_s4_class(openGEDI(f), "SpatRaster")
 })
 
 test_that("Level 4A HDF5 workflows operate end to end", {
@@ -90,7 +96,7 @@ test_that("Level 4A HDF5 workflows operate end to end", {
   lapply(h5_split, close)
   expect_equal(nrow(polyStatsLevel4A(all, poly, id = "zone")), 1)
   expect_s4_class(gridStatsLevel4A(all, res = .01), "SpatRaster")
-  expect_s4_class(rasterizeLevel4A(all, res = .01), "SpatRaster")
+  expect_s4_class(rasterize(all, metric = "agbd", res = .01), "SpatRaster")
   png(tempfile(fileext = ".png")); expect_equal(plotLevel4A(all), all); dev.off()
 })
 
