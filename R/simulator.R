@@ -445,8 +445,9 @@ gediWFMetrics <- function(input, outRoot = NULL, rhRes = 5, ground = TRUE,
           e_ground <- sum(pmax(0, ground_info$ground))
           e_can <- sum(amp) - e_ground
         } else {
-          ground_bin <- which.min(abs(elev - ground_elev))
-          e_ground <- min(sum(amp), 2 * sum(amp[seq_len(ground_bin)]))
+          # L1B bins run from high to low elevation. Integrate below the
+          # ground peak by elevation, independently of storage order.
+          e_ground <- min(sum(amp), 2 * sum(amp[elev <= ground_elev]))
           e_can <- sum(amp) - e_ground
         }
         e_can <- max(0, e_can); e_ground <- max(0, e_ground)

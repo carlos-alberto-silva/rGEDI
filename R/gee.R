@@ -28,7 +28,9 @@ ee_initialize <- function(project = Sys.getenv("EE_PROJECT", unset = ""), authen
   if (inherits(x, "python.builtin.object")) return(x)
   if (is.numeric(x) && length(x) == 4L) {
     x <- as.numeric(x)
-    return(ee$Geometry$Rectangle(as.list(x[c(1L, 3L, 2L, 4L)])))
+    return(ee$Geometry$Rectangle(
+      as.list(x[c(1L, 3L, 2L, 4L)]), proj = "EPSG:4326", geodesic = FALSE
+    ))
   }
   obj <- if (inherits(x, "SpatVector")) sf::st_as_sf(x) else sf::st_as_sf(x)
   path <- tempfile(fileext = ".geojson")

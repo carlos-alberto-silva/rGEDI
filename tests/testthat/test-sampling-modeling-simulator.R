@@ -214,3 +214,17 @@ test_that("GEDI tracks are standardized and thinned", {
   expect_equal(nrow(combined), 5)
   expect_equal(combined$sequence, c(1, 3, 5, 7, 9))
 })
+
+
+test_that("ground-peak cover separates canopy energy in descending L1B bins", {
+  set.seed(812)
+  points <- data.frame(X = rnorm(800, sd = 3), Y = rnorm(800, sd = 3),
+    Z = c(rnorm(400, 0, .2), rnorm(400, 15, 1)), Classification = 0L)
+  path <- tempfile(fileext = ".h5")
+  waveform <- gediWFSimulator(points, output = path, coords = c(0, 0))
+  on.exit({close(waveform); unlink(path)}, add = TRUE)
+  metrics <- gediWFMetrics(waveform, ground_method = "lowest_peak")
+  expect_equal(metrics$gHeight, 0, tolerance = .6)
+  expect_gt(metrics$cover, .2)
+  expect_lt(metrics$cover, .8)
+})

@@ -1,5 +1,9 @@
 # GEDI gridded products ---------------------------------------------------
 
+.as_gedi_vector <- function(x) {
+  if (inherits(x, "SpatVector")) x else terra::vect(x)
+}
+
 .gedi_metric_name <- function(path, product) {
   stem <- tools::file_path_sans_ext(basename(path))
   if (product == "GEDI03") {
@@ -84,7 +88,7 @@ mosaicLevel4B <- function(x, fun = "mean", filename = "", overwrite = FALSE) {
 
 .clip_gedi_raster <- function(x, y, filename = "", overwrite = FALSE) {
   r <- .as_gedi_raster(x)
-  geom <- if (is.numeric(y) && length(y) == 4L) terra::ext(y) else terra::vect(y)
+  geom <- if (is.numeric(y) && length(y) == 4L) terra::ext(y) else .as_gedi_vector(y)
   ans <- terra::crop(r, geom)
   if (!inherits(geom, "SpatExtent")) ans <- terra::mask(ans, geom)
   if (nzchar(filename)) terra::writeRaster(ans, filename, overwrite = overwrite) else ans
@@ -171,7 +175,7 @@ aggregateLevel4B <- function(x, fact, fun = mean, ...) terra::aggregate(.as_gedi
     geometry <- if (is.numeric(geometry) && length(geometry) == 4L) {
       terra::as.polygons(terra::ext(geometry))
     } else {
-      terra::vect(geometry)
+      .as_gedi_vector(geometry)
     }
     return(data.table::as.data.table(
       terra::extract(raster, geometry, ...)
@@ -225,7 +229,7 @@ getLevel4B <- function(x, geometry = NULL, metrics = NULL, xy = TRUE,
 
 .poly_stats_raster <- function(x, polygon, fun = mean, na.rm = TRUE, ...) {
   data.table::as.data.table(
-    terra::extract(.as_gedi_raster(x), terra::vect(polygon),
+    terra::extract(.as_gedi_raster(x), .as_gedi_vector(polygon),
                    fun = fun, na.rm = na.rm, ...)
   )
 }

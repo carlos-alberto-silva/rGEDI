@@ -105,3 +105,14 @@ test_that("GEE validation fails early and explains version limits", {
     "Version 002"
   )
 })
+
+
+test_that("global numeric AOIs retain their full WGS84 longitude span", {
+  local_mocked_bindings(.require_ee = function() list(Geometry = list(
+    Rectangle = function(coords, proj, geodesic) list(coords = coords, proj = proj, geodesic = geodesic)
+  )), .package = "rGEDI")
+  geometry <- ext_to_ee(c(-180, 180, -52, 52))
+  expect_equal(unlist(geometry$coords), c(-180, -52, 180, 52))
+  expect_identical(geometry$proj, "EPSG:4326")
+  expect_false(geometry$geodesic)
+})

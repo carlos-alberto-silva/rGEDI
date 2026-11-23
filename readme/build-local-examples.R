@@ -63,17 +63,12 @@ clipped2a <- clipLevel2AMGeometry(metrics2a, stands)
 clipped2b <- clipLevel2BVPMGeometry(metrics2b, stands)
 grid2a <- gridStatsLevel2AM(clipped2a, mean(rh98), res = 0.002)
 grid2b <- gridStatsLevel2BVPM(metrics2b, mean(cover), res = 0.002)
-set.seed(11)
-cloud <- data.frame(
-  X = c(runif(1500, -12, 12), runif(3500, -12, 12)),
-  Y = c(runif(1500, -12, 12), runif(3500, -12, 12)),
-  Z = c(rnorm(1500, 0, .25), pmax(0, rnorm(3500, 17, 6))),
-  Classification = c(rep(2L, 1500), rep(5L, 3500))
-)
+cloud <- lidR::readLAS(system.file("extdata", "Amazon.laz", package = "rGEDI"))
+coords <- c(mean(range(cloud@data$X)), mean(range(cloud@data$Y)))
 clean <- gediWFSimulator(cloud, output = file.path(work, "sim-clean.h5"),
-                         coords = c(0, 0), seed = 11)
+                         coords = coords, seed = 11)
 noisy <- gediWFSimulator(cloud, output = file.path(work, "sim-noisy.h5"),
-                         coords = c(0, 0), noise = 0.03, seed = 11)
+                         coords = coords, noise = 0.001, seed = 11)
 data.table::fwrite(metrics2a[, .(beam, shot_number, lon_lowestmode,
   lat_lowestmode, elev_lowestmode, rh50, rh75, rh90, rh98, rh100)],
   "readme/gedi-level2a-example.csv")

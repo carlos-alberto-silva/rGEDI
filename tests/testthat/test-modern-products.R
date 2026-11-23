@@ -122,3 +122,16 @@ test_that("Level 4A Release 3 quality fields are applied", {
   expect_equal(good$shot_number, c(1, 5))
 })
 
+
+
+test_that("native raster operations accept SpatVector polygons", {
+  raster <- terra::rast(nrows = 2, ncols = 2, xmin = 0, xmax = 2,
+    ymin = 0, ymax = 2, crs = "EPSG:4326", vals = 1:4)
+  names(raster) <- "value"
+  polygon <- terra::as.polygons(terra::ext(0, 1, 0, 2), crs = "EPSG:4326")
+  expect_equal(as.numeric(terra::values(clipLevel3(raster, polygon))), c(1, 3))
+  expect_equal(as.numeric(terra::values(clipLevel4B(raster, polygon))), c(1, 3))
+  expect_equal(getLevel3(raster, geometry = polygon)$value, c(1, 3))
+  expect_equal(getLevel4B(raster, geometry = polygon)$value, c(1, 3))
+  expect_equal(polyStats(raster, polygon)$value, 2)
+})

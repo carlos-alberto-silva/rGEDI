@@ -1,4 +1,5 @@
 test_that("cloud waveform slices read only the requested contiguous range", {
+  skip_on_cran() # Optional Python discovery can provision dependencies.
   skip_if_not_installed("reticulate")
   skip_if_not(reticulate::py_module_available("numpy"))
   reticulate::py_run_string("import numpy as np\nclass SliceProbe:\n    shape = (100,)\n    chunks = None\n    dtype = np.dtype('float64')\n    requested = None\n    def __getitem__(self, key):\n        self.requested = key\n        return np.arange(1, 101, dtype=float)[key]\nprobe = SliceProbe()")
@@ -17,6 +18,7 @@ test_that("cloud waveform slices read only the requested contiguous range", {
 
 
 test_that("cloud waveform extraction handles unsigned 64-bit sample addresses", {
+  skip_on_cran() # Optional Python discovery can provision dependencies.
   skip_if_not_installed("reticulate")
   skip_if_not(reticulate::py_module_available("h5py"))
   skip_if_not(reticulate::py_module_available("numpy"))

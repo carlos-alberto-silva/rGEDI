@@ -1,0 +1,6 @@
+        output cells valid
+        <char> <num> <num>
+1:     L3 bbox  6324  5163
+2:  L3 polygon  6324  4748
+3:    L4B bbox  6324  5194
+4: L4B polygon  6324  4807

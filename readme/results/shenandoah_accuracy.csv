@@ -1,0 +1,17 @@
+stat,value,unit,stage
+rmse,56.0256050465653,Mg/ha,Training
+rmseR,22.1975271056379,%,Training
+mae,38.4073792680881,Mg/ha,Training
+maeR,15.2171286976965,%,Training
+bias,0.164071637850435,Mg/ha,Training
+biasR,0.0650057170364235,%,Training
+r,0.917557885571475,"",Training
+adj_r2,0.841819535381082,"",Training
+rmse,88.4701890826383,Mg/ha,Validation
+rmseR,34.4703167540991,%,Validation
+mae,68.1617742163108,Mg/ha,Validation
+maeR,26.5576232188556,%,Validation
+bias,10.3436486820089,Mg/ha,Validation
+biasR,4.03015806973038,%,Validation
+r,0.728014498018614,"",Validation
+adj_r2,0.529274168593296,"",Validation

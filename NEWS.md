@@ -2,6 +2,13 @@
 
 # rGEDI 0.6.1 (2026-11-19)
 
+* Teach the GEDI product levels in an illustrated README tutorial, using
+  measured ALS examples, small native grid subsets, mapped boundaries,
+  printed R results and an optional Earth Engine biomass mapping workflow.
+* Preserve global longitude bounds in Earth Engine rectangles, accept
+  SpatVector polygons for native raster operations, and integrate the
+  ground-peak waveform cover estimate in elevation order.
+
 * Bound cloud waveform reads to the requested samples, handle unsigned 64-bit
   sample addresses, and return ordinary vectors for one-dimensional datasets.
 * Refresh the README for the current API, retain original package

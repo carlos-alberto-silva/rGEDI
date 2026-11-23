@@ -1,454 +1,70 @@
-![](https://github.com/carlos-alberto-silva/rGEDI/blob/master/readme/fig1.png)<br/>
+![](readme/fig1.png)
 
-<!-- badges: start -->
 [![CRAN status](https://www.r-pkg.org/badges/version/rGEDI)](https://CRAN.R-project.org/package=rGEDI)
-![GitHub](https://img.shields.io/badge/GitHub-master-green.svg)
-![Licence](https://img.shields.io/badge/Licence-GPL--3-blue.svg)
 [![Downloads](https://cranlogs.r-pkg.org/badges/grand-total/rGEDI)](https://cran.r-project.org/package=rGEDI)
-<!-- badges: end -->
+![Licence](https://img.shields.io/badge/Licence-GPL--3-blue.svg)
 
-**rGEDI: An R Package for NASA's Global Ecosystem Dynamics Investigation
-(GEDI) Data Visualizing and Processing.**
+# Learn GEDI with rGEDI
 
-Authors: Carlos Alberto Silva and Caio Hamamura.
+GEDI is a laser instrument aboard the International Space Station. Each
+measurement samples a footprint approximately 25 m across. Its waveform
+records returned laser energy through the vegetation and down to the ground.
+GEDI samples tracks; it does not measure every location in a landscape.
 
-`rGEDI` searches, downloads, streams, reads, filters, clips, summarizes,
-simulates, models, and maps NASA Global Ecosystem Dynamics Investigation
-(GEDI) data. It supports footprint products GEDI01_B, GEDI02_A, GEDI02_B,
-and GEDI04_A, as well as raster products GEDI03 and GEDI04_B.
+This tutorial follows those measurements from **Level 1B waveforms**, through
+**Level 2A/2B vegetation metrics**, **Level 3 grids**, and **Level 4A/4B biomass**.
+We then simulate GEDI waveforms from measured ALS data and combine GEDI with
+other satellite data to make a wall-to-wall map.
 
-# Getting Started
+## Before you start
 
-## 1 Installation
+The current tutorial uses the rGEDI 0.6.1 development API.
 
 ```r
-# Current development API used by these examples
 install.packages("remotes")
 remotes::install_github("carlos-alberto-silva/rGEDI")
-
-# Alternative development builds, after the r-universe build completes
-# install.packages("rGEDI", repos = c(
-#   "https://carlos-alberto-silva.r-universe.dev",
-#   "https://cloud.r-project.org"))
 
 library(rGEDI)
 library(data.table)
 library(sf)
 library(terra)
-```
 
-### Configure Python and Google Earth Engine
-
-rGEDI uses three optional Python packages through
-`reticulate`:
-
-1. [`earthaccess`](https://github.com/earthaccess-dev/earthaccess) finds and
-   authenticates Earthdata Cloud objects.
-2. [`h5py`](https://github.com/h5py/h5py) reads HDF5 content streamed from the
-   cloud.
-3. [`earthengine-api`](https://github.com/google/earthengine-api) samples
-   predictors and creates wall-to-wall maps in Google Earth Engine.
-
-Run the configuration once to install the optional Python modules through
-reticulate. Set RETICULATE_PYTHON before loading reticulate when selecting
-an existing environment. Add gedidb = TRUE to install the database backend.
-
-```r
-rGEDI_configure(install = TRUE)
-ee_initialize(project = "your-google-cloud-project")
-```
-
-Verify the active Python and required modules:
-
-```r
-safely <- function(expr, default = NA) tryCatch(expr, error = function(e) default)
-have_reticulate <- requireNamespace("reticulate", quietly = TRUE)
-py_ready <- have_reticulate &&
-  !inherits(try(reticulate::py_config(), silent = TRUE), "try-error")
-
-status <- list(
-  rGEDI_loaded = "package:rGEDI" %in% search(),
-  python_used = if (have_reticulate)
-    safely(reticulate::py_discover_config()$python) else NA,
-  h5py = if (py_ready) reticulate::py_module_available("h5py") else FALSE,
-  earthaccess = if (py_ready)
-    reticulate::py_module_available("earthaccess") else FALSE,
-  ee = if (py_ready) reticulate::py_module_available("ee") else FALSE
-)
-print(status)
-```
-
-## 2 Example study site
-
-The package contains Cerrado forest stands and small matched GEDI Level 1B,
-Level 2A, and Level 2B granules.
-
-```r
-stands_path <- system.file("extdata", "stands_cerrado.shp", package = "rGEDI")
-study_area <- sf::st_read(stands_path, quiet = TRUE)
-box <- sf::st_bbox(study_area)
-
-xmin <- unname(box["xmin"]); xmax <- unname(box["xmax"])
-ymin <- unname(box["ymin"]); ymax <- unname(box["ymax"])
-daterange <- c("2019-04-18", "2019-04-19")
-outdir <- file.path(tempdir(), "rGEDI")
+outdir <- file.path(tempdir(), "rGEDI-tutorial")
 dir.create(outdir, showWarnings = FALSE)
 ```
 
-## 3 Find GEDI data and download
+Bundled data support offline extraction, statistics and static plots.
+Interactive imagery maps use `leaflet` and online tiles; ALS files use `lidR`.
+The optional Earth Engine steps need
+an authenticated project and Python dependencies configured by
+`rGEDI_configure(install = TRUE)`.
 
-### 3.1 Find GEDI granules
+## 1 Start with Level 1B waveforms
 
-`gedifinder()` queries NASA CMR. Use the official short names and current
-versions. The returned character vector contains direct HTTPS links.
-
-```r
-products <- c(
-  GEDI01_B = "002", GEDI02_A = "002", GEDI02_B = "002",
-  GEDI03 = "001", GEDI04_A = "003", GEDI04_B = "002"
-)
-
-granules <- lapply(names(products), function(product) {
-  gedifinder(
-    product,
-    ul_lat = ymax, ul_lon = xmin,
-    lr_lat = ymin, lr_lon = xmax,
-    version = products[[product]], daterange = daterange,
-    cloud_computing = FALSE, persist = TRUE
-  )
-})
-names(granules) <- names(products)
-head(granules$GEDI02_A)
-```
-
-To retrieve every production granule in one orbit, supply its orbit number
-instead of a bounding box. CMR returns the four parts in acquisition order.
-
-```r
-orbit_granules <- gedifinder(
-  "GEDI02_A", version = "002", orbit = "O01964", return = "table"
-)
-orbit_granules[, c("granule_id", "orbit", "granule_part")]
-stopifnot(nrow(orbit_granules) == 4L)
-```
-
-Set `cloud_computing = TRUE` for cloud-hosted links suitable for streaming.
-An HTTPS Earthdata Cloud URL works on Windows, macOS, and Linux. Direct
-`s3://` reads require code running in AWS `us-west-2`, which is a NASA bucket
-policy rather than an operating-system limitation.
-
-### 3.2 Download the granules
-
-Keep credentials outside scripts. `earthdata_login()` can use a standard
-`~/.netrc`, the `NETRC` environment variable, or a path passed at run time.
-
-```r
-# Sys.setenv(NETRC = "/secure/path/to/.netrc")
-earthdata_login()
-
-gediDownload(granules$GEDI01_B[1], outdir)
-gediDownload(granules$GEDI02_A[1], outdir)
-gediDownload(granules$GEDI02_B[1], outdir)
-gediDownload(granules$GEDI04_A[1], outdir)
-
-# GEDI03 and GEDI04_B searches may return several metric GeoTIFFs.
-gediDownload(granules$GEDI03[1], outdir)
-gediDownload(granules$GEDI04_B[1], outdir)
-```
-
-`gediDownload()` accepts the complete URL vector and invisibly returns the
-downloaded paths. Orbit `O01964` is about 9.2 GB, so ensure sufficient disk
-space before running this example.
-
-```r
-orbit_files <- gediDownload(orbit_granules$url, outdir)
-```
-
-## 4 Read GEDI products
-
-### Read downloaded products
-
-```r
-level1b_file <- list.files(outdir, "GEDI01_B.*\\.h5$", full.names = TRUE)[1]
-level2a_file <- list.files(outdir, "GEDI02_A.*\\.h5$", full.names = TRUE)[1]
-level2b_file <- list.files(outdir, "GEDI02_B.*\\.h5$", full.names = TRUE)[1]
-level4a_file <- list.files(outdir, "GEDI04_A.*\\.h5$", full.names = TRUE)[1]
-level3_file  <- list.files(outdir, "GEDI03.*\\.tif$", full.names = TRUE)[1]
-level4b_file <- list.files(outdir, "GEDI04_B.*\\.tif$", full.names = TRUE)[1]
-
-level1b_full <- readLevel1B(level1b_file)
-level2a_full <- readLevel2A(level2a_file)
-level2b_full <- readLevel2B(level2b_file)
-level3  <- readLevel3(level3_file)
-level4a_full <- readLevel4A(level4a_file)
-level4b <- readLevel4B(level4b_file)
-```
-
-The bundled subsets can be opened without a network connection:
+Level 1B contains geolocated waveforms. First open the small Cerrado example
+distributed with the package.
 
 ```r
 level1b_path <- unzip(system.file("extdata",
   "GEDI01_B_2019108080338_O01964_T05337_02_003_01_sub.zip",
   package = "rGEDI"), exdir = outdir)
-level2a_path <- unzip(system.file("extdata",
-  "GEDI02_A_2019108080338_O01964_T05337_02_001_01_sub.zip",
-  package = "rGEDI"), exdir = outdir)
-level2b_path <- unzip(system.file("extdata",
-  "GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub.zip",
-  package = "rGEDI"), exdir = outdir)
-
 level1b <- readLevel1B(level1b_path)
-level2a <- readLevel2A(level2a_path)
-level2b <- readLevel2B(level2b_path)
-```
 
-### Stream GEDI HDF5 data from Earthdata Cloud
-
-```r
-cloud_urls <- gedifinder(
-  "GEDI04_A",
-  ul_lat = ymax, ul_lon = xmin, lr_lat = ymin, lr_lon = xmax,
-  version = "003", daterange = daterange,
-  cloud_computing = TRUE, persist = TRUE
-)
-
-# readLevel1B(), readLevel2A(), and readLevel2B() accept the same URL type.
-level4a_cloud <- readLevel4A(cloud_urls[1])
-class(level4a_cloud)
-```
-
-Level 3 and Level 4B are raster collections. Download the selected metric
-GeoTIFF first and then use `readLevel3()` or `readLevel4B()`. This avoids the
-Earthdata redirect restrictions encountered by GDAL virtual-file reads.
-
-### Stream footprint products from gediDB
-
-[gediDB](https://gedidb.readthedocs.io/en/latest/user/tiledb_database.html)
-provides a public, analysis-ready TileDB database for GEDI Level 2A, Level 2B,
-Level 4A, and Level 4C. It does not require NASA credentials. Install the
-optional Python backend once:
-
-~~~r
-rGEDI_configure(gedidb = TRUE, install = TRUE)
-~~~
-
-Select source = "gedidb" during the search. The finder checks the service and
-returns only a lazy remote reference; it does not transfer footprints. The
-read function opens that reference, and the extraction function requests the
-selected variables.
-
-~~~r
-l2a_address <- gedifinder(
-  "GEDI02_A",
-  ul_lat = ymax, ul_lon = xmin, lr_lat = ymin, lr_lon = xmax,
-  version = "003", daterange = daterange, source = "gedidb"
-)
-l2a_remote <- readLevel2A(l2a_address)
-l2a_rh98 <- getLevel2AM(l2a_remote, rh = 98, quality = TRUE)
-
-l4a_address <- gedifinder(
-  "GEDI04_A",
-  ul_lat = ymax, ul_lon = xmin, lr_lat = ymin, lr_lon = xmax,
-  version = "003", daterange = daterange, source = "gedidb"
-)
-l4a_remote <- readLevel4A(l4a_address)
-l4a_agbd <- getLevel4A(
-  l4a_remote,
-  cols = c("shot_number", "agbd", "agbd_se", "l4a_quality_flag_rel3"),
-  quality = TRUE
-)
-~~~
-
-The results are ordinary data.table footprint tables, so the same clipping,
-sampling, rasterization, statistics, and modeling functions apply. For an
-exact 1 km grid, supply a projected SpatRaster template:
-
-~~~r
-grid_points <- rbind(
-  l2a_rh98[, .(lon_lowestmode, lat_lowestmode)],
-  l4a_agbd[, .(lon_lowestmode, lat_lowestmode)]
-)
-grid_points <- terra::vect(
-  as.data.frame(grid_points),
-  geom = c("lon_lowestmode", "lat_lowestmode"), crs = "EPSG:4326"
-)
-grid_points <- terra::project(grid_points, "EPSG:6933")
-bounds <- as.vector(terra::ext(grid_points))
-bounds <- c(
-  floor(bounds[1] / 1000) * 1000, ceiling(bounds[2] / 1000) * 1000,
-  floor(bounds[3] / 1000) * 1000, ceiling(bounds[4] / 1000) * 1000
-)
-template_1km <- terra::rast(
-  terra::ext(bounds),
-  resolution = 1000, crs = "EPSG:6933"
-)
-
-rh98_1km <- rasterize(l2a_rh98, "rh98", template = template_1km)
-agbd_1km <- rasterize(l4a_agbd, "agbd", template = template_1km)
-~~~
-
-The first query in an R session opens remote TileDB metadata. Later queries
-reuse a cached provider. Call gedidb_disconnect() when the remote workflow is
-finished.
-
-For larger areas, retain a lazy gediDB query and process independent spatial
-tiles concurrently. Each worker downloads only the selected metric,
-coordinates, and quality fields and immediately reduces the footprints to
-grid-cell totals. Supplying `filename` keeps large rasters disk-backed.
-
-~~~r
-l2a_rh98_lazy <- getLevel2AM(
-  l2a_remote, rh = 98, quality = TRUE, collect = FALSE
-)
-
-rh98_parallel_1km <- rasterize(
-  l2a_rh98_lazy, "rh98",
-  res = 1000, output_crs = "EPSG:6933",
-  parallel = TRUE, workers = 2, tile_size = 1,
-  filename = file.path(outdir, "gedidb_rh98_1km.tif")
-)
-~~~
-
-Use a small number of workers first. Every worker opens an independent remote
-TileDB connection, so excessive parallelism can reduce performance or overload
-the public service. A mission-wide grid covers billions of footprints and
-should be treated as a resumable cloud/HPC batch job, not an interactive query.
-
-The same parallel controls are available when extracting a collection of
-independent granules. Each worker opens and closes its own HDF5 connection.
-
-~~~r
-level2a_collection <- readLevel2A(orbit_files)
-metrics <- getLevel2AM(
-  level2a_collection, rh = 98, quality = TRUE,
-  parallel = TRUE, workers = 2
-)
-close(level2a_collection)
-~~~
-
-gediWFSimulator() also accepts multiple footprint centres and the optional
-arguments parallel, workers, and seed. accumulateGEDIGranules() accepts a
-manifest table for parallel accumulation. Keep concurrency modest when
-several workflows share memory and network bandwidth.
-
-Parallelism is intentionally not applied to a single open HDF5 object or to
-Google Earth Engine operations. Earth Engine already executes computations on
-Google's servers, while sharing local HDF5 handles between processes is unsafe.
-
-### Search and process GEDI with Google Earth Engine
-
-The same finder-reader-extractor sequence also works with Google Earth Engine.
-Initialize the project once per R session, then select `source = "gee"`.
-Unlike Earthdata and gediDB, Earth Engine currently serves GEDI Version 2
-(Level 2A/2B and Level 4B) and Version 2.1 (Level 4A), so rGEDI validates the
-version and records it in the returned reference.
-
-~~~r
-ee_initialize(project = Sys.getenv("EE_PROJECT"))
-
-l2a_gee_address <- gedifinder(
-  "GEDI02_A",
-  ul_lat = ymax, ul_lon = xmin, lr_lat = ymin, lr_lon = xmax,
-  version = "002", daterange = daterange, source = "gee"
-)
-l2a_gee <- readLevel2A(l2a_gee_address)
-
-# Collect a bounded footprint query as a data.table.
-l2a_rh98_gee <- getLevel2AM(
-  l2a_gee, rh = 98, quality = TRUE, max_features = 100000
-)
-
-# Or leave the footprints in Earth Engine and build the 1 km grid there.
-l2a_rh98_lazy <- getLevel2AM(
-  l2a_gee, rh = 98, quality = TRUE, collect = FALSE
-)
-rh98_1km_gee <- rasterize(
-  l2a_rh98_lazy, "rh98", res = 1000, fun = "mean", output_crs = "EPSG:3857"
-)
-
-l4a_gee_address <- gedifinder(
-  "GEDI04_A",
-  ul_lat = ymax, ul_lon = xmin, lr_lat = ymin, lr_lon = xmax,
-  version = "002.1", daterange = daterange, source = "gee"
-)
-l4a_gee <- readLevel4A(l4a_gee_address)
-l4a_agbd_lazy <- getLevel4A(
-  l4a_gee, cols = "agbd", quality = TRUE, collect = FALSE
-)
-agbd_1km_gee <- rasterize(
-  l4a_agbd_lazy, "agbd", res = 1000, fun = "mean", output_crs = "EPSG:3857"
-)
-~~~
-
-`gedifinder()` checks that the selected service is reachable before later
-functions run. `clip()` preserves a lazy GEE object, and `getTileUrl()`,
-`map_view()`, `map_download()`, and `ee_image_to_drive()` accept the lazy
-raster result directly. The Web Mercator example uses 1,000 projected metres;
-choose an appropriate local metric or equal-area CRS for analysis because
-Web Mercator cell areas vary with latitude. Use `collect = TRUE` only for focused footprint
-queries; use `collect = FALSE` for large-area gridding and mapping.
-
-## 5 Extract, quality-filter, clip, rasterize, summarize, and simulate footprint-level products
-
-### 5.1 Extract the Reference Ground Track and plot the GIF animation
-
-`getTrack()` standardizes coordinates, beam names, and acquisition order
-from a Level 1B, 2A, 2B, or 4A object, an extracted table, or a list of open
-granules. NASA partitions one GEDI orbit into four consecutive production
-granules (`_01` through `_04`). `gedifinder(orbit = ...)` retrieves every part;
-`every` thins the display without changing acquisition order.
-
-```r
-stopifnot(length(orbit_files) == 4L)
-
-orbit_h5 <- lapply(sort(orbit_files), readLevel2A)
-rgt <- getTrack(orbit_h5, every = 200, segment_gaps = FALSE)
-head(rgt)
-
-plot_gedi_orbit_animation(
-  orbit_h5,
-  output_file = file.path(outdir, "gedi-orbit-animation.gif"),
-  title = "GEDI aboard the International Space Station",
-  duration = 8, every = 200, launch = FALSE
-)
-
-# Use .html for the interactive 3D globe.
-plot_gedi_orbit_animation(
-  orbit_h5, output_file = file.path(outdir, "gedi-orbit-animation.html"),
-  every = 200,
-  track_speed = 2, earth_rotation_speed = 2,
-  launch = interactive()
-)
-```
-
-The displayed example was generated from the four complete Level 2A V002
-granules for orbit `O01964`. Its 22,350 sampled footprints span all eight GEDI
-beams, four granule parts, 81.6 minutes, and latitudes from -50.346 to 51.825
-degrees. The reproducible cloud-reading and animation script is
-`readme/build-complete-orbit.R`.
-
-The GIF follows the ICESat2VegR presentation while showing the correct GEDI
-platform: GEDI is mounted on the International Space Station. GEDI operates at
-1064 nm in the near infrared; the red beam and track visualize that invisible
-laser pulse and connect the ISS payload to the accumulating reference ground
-track. Every displayed ISS position follows the time-ordered geolocation from
-the most complete beam in the open HDF5 granule. Following the ICESat2VegR
-animation, the textured Earth rotates independently while the NASA ISS image,
-GEDI payload label, red laser, and red orbit track move together in 3D. The
-HTML controls adjust both track playback and Earth rotation speed.
-
-<p align="center"><img src="readme/gedi-orbit-animation.gif" width="650" alt="GEDI aboard the ISS orbiting an animated globe"></p>
-
-### 5.2 Extract the data
-
-#### Get GEDI pulse geolocation (GEDI Level 1B)
-
-```r
 level1b_geo <- getLevel1BGeo(level1b)
-head(level1b_geo)
+head(level1b_geo[, .(shot_number, longitude_bin0, latitude_bin0)], 3)
 ```
 
-#### Plot GEDI footprints
+```text
+         shot_number longitude_bin0 latitude_bin0
+               <i64>          <num>         <num>
+1: 19640119100108615      -44.13999     -13.72638
+2: 19640119300108616      -44.13967     -13.72596
+3: 19640119500108617      -44.13936     -13.72555
+```
+
+### Plot the footprints
+
+Coordinates tell us where the laser sampled. Plot them over imagery:
 
 ```r
 footprint_map <- leaflet::leaflet(data = as.data.frame(level1b_geo)) |>
@@ -457,20 +73,19 @@ footprint_map <- leaflet::leaflet(data = as.data.frame(level1b_geo)) |>
     lng = ~longitude_bin0, lat = ~latitude_bin0,
     radius = 2, color = "red", stroke = FALSE, fillOpacity = 1
   ) |>
-  leaflet::addScaleBar(
-    position = "topright",
-    options = leaflet::scaleBarOptions(imperial = FALSE)
-  ) |>
-  leaflet::addLegend(
-    position = "topright", colors = "red", labels = "Samples",
-    title = "GEDI Level 1B"
-  )
+  leaflet::addScaleBar(position = "topright",
+    options = leaflet::scaleBarOptions(imperial = FALSE)) |>
+  leaflet::addLegend(position = "topright", colors = "red",
+    labels = "Samples", title = "GEDI Level 1B")
 footprint_map
 ```
 
-<p align="center"><img src="readme/fig2.PNG" width="800" alt="GEDI Level 1B footprint geolocation"></p>
+<p align="center"><img src="readme/fig2.PNG" width="800" alt="GEDI Level 1B footprints over imagery"></p>
 
-#### Get GEDI full waveform (GEDI Level 1B)
+### Examine one waveform
+
+The shot identifier connects a waveform to its footprint and higher-level
+metrics. Keep shot identifiers as character or integer64 values.
 
 ```r
 shot <- level1b_geo$shot_number[1]
@@ -478,159 +93,132 @@ waveform <- getLevel1BWF(level1b, shot_number = shot)
 plot(waveform)
 ```
 
-<p align="center"><img src="readme/fig3.png" width="750" alt="Original package illustration of a full waveform in amplitude and percent units"></p>
+<p align="center"><img src="readme/fig3.png" width="750" alt="GEDI waveform in raw and relative amplitude units"></p>
 
-#### Get GEDI elevation and height metrics (GEDI Level 2A)
+### Find additional granules
+
+For your own area, search with a bounding box and date interval. Earthdata
+downloads require an Earthdata account.
 
 ```r
-level2a_metrics <- getLevel2AM(level2a)
-level2a_good <- level2a_metrics[
-  quality_flag == 1 & degrade_flag == 0 & sensitivity >= 0.9
-]
-level2a_good[, .(beam, shot_number, elev_lowestmode, rh50, rh90, rh98, rh100)]
+study_area <- st_read(system.file("extdata", "stands_cerrado.shp",
+                                  package = "rGEDI"), quiet = TRUE)
+box <- st_bbox(study_area)
+xmin <- unname(box["xmin"]); xmax <- unname(box["xmax"])
+ymin <- unname(box["ymin"]); ymax <- unname(box["ymax"])
+
+urls <- gedifinder("GEDI01_B", ul_lat = ymax, ul_lon = xmin,
+  lr_lat = ymin, lr_lon = xmax, version = "002",
+  daterange = c("2019-04-18", "2019-04-19"))
+# earthdata_login()
+# gediDownload(urls, outdir = outdir)
 ```
 
-#### Plot waveform with RH metrics
+`gedifinder(orbit = "O01964", product = "GEDI02_A", version = "002")`
+finds the four production granules for that orbit. `getTrack()` and
+`plot_gedi_orbit_animation()` can display their time-ordered tracks.
+
+<p align="center"><img src="readme/gedi-orbit-animation.gif" width="650" alt="GEDI sampling tracks from the International Space Station"></p>
+
+## 2 Describe vegetation with Level 2A and Level 2B
+
+Level 2A supplies ground elevation and relative-height metrics. RH98 is the
+height associated with 98% of cumulative waveform energy, relative to the
+estimated ground. Level 2B describes canopy cover, plant area index (PAI), and
+plant area volume density (PAVD).
+
+```r
+level2a_path <- unzip(system.file("extdata",
+  "GEDI02_A_2019108080338_O01964_T05337_02_001_01_sub.zip",
+  package = "rGEDI"), exdir = outdir)
+level2b_path <- unzip(system.file("extdata",
+  "GEDI02_B_2019108080338_O01964_T05337_02_001_01_sub.zip",
+  package = "rGEDI"), exdir = outdir)
+level2a <- readLevel2A(level2a_path)
+level2b <- readLevel2B(level2b_path)
+level2a_metrics <- getLevel2AM(level2a)
+level2b_vpm <- getLevel2BVPM(level2b)
+head(level2a_metrics[, .(beam, shot_number, rh50, rh98, rh100)], 3)
+```
+
+```text
+       beam       shot_number  rh50  rh98 rh100
+     <char>             <i64> <num> <num> <num>
+1: BEAM0001 19640119100108615 -0.14  3.25  4.30
+2: BEAM0001 19640119300108616 -0.26  3.07  4.08
+3: BEAM0001 19640119500108617 -0.26  3.22  4.41
+```
+
+```r
+head(level2b_vpm[, .(beam, shot_number, pai, cover, fhd_normal)], 3)
+```
+
+```text
+    beam       shot_number         pai       cover fhd_normal
+   <int>             <i64>       <num>       <num>      <num>
+1:     1 19640119100108615 0.056964017 0.028080121  1.3729203
+2:     1 19640119300108616 0.003395777 0.001696448  0.6365142
+3:     1 19640119500108617 0.037773777 0.018709604  1.4299893
+```
+
+### Connect height metrics to the waveform
 
 ```r
 plotWFMetrics(level1b, level2a, shot_number = shot,
               rh = c(25, 50, 75, 90, 98))
 ```
 
-<p align="center"><img src="readme/fig8.png" width="650" alt="Original package illustration of a waveform, cumulative return energy and relative-height metrics"></p>
+<p align="center"><img src="readme/fig8.png" width="650" alt="Waveform, cumulative energy and relative-height metrics"></p>
 
-#### Get GEDI vegetation biophysical variables (GEDI Level 2B)
+### Explore vertical vegetation profiles
 
-```r
-level2b_vpm <- getLevel2BVPM(level2b)
-level2b_good <- level2b_vpm[l2b_quality_flag == 1 & sensitivity >= 0.9]
-level2b_good[, .(beam, shot_number, rh100, pai, fhd_normal, cover)]
-```
-
-#### Get and plot PAI and PAVD profiles (GEDI Level 2B)
+PAI describes plant area per ground area; PAVD describes its vertical
+distribution. Extract the profiles before plotting a selected beam.
 
 ```r
-pai_profile  <- getLevel2BPAIProfile(level2b)
+pai_profile <- getLevel2BPAIProfile(level2b)
 pavd_profile <- getLevel2BPAVDProfile(level2b)
 profile_beam <- unique(pai_profile$beam)[1]
 plotPAIProfile(pai_profile, beam = profile_beam)
 plotPAVDProfile(pavd_profile, beam = profile_beam)
 ```
 
-<p align="center"><img src="readme/fig9.png" width="950" alt="Original package illustration of PAI and PAVD along a GEDI transect"></p>
+<p align="center"><img src="readme/fig9.png" width="1000" alt="PAI and PAVD profiles along GEDI tracks"></p>
 
-#### Get GEDI aboveground biomass at footprint level (GEDI Level 4A)
+### Filter and clip the footprints
 
-```r
-level4a_footprints <- getLevel4A(
-  level4a_cloud,
-  cols = c("beam", "shot_number", "delta_time", "lat_lowestmode",
-           "lon_lowestmode", "agbd", "agbd_se", "sensitivity",
-           "l4a_quality_flag_rel3", "degrade_include_flag",
-           "elev_highestreturn_outlier_flag"),
-  quality = TRUE
-)
-head(level4a_footprints)
-```
-
-#### Inspect footprint quality before analysis
-
-Filter by quality, sensitivity, night acquisition and power beam:
+Choose quality criteria appropriate to the analysis. This local example
+retains high-quality, undegraded nighttime measurements from power beams.
 
 ```r
 power_beams <- c("BEAM0101", "BEAM0110", "BEAM1000", "BEAM1011")
-screened <- level2a_metrics[
+level2a_good <- level2a_metrics[
   quality_flag == 1 & degrade_flag == 0 &
-  sensitivity >= 0.95 & sensitivity <= 1 &
+  sensitivity >= 0.9 & sensitivity <= 1 &
   solar_elevation < 0 & beam %in% power_beams
 ]
-```
+level2b_good <- level2b_vpm[l2b_quality_flag == 1 & sensitivity >= 0.9]
 
-### 5.3 Clip
-
-Use the generic `clip()` function for every GEDI product. A bounding box uses
-the rGEDI/terra coordinate order `c(xmin, xmax, ymin, ymax)`; polygons can be
-`sf`, `sfc`, or `SpatVector` objects.
-
-```r
+# Extracted tables return clipped tables.
 bbox <- c(xmin, xmax, ymin, ymax)
-
-# Open HDF5 products
-level1b_clip <- clip(level1b, bbox,
-  output = file.path(outdir, "level1b-clip.h5"))
-level2a_clip <- clip(level2a, bbox,
-  output = file.path(outdir, "level2a-clip.h5"))
-level2b_clip <- clip(level2b, study_area,
-  output = file.path(outdir, "level2b-clip.h5"))
-level4a_clip <- clip(level4a_cloud, bbox,
-  output = file.path(outdir, "level4a-clip.h5"))
-
-# Extracted footprint tables and rasters
 level2a_bbox <- clip(level2a_metrics, bbox)
-level4a_geom <- clip(level4a_footprints, study_area)
-level3_aoi <- clip(level3, vect(study_area))
-level4b_bbox <- clip(level4b, bbox)
+level2a_inside <- clip(level2a_metrics, study_area)
+
+# Open HDF5 objects can instead be written as subset HDF5 files.
+level2a_h5_clip <- clip(level2a, study_area,
+  output = file.path(outdir, "level2a-clipped.h5"))
 ```
 
-Outputs retain their input type: HDF5, footprint table or raster.
-Product-specific clipping functions are also available.
+<p align="center"><img src="readme/fig4.png" width="1000" alt="GEDI clipping by bounding box and stand polygons"></p>
 
-#### Clip open GEDI HDF5 objects
+### Summarize each polygon
 
-Level 1B, 2A, 2B, and 4A clippers write valid subset HDF5 files and return
-open GEDI objects. Passing an extracted table instead returns a `data.table`.
-
-```r
-level1b_clip <- clipLevel1B(level1b, xmin, xmax, ymin, ymax,
-                            output = file.path(outdir, "level1b-clip.h5"))
-level2a_clip <- clipLevel2A(level2a, xmin, xmax, ymin, ymax,
-                            output = file.path(outdir, "level2a-clip.h5"))
-level2b_clip <- clipLevel2B(level2b, xmin, xmax, ymin, ymax,
-                            output = file.path(outdir, "level2b-clip.h5"))
-level4a_clip <- clipLevel4A(level4a_cloud, xmin, xmax, ymin, ymax,
-                            output = file.path(outdir, "level4a-clip.h5"))
-level4a_table_clip <- clipLevel4A(level4a_footprints, xmin, xmax, ymin, ymax)
-```
-
-Clip the HDF5 products by geometry:
+Use a polygon identifier to keep the summaries separate. Here cover is a
+fraction, not a percentage.
 
 ```r
-level1b_geom <- clipLevel1BGeometry(level1b, study_area,
-  output = file.path(outdir, "level1b-geometry"))
-level2a_geom <- clipLevel2AGeometry(level2a, study_area,
-  output = file.path(outdir, "level2a-geometry"))
-level2b_geom <- clipLevel2BGeometry(level2b, study_area,
-  output = file.path(outdir, "level2b-geometry"))
-level4a_geom <- clipLevel4AGeometry(level4a_cloud, study_area,
-  output = file.path(outdir, "level4a-geometry.h5"))
-level4a_table_geom <- clipLevel4AGeometry(level4a_footprints, study_area)
-```
-
-#### Clip extracted `data.table` objects
-
-```r
-level1b_geo_bbox <- clipLevel1BGeo(level1b_geo, xmin, xmax, ymin, ymax)
-level2a_bbox <- clipLevel2AM(level2a_metrics, xmin, xmax, ymin, ymax)
-level2b_bbox <- clipLevel2BVPM(level2b_vpm, xmin, xmax, ymin, ymax)
-
-level1b_geo_geom <- clipLevel1BGeoGeometry(level1b_geo, study_area)
-level2a_geom_dt <- clipLevel2AMGeometry(level2a_metrics, study_area)
-level2b_geom_dt <- clipLevel2BVPMGeometry(level2b_vpm, study_area)
-
-plot(st_geometry(study_area))
-points(level2a_geom_dt$lon_lowestmode, level2a_geom_dt$lat_lowestmode,
-       pch = 16, col = "#762A83")
-```
-
-<p align="center"><img src="readme/fig4.png" width="950" alt="GEDI footprint clipping by extent and forest-stand polygons"></p>
-
-#### Characterize forest structure within polygons
-
-Supply mapped stand or forest-type boundaries to clip footprint products
-and summarize their vegetation metrics by polygon.
-
-```r
-# `polygons` contains a unit_id column and a defined CRS.
+polygons <- study_area
+polygons$unit_id <- seq_len(nrow(polygons))
 footprints <- clip(level2b_good, polygons, split_by = "unit_id")
 structure_metrics <- function(pai, cover) list(
   n = length(pai), mean_pai = mean(pai), mean_cover = mean(cover)
@@ -638,293 +226,459 @@ structure_metrics <- function(pai, cover) list(
 polygon_summary <- polyStatsLevel2BVPM(
   footprints, ~structure_metrics(pai, cover), id = "poly_id"
 )
+polygon_summary
 ```
 
-These are summaries of sampled footprints. Record sample counts and
-acquisition periods when interpreting differences among polygons.
-
-### 5.4 Compute descriptive statistics
-
-```r
-metric_set <- function(x) c(
-  n = sum(is.finite(x)), mean = mean(x, na.rm = TRUE),
-  sd = sd(x, na.rm = TRUE), min = min(x, na.rm = TRUE),
-  max = max(x, na.rm = TRUE)
-)
-
-rh98_stats <- polyStatsLevel2AM(
-  level2a_geom_dt, func = metric_set(rh98), id = NULL
-)
-cover_stats <- polyStatsLevel2BVPM(
-  level2b_geom_dt, func = metric_set(cover), id = NULL
-)
-agbd_stats <- polyStatsLevel4A(
-  level4a_footprints, study_area, metric = "agbd", fun = metric_set
-)
+```text
+   poly_id     n   mean_pai mean_cover
+     <int> <int>      <num>      <num>
+1:       2    98 0.11910636 0.05553518
+2:       1   100 0.15160601 0.06934074
+3:       5    52 0.06078231 0.02914990
+4:       4    20 0.25203198 0.11343149
+5:       3    29 0.23915693 0.10965394
 ```
 
-Example output for all five bundled stands, calculated with the polygon
-summary functions (`readme/build-package-spatial.R`):
+### Build your own footprint grids
 
-| Stand | Footprints | Mean RH98 (m) | Mean PAI (m²/m²) | Mean cover (%) |
-|---|---:|---:|---:|---:|
-| 1 | 100 | 4.56 | 0.152 | 6.93 |
-| 2 | 98 | 4.44 | 0.119 | 5.55 |
-| 3 | 29 | 6.58 | 0.239 | 10.97 |
-| 4 | 20 | 6.04 | 0.252 | 11.34 |
-| 5 | 52 | 3.43 | 0.061 | 2.91 |
-
-### 5.5 Compute grids with descriptive statistics
+`gridStatsLevel2AM()` and `gridStatsLevel2BVPM()` calculate user-defined
+statistics. Their geographic resolution is in degrees.
 
 ```r
 grid_summary <- function(x) list(
   min = min(x, na.rm = TRUE), max = max(x, na.rm = TRUE),
   mean = mean(x, na.rm = TRUE), sd = sd(x, na.rm = TRUE)
 )
-rh100_grid <- gridStatsLevel2AM(
-  level2a_metrics, func = grid_summary(rh100), res = 0.005
-)
-pai_grid <- gridStatsLevel2BVPM(
-  level2b_vpm, func = grid_summary(pai), res = 0.005
-)
-agbd_grid <- gridStatsLevel4A(
-  level4a_footprints, metric = "agbd", fun = mean,
-  res = 0.002, na.rm = TRUE
-)
+rh100_grid <- gridStatsLevel2AM(level2a_metrics,
+  func = grid_summary(rh100), res = 0.005)
+pai_grid <- gridStatsLevel2BVPM(level2b_vpm,
+  func = grid_summary(pai), res = 0.005)
 ```
 
-<p align="center">
-  <img src="readme/fig5.png" width="390" alt="Gridded RH100 minimum, maximum, mean and standard deviation">
-  <img src="readme/fig6.png" width="390" alt="Gridded PAI minimum, maximum, mean and standard deviation">
-</p>
+<p align="center"><img src="readme/fig5.png" width="390" alt="RH100 grid statistics"><img src="readme/fig6.png" width="390" alt="PAI grid statistics"></p>
 
-#### Projected 1 km grids
-
-Use a projected template to specify cell size in metres. This example uses
-UTM zone 23S for the bundled Brazilian subset.
+For an exact 1 km cell size, supply a projected template to `rasterize()`.
+Choose a projection appropriate to your area; UTM 23S fits this example.
 
 ```r
 points_utm <- terra::project(to_vect(level2a_metrics), "EPSG:32723")
-template <- terra::rast(terra::ext(points_utm), resolution = 1000,
+bounds <- as.vector(terra::ext(points_utm))
+bounds[c(1, 3)] <- floor(bounds[c(1, 3)] / 1000) * 1000
+bounds[c(2, 4)] <- ceiling(bounds[c(2, 4)] / 1000) * 1000
+template <- terra::rast(terra::ext(bounds), resolution = 1000,
                         crs = "EPSG:32723")
-rh98_1km <- rasterize(level2a_metrics, "rh98", template = template, fun = "mean")
-pai_1km <- rasterize(level2b_vpm, "pai", template = template, fun = "mean")
+rh98_1km <- rGEDI::rasterize(level2a_metrics, "rh98",
+  template = template, fun = "mean")
+pai_1km <- rGEDI::rasterize(level2b_vpm, "pai",
+  template = template, fun = "mean")
 ```
 
-<p align="center"><img src="readme/fig-package-spatial.png" width="1100" alt="Clipping to two example stands and rasterizing RH98 and PAI on a shared projected 1 km grid, with scale bars, north arrows and legends"></p>
+<p align="center"><img src="readme/fig-package-spatial.png" width="1100" alt="Polygon clipping and projected 1 km mean RH98 and PAI grids"></p>
 
-Panel A clips to the first two bundled stands. Panels B–C grid all bundled
-footprints. Redraw the figure and polygon-summary table with
-`Rscript readme/build-package-spatial.R`.
+These grids summarize sampled footprints. White cells have no included
+measurements; they are not zero-height vegetation.
 
-### 5.6 Convert to `SpatVector`
+## 3 Read and explore native Level 3 grids
 
-`to_vect()` detects the standard coordinate fields for Level 2A, Level 2B,
-and Level 4A tables.
-
-```r
-level2a_vect <- to_vect(level2a_metrics)
-level2b_vect <- to_vect(level2b_vpm)
-level4a_vect <- to_vect(level4a_footprints)
-```
-
-## 6 Modelling forest attributes
-
-Use `fit_model()`, `predict()` and `fit_metrics()` to calibrate and assess
-models of forest attributes. Section 9 outlines ancillary-data extraction
-and mapping. Keep validation locations separate from the training data.
-
-Join field observations to simulated waveform metrics by plot identifier.
-Keep samples from the same plot or stand together in validation folds.
-
-## 7 Extract, clip, and summarize GEDI-derived grid products
+NASA also distributes nominal 1 km Level 3 summaries. These are different
+from the user-defined grids above. A small regional subset around Brasília,
+Brazil, is bundled with its IBGE boundary so this example runs offline.
 
 ```r
+level3_file <- system.file("extdata", "GEDI03_Brasilia.tif", package = "rGEDI")
+level4b_file <- system.file("extdata", "GEDI04_B_Brasilia.tif", package = "rGEDI")
 level3 <- readLevel3(level3_file)
 level4b <- readLevel4B(level4b_file)
 ```
 
-### 7.1 Visualization
-
-```r
-plotLevel3(level3, main = "GEDI Level 3 metric")
-plotLevel4B(level4b, main = "GEDI Level 4B AGBD")
+```text
+    product  rows columns layers resolution_m
+     <char> <num>   <num>  <num>        <num>
+1:  Level 3    92     121      2     1000.895
+2: Level 4B    92     121      2     1000.895
 ```
 
-### 7.2 Clip using a bounding box or geometry
+### Clip a grid to a mapped boundary
+
+Transform the boundary to the raster's CRS before using its coordinates.
+`clipLevel3()` accepts either an extent or a polygon.
 
 ```r
-level3_bbox <- clipLevel3(level3, c(xmin, xmax, ymin, ymax))
-level4b_bbox <- clipLevel4B(level4b, c(xmin, xmax, ymin, ymax))
-level3_aoi <- clipLevel3(level3, vect(study_area))
-level4b_aoi <- clipLevel4B(level4b, vect(study_area))
-level3_values <- getLevel3(level3, geometry = vect(study_area))
-level4b_values <- getLevel4B(level4b, geometry = vect(study_area))
+grid_aoi <- st_read(system.file("extdata", "brasilia.shp",
+                                package = "rGEDI"), quiet = TRUE)
+native_aoi <- st_transform(grid_aoi, terra::crs(level3))
+grid_bbox <- as.vector(terra::ext(terra::vect(native_aoi)))
+level3_bbox <- clipLevel3(level3, grid_bbox)
+level3_aoi <- clipLevel3(level3, terra::vect(native_aoi))
+
+plotLevel3(level3[["rh100_mean"]], main = "Level 3 mean RH100 (m)")
+plotLevel3(level3_aoi[["rh100_mean"]], main = "Mean RH100 inside Brasilia")
 ```
 
-### 7.3 Compute Level 4B descriptive statistics within an AOI
+<p align="center"><img src="readme/fig-level3-products.png" width="1050" alt="Native Level 3 mean RH100 before and after clipping to the Brasilia boundary"></p>
+
+### Extract pixel values
+
+`getLevel3()` returns the native cell measurements intersecting the polygon.
+`ID` identifies the input polygon; each row is an intersected cell.
 
 ```r
-level4b_stats <- polyStats(
-  level4b, vect(study_area), fun = mean, na.rm = TRUE
-)
+level3_values <- getLevel3(level3, geometry = terra::vect(native_aoi))
+head(level3_values[is.finite(rh100_mean)], 3)
+```
+
+```text
+      ID rh100_mean counts
+   <num>      <num>  <num>
+1:     1   9.303703     27
+2:     1  11.421481     54
+3:     1   9.538421     38
+```
+
+## 4 Move from structure to biomass with Level 4A and Level 4B
+
+Level 4A estimates aboveground biomass density (AGBD) at footprints.
+Level 4B provides gridded estimates and uncertainty information. Both use
+Mg/ha, equivalent to metric tonnes per hectare.
+
+### Level 4A footprints through Earth Engine
+
+This optional online step introduces the new mapping area, Shenandoah
+National Park. Its NPS boundary is supplied as a shapefile.
+
+```r
+# Configure Python dependencies once, if needed:
+# rGEDI_configure(install = TRUE)
+# Sys.setenv(EE_PROJECT = "your-authenticated-project")
+ee <- ee_initialize(project = Sys.getenv("EE_PROJECT"))
+aoi <- st_read(system.file("extdata", "shenandoah.shp", package = "rGEDI"),
+               quiet = TRUE)
+box <- st_bbox(aoi)
+address <- gedifinder("GEDI04_A", ul_lat = box[["ymax"]],
+  ul_lon = box[["xmin"]], lr_lat = box[["ymin"]], lr_lon = box[["xmax"]],
+  version = "002.1", daterange = c("2019-05-01", "2019-10-01"), source = "gee")
+level4a <- readLevel4A(address)
+lazy <- getLevel4A(level4a, quality = TRUE, collect = FALSE)
+lazy <- clip(lazy, aoi)  # Apply the polygon filter before transferring data.
+biomass_footprints <- getLevel4A(lazy, quality = TRUE, max_features = 10000,
+  cols = c("beam", "shot_number", "agbd", "agbd_se", "sensitivity",
+           "solar_elevation", "l4_quality_flag", "degrade_flag"))
+head(biomass_footprints[, .(beam, shot_number, agbd, agbd_se, sensitivity)], 3)
+```
+
+```text
+    beam       shot_number     agbd  agbd_se sensitivity
+   <int>            <char>    <num>    <num>       <num>
+1:    11 43081100300231185 453.4523 10.32448    0.977248
+2:    11 43081100300231211 366.5885 10.31399    0.979268
+3:    11 43081100300231207 398.6888 10.31586    0.989330
+```
+
+The finder-reader-extractor sequence also supports Earthdata Cloud and
+gediDB. Select `source = "earthdata"` or `source = "gedidb"` and the product
+version provided by that service. GEE retains numeric beam identifiers;
+its power beams are `5`, `6`, `8`, and `11`.
+
+### Plot and clip Level 4B grids offline
+
+Return to the bundled Brasília grids to compare regional biomass estimates
+with the Level 3 structure metrics.
+
+```r
+level4b_bbox <- clipLevel4B(level4b, grid_bbox)
+level4b_aoi <- clipLevel4B(level4b, terra::vect(native_aoi))
+plotLevel4B(level4b[["MU"]], main = "Level 4B AGBD (Mg/ha)")
+plotLevel4B(level4b_aoi[["MU"]], main = "AGBD inside Brasilia")
+```
+
+<p align="center"><img src="readme/fig-level4b-products.png" width="1050" alt="Native Level 4B AGBD before and after polygon clipping"></p>
+
+### Extract cells and calculate a polygon summary
+
+```r
+level4b_values <- getLevel4B(level4b, geometry = terra::vect(native_aoi))
+head(level4b_values[is.finite(MU)], 3)
+```
+
+```text
+      ID       MU        SE
+   <num>    <num>     <num>
+1:     1 26.18723 10.511335
+2:     1 11.92644  2.939256
+3:     1 21.65576  8.193736
+```
+
+```r
+level4b_stats <- polyStats(level4b, terra::vect(native_aoi),
+                           fun = mean, na.rm = TRUE)
 level4b_stats
 ```
 
-## 8 Simulating GEDI full-waveform data from ALS point clouds
-
-`gediWFSimulator()` simulates GEDI waveforms from ALS point clouds, building
-on Steven Hancock's simulator. `gediWFMetrics()` extracts waveform metrics.
-
-```r
-set.seed(11)
-als <- data.frame(
-  X = c(runif(1500, -12, 12), runif(3500, -12, 12)),
-  Y = c(runif(1500, -12, 12), runif(3500, -12, 12)),
-  Z = c(rnorm(1500, 0, 0.25), pmax(0, rnorm(3500, 17, 6))),
-  Classification = c(rep(2L, 1500), rep(5L, 3500))
-)
+```text
+      ID       MU       SE
+   <int>    <num>    <num>
+1:     1 17.22374 5.675005
 ```
 
-### 8.1 Extract metrics without adding waveform noise
+`MU` is the mean AGBD estimate and `SE` is its cell-level standard error.
+Here the summary averages the intersected cell values. The mean of the SE
+values is not the uncertainty of the regional mean.
 
-```r
-sim_clean <- gediWFSimulator(
-  als, output = file.path(outdir, "sim-clean.h5"),
-  coords = c(0, 0), noise = 0, seed = 11
-)
-metrics_clean <- gediWFMetrics(sim_clean)
-metrics_clean[, .(cover, rh50, rh90, rh100, waveEnergy)]
+The corresponding clipping calls return:
+
+```text
+        output cells valid
+        <char> <num> <num>
+1:     L3 bbox  6324  5163
+2:  L3 polygon  6324  4748
+3:    L4B bbox  6324  5194
+4: L4B polygon  6324  4807
 ```
 
-### 8.2 Extract metrics after adding waveform noise
+## 5 Simulate GEDI waveforms from measured ALS
+
+ALS resolves individual laser returns. `gediWFSimulator()` combines those
+returns into a GEDI-like waveform at a chosen footprint location. The input
+below is the original measured Amazon ALS example, not a random point cloud.
+The package also includes `Savanna.laz`.
 
 ```r
-sim_noisy <- gediWFSimulator(
-  als, output = file.path(outdir, "sim-noisy.h5"),
-  coords = c(0, 0), noise = 0.03, seed = 11
-)
-metrics_noisy <- gediWFMetrics(sim_noisy)
-metrics_noisy[, .(cover, rh50, rh90, rh100, waveEnergy)]
+als_file <- system.file("extdata", "Amazon.laz", package = "rGEDI")
+als <- lidR::readLAS(als_file)
+centre <- c(mean(range(als@data$X)), mean(range(als@data$Y)))
+
+sim_clean <- gediWFSimulator(als, output = file.path(outdir, "sim-clean.h5"),
+                            coords = centre, noise = 0, seed = 11)
+sim_noisy <- gediWFSimulator(als, output = file.path(outdir, "sim-noisy.h5"),
+                            coords = centre, noise = 0.001, seed = 11)
+metrics_clean <- gediWFMetrics(sim_clean, rhRes = 1, ground_method = "lowest_peak")
+metrics_noisy <- gediWFMetrics(sim_noisy, rhRes = 1, ground_method = "lowest_peak")
+sim_waveform <- getLevel1BWF(sim_clean, metrics_clean$shot_number[1])
+plot(sim_waveform, relative = TRUE)
 ```
 
-<p align="center"><img src="readme/fig7.png" width="850" alt="Original package illustration of ALS point clouds and simulated GEDI waveforms"></p>
+<p align="center"><img src="readme/fig-package-als.png" width="1000" alt="Measured Amazon and Savanna ALS clouds and GEDI-like simulated waveforms"></p>
 
-## 9 Modelling and mapping with ancillary data
+Repeating these calls for both measured clouds gives:
 
-The package supports sampling footprint products, extracting Earth Engine
-predictors, selecting variables, fitting models, assessing predictions and
-creating maps. The installed `scripts/upscaling_alphaearth_workflow.R` provides
-a package workflow using a user-configured Earth Engine project.
+```text
+      site noise     cover       rh50      rh90      rh98 rh100 waveEnergy
+    <char> <num>     <num>      <num>     <num>     <num> <num>      <num>
+1:  Amazon 0.000 0.7795247 20.0403346 30.525283 31.963053 36.15   1.000000
+2:  Amazon 0.001 0.7767196 20.0361180 30.535343 31.995403 70.95   1.002188
+3: Savanna 0.000 0.1565774  0.4287428  4.700784  7.047970 13.05   1.000000
+4: Savanna 0.001 0.1549919  0.4276787  4.759650  7.226346 47.85   1.007346
+```
 
-Use `extractEE()` to retrieve predictors at GEDI footprints, and keep their
-acquisition period aligned with the response data. For example, after
-constructing an annual predictor stack:
+Waveform heights use the estimated ground; ALS display heights use each
+cloud's minimum elevation. Notice how noise affects RH100 more than RH98.
+Ground estimation and the waveform noise window matter when interpreting
+these metrics.
+
+## 6 Integrate GEDI and other sensors for wall-to-wall mapping
+
+GEDI footprints provide training observations, while spatially continuous
+satellite and terrain predictors allow a model to estimate unsampled cells.
+This example maps biomass in Shenandoah National Park using annual AlphaEarth
+satellite embeddings and NASADEM terrain variables accessed through rGEDI.
+
+### See global GEDI data through GEE
+
+A small display preview of the native Level 4B product illustrates global
+coverage without transferring the footprint archive.
 
 ```r
-training <- extractEE(stack, footprint_sample, scale = 30, chunk_size = 250)
+global_address <- gedifinder("GEDI04_B", ul_lat = 52, ul_lon = -180,
+  lr_lat = -52, lr_lon = 180, version = "002", source = "gee")
+global_biomass <- readLevel4B(global_address, metrics = "MU")
+map_view(list(AGBD = global_biomass),
+  vis = list(AGBD = list(min = 0, max = 400,
+    palette = c("#000004", "#721F81", "#F1605D", "#FCFDBF"))))
 ```
 
-Fit and evaluate models using separate training and validation tables. Here
-`predictor_names` contains the numeric predictor columns shared by both tables.
+<p align="center"><img src="readme/fig-gee-global.png" width="1100" alt="Global native GEDI Level 4B biomass viewed through Earth Engine"></p>
+
+The figure uses a 20 km nearest-neighbour display preview. It is not a newly
+estimated global biomass raster. The underlying product has its own sampling
+support, period and uncertainty.
+
+### Run the complete mapping example
+
+The optional script retrieves May–September observations for 2019, 2021 and
+2022, filters quality and nighttime power beams, clips them to the park, and
+extracts year-matched predictors. It caches intermediate data outside the
+package. Choose a cache folder on a drive with space.
 
 ```r
-model <- fit_model(
-  train[, ..predictor_names], train$agbd,
-  method = "randomForest", test = "none", seed = 42, ntree = 500
-)
-predicted <- as.numeric(predict(model, newdata = holdout[, ..predictor_names]))
-accuracy <- fit_metrics(holdout$agbd, predicted, unit = "Mg/ha")
+# Windows example; choose a suitable location for your computer:
+# Sys.setenv(RGEDI_EXAMPLE_CACHE = "D:/rGEDI_package_examples")
+source("readme/build-gee-tutorial.R")
+source("readme/plot-gee-tutorial.R")
 ```
 
-These snippets require user-supplied training and holdout tables. Validation
-against GEDI AGBD evaluates agreement with the mission estimates; independent
-field measurements are needed to assess agreement with field biomass.
+The following steps explain the main calls in that script.
 
-For server-side prediction, `build_ee_forest()` and `map_create()` fit and apply
-an Earth Engine regression forest. Evaluate that model on its own held-out
-observations before interpreting its predictions.
+### Extract ancillary predictors
+
+For each acquisition year, build an annual predictor stack and extract its
+values at the screened GEDI footprints. Preserve coordinates with a sample
+identifier because GEE sampling returns feature properties.
 
 ```r
-training_ee <- vect_as_ee(to_vect(training))
-forest_ee <- build_ee_forest(
-  training_ee, response = "agbd", predictors = predictor_names,
-  trees = 500, seed = 42
-)
-image <- map_create(forest_ee, stack, aoi = study_extent, name = "agbd")
-map_download(
-  image, file.path(outdir, "gee_agbd.tif"),
-  region = study_extent, scale = 30, crs = "EPSG:4326"
-)
+stack <- ee_build_AlphaEarth_embedding_terrain_stack(
+  aoi, start_year = 2019, end_year = 2019, add_lonlat = FALSE)
+biomass_footprints <- biomass_footprints[
+  is.finite(agbd) & agbd >= 0 & sensitivity >= 0.9 & sensitivity <= 1 &
+  solar_elevation < 0 & beam %in% c(5, 6, 8, 11)]
+biomass_footprints[, sample_id := seq_len(.N)]
+coordinates <- biomass_footprints[, .(sample_id, lon_lowestmode, lat_lowestmode)]
+ancillary <- extractEE(stack, biomass_footprints, scale = 30, chunk_size = 1000)
+ancillary <- merge(ancillary, coordinates, by = "sample_id", all.x = TRUE)
 ```
 
-## 10 Close the files
+The complete script repeats this extraction by year, represents aspect with
+sine and cosine, and uses `sample(..., spacedSampling(...))` to limit spatial
+clustering. It retains 2,348 complete records for the displayed run.
 
-Close every local or streamed HDF5 object after use.
+### Separate validation blocks before selecting variables
+
+Use the saved preparation results to repeat the model steps. All observations
+from a 2 km block remain in the same partition across years.
+
+```r
+cache <- Sys.getenv("RGEDI_EXAMPLE_CACHE",
+                    file.path(tempdir(), "rGEDI-package-examples"))
+inputs <- readRDS(file.path(cache, "shenandoah_model_inputs.rds"))
+data <- as.data.table(inputs$training)
+train <- data[!block %in% inputs$heldout_blocks]
+valid <- data[block %in% inputs$heldout_blocks]
+predictor_names <- c(sprintf("A%02d", 0:63), "elevation", "slope",
+                     "aspect_sin", "aspect_cos")
+selection <- varSel(train[, ..predictor_names], train$agbd,
+  method = "rfe", threshold = 0, seed = 726, ntree = 150, nodesize = 5)
+selected <- selection$selvars
+```
+
+<p align="center"><img src="readme/fig-gee-variable-selection.png" width="1000" alt="Training-only variable importance and recursive feature elimination"></p>
+
+The displayed run retains 13 predictors. Out-of-bag error guides selection
+within the training data; the held-out blocks are reserved for evaluation.
+
+### Train and validate the GEE forest
+
+Use the selected predictors to train the Earth Engine regression forest.
+Classify held-out feature properties to evaluate the same server-side model.
+
+```r
+model_fields <- c("lon_lowestmode", "lat_lowestmode", "sample_id", "agbd", selected)
+training_ee <- vect_as_ee(to_vect(train[, ..model_fields]))
+model <- build_ee_forest(training_ee, response = "agbd", predictors = selected,
+                         trees = 500, seed = 726)
+validation_ee <- vect_as_ee(to_vect(valid[, ..model_fields]))
+validation_ee <- validation_ee$classify(model, "predicted")
+```
+
+The full script collects these predictions and evaluates them with
+`fit_metrics()`. Predictive R² below is calculated as one minus the residual
+sum of squares divided by the observed total sum of squares.
+
+```text
+        stage     n    R2  RMSE  bias
+       <fctr> <int> <num> <num> <num>
+1:   Training  1703 0.799 56.03  0.16
+2: Validation   645 0.516 88.47 10.34
+```
+
+<p align="center"><img src="readme/fig-gee-model-validation.png" width="1000" alt="Training and spatial holdout model diagnostics with common axes"></p>
+
+The reference response is GEDI AGBD, so this measures agreement with withheld
+GEDI estimates. Independent field data are needed to evaluate field biomass.
+
+### Predict the whole park
+
+After evaluation, the complete script refits the selected model on all 2,348
+records. It applies that model to the 2021 predictor stack and exports a
+100 m demonstration map. The stack includes the same aspect transformations
+used during training.
+
+```r
+stack <- ee_build_AlphaEarth_embedding_terrain_stack(aoi, 2021, 2021,
+                                                   add_lonlat = FALSE)
+aspect <- stack$select("aspect")$multiply(pi / 180)
+stack <- stack$addBands(aspect$sin()$rename("aspect_sin"))$
+  addBands(aspect$cos()$rename("aspect_cos"))
+all_training <- vect_as_ee(to_vect(data[, ..model_fields]))
+final_model <- build_ee_forest(all_training, "agbd", selected, trees = 500, seed = 726)
+mapped <- map_create(final_model, stack$select(as.list(selected)),
+                     aoi = aoi, name = "AGBD")
+map_view(list(AGBD = mapped),
+  vis = list(AGBD = list(min = 0, max = 500,
+    palette = c("#000004", "#721F81", "#F1605D", "#FCFDBF"))), aoi = aoi)
+map_download(mapped, file.path(outdir, "shenandoah_agbd_2021.tif"),
+              region = aoi, scale = 100, crs = "EPSG:32617")
+```
+
+<p align="center"><img src="readme/fig-gee-shenandoah-map.png" width="1050" alt="Shenandoah boundary, GEDI training and validation samples, and wall-to-wall biomass prediction"></p>
+
+This is a model prediction between sampled footprints. It is not an
+additional GEDI observation or the native NASA Level 4B product.
+
+## Close HDF5 connections
 
 ```r
 close(level1b)
 close(level2a)
 close(level2b)
-close(level1b_full)
-close(level2a_full)
-close(level2b_full)
-close(level4a_full)
-close(level4a_cloud)
-invisible(lapply(orbit_h5, close))
-close(level1b_clip)
-close(level2a_clip)
-close(level2b_clip)
-lapply(level1b_geom, close)
-lapply(level2a_geom, close)
-lapply(level2b_geom, close)
+close(level2a_h5_clip)
 close(sim_clean)
 close(sim_noisy)
 ```
 
-# References
+## Reproduce the displayed outputs
 
-- Dubayah, R. et al. (2020). The Global Ecosystem Dynamics Investigation:
-  High-resolution laser ranging of the Earth's forests and topography.
-  *Science of Remote Sensing*, 1, 100002.
-- Hancock, S. et al. (2019). The GEDI simulator: A large-footprint waveform
-  lidar simulator for calibration and validation of spaceborne missions.
-  *Earth and Space Science*, 6, 294Ã¢â‚¬â€œ310.
-- Steven Hancock's reference implementation: <https://bitbucket.org/StevenHancock/gedisimulator/src/master/>
-- GEDI project and product guides: <https://www.earthdata.nasa.gov/data/projects/gedi>
+Run scripts from the repository root after installing their plotting
+dependencies. The local scripts use bundled data; the cloud script is optional.
 
-# Acknowledgements
+```r
+# install.packages(c("lidR", "plot3D", "patchwork", "viridisLite", "rnaturalearthdata"))
+source("readme/build-tutorial-local.R")    # Waveforms, measured ALS and R output
+source("readme/build-package-spatial.R")   # Footprint clipping and user grids
+source("readme/build-tutorial-rasters.R")  # Native Level 3/4B plots and output
+# source("readme/build-gee-tutorial.R")    # Requires GEE; downloads and models
+# source("readme/plot-gee-tutorial.R")     # Draw the saved cloud results
+```
 
-GEDI data are provided by NASA's Land Processes Distributed Active Archive
-Center and Oak Ridge National Laboratory Distributed Active Archive Center.
-Steven Hancock developed the GEDI waveform simulator (Hancock et al., 2019).
-The waveform-simulation functionality in rGEDI builds on his implementation.
-We acknowledge Steven Hancock and the contributors to the GEDI
-waveform-simulation ecosystem.
+All figures and data here are package tutorial examples. Data-source and
+subset details are recorded in `inst/extdata/EXAMPLE_DATA.txt`.
 
-- Steven Hancock's reference implementation is available in the
-  [GEDI simulator repository](https://bitbucket.org/StevenHancock/gedisimulator/src/master/).
+## Acknowledgements and funding
 
-# Reporting issues
+GEDI data are provided by NASA's LP DAAC and ORNL DAAC. Steven Hancock
+developed the GEDI waveform simulator; rGEDI builds on his
+[reference implementation](https://bitbucket.org/StevenHancock/gedisimulator/src/master/).
+Example boundaries are from [IBGE](https://servicodados.ibge.gov.br/api/docs/malhas?versao=3)
+and the [National Park Service](https://www.nps.gov/subjects/gisandmapping/npmap.htm).
 
-Report reproducible problems at
-<https://github.com/carlos-alberto-silva/rGEDI/issues>. Include the rGEDI
-version, operating system, product/version, a minimal example, and the complete
-error message. Never include Earthdata or Google credentials.
+This work was primarily supported by NASA’s ICESat-2 Science Team
+(80NSSC23K0941), Carbon Monitoring System (80NSSC23K1257), and Commercial
+Smallsat Data Scientific Analysis program (80NSSC24K0055); the
+McIntire–Stennis Program at the University of Florida (Accession No. 7005758);
+and the Joint Fire Science Program through the EMS4D project (22-2-02-15).
 
-# Citing rGEDI
+## Cite rGEDI
 
 ```r
 citation("rGEDI")
 ```
 
-Silva, C. A., and Hamamura, C. (2026). *rGEDI: NASA's Global Ecosystem
-Dynamics Investigation (GEDI) Data Visualization and Processing*.
-R package version 0.6.0. <https://doi.org/10.32614/CRAN.package.rGEDI>.
+Silva, C. A., and Hamamura, C. *rGEDI: NASA's Global Ecosystem Dynamics
+Investigation (GEDI) Data Visualization and Processing*. R package.
+[CRAN package DOI](https://doi.org/10.32614/CRAN.package.rGEDI).
 
-# Disclaimer
+## Questions and issues
 
-rGEDI is an independent open-source project and is not an official NASA
-software product. Users remain responsible for checking product quality flags,
-release notes, model assumptions, and the suitability of outputs for their
-application.
+Report reproducible problems at the
+[issue tracker](https://github.com/carlos-alberto-silva/rGEDI/issues), including
+the package version, operating system, product/version and minimal example.
+Keep credentials out of reports. rGEDI is an independent open-source project,
+not an official NASA software product.
