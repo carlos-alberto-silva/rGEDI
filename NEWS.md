@@ -4,8 +4,8 @@
 
 * Bound cloud waveform reads to the requested samples, handle unsigned 64-bit
   sample addresses, and return ordinary vectors for one-dimensional datasets.
-* Refresh the repository examples with real forest point clouds, matched GEDI
-  profiles, polygon characterization, reproducible modelling and editable figures.
+* Refresh the README for the current API, retain original package
+  illustrations, and keep manuscript study-case assets outside the package.
 
 * Simplify the public workflow: `gedifinder()` chooses the source and the
   existing `readLevel*()` functions open local, Earthdata, gediDB, or supported

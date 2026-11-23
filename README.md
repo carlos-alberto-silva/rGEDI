@@ -21,20 +21,9 @@ simulates, models, and maps NASA Global Ecosystem Dynamics Investigation
 (GEDI) data. It supports footprint products GEDI01_B, GEDI02_A, GEDI02_B,
 and GEDI04_A, as well as raster products GEDI03 and GEDI04_B.
 
-The examples below form one workflow. Local examples use the real GEDI subsets
-bundled with the package. Cloud and Google Earth Engine examples use real NASA
-and Earth Engine services. Reproduction instructions and input provenance for the figures are in
-[`readme/REPRODUCE.md`](readme/REPRODUCE.md). A
-generated function reference manual is available at
-`output/pdf/rGEDI-reference-manual.pdf`.
-
-<p align="center"><img src="readme/fig-package-workflow.png" width="900" alt="Connected rGEDI readers, extractors, spatial functions, model functions and supporting interfaces"></p>
-
-Editable PowerPoint figures and the full plotting scripts are available in
-[`readme/editable/`](readme/editable/) and
-[`readme/REPRODUCE.md`](readme/REPRODUCE.md). The workflow diagram, waveforms,
-reference lines and model scatter charts contain editable native objects.
-Dense ALS and PAVD panels remain separate high-resolution image objects.
+The examples below demonstrate the package API using the bundled GEDI
+subsets and optional cloud services. The generated package reference manual is
+available in `output/pdf/rGEDI-reference-manual.pdf`.
 
 # Getting Started
 
@@ -58,7 +47,7 @@ library(terra)
 
 ### Configure Python and Google Earth Engine
 
-As in the ICESat2VegR workflow, rGEDI uses three Python packages through
+rGEDI uses three optional Python packages through
 `reticulate`:
 
 1. [`earthaccess`](https://github.com/earthaccess-dev/earthaccess) finds and
@@ -467,9 +456,6 @@ level1b_geo <- getLevel1BGeo(level1b)
 head(level1b_geo)
 ```
 
-The U.S. comparison below connects footprint geolocation to real GEDI
-returns and measured airborne lidar structure.
-
 
 #### Get GEDI full waveform (GEDI Level 1B)
 
@@ -478,6 +464,8 @@ shot <- level1b_geo$shot_number[1]
 waveform <- getLevel1BWF(level1b, shot_number = shot)
 plot(waveform)
 ```
+
+<p align="center"><img src="readme/fig3.png" width="750" alt="Original package illustration of a full waveform in amplitude and percent units"></p>
 
 
 #### Get GEDI elevation and height metrics (GEDI Level 2A)
@@ -497,6 +485,7 @@ plotWFMetrics(level1b, level2a, shot_number = shot,
               rh = c(25, 50, 75, 90, 98))
 ```
 
+<p align="center"><img src="readme/fig8.png" width="650" alt="Original package illustration of a waveform, cumulative return energy and relative-height metrics"></p>
 
 
 #### Get GEDI vegetation biophysical variables (GEDI Level 2B)
@@ -517,47 +506,7 @@ plotPAIProfile(pai_profile, beam = profile_beam)
 plotPAVDProfile(pavd_profile, beam = profile_beam)
 ```
 
-The Appalachian example connects footprint products, clipping, vegetation
-profiles and forest characterization. Panel A shows 13 granules from May to
-September 2019 clipped to the mapped Great Smoky Mountains National Park AOI.
-Panel B shows all eight ground tracks of one Earthdata granule. Panel C shows
-a continuous PAVD display with the actual Level 1B waveform from the marked
-footprint in its inset. No background imagery is used.
-
-```r
-source("readme/build-profile-example.R")
-```
-
-<p align="center"><img src="readme/fig-forest-characterization.png" width="1100" alt="Thirteen GEDI granules over a named park AOI, eight ground tracks from one granule, a PAVD profile with a real waveform inset, forest-type PAVD curves and L2A RH98 and L2B cover and PAI boxplots"></p>
-
-The single-granule map contains 4,387 geolocated footprints across all eight
-beams. Footprint circles have a nominal 25 m diameter. The highlighted
-Level 2B beam contains 686 candidate shots, of which 167 pass its quality,
-algorithm, degradation, sensitivity and vegetation-value screen. There are
-166 inside the park, each with a valid matched Level 2A RH98 observation.
-The continuous profile has 43 shots across 2.39 km. Its 925-bin inset waveform
-comes from the marked shot, rather than an illustration from another site.
-
-For display, the PAVD columns extend to the midpoints between footprint
-centres, and their native 5 m vertical bins are interpolated within each
-column. This produces a continuous display while retaining the original
-measurements for summaries. It does not create new GEDI observations.
-The transect shows L2B ground and the elevation of L2A RH98.
-
-Panels D and E compare 72 deciduous, 18 evergreen and 57 mixed-forest
-footprints classified by year-matched NLCD 2019 pixels. The vertical PAVD
-panels share axes and show means and interquartile ranges from native bins,
-including zeros. The boxplots show standard Level 2A RH98 and Level 2B canopy
-cover and PAI. Nineteen other-cover footprints remain in the park-wide
-summary and are omitted from these forest comparisons.
-
-The overview uses GEE Level 2A V2 footprints. The single-granule map,
-matched RH98 measurements, PAVD profiles and waveform use Earthdata V3.
-The overview illustrates coverage. Numerical forest summaries use the
-matched V3 observations. The [NPS boundary](https://www.nps.gov/grsm/planyourvisit/access_data.htm)
-defines the AOI, and [USGS NLCD 2019](https://developers.google.com/earth-engine/datasets/catalog/USGS_NLCD_RELEASES_2019_REL_NLCD)
-provides the forest classes. Cached inputs make redrawing the figure possible
-without a cloud connection.
+<p align="center"><img src="readme/fig9.png" width="950" alt="Original package illustration of PAI and PAVD along a GEDI transect"></p>
 
 #### Get GEDI aboveground biomass at footprint level (GEDI Level 4A)
 
@@ -573,26 +522,27 @@ level4a_footprints <- getLevel4A(
 head(level4a_footprints)
 ```
 
-### U.S. forest waveforms and airborne lidar
+#### Inspect footprint quality before analysis
 
-Six real GEDI Level 1B waveforms illustrate Pacific coastal conifer,
-southwest dry conifer, northern mixed forest, Appalachian hardwood,
-Sierra Nevada montane conifer and southeastern evergreen forest settings. The
-USGS 3DEP views show height-coloured ALS points over measured hillshaded DTM
-surfaces. All point clouds share camera angle, horizontal extent, vertical
-limits and colour scale. Waveforms share height and peak-return scales,
-with labelled GEDI ground and RH98 lines. The top axis shows normalized
-cumulative return energy integrated over the displayed -10 to 60 m interval.
-This plotting calculation is separate from the mission's RH retrieval.
-The ALS clips and hillshaded DTM surfaces have a 25 m diameter. An orthographic
-view and translucent terrain keep the lower returns visible.
+Use the returned metric table to apply an explicit, reproducible screen:
 
-<p align="center"><img src="readme/fig-us-forest-waveforms.png" width="1000" alt="Large US locator map above six 3D ALS clouds with hillshaded terrain and observed GEDI waveforms showing ground and RH98"></p>
+```r
+power_beams <- c("BEAM0101", "BEAM0110", "BEAM1000", "BEAM1011")
+screened <- level2a_metrics[
+  quality_flag == 1 & degrade_flag == 0 &
+  sensitivity >= 0.95 & sensitivity <= 1 &
+  solar_elevation < 0 & beam %in% power_beams
+]
+```
 
-ALS and GEDI acquisition dates are shown. These observations illustrate
-contrasting structure and are not a temporally matched ALS validation.
-The plotting inputs and provenance are in `readme/data/us_forests/`.
-Rebuild with `python readme/build-us-forest-figure.py`.
+The example below uses only the Level 2A subset already distributed with the
+package. It shows how each successive filter changes the retained sample and
+its RH98 distribution. The 0.95 sensitivity threshold is an example setting.
+The bundled subset already passes the quality and night screens, so those
+steps leave its count unchanged. It is a small API demonstration, not a regional estimate.
+Redraw it with `Rscript readme/build-package-filtering.R`.
+
+<p align="center"><img src="readme/fig-package-filtering.png" width="950" alt="Successive quality, degradation, sensitivity, night and power-beam filtering of the bundled GEDI subset, with RH98 distributions"></p>
 
 ### 5.3 Clip
 
@@ -674,10 +624,8 @@ points(level2a_geom_dt$lon_lowestmode, level2a_geom_dt$lat_lowestmode,
 
 #### Characterize forest structure within polygons
 
-The characterization figure in Section 5.2 demonstrates a clip to a named
-national park followed by summaries within the AOI and by mapped forest type.
-Supply your own mapped fire, stand or forest-type boundaries to apply the
-same functions to other questions.
+Supply mapped stand or forest-type boundaries to clip footprint products
+and summarize their vegetation metrics by polygon.
 
 ```r
 # `polygons` contains a unit_id column and a defined CRS.
@@ -690,10 +638,8 @@ polygon_summary <- polyStatsLevel2BVPM(
 )
 ```
 
-The runnable park example writes `readme/profile-polygon-summary.csv` and
-`readme/profile-forest-type-summary.csv`. These are summaries of sampled
-footprints. Record sample counts and acquisition periods when interpreting
-differences among forest types or disturbance classes.
+These are summaries of sampled footprints. Record sample counts and
+acquisition periods when interpreting differences among polygons.
 
 ### 5.4 Compute descriptive statistics
 
@@ -731,7 +677,6 @@ agbd_grid <- gridStatsLevel4A(
 ```
 
 
-
 ### 5.6 Convert to `SpatVector`
 
 `to_vect()` detects the standard coordinate fields for Level 2A, Level 2B,
@@ -745,10 +690,9 @@ level4a_vect <- to_vect(level4a_footprints)
 
 ## 6 Modelling forest attributes
 
-Section 9 provides a runnable forest biomass example using satellite-derived
-predictors, separate spatial blocks and a held-out acquisition year. It uses
-fit_model(), predict() and fit_metrics(), and reports training and validation
-performance with the same plotting scales.
+Use `fit_model()`, `predict()` and `fit_metrics()` to calibrate and assess
+models of forest attributes. Section 9 outlines ancillary-data extraction
+and mapping. Keep validation locations separate from the training data.
 
 For a field response such as total fuel biomass or timber volume, join
 measured plots to simulated waveform metrics using plot identifiers.
@@ -839,123 +783,55 @@ metrics_noisy[, .(cover, rh50, rh90, rh100, waveEnergy)]
 ```
 
 
-## 9 Forest biomass modelling and mapping
+<p align="center"><img src="readme/fig7.png" width="850" alt="Original package illustration of ALS point clouds and simulated GEDI waveforms"></p>
 
-The forest example uses the North Kaibab landscape around the 2020 Mangum
-Fire in Arizona. It covers contrasting canopy conditions and pools screened
-GEDI Level 4A observations from 2019, 2021 and 2022. Predictors are all
-64 annual AlphaEarth embedding bands, elevation, slope and sine/cosine of
-aspect. The reference response is GEDI aboveground biomass density.
+## 9 Modelling and mapping with ancillary data
 
-<p align="center"><img src="readme/fig-forest-landscape.png" width="750" alt="Landsat natural colour forest landscape with boundary, north arrow and scale"></p>
+The package supports sampling footprint products, extracting Earth Engine
+predictors, selecting variables, fitting models, assessing predictions and
+creating maps. The installed `scripts/upscaling_alphaearth_workflow.R` provides
+a package workflow using a user-configured Earth Engine project.
 
-### 9.1 Retrieve the forest inputs
+Use `extractEE()` to retrieve predictors at GEDI footprints, and keep their
+acquisition period aligned with the response data. For example, after
+constructing an annual predictor stack:
 
-The installed script fits and evaluates the model using the supplied real
-GEDI and predictor table. Its fixed spatial folds make the displayed
-validation reproducible. Set EE_PROJECT and RGEDI_FOREST_MAP=TRUE to
-retrieve a fresh GEE predictor stack and generate a prediction raster.
+```r
+training <- extractEE(stack, footprint_sample, scale = 30, chunk_size = 250)
+```
 
-~~~r
-Sys.setenv(EE_PROJECT = "your-google-cloud-project")
-source("inst/scripts/forest_biomass_workflow.R")
-~~~
+Fit and evaluate models using separate training and validation tables. Here
+`predictor_names` contains the numeric predictor columns shared by both tables.
 
-To retrieve new observations, use the finder-reader-extractor sequence for
-each year and extract predictors from the matching annual embedding.
-The GEE reference records the Level 4A Version 2.1 source.
-
-~~~r
-address <- gedifinder(
-  "GEDI04_A", ul_lat = 36.90, ul_lon = -112.60,
-  lr_lat = 36.45, lr_lon = -112.05,
-  version = "002.1", daterange = c("2019-01-01", "2020-01-01"),
-  source = "gee"
-)
-dataset <- readLevel4A(address)
-footprints <- getLevel4A(
-  dataset, quality = TRUE, max_features = 1000000, max_granules = 2000,
-  cols = c("beam", "shot_number", "agbd", "solar_elevation",
-           "l4_quality_flag", "degrade_flag", "sensitivity")
-)
-footprints <- footprints[
-  is.finite(agbd) & agbd >= 0 & l4_quality_flag == 1 & degrade_flag == 0
-]
-~~~
-
-### 9.2 Fit and assess the forest model
-
-Separate spatial blocks and acquisition years before fitting. The illustrated
-evaluation assigns 2.5 km spatial blocks to five folds. Each fold trains on
-2019/2021 observations outside the held-out blocks and predicts 2022
-observations in those blocks. The full script repeats this operation across
-all five folds.
-
-~~~r
-fit <- fit_model(
-  train[, ..predictor_names], train$agbd,
-  method = "randomForest", test = "none",
-  seed = 5721, ntree = 500,
-  mtry = floor(sqrt(length(predictor_names))), nodesize = 5
-)
-predicted <- as.numeric(predict(fit, newdata = holdout[, ..predictor_names]))
-accuracy <- fit_metrics(holdout$agbd, predicted, unit = "Mg/ha")
-~~~
-
-The saved demonstration pools 392 observations from 2019, 499 from 2021
-and 486 from 2022 (1,377 total). Its pooled spatial and 2022
-holdout evaluation has 486 observations, predictive RÃ‚Â² of 0.56, RMSE of
-56.5 Mg/ha and bias of 4.6 Mg/ha. Training metrics describe the final model
-fitted to all observations. These results assess agreement with GEDI
-biomass estimates at held-out locations.
-
-<p align="center"><img src="readme/fig-gedi-model-validation.png" width="850" alt="Training and spatial temporal holdout with equal axes, density colours, fitted and 1 to 1 lines"></p>
-
-One extreme training observation falls outside the 0Ã¢â‚¬â€œ750 Mg/ha display.
-The reported statistics include every observation. The
-[full-range plot](readme/fig-forest-validation-full-range.png) shows the
-complete range.
-
-### 9.3 Predict and map biomass
-
-The final model uses the same predictor names and the rGEDI predict()
-method. GEE predictor rasters can be downloaded with map_download().
-The plotting script adds the boundary, scale bar, north arrow and units.
-
-~~~r
+```r
 model <- fit_model(
-  training[, ..predictor_names], training$agbd,
-  method = "randomForest", test = "none",
-  seed = 5721, ntree = 500,
-  mtry = floor(sqrt(length(predictor_names))), nodesize = 5
+  train[, ..predictor_names], train$agbd,
+  method = "randomForest", test = "none", seed = 42, ntree = 500
 )
-mapped <- terra::predict(
-  predictors[[predictor_names]], model, na.rm = TRUE,
-  filename = file.path(outdir, "agbd_2019.tif"), overwrite = TRUE
-)
-~~~
+predicted <- as.numeric(predict(model, newdata = holdout[, ..predictor_names]))
+accuracy <- fit_metrics(holdout$agbd, predicted, unit = "Mg/ha")
+```
 
-<p align="center"><img src="readme/fig-gedi-wall-to-wall.png" width="750" alt="Predicted North Kaibab AGBD in Mg per hectare with boundary, north arrow and scale"></p>
+These snippets require user-supplied training and holdout tables. Validation
+against GEDI AGBD evaluates agreement with the mission estimates; independent
+field measurements are needed to assess agreement with field biomass.
 
-For server-side prediction, build_ee_forest() and map_create() train and
-apply a GEE regression forest. Assess that GEE model on its own held-out
-observations before reporting its accuracy.
+For server-side prediction, `build_ee_forest()` and `map_create()` fit and apply
+an Earth Engine regression forest. Evaluate that model on its own held-out
+observations before interpreting its predictions.
 
-~~~r
-training_ee <- vect_as_ee(to_vect(training, lon = "lon", lat = "lat"))
+```r
+training_ee <- vect_as_ee(to_vect(training))
 forest_ee <- build_ee_forest(
   training_ee, response = "agbd", predictors = predictor_names,
-  trees = 500, seed = 5721
+  trees = 500, seed = 42
 )
 image <- map_create(forest_ee, stack, aoi = study_extent, name = "agbd")
 map_download(
   image, file.path(outdir, "gee_agbd.tif"),
-  region = study_extent, scale = 30, crs = "EPSG:32612"
+  region = study_extent, scale = 30, crs = "EPSG:4326"
 )
-~~~
-
-readme/build-forest-example.R redraws the validation figures from the saved
-inputs. readme/build-modern-examples.R calls this workflow. Use readme/plot-forest-maps.R DATA_DIR BOUNDARY_GEOJSON to redraw the maps from the exported rasters.
+```
 
 ## 10 Close the files
 
