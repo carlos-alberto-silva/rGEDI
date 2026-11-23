@@ -12,10 +12,6 @@
 
 Authors: Carlos Alberto Silva and Caio Hamamura.
 
-The original rGEDI workflow provides functions for downloading, visualizing,
-clipping, gridding, simulating, and exporting GEDI data. The expanded package
-also searches, streams, filters, summarizes, models, and maps NASA GEDI data.
-
 `rGEDI` searches, downloads, streams, reads, filters, clips, summarizes,
 simulates, models, and maps NASA Global Ecosystem Dynamics Investigation
 (GEDI) data. It supports footprint products GEDI01_B, GEDI02_A, GEDI02_B,
@@ -24,6 +20,24 @@ and GEDI04_A, as well as raster products GEDI03 and GEDI04_B.
 The examples below demonstrate the package API using the bundled GEDI
 subsets and optional cloud services. The generated package reference manual is
 available in `output/pdf/rGEDI-reference-manual.pdf`.
+
+## Data access
+
+| Source | Open data with | Access requirement |
+|---|---|---|
+| Local files | `readLevel*()` | HDF5 or GeoTIFF files |
+| Earthdata Cloud | `gedifinder(source = "earthdata")`, then `readLevel*()` | Earthdata login |
+| gediDB | `gedifinder(source = "gedidb")`, then `readLevel*()` | Optional Python backend |
+| Google Earth Engine | `gedifinder(source = "gee")`, then `readLevel*()` | Authenticated GEE project |
+
+| Product | Reader | Extractor | Example output |
+|---|---|---|---|
+| Level 1B | `readLevel1B()` | `getLevel1BGeo()`, `getLevel1BWF()` | Coordinates and waveforms |
+| Level 2A | `readLevel2A()` | `getLevel2AM()` | RH98, RH100, ground elevation (m) |
+| Level 2B | `readLevel2B()` | `getLevel2BVPM()`, `getLevel2BPAVDProfile()` | PAI (m²/m²), cover, PAVD (m²/m³) |
+| Level 3 | `readLevel3()` | `getLevel3()` | Gridded structure metrics |
+| Level 4A | `readLevel4A()` | `getLevel4A()` | AGBD (Mg/ha) |
+| Level 4B | `readLevel4B()` | `getLevel4B()` | Gridded AGBD (Mg/ha) |
 
 # Getting Started
 
@@ -456,6 +470,7 @@ level1b_geo <- getLevel1BGeo(level1b)
 head(level1b_geo)
 ```
 
+<p align="center"><img src="readme/fig2.PNG" width="800" alt="GEDI Level 1B footprint geolocation"></p>
 
 #### Get GEDI full waveform (GEDI Level 1B)
 
@@ -466,7 +481,6 @@ plot(waveform)
 ```
 
 <p align="center"><img src="readme/fig3.png" width="750" alt="Original package illustration of a full waveform in amplitude and percent units"></p>
-
 
 #### Get GEDI elevation and height metrics (GEDI Level 2A)
 
@@ -486,7 +500,6 @@ plotWFMetrics(level1b, level2a, shot_number = shot,
 ```
 
 <p align="center"><img src="readme/fig8.png" width="650" alt="Original package illustration of a waveform, cumulative return energy and relative-height metrics"></p>
-
 
 #### Get GEDI vegetation biophysical variables (GEDI Level 2B)
 
@@ -524,7 +537,7 @@ head(level4a_footprints)
 
 #### Inspect footprint quality before analysis
 
-Use the returned metric table to apply an explicit, reproducible screen:
+Filter by quality, sensitivity, night acquisition and power beam:
 
 ```r
 power_beams <- c("BEAM0101", "BEAM0110", "BEAM1000", "BEAM1011")
@@ -534,15 +547,6 @@ screened <- level2a_metrics[
   solar_elevation < 0 & beam %in% power_beams
 ]
 ```
-
-The example below uses only the Level 2A subset already distributed with the
-package. It shows how each successive filter changes the retained sample and
-its RH98 distribution. The 0.95 sensitivity threshold is an example setting.
-The bundled subset already passes the quality and night screens, so those
-steps leave its count unchanged. It is a small API demonstration, not a regional estimate.
-Redraw it with `Rscript readme/build-package-filtering.R`.
-
-<p align="center"><img src="readme/fig-package-filtering.png" width="950" alt="Successive quality, degradation, sensitivity, night and power-beam filtering of the bundled GEDI subset, with RH98 distributions"></p>
 
 ### 5.3 Clip
 
@@ -570,10 +574,8 @@ level3_aoi <- clip(level3, vect(study_area))
 level4b_bbox <- clip(level4b, bbox)
 ```
 
-The output type follows the input type: open HDF5 objects return open clipped
-HDF5 objects, extracted tables return `data.table` objects, and Level 3/4B
-rasters return `SpatRaster` objects. The product-specific functions shown below
-remain available when an explicit function name is useful in a script.
+Outputs retain their input type: HDF5, footprint table or raster.
+Product-specific clipping functions are also available.
 
 #### Clip open GEDI HDF5 objects
 
@@ -622,6 +624,8 @@ points(level2a_geom_dt$lon_lowestmode, level2a_geom_dt$lat_lowestmode,
        pch = 16, col = "#762A83")
 ```
 
+<p align="center"><img src="readme/fig4.png" width="950" alt="GEDI footprint clipping by extent and forest-stand polygons"></p>
+
 #### Characterize forest structure within polygons
 
 Supply mapped stand or forest-type boundaries to clip footprint products
@@ -661,14 +665,29 @@ agbd_stats <- polyStatsLevel4A(
 )
 ```
 
+Example output for all five bundled stands, calculated with the polygon
+summary functions (`readme/build-package-spatial.R`):
+
+| Stand | Footprints | Mean RH98 (m) | Mean PAI (m²/m²) | Mean cover (%) |
+|---|---:|---:|---:|---:|
+| 1 | 100 | 4.56 | 0.152 | 6.93 |
+| 2 | 98 | 4.44 | 0.119 | 5.55 |
+| 3 | 29 | 6.58 | 0.239 | 10.97 |
+| 4 | 20 | 6.04 | 0.252 | 11.34 |
+| 5 | 52 | 3.43 | 0.061 | 2.91 |
+
 ### 5.5 Compute grids with descriptive statistics
 
 ```r
-rh98_grid <- gridStatsLevel2AM(
-  level2a_metrics, func = mean(rh98, na.rm = TRUE), res = 0.002
+grid_summary <- function(x) list(
+  min = min(x, na.rm = TRUE), max = max(x, na.rm = TRUE),
+  mean = mean(x, na.rm = TRUE), sd = sd(x, na.rm = TRUE)
 )
-cover_grid <- gridStatsLevel2BVPM(
-  level2b_vpm, func = mean(cover, na.rm = TRUE), res = 0.002
+rh100_grid <- gridStatsLevel2AM(
+  level2a_metrics, func = grid_summary(rh100), res = 0.005
+)
+pai_grid <- gridStatsLevel2BVPM(
+  level2b_vpm, func = grid_summary(pai), res = 0.005
 )
 agbd_grid <- gridStatsLevel4A(
   level4a_footprints, metric = "agbd", fun = mean,
@@ -676,6 +695,29 @@ agbd_grid <- gridStatsLevel4A(
 )
 ```
 
+<p align="center">
+  <img src="readme/fig5.png" width="390" alt="Gridded RH100 minimum, maximum, mean and standard deviation">
+  <img src="readme/fig6.png" width="390" alt="Gridded PAI minimum, maximum, mean and standard deviation">
+</p>
+
+#### Projected 1 km grids
+
+Use a projected template to specify cell size in metres. This example uses
+UTM zone 23S for the bundled Brazilian subset.
+
+```r
+points_utm <- terra::project(to_vect(level2a_metrics), "EPSG:32723")
+template <- terra::rast(terra::ext(points_utm), resolution = 1000,
+                        crs = "EPSG:32723")
+rh98_1km <- rasterize(level2a_metrics, "rh98", template = template, fun = "mean")
+pai_1km <- rasterize(level2b_vpm, "pai", template = template, fun = "mean")
+```
+
+<p align="center"><img src="readme/fig-package-spatial.png" width="1100" alt="Clipping to two example stands and rasterizing RH98 and PAI on a shared projected 1 km grid, with scale bars, north arrows and legends"></p>
+
+Panel A clips to the first two bundled stands. Panels B–C grid all bundled
+footprints. Redraw the figure and polygon-summary table with
+`Rscript readme/build-package-spatial.R`.
 
 ### 5.6 Convert to `SpatVector`
 
@@ -694,13 +736,8 @@ Use `fit_model()`, `predict()` and `fit_metrics()` to calibrate and assess
 models of forest attributes. Section 9 outlines ancillary-data extraction
 and mapping. Keep validation locations separate from the training data.
 
-For a field response such as total fuel biomass or timber volume, join
-measured plots to simulated waveform metrics using plot identifiers.
-gediWFSimulator() and gediWFMetrics() provide the waveform predictors shown
-in Section 8. Fit the model to the measured field response, and keep samples
-from the same plot or stand together when assigning validation folds. Apply
-varSel() within each training fold when predictor selection forms part of the
-workflow. Record the field units alongside the predictions.
+Join field observations to simulated waveform metrics by plot identifier.
+Keep samples from the same plot or stand together in validation folds.
 
 ## 7 Extract, clip, and summarize GEDI-derived grid products
 
@@ -738,17 +775,8 @@ level4b_stats
 
 ## 8 Simulating GEDI full-waveform data from ALS point clouds
 
-`gediWFSimulator()` accepts LAS/LAZ files, `lidR::LAS` objects, `SpatVector`
-points, or an X/Y/Z table. Its focused implementation follows Steven Hancock's
-`gediRat` core: Gaussian footprint weighting, local ALS-density correction,
-vertical binning, Gaussian pulse convolution, LAS class 2 ground separation,
-and unit-integral normalization. Its supported waveform path is tested bin by
-bin against a C reference extraction from upstream commit
-`49ad4f26b03083b61ee0bd424e8a7e4a8f2c301d`, with agreement within `5e-7`.
-Vectorized bin accumulation keeps this path portable and fast without the
-native library stack that caused CRAN problems. `gediWFMetrics()` supplies the
-focused RH, canopy-cover, energy, ground-height, and foliage-height-diversity
-metrics used here; it does not reproduce every optional `gediMetric` mode.
+`gediWFSimulator()` simulates GEDI waveforms from ALS point clouds, building
+on Steven Hancock's simulator. `gediWFMetrics()` extracts waveform metrics.
 
 ```r
 set.seed(11)
@@ -781,7 +809,6 @@ sim_noisy <- gediWFSimulator(
 metrics_noisy <- gediWFMetrics(sim_noisy)
 metrics_noisy[, .(cover, rh50, rh90, rh100, waveEnergy)]
 ```
-
 
 <p align="center"><img src="readme/fig7.png" width="850" alt="Original package illustration of ALS point clouds and simulated GEDI waveforms"></p>
 
