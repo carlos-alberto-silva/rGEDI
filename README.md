@@ -448,6 +448,26 @@ level1b_geo <- getLevel1BGeo(level1b)
 head(level1b_geo)
 ```
 
+#### Plot GEDI footprints
+
+```r
+footprint_map <- leaflet::leaflet(data = as.data.frame(level1b_geo)) |>
+  leaflet::addProviderTiles("Esri.WorldImagery") |>
+  leaflet::addCircleMarkers(
+    lng = ~longitude_bin0, lat = ~latitude_bin0,
+    radius = 2, color = "red", stroke = FALSE, fillOpacity = 1
+  ) |>
+  leaflet::addScaleBar(
+    position = "topright",
+    options = leaflet::scaleBarOptions(imperial = FALSE)
+  ) |>
+  leaflet::addLegend(
+    position = "topright", colors = "red", labels = "Samples",
+    title = "GEDI Level 1B"
+  )
+footprint_map
+```
+
 <p align="center"><img src="readme/fig2.PNG" width="800" alt="GEDI Level 1B footprint geolocation"></p>
 
 #### Get GEDI full waveform (GEDI Level 1B)
