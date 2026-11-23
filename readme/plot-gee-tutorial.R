@@ -6,7 +6,8 @@ suppressPackageStartupMessages({
 root <- Sys.getenv("RGEDI_EXAMPLE_CACHE",file.path(tempdir(),"rGEDI-package-examples"))
 theme_set(theme_minimal(base_size=12)+theme(panel.grid.minor=element_blank(),plot.title=element_text(face="bold")))
 save_plot <- function(p,name,w,h) {
-  ggsave(paste0("readme/",name,".png"),p,width=w,height=h,dpi=300,bg="white")
+  ggsave(paste0("readme/",name,".png"),p,width=w,height=h,dpi=300,bg="white",device=grDevices::png,
+    type=if(capabilities("cairo")) "cairo" else getOption("bitmapType"))
   ggsave(paste0("readme/",name,".pdf"),p,width=w,height=h,bg="white")
 }
 # Global native Level 4B, displayed on Equal Earth without spatial analysis.
@@ -39,14 +40,21 @@ summary <- pred[,.(n=.N,R2=1-sum((predicted-agbd)^2)/sum((agbd-mean(agbd))^2),
   RMSE=sqrt(mean((predicted-agbd)^2)),bias=mean(predicted-agbd)),by=stage]
 summary[,label:=sprintf("n = %d\nR\u00b2 = %.2f\nRMSE = %.1f Mg/ha\nBias = %.1f Mg/ha",n,R2,RMSE,bias)]
 maximum <- ceiling(max(pred$agbd,pred$predicted)/100)*100
-p <- ggplot(pred,aes(agbd,predicted))+geom_abline(slope=1,intercept=0,linetype=2,colour="#68777C")+
-  geom_point(colour="#267F82",size=1.15,alpha=.55)+geom_smooth(method="lm",formula=y~x,se=FALSE,colour="#A42A73",linewidth=.7)+
-  geom_text(data=summary,aes(x=.04*maximum,y=.96*maximum,label=label),inherit.aes=FALSE,hjust=0,vjust=1,size=3.5)+
+pred[, `:=`(bin_x=floor(agbd/25),bin_y=floor(predicted/25))]
+pred[, local_count := .N, by=.(stage,bin_x,bin_y)]
+p <- ggplot(pred[order(local_count)],aes(agbd,predicted))+
+  geom_point(aes(colour=local_count),size=1.25,alpha=.9)+
+  geom_abline(slope=1,intercept=0,linetype=2,colour="#5D666A",linewidth=.7)+
+  scale_colour_viridis_c(option="viridis",trans="log1p",name="Local footprint count",
+    breaks=c(1,2,5,10,20,50),guide=guide_colourbar(barwidth=grid::unit(7,"cm"),barheight=grid::unit(.4,"cm")))+
+  geom_text(data=summary,aes(x=.04*maximum,y=.96*maximum,label=label),inherit.aes=FALSE,hjust=0,vjust=1,size=4)+
   facet_wrap(~stage)+coord_equal(xlim=c(0,maximum),ylim=c(0,maximum),expand=FALSE)+
   labs(x="Reference GEDI AGBD (Mg/ha)",y="Predicted AGBD (Mg/ha)",title="Biomass model training and spatial validation",
-    caption="Dashed: 1:1. Magenta: fitted relationship. Validation uses held-out 2 km blocks across all sampled years.")+
-  theme(strip.text=element_text(face="bold"),plot.caption=element_text(hjust=0,size=9))
-save_plot(p,"fig-gee-model-validation",10.5,5.5)
+    subtitle="Points coloured by local footprint density (25 x 25 Mg/ha bins)",
+    caption="Dashed line: 1:1. Statistics use all observations. Validation holds out 2 km blocks across all sampled years.")+
+  theme(strip.text=element_text(face="bold",size=13),panel.background=element_rect(fill="#FAFAF9",colour=NA),
+    panel.grid.major=element_line(colour="#E5E7E5"),legend.position="bottom",plot.caption=element_text(hjust=0,size=9))
+save_plot(p,"fig-gee-model-validation",10.5,6.3)
 output <- summary[,.(stage,n,R2=round(R2,3),RMSE=round(RMSE,2),bias=round(bias,2))]
 writeLines(capture.output(print(output)),"readme/results/shenandoah-evaluation.txt")
 importance <- fread("readme/results/shenandoah_importance.csv")

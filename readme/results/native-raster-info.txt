@@ -1,4 +1,4 @@
     product  rows columns layers resolution_m
      <char> <num>   <num>  <num>        <num>
-1:  Level 3    92     121      2     1000.895
-2: Level 4B    92     121      2     1000.895
+1:  Level 3   178     146      2     1000.895
+2: Level 4B   178     146      2     1000.895

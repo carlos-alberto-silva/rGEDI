@@ -1,11 +1,10 @@
-# Optional package tutorial. Requires an authenticated Earth Engine project.
-# Large intermediate data stay in RGEDI_EXAMPLE_CACHE, outside the package.
+# Optional convenience copy of the complete workflow printed in README.md.
 suppressPackageStartupMessages({
-  if (file.exists("DESCRIPTION") && requireNamespace("pkgload", quietly = TRUE)) pkgload::load_all(".", quiet = TRUE) else library(rGEDI)
-  library(sf); library(terra); library(data.table)
+  if (file.exists("DESCRIPTION") && requireNamespace("pkgload",quietly=TRUE)) pkgload::load_all(".",quiet=TRUE) else library(rGEDI)
+  library(sf);library(terra);library(data.table)
 })
 main <- function() {
-  root <- Sys.getenv("RGEDI_EXAMPLE_CACHE", file.path(tempdir(), "rGEDI-package-examples"))
+  root <- Sys.getenv("RGEDI_EXAMPLE_CACHE", file.path(path.expand("~"), "rGEDI-cache"))
   dir.create(root, recursive = TRUE, showWarnings = FALSE)
   dir.create("readme/results", recursive = TRUE, showWarnings = FALSE)
   log <- function(...) {cat(format(Sys.time(), "%H:%M:%S"), ..., "\n"); flush.console()}
@@ -25,34 +24,15 @@ main <- function() {
   }
   log("Global Level 4B display saved")
 
-  boundary_file <- file.path(root, "shenandoah_boundary.geojson")
-  if (!file.exists(boundary_file)) {
-    url <- paste0("https://services1.arcgis.com/fBc8EJBxQRMcHlei/arcgis/rest/services/",
-      "NPS_Land_Resources_Division_Boundary_and_Tract_Data_Service/FeatureServer/2/query?",
-      "where=UNIT_CODE%20%3D%20%27SHEN%27&outFields=UNIT_CODE,UNIT_NAME&outSR=4326&f=geojson")
-    curl::curl_download(url, boundary_file)
-  }
-  aoi <- st_read(boundary_file, quiet = TRUE) |> st_make_valid() |> st_transform(32617)
-  aoi <- st_simplify(aoi, dTolerance = 20, preserveTopology = TRUE) |> st_transform(4326)
-  aoi <- aoi[, c("UNIT_CODE", "UNIT_NAME")]
-  st_write(aoi, "inst/extdata/shenandoah.shp", delete_layer = TRUE, quiet = TRUE)
-  st_write(aoi, "readme/shenandoah-boundary.geojson", delete_dsn = TRUE, quiet = TRUE)
+  aoi <- st_read(system.file("extdata", "shenandoah.shp", package = "rGEDI"), quiet = TRUE)
   box <- st_bbox(aoi)
-  log("Boundary saved; area km2:", round(sum(st_area(st_transform(aoi, 32617)))/1e6, 1))
   source_years <- c(2019L, 2021L, 2022L)
   all <- list()
   for (year in source_years) {
     dest <- file.path(root, paste0("shenandoah_predictors_", year, ".rds"))
     if (file.exists(dest)) {
-      cached <- readRDS(dest)
-      if (!"lon_lowestmode" %in% names(cached)) {
-        raw <- readRDS(file.path(root,paste0("shenandoah_raw_",year,".rds")))
-        i <- match(cached$shot_number,raw$shot_number)
-        stopifnot(!anyNA(i))
-        cached[, `:=`(lon_lowestmode=raw$lon_lowestmode[i],lat_lowestmode=raw$lat_lowestmode[i])]
-        saveRDS(cached,dest)
-      }
-      all[[as.character(year)]] <- cached; next
+      all[[as.character(year)]] <- readRDS(dest)
+      next
     }
     ref <- gedifinder("GEDI04_A", ul_lat = box[["ymax"]], ul_lon = box[["xmin"]],
       lr_lat = box[["ymin"]], lr_lon = box[["xmax"]], version = "002.1", source = "gee",

@@ -8,24 +8,26 @@ https://github.com/carlos-alberto-silva/rGEDI/releases/download/datasets/example
 No random points were generated or substituted. Original point attributes
 are retained. The tutorial displays nominal 25 m diameter footprint clips.
 
-Native NASA grids around Brasilia, Brazil
-GEDI03_Brasilia.tif: rh100_mean (m) and counts (number of observations).
+Native NASA grids for Sequoia National Forest, California
+GEDI03_Sequoia.tif: rh100_mean (m) and counts (number of observations).
 Source: GEDI L3 Land Surface Metrics, Version 2, 2019 day 108 to 2021 day 216.
 https://data.ornldaac.earthdata.nasa.gov/protected/gedi/GEDI_L3_LandSurface_Metrics_V2/data/GEDI03_rh100_mean_2019108_2021216_002_02.tif
 https://data.ornldaac.earthdata.nasa.gov/protected/gedi/GEDI_L3_LandSurface_Metrics_V2/data/GEDI03_counts_2019108_2021216_002_02.tif
-GEDI04_B_Brasilia.tif: MU (AGBD, Mg/ha) and SE (cell standard error, Mg/ha).
+GEDI04_B_Sequoia.tif: MU (AGBD, Mg/ha) and SE (cell standard error, Mg/ha).
 Source: GEDI L4B Gridded Biomass, Version 2.
 https://data.ornldaac.earthdata.nasa.gov/protected/gedi/GEDI_L4B_Gridded_Biomass/data/GEDI04_B_MW019MW138_02_002_05_R01000M_MU.tif
 https://data.ornldaac.earthdata.nasa.gov/protected/gedi/GEDI_L4B_Gridded_Biomass/data/GEDI04_B_MW019MW138_02_002_05_R01000M_SE.tif
-These are cropped windows spanning approximately longitude -48.45 to -47.2
-and latitude -16.15 to -15.4. Native EPSG:6933 cells and values are retained,
-without interpolation. Each file has 92 rows, 121 columns and two layers;
-native cell spacing is 1000.895 m (nominal 1 km).
+The Sequoia subsets retain the original EPSG:6933 cells and values without
+interpolation. The geographic extraction window is approximately longitude
+-119.420 to -117.910, latitude 35.276 to 36.998. Cell spacing is 1000.895 m
+(nominal 1 km).
 
 Boundary shapefiles
-brasilia.*: Brasilia/Federal District boundary, IBGE municipality code 5300108.
-https://servicodados.ibge.gov.br/api/v3/malhas/municipios/5300108?formato=application/vnd.geo+json&qualidade=minima
-Simplified by 100 m in a projected CRS, with topology preservation.
+sequoia.*: Sequoia National Forest administrative boundary, USDA Forest Service.
+https://apps.fs.usda.gov/arcx/rest/services/EDW/EDW_ForestSystemBoundaries_01/MapServer/0
+Query: forestname LIKE '%Sequoia%'; forestorgcode 0513; outSR 4326.
+Simplified by 50 m in UTM 11N, preserving topology. This administrative
+boundary can include non-federal lands; it is not a federal ownership mask.
 shenandoah.*: Shenandoah National Park boundary, US National Park Service,
 UNIT_CODE SHEN, from the Land Resources Division boundary service:
 https://services1.arcgis.com/fBc8EJBxQRMcHlei/arcgis/rest/services/NPS_Land_Resources_Division_Boundary_and_Tract_Data_Service/FeatureServer/2

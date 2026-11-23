@@ -4,7 +4,16 @@
 [![Downloads](https://cranlogs.r-pkg.org/badges/grand-total/rGEDI)](https://cran.r-project.org/package=rGEDI)
 ![Licence](https://img.shields.io/badge/Licence-GPL--3-blue.svg)
 
-# Learn GEDI with rGEDI
+# rGEDI: NASA's Global Ecosystem Dynamics Investigation (GEDI) Data Visualization and Processing
+
+**Authors:** Carlos Alberto Silva and Caio Hamamura.
+
+`rGEDI` searches, downloads, streams, reads, filters, clips, summarizes,
+simulates, models and maps GEDI data. The package supports Level 1B waveforms,
+Level 2A/2B vegetation structure, Level 3 grids and Level 4A/4B biomass,
+including integration with other sensors for wall-to-wall mapping.
+
+## From laser measurements to maps
 
 GEDI is a laser instrument aboard the International Space Station. Each
 measurement samples a footprint approximately 25 m across. Its waveform
@@ -16,13 +25,27 @@ This tutorial follows those measurements from **Level 1B waveforms**, through
 We then simulate GEDI waveforms from measured ALS data and combine GEDI with
 other satellite data to make a wall-to-wall map.
 
-## Before you start
+## Installation and configuration
 
-The current tutorial uses the rGEDI 0.6.1 development API.
+### Install rGEDI
+
+The released version is available from CRAN:
+
+```r
+install.packages("rGEDI")
+```
+
+The examples below use the **0.6.1 development API**. Install the GitHub version
+to follow them:
 
 ```r
 install.packages("remotes")
 remotes::install_github("carlos-alberto-silva/rGEDI")
+
+# Alternative: the development build from r-universe, once available.
+# install.packages("rGEDI", repos = c(
+#   "https://carlos-alberto-silva.r-universe.dev",
+#   "https://cloud.r-project.org"))
 
 library(rGEDI)
 library(data.table)
@@ -34,10 +57,63 @@ dir.create(outdir, showWarnings = FALSE)
 ```
 
 Bundled data support offline extraction, statistics and static plots.
-Interactive imagery maps use `leaflet` and online tiles; ALS files use `lidR`.
-The optional Earth Engine steps need
-an authenticated project and Python dependencies configured by
-`rGEDI_configure(install = TRUE)`.
+Install the optional R packages needed for interactive imagery, measured ALS,
+model selection and the figure layouts:
+
+```r
+install.packages(c("leaflet", "lidR", "plot3D", "randomForest",
+                   "patchwork", "viridisLite", "rnaturalearthdata"))
+```
+
+Interactive imagery tiles require internet access. Local HDF5 and raster
+workflows do not require Python or cloud authentication.
+
+### Configure optional Python backends
+
+The cloud tools use `reticulate` with `earthaccess` for Earthdata access,
+`h5py` for streamed HDF5, and `earthengine-api` for Google Earth Engine.
+
+```r
+install.packages("reticulate")
+
+# Optional: select an existing Python executable before loading reticulate.
+# Sys.setenv(RETICULATE_PYTHON = "/path/to/your/python")
+rGEDI_configure(install = TRUE)
+
+# Include the optional gediDB backend when needed:
+# rGEDI_configure(install = TRUE, gedidb = TRUE)
+```
+
+Inspect the selected interpreter and module availability:
+
+```r
+reticulate::py_config()
+rGEDI_configure(install = FALSE)
+gee_available()
+# gedidb_available()  # If the optional database backend was configured.
+```
+
+### Authenticate Earthdata and Earth Engine
+
+Earthdata access can use a standard `~/.netrc`, the `NETRC` environment
+variable, or an interactive login. Keep credentials outside scripts.
+
+```r
+# Optional alternative to the standard ~/.netrc location:
+# Sys.setenv(NETRC = "/secure/path/to/.netrc")
+earthdata_login()
+```
+
+For GEE, supply a Google Cloud project registered for Earth Engine and follow
+the authentication prompt on first use:
+
+```r
+Sys.setenv(EE_PROJECT = "your-google-cloud-project")
+ee <- ee_initialize(project = Sys.getenv("EE_PROJECT"))
+```
+
+These setup calls are explicit, optional steps for cloud examples; package
+installation and checks do not install Python modules or authenticate services.
 
 ## 1 Start with Level 1B waveforms
 
@@ -281,12 +357,12 @@ measurements; they are not zero-height vegetation.
 ## 3 Read and explore native Level 3 grids
 
 NASA also distributes nominal 1 km Level 3 summaries. These are different
-from the user-defined grids above. A small regional subset around Brasília,
-Brazil, is bundled with its IBGE boundary so this example runs offline.
+from the user-defined grids above. A small regional subset for Sequoia National Forest,
+California, is bundled with its USFS administrative boundary so this example runs offline.
 
 ```r
-level3_file <- system.file("extdata", "GEDI03_Brasilia.tif", package = "rGEDI")
-level4b_file <- system.file("extdata", "GEDI04_B_Brasilia.tif", package = "rGEDI")
+level3_file <- system.file("extdata", "GEDI03_Sequoia.tif", package = "rGEDI")
+level4b_file <- system.file("extdata", "GEDI04_B_Sequoia.tif", package = "rGEDI")
 level3 <- readLevel3(level3_file)
 level4b <- readLevel4B(level4b_file)
 ```
@@ -294,8 +370,8 @@ level4b <- readLevel4B(level4b_file)
 ```text
     product  rows columns layers resolution_m
      <char> <num>   <num>  <num>        <num>
-1:  Level 3    92     121      2     1000.895
-2: Level 4B    92     121      2     1000.895
+1:  Level 3   178     146      2     1000.895
+2: Level 4B   178     146      2     1000.895
 ```
 
 ### Clip a grid to a mapped boundary
@@ -304,7 +380,7 @@ Transform the boundary to the raster's CRS before using its coordinates.
 `clipLevel3()` accepts either an extent or a polygon.
 
 ```r
-grid_aoi <- st_read(system.file("extdata", "brasilia.shp",
+grid_aoi <- st_read(system.file("extdata", "sequoia.shp",
                                 package = "rGEDI"), quiet = TRUE)
 native_aoi <- st_transform(grid_aoi, terra::crs(level3))
 grid_bbox <- as.vector(terra::ext(terra::vect(native_aoi)))
@@ -312,10 +388,55 @@ level3_bbox <- clipLevel3(level3, grid_bbox)
 level3_aoi <- clipLevel3(level3, terra::vect(native_aoi))
 
 plotLevel3(level3[["rh100_mean"]], main = "Level 3 mean RH100 (m)")
-plotLevel3(level3_aoi[["rh100_mean"]], main = "Mean RH100 inside Brasilia")
+plotLevel3(level3_aoi[["rh100_mean"]], main = "Mean RH100 inside Sequoia National Forest")
 ```
 
-<p align="center"><img src="readme/fig-level3-products.png" width="1050" alt="Native Level 3 mean RH100 before and after clipping to the Brasilia boundary"></p>
+<details>
+<summary>Complete map layout code: white and grey background, shared palette, boundary, north arrows and scale bars</summary>
+
+```r
+library(ggplot2)
+library(patchwork)
+outline <- st_transform(grid_aoi,32611)
+draw <- function(full,clipped,product,unit,palette) {
+  projector <- if(product=="3") projectLevel3 else projectLevel4B
+  full <- projector(full,"EPSG:32611",method="near")
+  clipped <- projector(clipped,"EPSG:32611",method="near")
+  e <- as.vector(ext(full));dx<-e[2]-e[1];dy<-e[4]-e[3]
+  limits <- range(values(full),na.rm=TRUE)
+  panel <- function(r,title) {
+    d <- as.data.frame(r,xy=TRUE,na.rm=TRUE);names(d)[3]<-"value"
+    ggplot(d,aes(x,y,fill=value))+geom_tile(width=res(r)[1],height=res(r)[2])+
+      geom_sf(data=outline,inherit.aes=FALSE,fill=NA,colour="white",linewidth=1.1)+
+      geom_sf(data=outline,inherit.aes=FALSE,fill=NA,colour="#50575A",linewidth=.45)+
+      scale_fill_viridis_c(option=palette,limits=limits,name=unit,
+        guide=guide_colourbar(barwidth=grid::unit(7,"cm"),barheight=grid::unit(.35,"cm")))+
+      coord_sf(crs=32611,xlim=e[1:2],ylim=c(e[3]-.12*dy,e[4]),datum=NA,expand=FALSE)+
+      annotate("segment",x=e[1]+.08*dx,xend=e[1]+.08*dx+20000,y=e[3]-.07*dy,yend=e[3]-.07*dy,linewidth=.8)+
+      annotate("text",x=e[1]+.08*dx+10000,y=e[3]-.035*dy,label="20 km",size=3.5)+
+      annotate("rect",xmin=e[2]-.13*dx,xmax=e[2]-.03*dx,ymin=e[4]-.20*dy,ymax=e[4]-.015*dy,fill="white",colour="#E1E4E0",linewidth=.2)+
+      annotate("segment",x=e[2]-.08*dx,xend=e[2]-.08*dx,y=e[4]-.18*dy,yend=e[4]-.07*dy,
+        arrow=grid::arrow(type="closed",length=grid::unit(2,"mm")))+
+      annotate("text",x=e[2]-.08*dx,y=e[4]-.035*dy,label="N",size=4)+
+      labs(title=title,subtitle="Sequoia National Forest")+
+      theme_void(base_size=13)+theme(plot.title=element_text(face="bold"),legend.position="bottom",
+        panel.background=element_rect(fill="#F2F3F1",colour=NA),plot.background=element_rect(fill="white",colour=NA))
+  }
+  panel(full,paste0("A  Native Level ",product))+panel(clipped,"B  Clipped to the forest")+
+    plot_layout(guides="collect")+plot_annotation(caption="Grey outline: USFS administrative boundary. Light grey: no displayed estimate. Native nominal 1 km cells; nearest-neighbour projection for display.") &
+    theme(legend.position="bottom",plot.caption=element_text(size=9,hjust=0))
+}
+
+structure_map <- draw(level3[["rh100_mean"]], level3_aoi[["rh100_mean"]],
+                      "3", "RH100 (m)", "viridis")
+structure_map
+ggsave(file.path(outdir,"level3-sequoia.png"),structure_map,
+       width=11,height=7,dpi=250,bg="white")
+```
+
+</details>
+
+<p align="center"><img src="readme/fig-level3-products.png" width="1050" alt="Native Level 3 mean RH100 before and after clipping to the Sequoia National Forest boundary"></p>
 
 ### Extract pixel values
 
@@ -330,9 +451,9 @@ head(level3_values[is.finite(rh100_mean)], 3)
 ```text
       ID rh100_mean counts
    <num>      <num>  <num>
-1:     1   9.303703     27
-2:     1  11.421481     54
-3:     1   9.538421     38
+1:     1   13.43818     11
+2:     1   11.44869     61
+3:     1   19.22667     18
 ```
 
 ## 4 Move from structure to biomass with Level 4A and Level 4B
@@ -381,14 +502,24 @@ its power beams are `5`, `6`, `8`, and `11`.
 
 ### Plot and clip Level 4B grids offline
 
-Return to the bundled Brasília grids to compare regional biomass estimates
+Return to the bundled Sequoia grids to compare regional biomass estimates
 with the Level 3 structure metrics.
 
 ```r
 level4b_bbox <- clipLevel4B(level4b, grid_bbox)
 level4b_aoi <- clipLevel4B(level4b, terra::vect(native_aoi))
 plotLevel4B(level4b[["MU"]], main = "Level 4B AGBD (Mg/ha)")
-plotLevel4B(level4b_aoi[["MU"]], main = "AGBD inside Brasilia")
+plotLevel4B(level4b_aoi[["MU"]], main = "AGBD inside Sequoia National Forest")
+```
+
+The same layout uses magma for biomass:
+
+```r
+biomass_map <- draw(level4b[["MU"]], level4b_aoi[["MU"]],
+                    "4B", "AGBD (Mg/ha)", "magma")
+biomass_map
+ggsave(file.path(outdir,"level4b-sequoia.png"),biomass_map,
+       width=11,height=7,dpi=250,bg="white")
 ```
 
 <p align="center"><img src="readme/fig-level4b-products.png" width="1050" alt="Native Level 4B AGBD before and after polygon clipping"></p>
@@ -403,9 +534,9 @@ head(level4b_values[is.finite(MU)], 3)
 ```text
       ID       MU        SE
    <num>    <num>     <num>
-1:     1 26.18723 10.511335
-2:     1 11.92644  2.939256
-3:     1 21.65576  8.193736
+1:     1 57.40922  8.426760
+2:     1 25.16608  5.206754
+3:     1 54.39237 22.470741
 ```
 
 ```r
@@ -417,7 +548,7 @@ level4b_stats
 ```text
       ID       MU       SE
    <int>    <num>    <num>
-1:     1 17.22374 5.675005
+1:     1 92.57902 12.80514
 ```
 
 `MU` is the mean AGBD estimate and `SE` is its cell-level standard error.
@@ -429,10 +560,10 @@ The corresponding clipping calls return:
 ```text
         output cells valid
         <char> <num> <num>
-1:     L3 bbox  6324  5163
-2:  L3 polygon  6324  4748
-3:    L4B bbox  6324  5194
-4: L4B polygon  6324  4807
+1:     L3 bbox 19908 19515
+2:  L3 polygon 19908  4952
+3:    L4B bbox 19908 19430
+4: L4B polygon 19908  4942
 ```
 
 ## 5 Simulate GEDI waveforms from measured ALS
@@ -502,85 +633,188 @@ The figure uses a 20 km nearest-neighbour display preview. It is not a newly
 estimated global biomass raster. The underlying product has its own sampling
 support, period and uncertainty.
 
-### Run the complete mapping example
+### Complete multi-year upscaling workflow
 
-The optional script retrieves May–September observations for 2019, 2021 and
-2022, filters quality and nighttime power beams, clips them to the park, and
-extracts year-matched predictors. It caches intermediate data outside the
-package. Choose a cache folder on a drive with space.
+The code below runs directly, without sourcing another script. It retrieves
+May–September GEDI observations from 2019, 2021 and 2022, extracts year-matched
+AlphaEarth and NASADEM predictors, and holds out 2 km blocks across all years.
+Use a new cache folder when changing the area, dates or selection settings.
+The cache path uses the same code on Windows, macOS and Linux.
 
-```r
-# Windows example; choose a suitable location for your computer:
-# Sys.setenv(RGEDI_EXAMPLE_CACHE = "D:/rGEDI_package_examples")
-source("readme/build-gee-tutorial.R")
-source("readme/plot-gee-tutorial.R")
-```
-
-The following steps explain the main calls in that script.
-
-### Extract ancillary predictors
-
-For each acquisition year, build an annual predictor stack and extract its
-values at the screened GEDI footprints. Preserve coordinates with a sample
-identifier because GEE sampling returns feature properties.
+### Prepare the cache and global display
 
 ```r
-stack <- ee_build_AlphaEarth_embedding_terrain_stack(
-  aoi, start_year = 2019, end_year = 2019, add_lonlat = FALSE)
-biomass_footprints <- biomass_footprints[
-  is.finite(agbd) & agbd >= 0 & sensitivity >= 0.9 & sensitivity <= 1 &
-  solar_elevation < 0 & beam %in% c(5, 6, 8, 11)]
-biomass_footprints[, sample_id := seq_len(.N)]
-coordinates <- biomass_footprints[, .(sample_id, lon_lowestmode, lat_lowestmode)]
-ancillary <- extractEE(stack, biomass_footprints, scale = 30, chunk_size = 1000)
-ancillary <- merge(ancillary, coordinates, by = "sample_id", all.x = TRUE)
+root <- Sys.getenv("RGEDI_EXAMPLE_CACHE", file.path(path.expand("~"), "rGEDI-cache"))
+dir.create(root, recursive = TRUE, showWarnings = FALSE)
+dir.create("readme/results", recursive = TRUE, showWarnings = FALSE)
+log <- function(...) {cat(format(Sys.time(), "%H:%M:%S"), ..., "\n"); flush.console()}
+if (!nzchar(Sys.getenv("EE_PROJECT"))) stop("Set EE_PROJECT to an authenticated Earth Engine project.")
+ee <- ee_initialize(project = Sys.getenv("EE_PROJECT"), authenticate = FALSE)
+ee$data$setDeadline(180000L)
+log("Earth Engine initialized")
+
+# Native global Level 4B as a bounded display preview, not a new biomass grid.
+global_file <- file.path(root, "global_l4b_complete.tif")
+if (!file.exists(global_file)) {
+  ref <- gedifinder("GEDI04_B", ul_lat = 52, ul_lon = -180, lr_lat = -52,
+                   lr_lon = 180, version = "002", source = "gee")
+  global <- readLevel4B(ref, metrics = "MU")
+  map_download(global, global_file, region = c(-180, 180, -52, 52),
+               scale = 20000, crs = "EPSG:4326")
+}
+log("Global Level 4B display saved")
 ```
 
-The complete script repeats this extraction by year, represents aspect with
-sine and cosine, and uses `sample(..., spacedSampling(...))` to limit spatial
-clustering. It retains 2,348 complete records for the displayed run.
-
-### Separate validation blocks before selecting variables
-
-Use the saved preparation results to repeat the model steps. All observations
-from a 2 km block remain in the same partition across years.
+### Retrieve and screen several GEDI years
 
 ```r
-cache <- Sys.getenv("RGEDI_EXAMPLE_CACHE",
-                    file.path(tempdir(), "rGEDI-package-examples"))
-inputs <- readRDS(file.path(cache, "shenandoah_model_inputs.rds"))
-data <- as.data.table(inputs$training)
-train <- data[!block %in% inputs$heldout_blocks]
-valid <- data[block %in% inputs$heldout_blocks]
-predictor_names <- c(sprintf("A%02d", 0:63), "elevation", "slope",
-                     "aspect_sin", "aspect_cos")
-selection <- varSel(train[, ..predictor_names], train$agbd,
-  method = "rfe", threshold = 0, seed = 726, ntree = 150, nodesize = 5)
-selected <- selection$selvars
+aoi <- st_read(system.file("extdata", "shenandoah.shp", package = "rGEDI"), quiet = TRUE)
+box <- st_bbox(aoi)
+source_years <- c(2019L, 2021L, 2022L)
+all <- list()
+for (year in source_years) {
+  dest <- file.path(root, paste0("shenandoah_predictors_", year, ".rds"))
+  if (file.exists(dest)) {
+    all[[as.character(year)]] <- readRDS(dest)
+    next
+  }
+  ref <- gedifinder("GEDI04_A", ul_lat = box[["ymax"]], ul_lon = box[["xmin"]],
+    lr_lat = box[["ymin"]], lr_lon = box[["xmax"]], version = "002.1", source = "gee",
+    daterange = c(sprintf("%s-05-01", year), sprintf("%s-10-01", year)))
+  x <- readLevel4A(ref)
+  x <- getLevel4A(x, quality = TRUE, collect = FALSE, max_granules = 500L)
+  x <- clip(x, aoi)
+  log(year, "collecting park-clipped footprints")
+  d <- getLevel4A(x, quality = TRUE, max_features = 10000L, max_granules = 500L,
+    cols = c("beam", "shot_number", "agbd", "agbd_se", "sensitivity",
+             "solar_elevation", "l4_quality_flag", "degrade_flag"))
+  saveRDS(d, file.path(root, paste0("shenandoah_raw_", year, ".rds")))
+  d <- clip(d, aoi)
+  d <- d[is.finite(agbd) & agbd >= 0 & sensitivity >= .9 & sensitivity <= 1 &
+         solar_elevation < 0 & as.character(beam) %in% c("5","6","8","11","BEAM0101","BEAM0110","BEAM1000","BEAM1011")]
+  d[, `:=`(sample_id = seq_len(.N) + year*100000L, year = year)]
+  log(year, "screened footprints:", nrow(d))
+  if (!nrow(d)) next
+  predictors <- ee_build_AlphaEarth_embedding_terrain_stack(aoi, year, year, add_lonlat = FALSE)
+  bands <- c(sprintf("A%02d", 0:63), "elevation", "slope", "aspect")
+  coordinates <- d[,.(sample_id,lon_lowestmode,lat_lowestmode)]
+  d <- extractEE(predictors$select(as.list(bands)), d, scale = 30, chunk_size = 1000L)
+  d <- merge(d,coordinates,by="sample_id",all.x=TRUE,sort=FALSE)
+  d <- d[complete.cases(d[, c("agbd", bands), with = FALSE])]
+  d[, `:=`(aspect_sin = sin(aspect*pi/180), aspect_cos = cos(aspect*pi/180))]
+  saveRDS(d, dest)
+  all[[as.character(year)]] <- d
+  log(year, "predictor records:", nrow(d))
+}
 ```
 
-<p align="center"><img src="readme/fig-gee-variable-selection.png" width="1000" alt="Training-only variable importance and recursive feature elimination"></p>
-
-The displayed run retains 13 predictors. Out-of-bag error guides selection
-within the training data; the held-out blocks are reserved for evaluation.
-
-### Train and validate the GEE forest
-
-Use the selected predictors to train the Earth Engine regression forest.
-Classify held-out feature properties to evaluate the same server-side model.
+### Select spatial samples and validation blocks
 
 ```r
-model_fields <- c("lon_lowestmode", "lat_lowestmode", "sample_id", "agbd", selected)
-training_ee <- vect_as_ee(to_vect(train[, ..model_fields]))
-model <- build_ee_forest(training_ee, response = "agbd", predictors = selected,
-                         trees = 500, seed = 726)
-validation_ee <- vect_as_ee(to_vect(valid[, ..model_fields]))
-validation_ee <- validation_ee$classify(model, "predicted")
+set.seed(726)
+all <- lapply(all, function(d) rGEDI::sample(d, spacedSampling(size = min(1000L, nrow(d)), radius = 60)))
+data <- rbindlist(all, fill = TRUE)
+stopifnot(nrow(data) >= 150L)
+xy <- st_coordinates(st_transform(st_as_sf(data, coords = c("lon_lowestmode", "lat_lowestmode"), crs = 4326), 32617))
+data[, block := paste(floor(xy[,1]/2000), floor(xy[,2]/2000), sep = "_")]
+set.seed(726)
+blocks <- base::sample(unique(data$block), ceiling(.3*length(unique(data$block))))
+train <- data[!block %in% blocks]; valid <- data[block %in% blocks]
+bands <- c(sprintf("A%02d", 0:63), "elevation", "slope", "aspect_sin", "aspect_cos")
+selection_file <- file.path(root, "shenandoah_selection.rds")
+if (file.exists(selection_file)) selection <- readRDS(selection_file) else {
+  log("Selecting variables using training blocks only")
+  selection <- varSel(train[, ..bands], train$agbd, method = "rfe", threshold = 0,
+                      seed = 726, ntree = 150, nodesize = 5)
+  saveRDS(selection, selection_file)
+}
+keep <- selection$selvars
+fwrite(selection$importance, "readme/results/shenandoah_importance.csv")
+fwrite(selection$test, "readme/results/shenandoah_rfe.csv")
+log("Training:",nrow(train),"validation:",nrow(valid),"selected predictors:",length(keep))
 ```
 
-The full script collects these predictions and evaluates them with
-`fit_metrics()`. Predictive R² below is calculated as one minus the residual
-sum of squares divided by the observed total sum of squares.
+### Train, predict and evaluate the GEE forest
+
+```r
+# Add circular aspect predictors to the annual GEE stack.
+stack <- ee_build_AlphaEarth_embedding_terrain_stack(aoi, 2021, 2021, add_lonlat = FALSE)
+aspect <- stack$select("aspect")$multiply(pi/180)
+stack <- stack$addBands(aspect$sin()$rename("aspect_sin"))$addBands(aspect$cos()$rename("aspect_cos"))
+# Validate on year-matched predictor values in feature tables. The same server
+# forest and selected variables are subsequently used for the map.
+small <- function(d) d[, c("lon_lowestmode","lat_lowestmode","agbd","sample_id",keep), with = FALSE]
+model <- build_ee_forest(vect_as_ee(to_vect(small(train))), "agbd", keep, trees = 500L, seed = 726L)
+classify <- function(d) {
+  fc <- vect_as_ee(to_vect(small(d)))$classify(model, "predicted")
+  out <- reticulate::py_to_r(fc$select(c("sample_id","agbd","predicted"))$getInfo())
+  rbindlist(lapply(out$features, `[[`, "properties"))
+}
+pred_train <- classify(train); pred_train[, stage := "Training"]
+pred_valid <- classify(valid); pred_valid[, stage := "Validation"]
+predictions <- rbindlist(list(pred_train, pred_valid))
+fwrite(predictions, "readme/results/shenandoah_predictions.csv")
+fwrite(rbindlist(lapply(split(predictions, predictions$stage), function(d) {
+  x <- as.data.table(fit_metrics(d$agbd, d$predicted, unit = "Mg/ha"))
+  x[, stage := d$stage[1]]; x
+})), "readme/results/shenandoah_accuracy.csv")
+fwrite(data[, .(sample_id, year, beam, shot_number, lon_lowestmode, lat_lowestmode, agbd, block,
+                 partition = fifelse(block %in% blocks, "Validation", "Training"))],
+       "readme/results/shenandoah_footprints.csv")
+saveRDS(list(training = data, selected = keep, heldout_blocks = blocks), file.path(root,"shenandoah_model_inputs.rds"))
+```
+
+### Refit and export a wall-to-wall map
+
+```r
+# Refit on all available observations for the final 2021 demonstration map.
+final <- build_ee_forest(vect_as_ee(to_vect(small(data))), "agbd", keep, trees = 500L, seed = 726L)
+image <- map_create(final, stack$select(as.list(keep)), aoi = aoi, name = "AGBD")
+dest <- file.path(root, "shenandoah_agbd_2021.tif")
+if (!file.exists(dest)) map_download(image, dest, aoi, scale = 100, crs = "EPSG:32617")
+dem_dest <- file.path(root,"shenandoah_dem.tif")
+if (!file.exists(dem_dest)) map_download(stack$select("elevation"),dem_dest,aoi,scale=100,crs="EPSG:32617")
+log("Wall-to-wall map saved:", dest)
+fwrite(data.table(n = nrow(data), train = nrow(train), validation = nrow(valid),
+                  predictors = length(keep), map_year = 2021, map_resolution_m = 100),
+       "readme/results/shenandoah_run.csv")
+log("COMPLETE")
+```
+
+### Inspect the 1:1 plots
+
+Points use a viridis palette to show local footprint counts in 25 × 25 Mg/ha bins. Both panels use
+the same axes and colour scale, including all observations. Predictive R² is
+one minus residual sum of squares divided by observed total sum of squares.
+
+```r
+library(ggplot2)
+theme_set(theme_minimal(base_size=12)+theme(panel.grid.minor=element_blank(),plot.title=element_text(face="bold")))
+pred <- fread("readme/results/shenandoah_predictions.csv")
+pred[,stage:=factor(stage,levels=c("Training","Validation"))]
+summary <- pred[,.(n=.N,R2=1-sum((predicted-agbd)^2)/sum((agbd-mean(agbd))^2),
+  RMSE=sqrt(mean((predicted-agbd)^2)),bias=mean(predicted-agbd)),by=stage]
+summary[,label:=sprintf("n = %d\nR\u00b2 = %.2f\nRMSE = %.1f Mg/ha\nBias = %.1f Mg/ha",n,R2,RMSE,bias)]
+maximum <- ceiling(max(pred$agbd,pred$predicted)/100)*100
+pred[, `:=`(bin_x=floor(agbd/25),bin_y=floor(predicted/25))]
+pred[, local_count := .N, by=.(stage,bin_x,bin_y)]
+p <- ggplot(pred[order(local_count)],aes(agbd,predicted))+
+  geom_point(aes(colour=local_count),size=1.25,alpha=.9)+
+  geom_abline(slope=1,intercept=0,linetype=2,colour="#5D666A",linewidth=.7)+
+  scale_colour_viridis_c(option="viridis",trans="log1p",name="Local footprint count",
+    breaks=c(1,2,5,10,20,50),guide=guide_colourbar(barwidth=grid::unit(7,"cm"),barheight=grid::unit(.4,"cm")))+
+  geom_text(data=summary,aes(x=.04*maximum,y=.96*maximum,label=label),inherit.aes=FALSE,hjust=0,vjust=1,size=4)+
+  facet_wrap(~stage)+coord_equal(xlim=c(0,maximum),ylim=c(0,maximum),expand=FALSE)+
+  labs(x="Reference GEDI AGBD (Mg/ha)",y="Predicted AGBD (Mg/ha)",title="Biomass model training and spatial validation",
+    subtitle="Points coloured by local footprint density (25 x 25 Mg/ha bins)",
+    caption="Dashed line: 1:1. Statistics use all observations. Validation holds out 2 km blocks across all sampled years.")+
+  theme(strip.text=element_text(face="bold",size=13),panel.background=element_rect(fill="#FAFAF9",colour=NA),
+    panel.grid.major=element_line(colour="#E5E7E5"),legend.position="bottom",plot.caption=element_text(hjust=0,size=9))
+ggplot2::ggsave(file.path(outdir, "model-validation.png"), p, width = 10.5, height = 6.3, dpi = 300, bg = "white")
+output <- summary[,.(stage,n,R2=round(R2,3),RMSE=round(RMSE,2),bias=round(bias,2))]
+writeLines(capture.output(print(output)),file.path(outdir, "model-evaluation.txt"))
+p
+```
 
 ```text
         stage     n    R2  RMSE  bias
@@ -589,39 +823,45 @@ sum of squares divided by the observed total sum of squares.
 2: Validation   645 0.516 88.47 10.34
 ```
 
-<p align="center"><img src="readme/fig-gee-model-validation.png" width="1000" alt="Training and spatial holdout model diagnostics with common axes"></p>
+<p align="center"><img src="readme/fig-gee-model-validation.png" width="1000" alt="Training and spatial validation with a shared viridis footprint-count legend"></p>
 
-The reference response is GEDI AGBD, so this measures agreement with withheld
-GEDI estimates. Independent field data are needed to evaluate field biomass.
-
-### Predict the whole park
-
-After evaluation, the complete script refits the selected model on all 2,348
-records. It applies that model to the 2021 predictor stack and exports a
-100 m demonstration map. The stack includes the same aspect transformations
-used during training.
+The displayed run uses 2,348 samples, with 1,703 for training and 645 for
+validation, and selects 13 predictors. Validation measures agreement with
+withheld GEDI estimates; it is not an independent field biomass validation.
 
 ```r
-stack <- ee_build_AlphaEarth_embedding_terrain_stack(aoi, 2021, 2021,
-                                                   add_lonlat = FALSE)
-aspect <- stack$select("aspect")$multiply(pi / 180)
-stack <- stack$addBands(aspect$sin()$rename("aspect_sin"))$
-  addBands(aspect$cos()$rename("aspect_cos"))
-all_training <- vect_as_ee(to_vect(data[, ..model_fields]))
-final_model <- build_ee_forest(all_training, "agbd", selected, trees = 500, seed = 726)
-mapped <- map_create(final_model, stack$select(as.list(selected)),
-                     aoi = aoi, name = "AGBD")
-map_view(list(AGBD = mapped),
-  vis = list(AGBD = list(min = 0, max = 500,
-    palette = c("#000004", "#721F81", "#F1605D", "#FCFDBF"))), aoi = aoi)
-map_download(mapped, file.path(outdir, "shenandoah_agbd_2021.tif"),
-              region = aoi, scale = 100, crs = "EPSG:32617")
+library(patchwork)
+importance <- fread("readme/results/shenandoah_importance.csv")
+rfe <- fread("readme/results/shenandoah_rfe.csv")
+top <- importance[order(-importance)][1:15]
+top[,parameter:=factor(parameter,levels=rev(parameter))]
+chosen <- sum(importance$selected)
+a <- ggplot(top,aes(importance,parameter,fill=selected))+geom_col(width=.7)+
+  scale_fill_manual(values=c("FALSE"="#C9D0D0","TRUE"="#705196"),labels=c("Other","Selected"),name=NULL)+
+  labs(title="A  Predictor importance",x="Relative importance",y=NULL)+theme(legend.position="bottom")
+b <- ggplot(rfe,aes(nvariables,oob_rmse))+geom_line(colour="#267F82",linewidth=.8)+
+  geom_vline(xintercept=chosen,colour="#A42A73",linetype=2)+
+  labs(title="B  Recursive feature elimination",x="Predictors retained",y="Training OOB RMSE (Mg/ha)")
+selection_plot <- a+b+patchwork::plot_annotation(caption="Variable selection uses training blocks only.")
+ggplot2::ggsave(file.path(outdir,"variable-selection.png"),selection_plot,width=10.5,height=4.5,dpi=300,bg="white")
+selection_plot
 ```
 
-<p align="center"><img src="readme/fig-gee-shenandoah-map.png" width="1050" alt="Shenandoah boundary, GEDI training and validation samples, and wall-to-wall biomass prediction"></p>
+<p align="center"><img src="readme/fig-gee-variable-selection.png" width="1000" alt="Training variable importance and recursive feature elimination"></p>
 
-This is a model prediction between sampled footprints. It is not an
-additional GEDI observation or the native NASA Level 4B product.
+### View the final prediction
+
+```r
+map_view(list(AGBD = image),
+  vis = list(AGBD = list(min = 0, max = 500,
+    palette = c("#000004", "#721F81", "#F1605D", "#FCFDBF"))), aoi = aoi)
+```
+
+<p align="center"><img src="readme/fig-gee-shenandoah-map.png" width="1050" alt="Shenandoah boundary, GEDI spatial partitions and wall-to-wall biomass map"></p>
+
+The final map refits the selected model on all samples and uses the 2021
+predictor stack. It is a prediction between footprints, separate from the
+native NASA Level 4B product.
 
 ## Close HDF5 connections
 
@@ -656,7 +896,7 @@ subset details are recorded in `inst/extdata/EXAMPLE_DATA.txt`.
 GEDI data are provided by NASA's LP DAAC and ORNL DAAC. Steven Hancock
 developed the GEDI waveform simulator; rGEDI builds on his
 [reference implementation](https://bitbucket.org/StevenHancock/gedisimulator/src/master/).
-Example boundaries are from [IBGE](https://servicodados.ibge.gov.br/api/docs/malhas?versao=3)
+Example boundaries are from the [USDA Forest Service](https://apps.fs.usda.gov/arcx/rest/services/EDW/EDW_ForestSystemBoundaries_01/MapServer/0)
 and the [National Park Service](https://www.nps.gov/subjects/gisandmapping/npmap.htm).
 
 This work was primarily supported by NASA’s ICESat-2 Science Team
