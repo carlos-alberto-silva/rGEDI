@@ -17,28 +17,6 @@ simulates, models, and maps NASA Global Ecosystem Dynamics Investigation
 (GEDI) data. It supports footprint products GEDI01_B, GEDI02_A, GEDI02_B,
 and GEDI04_A, as well as raster products GEDI03 and GEDI04_B.
 
-The examples below demonstrate the package API using the bundled GEDI
-subsets and optional cloud services. The generated package reference manual is
-available in `output/pdf/rGEDI-reference-manual.pdf`.
-
-## Data access
-
-| Source | Open data with | Access requirement |
-|---|---|---|
-| Local files | `readLevel*()` | HDF5 or GeoTIFF files |
-| Earthdata Cloud | `gedifinder(source = "earthdata")`, then `readLevel*()` | Earthdata login |
-| gediDB | `gedifinder(source = "gedidb")`, then `readLevel*()` | Optional Python backend |
-| Google Earth Engine | `gedifinder(source = "gee")`, then `readLevel*()` | Authenticated GEE project |
-
-| Product | Reader | Extractor | Example output |
-|---|---|---|---|
-| Level 1B | `readLevel1B()` | `getLevel1BGeo()`, `getLevel1BWF()` | Coordinates and waveforms |
-| Level 2A | `readLevel2A()` | `getLevel2AM()` | RH98, RH100, ground elevation (m) |
-| Level 2B | `readLevel2B()` | `getLevel2BVPM()`, `getLevel2BPAVDProfile()` | PAI (m²/m²), cover, PAVD (m²/m³) |
-| Level 3 | `readLevel3()` | `getLevel3()` | Gridded structure metrics |
-| Level 4A | `readLevel4A()` | `getLevel4A()` | AGBD (Mg/ha) |
-| Level 4B | `readLevel4B()` | `getLevel4B()` | Gridded AGBD (Mg/ha) |
-
 # Getting Started
 
 ## 1 Installation
