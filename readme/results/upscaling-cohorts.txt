@@ -1,0 +1,5 @@
+    year quality_screened night_power
+   <int>            <int>       <int>
+1:  2019             8131        2943
+2:  2021             3334        1121
+3:  2022             5806        1535

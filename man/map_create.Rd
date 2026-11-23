@@ -2,22 +2,25 @@
 % Please edit documentation in R/gee.R
 \name{map_create}
 \alias{map_create}
-\title{Apply an Earth Engine model to a predictor image}
+\title{Apply a fitted model to an Earth Engine predictor image}
 \usage{
 map_create(model, stack, aoi = NULL, name = "prediction")
 }
 \arguments{
-\item{model}{A trained Earth Engine classifier or regressor.}
+\item{model}{A random-forest \code{gedi_model} from \code{\link[=fit_model]{fit_model()}}, a fitted
+\code{randomForest} regression model, or a trained Earth Engine classifier.
+Local forests are converted internally by \code{\link[=build_ee_forest]{build_ee_forest()}} without
+retraining. Factor predictors and classification forests are unsupported.}
 
-\item{stack}{Earth Engine predictor image.}
+\item{stack}{Earth Engine predictor image with bands matching model predictors.}
 
 \item{aoi}{Optional area to clip.}
 
 \item{name}{Output band name.}
 }
 \value{
-An Earth Engine image.
+An Earth Engine image, with predictions stored as float32.
 }
 \description{
-Apply an Earth Engine model to a predictor image
+Apply a fitted model to an Earth Engine predictor image
 }

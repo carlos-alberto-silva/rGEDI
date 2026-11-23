@@ -1,0 +1,6 @@
+Key: <year>
+    year quality_screened night_power complete_predictors retained
+   <int>            <int>       <int>               <int>    <int>
+1:  2019             8131        2943                2921     1000
+2:  2021             3334        1121                1110      501
+3:  2022             5806        1535                1515      847

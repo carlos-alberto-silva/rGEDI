@@ -1,0 +1,4 @@
+                   group bands
+                  <char> <int>
+1: AlphaEarth embeddings    64
+2:    Terrain predictors     4

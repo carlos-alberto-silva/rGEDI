@@ -2,25 +2,20 @@
 % Please edit documentation in R/gee.R
 \name{build_ee_forest}
 \alias{build_ee_forest}
-\title{Train a regression forest in Earth Engine}
+\title{Convert a fitted R random forest to Earth Engine}
 \usage{
-build_ee_forest(training, response, predictors, trees = 500L, seed = 1L)
+build_ee_forest(rf)
 }
 \arguments{
-\item{training}{Earth Engine \code{FeatureCollection} containing predictors and
-the response.}
-
-\item{response}{Response property name, such as \code{"agbd"} or \code{"rh98"}.}
-
-\item{predictors}{Predictor property names.}
-
-\item{trees}{Number of trees.}
-
-\item{seed}{Random seed.}
+\item{rf}{A fitted \code{randomForest} regression model or a random-forest
+\code{gedi_model} returned by \code{\link[=fit_model]{fit_model()}}. Predictors must be numeric, with
+names containing letters, digits or underscores (not starting with digits).}
 }
 \value{
-A trained Earth Engine classifier configured for regression.
+An Earth Engine decision-tree ensemble in regression mode.
 }
 \description{
-Train a regression forest in Earth Engine
+Serializes the existing regression trees and their predictions. No model is
+trained or refitted in Earth Engine. \code{\link[=map_create]{map_create()}} calls this internally
+for local models.
 }

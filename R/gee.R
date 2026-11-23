@@ -382,37 +382,81 @@ ee_check_task_status <- function(task, quiet = TRUE) {
   status
 }
 
-#' Train a regression forest in Earth Engine
-#'
-#' @param training Earth Engine `FeatureCollection` containing predictors and
-#'   the response.
-#' @param response Response property name, such as `"agbd"` or `"rh98"`.
-#' @param predictors Predictor property names.
-#' @param trees Number of trees.
-#' @param seed Random seed.
-#' @return A trained Earth Engine classifier configured for regression.
-#' @export
-build_ee_forest <- function(training, response, predictors, trees = 500L,
-                            seed = 1L) {
-  ee <- .require_ee()
-  forest <- ee$Classifier$smileRandomForest(
-    numberOfTrees = as.integer(trees), seed = as.integer(seed)
-  )$setOutputMode("REGRESSION")
-  forest$train(
-    features = training,
-    classProperty = response,
-    inputProperties = reticulate::r_to_py(as.list(predictors))
-  )
+# Serialize numeric regression trees without fitting another model.
+.rf_tree_strings <- function(rf) {
+  if (inherits(rf, "gedi_model")) rf <- rf$model
+  if (!inherits(rf, "randomForest") || !identical(rf$type, "regression")) {
+    stop("'rf' must be a fitted randomForest regression model or a random-forest gedi_model.", call. = FALSE)
+  }
+  if (is.null(rf$forest)) stop("Fit the forest with keep.forest = TRUE.", call. = FALSE)
+  if (any(rf$forest$ncat != 1L) || any(vapply(rf$forest$xlevels, is.character, logical(1)))) {
+    stop("Earth Engine conversion currently supports numeric predictors only, not factors.", call. = FALSE)
+  }
+  if (!requireNamespace("randomForest", quietly = TRUE)) stop("Install 'randomForest'.")
+  predictors <- names(rf$forest$ncat)
+  if (is.null(predictors) || any(!grepl("^[A-Za-z_][A-Za-z0-9_]*$", predictors))) {
+    stop("Predictor names must contain letters, digits or underscores and cannot start with a digit.", call. = FALSE)
+  }
+  number <- function(x) {
+    if (!is.finite(x)) stop("The forest contains a non-finite split or prediction.", call. = FALSE)
+    formatC(x, digits = 17L, format = "g", decimal.mark = ".", flag = "#")
+  }
+  vapply(seq_len(rf$ntree), function(k) {
+    if (rf$forest$ndbigtree[k] == 1L) {
+      return(paste0("1) root 1 0 ", number(rf$forest$nodepred[1L, k]), " *\n"))
+    }
+    tree <- randomForest::getTree(rf, k = k, labelVar = FALSE)
+    lines <- character(nrow(tree)); position <- 0L
+    visit <- function(node, id, depth, rule) {
+      if (id > 2^53 - 1) stop("Tree depth exceeds the exact node numbering supported by this converter.", call. = FALSE)
+      leaf <- tree[node, "status"] == -1L
+      position <<- position + 1L
+      lines[position] <<- paste0(strrep(" ", depth), format(id, scientific = FALSE, trim = TRUE),
+        ") ", rule, " 1 0 ", number(tree[node, "prediction"]), if (leaf) " *" else "")
+      if (!leaf) {
+        variable <- predictors[tree[node, "split var"]]
+        split <- number(tree[node, "split point"])
+        visit(tree[node, "left daughter"], 2 * id, depth + 1L, paste(variable, "<=", split))
+        visit(tree[node, "right daughter"], 2 * id + 1, depth + 1L, paste(variable, ">", split))
+      }
+    }
+    visit(1L, 1, 0L, "root")
+    paste0(paste(lines, collapse = "\n"), "\n")
+  }, character(1), USE.NAMES = FALSE)
 }
 
-#' Apply an Earth Engine model to a predictor image
-#' @param model A trained Earth Engine classifier or regressor.
-#' @param stack Earth Engine predictor image.
+#' Convert a fitted R random forest to Earth Engine
+#'
+#' Serializes the existing regression trees and their predictions. No model is
+#' trained or refitted in Earth Engine. [map_create()] calls this internally
+#' for local models.
+#' @param rf A fitted `randomForest` regression model or a random-forest
+#'   `gedi_model` returned by [fit_model()]. Predictors must be numeric, with
+#'   names containing letters, digits or underscores (not starting with digits).
+#' @return An Earth Engine decision-tree ensemble in regression mode.
+#' @export
+build_ee_forest <- function(rf) {
+  trees <- .rf_tree_strings(rf)
+  ee <- .require_ee()
+  ee$Classifier$decisionTreeEnsemble(as.list(trees))$setOutputMode("REGRESSION")
+}
+
+#' Apply a fitted model to an Earth Engine predictor image
+#' @param model A random-forest `gedi_model` from [fit_model()], a fitted
+#'   `randomForest` regression model, or a trained Earth Engine classifier.
+#'   Local forests are converted internally by [build_ee_forest()] without
+#'   retraining. Factor predictors and classification forests are unsupported.
+#' @param stack Earth Engine predictor image with bands matching model predictors.
 #' @param aoi Optional area to clip.
 #' @param name Output band name.
-#' @return An Earth Engine image.
+#' @return An Earth Engine image, with predictions stored as float32.
 #' @export
 map_create <- function(model, stack, aoi = NULL, name = "prediction") {
+  if (inherits(model, "gedi_model") || inherits(model, "randomForest")) {
+    model <- build_ee_forest(model)
+  } else if (!inherits(model, "python.builtin.object")) {
+    stop("'model' must be a fitted random forest, gedi_model or Earth Engine classifier.", call. = FALSE)
+  }
   out <- stack$classify(model, name)$toFloat()
   if (!is.null(aoi)) out <- out$clip(.as_ee_geom(aoi))
   out

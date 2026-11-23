@@ -73,7 +73,7 @@ save_plot(a+b+plot_annotation(caption="Selection uses training blocks only. The 
 area <- st_read(system.file("extdata","shenandoah.shp",package="rGEDI"),quiet=TRUE) |> st_transform(32617)
 footprints <- fread("readme/results/shenandoah_footprints.csv")
 points <- st_as_sf(footprints,coords=c("lon_lowestmode","lat_lowestmode"),crs=4326) |> st_transform(32617)
-biomass <- rast(file.path(root,"shenandoah_agbd_2021.tif"))
+biomass <- rast(file.path(root,"shenandoah_local_rf_agbd_2021.tif"))
 df <- as.data.frame(biomass,xy=TRUE,na.rm=TRUE);names(df)[3]<-"agbd"
 dem <- rast(file.path(root,"shenandoah_dem.tif"))
 terrain <- terra::terrain(dem,v=c("slope","aspect"),unit="radians")
@@ -95,8 +95,39 @@ a <- ggplot()+geom_tile(data=background,aes(x,y,fill=shade),width=res(hill)[1],h
 b <- ggplot(df)+geom_tile(aes(x,y,fill=agbd),width=res(biomass)[1],height=res(biomass)[2])+
   scale_fill_viridis_c(option="magma",name="AGBD (Mg/ha)",limits=c(0,500),oob=scales::squish,
     breaks=c(0,100,200,300,400,500),labels=c("0","100","200","300","400",">=500"))+
-  labs(title="B  Wall-to-wall prediction",subtitle="2021 ancillary predictors; 100 m display grid")
-maps <- decorate(a)+decorate(b)+plot_annotation(caption="NPS park boundary simplified by 20 m. Final map refitted on all 2,348 GEDI samples. Predictions are calibrated to GEDI AGBD, not field biomass.")
+  labs(title="B  Wall-to-wall prediction",subtitle="Validated local forest; 2021 predictors; 100 m grid")
+maps <- decorate(a)+decorate(b)+plot_annotation(caption="NPS boundary simplified by 20 m. The mapped forest was trained on 1,703 footprints and validated on 645 held-out footprints; no retraining in GEE.")
 save_plot(maps,"fig-gee-shenandoah-map",10.5,8)
+samples <- decorate(a)+labs(title="GEDI spatial partitions",subtitle="Shenandoah National Park; 2 km validation blocks")+
+  plot_annotation(caption="Samples from 2019, 2021 and 2022. All years from a block\nremain together in training or validation.")
+save_plot(samples,"fig-gee-samples",5.5,8)
+
+# Ancillary inputs: embeddings are unitless features, not biomass estimates.
+inputs <- rast(file.path(root,"shenandoah_predictors_display_2021.tif"))
+names(inputs) <- c("A00","A20","A40","elevation","slope")
+inputs <- mask(inputs,vect(area))
+display <- as.data.table(as.data.frame(inputs,xy=TRUE,na.rm=FALSE))
+shade_hex <- grDevices::gray(pmin(1,pmax(0,.55+.4*background$shade)))
+context <- function() geom_raster(data=background,aes(x,y),fill=shade_hex,inherit.aes=FALSE)
+stretch <- function(x) {
+  q <- quantile(x,c(.02,.98),na.rm=TRUE)
+  pmin(1,pmax(0,(x-q[1])/(q[2]-q[1])))
+}
+display[,rgb:=NA_character_]
+ok <- which(complete.cases(display[,.(A00,A20,A40)]))
+display[ok,rgb:=grDevices::rgb(stretch(A00),stretch(A20),stretch(A40))]
+rgb_map <- ggplot(display)+context()+geom_raster(aes(x,y,fill=rgb),na.rm=TRUE)+
+  scale_fill_identity(na.value="transparent")+labs(title="A  Satellite embeddings",subtitle="RGB: A00 / A20 / A40 (unitless)")
+elevation_map <- ggplot(display)+context()+geom_raster(aes(x,y,fill=elevation))+
+  scale_fill_viridis_c(option="viridis",na.value="transparent",name="Elevation (m)",guide=guide_colourbar(title.position="top",barwidth=grid::unit(4,"cm")))+
+  labs(title="B  Elevation",subtitle="NASADEM")
+slope_map <- ggplot(display)+context()+geom_raster(aes(x,y,fill=slope))+
+  scale_fill_viridis_c(option="inferno",na.value="transparent",name="Slope (degrees)",guide=guide_colourbar(title.position="top",barwidth=grid::unit(4,"cm")))+
+  labs(title="C  Slope",subtitle="Derived from NASADEM")
+ancillary_maps <- decorate(rgb_map)+decorate(elevation_map)+decorate(slope_map)+
+  plot_annotation(caption="2021 predictors inside Shenandoah National Park; grey shows context hillshade.\nDisplay: 100 m. Extraction: 30 m. RGB contrast: per-channel 2nd-98th percentiles.")
+ancillary_maps <- ancillary_maps + plot_annotation(theme=theme(plot.caption=element_text(hjust=0,size=9)))
+save_plot(ancillary_maps,"fig-gee-predictors",12.5,8)
+
 raw <- readRDS(file.path(root,"shenandoah_raw_2019.rds"))
 writeLines(capture.output(print(head(raw[,.(beam,shot_number,agbd,agbd_se,sensitivity)],3))),"readme/results/level4a-footprints.txt")

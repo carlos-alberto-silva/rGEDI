@@ -1,4 +1,4 @@
         stage     n    R2  RMSE  bias
        <fctr> <int> <num> <num> <num>
-1:   Training  1703 0.799 56.03  0.16
-2: Validation   645 0.516 88.47 10.34
+1:   Training  1703 0.710 67.19  0.01
+2: Validation   645 0.498 90.09 11.07

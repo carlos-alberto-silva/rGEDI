@@ -1,0 +1,4 @@
+    partition footprints blocks
+       <char>      <int>  <int>
+1:   Training       1703    105
+2: Validation        645     45

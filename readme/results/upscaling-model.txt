@@ -1,0 +1,9 @@
+
+Call:
+ randomForest(x = xx, y = yy, ntree = 200, nodesize = 5, maxnodes = 128)
+               Type of random forest: regression
+                     Number of trees: 200
+No. of variables tried at each split: 4
+
+          Mean of squared residuals: 8567.558
+                    % Var explained: 45.02

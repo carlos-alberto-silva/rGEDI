@@ -2,6 +2,10 @@
 
 # rGEDI 0.6.1 (2026-11-19)
 
+* Convert locally fitted numeric regression forests inside `map_create()`;
+  `build_ee_forest()` now serializes an existing R forest instead of training
+  a new Earth Engine forest. The upscaling tutorial validates the local model
+  and maps those same trees, with outputs shown at each stage.
 * Teach the GEDI product levels in an illustrated README tutorial, using
   measured ALS examples, small native grid subsets, mapped boundaries,
   printed R results and an optional Earth Engine biomass mapping workflow.
